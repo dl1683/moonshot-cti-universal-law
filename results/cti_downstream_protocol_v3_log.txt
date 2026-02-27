@@ -1,0 +1,180 @@
+CTI DOWNSTREAM DECISION PROTOCOL V2
+Pre-registered thresholds: mean Spearman rho > 0.50, >=60% positive
+============================================================
+Device: cuda
+
+[STEP 1] H1 from existing 4-dataset NLP data
+H1_existing: within-model rho from existing data...
+  n_pairs=48, mean_rho=0.6880, frac_positive=0.94 -> PASS
+
+[STEP 2] New inference on banking77 + amazon_massive
+
+  pythia-160m x banking77
+  Loading dataset banking77...
+  banking77: n=5000, K=77
+  Loading model EleutherAI/pythia-160m...
+  n_layers=12, sampling at [1, 2, 5, 7, 10, 12]
+  Inference done in 3.6s
+    Layer  1/12: kappa=0.3020  q_1nn=0.6059  MAP@10=0.6077
+    Layer  2/12: kappa=0.2422  q_1nn=0.5425  MAP@10=0.5651
+    Layer  5/12: kappa=0.0818  q_1nn=0.4849  MAP@10=0.5203
+    Layer  7/12: kappa=0.0890  q_1nn=0.4985  MAP@10=0.5303
+    Layer 10/12: kappa=0.1316  q_1nn=0.4792  MAP@10=0.5165
+    Layer 12/12: kappa=0.2879  q_1nn=0.5749  MAP@10=0.5941
+
+  pythia-160m x amazon_massive_en
+  Loading dataset amazon_massive_en...
+  amazon_massive_en: n=2974, K=59
+  Loading model EleutherAI/pythia-160m...
+  n_layers=12, sampling at [1, 2, 5, 7, 10, 12]
+  Inference done in 1.1s
+    Layer  1/12: kappa=0.2963  q_1nn=0.5683  MAP@10=0.5937
+    Layer  2/12: kappa=0.2850  q_1nn=0.5594  MAP@10=0.5867
+    Layer  5/12: kappa=0.0725  q_1nn=0.5311  MAP@10=0.5662
+    Layer  7/12: kappa=0.0756  q_1nn=0.5423  MAP@10=0.5736
+    Layer 10/12: kappa=0.1213  q_1nn=0.5338  MAP@10=0.5668
+    Layer 12/12: kappa=0.3165  q_1nn=0.5499  MAP@10=0.5820
+
+  pythia-410m x banking77
+  Loading dataset banking77...
+  banking77: n=5000, K=77
+  Loading model EleutherAI/pythia-410m...
+  n_layers=24, sampling at [1, 5, 10, 14, 19, 24]
+  Inference done in 9.3s
+    Layer  1/24: kappa=0.3124  q_1nn=0.6460  MAP@10=0.6458
+    Layer  5/24: kappa=0.2966  q_1nn=0.6103  MAP@10=0.6224
+    Layer 10/24: kappa=0.0474  q_1nn=0.5581  MAP@10=0.5756
+    Layer 14/24: kappa=0.0476  q_1nn=0.5804  MAP@10=0.5943
+    Layer 19/24: kappa=0.0737  q_1nn=0.5283  MAP@10=0.5591
+    Layer 24/24: kappa=0.2981  q_1nn=0.5893  MAP@10=0.6074
+
+  pythia-410m x amazon_massive_en
+  Loading dataset amazon_massive_en...
+  amazon_massive_en: n=2974, K=59
+  Loading model EleutherAI/pythia-410m...
+  n_layers=24, sampling at [1, 5, 10, 14, 19, 24]
+  Inference done in 2.5s
+    Layer  1/24: kappa=0.2728  q_1nn=0.5923  MAP@10=0.6152
+    Layer  5/24: kappa=0.3205  q_1nn=0.5998  MAP@10=0.6240
+    Layer 10/24: kappa=0.0310  q_1nn=0.5618  MAP@10=0.5907
+    Layer 14/24: kappa=0.0327  q_1nn=0.5752  MAP@10=0.6050
+    Layer 19/24: kappa=0.0427  q_1nn=0.5536  MAP@10=0.5766
+    Layer 24/24: kappa=0.3169  q_1nn=0.5789  MAP@10=0.6053
+
+  pythia-1b x banking77
+  Loading dataset banking77...
+  banking77: n=5000, K=77
+  Loading model EleutherAI/pythia-1b...
+  n_layers=16, sampling at [1, 3, 6, 10, 13, 16]
+  Inference done in 20.5s
+    Layer  1/16: kappa=0.2793  q_1nn=0.5467  MAP@10=0.5665
+    Layer  3/16: kappa=0.2912  q_1nn=0.5937  MAP@10=0.6041
+    Layer  6/16: kappa=0.0492  q_1nn=0.5366  MAP@10=0.5629
+    Layer 10/16: kappa=0.0616  q_1nn=0.5781  MAP@10=0.5968
+    Layer 13/16: kappa=0.0887  q_1nn=0.5726  MAP@10=0.5922
+    Layer 16/16: kappa=0.3025  q_1nn=0.6111  MAP@10=0.6235
+
+  pythia-1b x amazon_massive_en
+  Loading dataset amazon_massive_en...
+  amazon_massive_en: n=2974, K=59
+  Loading model EleutherAI/pythia-1b...
+  n_layers=16, sampling at [1, 3, 6, 10, 13, 16]
+  Inference done in 5.5s
+    Layer  1/16: kappa=0.2626  q_1nn=0.5417  MAP@10=0.5688
+    Layer  3/16: kappa=0.2864  q_1nn=0.5629  MAP@10=0.5909
+    Layer  6/16: kappa=0.0256  q_1nn=0.5434  MAP@10=0.5743
+    Layer 10/16: kappa=0.0349  q_1nn=0.5803  MAP@10=0.6041
+    Layer 13/16: kappa=0.0500  q_1nn=0.5646  MAP@10=0.5961
+    Layer 16/16: kappa=0.3404  q_1nn=0.5916  MAP@10=0.6108
+
+  pythia-1.4b x banking77
+  Loading dataset banking77...
+  banking77: n=5000, K=77
+  Loading model EleutherAI/pythia-1.4b...
+  n_layers=24, sampling at [1, 5, 10, 14, 19, 24]
+  Inference done in 30.9s
+    Layer  1/24: kappa=0.3025  q_1nn=0.6166  MAP@10=0.6229
+    Layer  5/24: kappa=0.0709  q_1nn=0.5441  MAP@10=0.5682
+    Layer 10/24: kappa=0.0770  q_1nn=0.5722  MAP@10=0.5906
+    Layer 14/24: kappa=0.0920  q_1nn=0.5799  MAP@10=0.5995
+    Layer 19/24: kappa=0.1512  q_1nn=0.6103  MAP@10=0.6220
+    Layer 24/24: kappa=0.2843  q_1nn=0.5992  MAP@10=0.6179
+
+  pythia-1.4b x amazon_massive_en
+  Loading dataset amazon_massive_en...
+  amazon_massive_en: n=2974, K=59
+  Loading model EleutherAI/pythia-1.4b...
+  n_layers=24, sampling at [1, 5, 10, 14, 19, 24]
+  Inference done in 8.3s
+    Layer  1/24: kappa=0.2662  q_1nn=0.5738  MAP@10=0.6009
+    Layer  5/24: kappa=0.0420  q_1nn=0.5399  MAP@10=0.5733
+    Layer 10/24: kappa=0.0503  q_1nn=0.5748  MAP@10=0.6017
+    Layer 14/24: kappa=0.0584  q_1nn=0.5933  MAP@10=0.6145
+    Layer 19/24: kappa=0.0975  q_1nn=0.6001  MAP@10=0.6281
+    Layer 24/24: kappa=0.3315  q_1nn=0.5830  MAP@10=0.6055
+
+  Qwen2.5-0.5B x banking77
+  Loading dataset banking77...
+  banking77: n=5000, K=77
+  Loading model Qwen/Qwen2.5-0.5B...
+  n_layers=24, sampling at [1, 5, 10, 14, 19, 24]
+  Inference done in 10.9s
+    Layer  1/24: kappa=0.3576  q_1nn=0.7684  MAP@10=0.7544
+    Layer  5/24: kappa=0.0198  q_1nn=0.5514  MAP@10=0.5744
+    Layer 10/24: kappa=0.0245  q_1nn=0.5581  MAP@10=0.5750
+    Layer 14/24: kappa=0.0251  q_1nn=0.5309  MAP@10=0.5603
+    Layer 19/24: kappa=0.0463  q_1nn=0.5546  MAP@10=0.5725
+    Layer 24/24: kappa=0.2804  q_1nn=0.5396  MAP@10=0.5668
+
+  Qwen2.5-0.5B x amazon_massive_en
+  Loading dataset amazon_massive_en...
+  amazon_massive_en: n=2974, K=59
+  Loading model Qwen/Qwen2.5-0.5B...
+  n_layers=24, sampling at [1, 5, 10, 14, 19, 24]
+  Inference done in 3.0s
+    Layer  1/24: kappa=0.3184  q_1nn=0.6590  MAP@10=0.6804
+    Layer  5/24: kappa=0.0160  q_1nn=0.5406  MAP@10=0.5730
+    Layer 10/24: kappa=0.0183  q_1nn=0.5618  MAP@10=0.5905
+    Layer 14/24: kappa=0.0191  q_1nn=0.5581  MAP@10=0.5817
+    Layer 19/24: kappa=0.0311  q_1nn=0.5755  MAP@10=0.5967
+    Layer 24/24: kappa=0.2788  q_1nn=0.5434  MAP@10=0.5755
+
+[STEP 3] Within-model Spearman analysis
+  pythia-160m x banking77: rho(kappa,q)=0.829  rho(kappa,MAP@10)=0.829
+  pythia-160m x amazon_massive_en: rho(kappa,q)=0.771  rho(kappa,MAP@10)=0.771
+  pythia-410m x banking77: rho(kappa,q)=0.771  rho(kappa,MAP@10)=0.771
+  pythia-410m x amazon_massive_en: rho(kappa,q)=0.771  rho(kappa,MAP@10)=0.771
+  pythia-1b x banking77: rho(kappa,q)=0.771  rho(kappa,MAP@10)=0.771
+  pythia-1b x amazon_massive_en: rho(kappa,q)=0.314  rho(kappa,MAP@10)=0.314
+  pythia-1.4b x banking77: rho(kappa,q)=0.943  rho(kappa,MAP@10)=0.943
+  pythia-1.4b x amazon_massive_en: rho(kappa,q)=0.371  rho(kappa,MAP@10)=0.371
+  Qwen2.5-0.5B x banking77: rho(kappa,q)=0.257  rho(kappa,MAP@10)=0.086
+  Qwen2.5-0.5B x amazon_massive_en: rho(kappa,q)=0.600  rho(kappa,MAP@10)=0.600
+
+  H1_new: mean_rho(kappa,q_1nn)=0.6400, frac_pos=1.00 -> PASS
+  H2:     mean_rho(kappa,MAP@10)=0.6229, frac_pos=1.00 -> PASS
+
+[STEP 4] H3: cross-model ranking on banking77 (final layer)
+  H3: Spearman rho(kappa,MAP@10) across 5 models = 0.700 (p=0.188) -> PASS
+
+[STEP 5] Variance diagnostics
+  pythia-160m_banking77: MAP@10 range [0.5165, 0.6077], ceiling_frac=0.009033333333333332
+  pythia-160m_amazon_massive_en: MAP@10 range [0.5662, 0.5937], ceiling_frac=0.04617798699843084
+  pythia-410m_banking77: MAP@10 range [0.5591, 0.6458], ceiling_frac=0.0175
+  pythia-410m_amazon_massive_en: MAP@10 range [0.5766, 0.6240], ceiling_frac=0.046794440708361355
+  pythia-1b_banking77: MAP@10 range [0.5629, 0.6235], ceiling_frac=0.015666666666666666
+  pythia-1b_amazon_massive_en: MAP@10 range [0.5688, 0.6108], ceiling_frac=0.051557946648733456
+  pythia-1.4b_banking77: MAP@10 range [0.5682, 0.6229], ceiling_frac=0.020800000000000003
+  pythia-1.4b_amazon_massive_en: MAP@10 range [0.5733, 0.6281], ceiling_frac=0.06119704102219233
+  Qwen2.5-0.5B_banking77: MAP@10 range [0.5603, 0.7544], ceiling_frac=0.02463333333333333
+  Qwen2.5-0.5B_amazon_massive_en: MAP@10 range [0.5730, 0.6804], ceiling_frac=0.05817081371889712
+
+============================================================
+DOWNSTREAM DECISION PROTOCOL V2 SUMMARY
+============================================================
+  H1_existing: PASS (mean_rho=0.6880, frac_pos=0.94)
+  H1_new:      PASS (mean_rho=0.6400)
+  H2:          PASS (mean_rho=0.6229)
+  H3:          PASS
+
+Saved to C:\Users\devan\OneDrive\Desktop\Projects\AI Moonshots\moonshot-cti-universal-law\results\cti_downstream_protocol_v3.json

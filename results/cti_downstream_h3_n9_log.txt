@@ -1,0 +1,55 @@
+CTI DOWNSTREAM H3 EXTENSION
+Target: H3 cross-model ranking n=9 (p<0.05 at rho=0.70)
+============================================================
+Device: cuda
+
+[STEP 1] Load V3 H3 data (5 models)
+  Loaded 5 existing models from V3:
+    pythia-160m: kappa=0.2879  MAP@10=0.5941
+    pythia-410m: kappa=0.2981  MAP@10=0.6074
+    pythia-1b: kappa=0.3025  MAP@10=0.6235
+    pythia-1.4b: kappa=0.2843  MAP@10=0.6179
+    Qwen2.5-0.5B: kappa=0.2804  MAP@10=0.5668
+
+[STEP 2] Load banking77
+  Loading dataset banking77...
+  banking77: n=5000, K=77
+
+[STEP 3] Run 4 new models (final layer only)
+
+  OLMo-1B x banking77 (final layer only)
+  Loading model allenai/OLMo-1B-hf...
+  Inference done in 26.4s
+    Final layer 16/16: kappa=0.3170  MAP@10=0.6672
+
+  TinyLlama-1.1B x banking77 (final layer only)
+  Loading model TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T...
+  Inference done in 26.9s
+    Final layer 22/22: kappa=0.3077  MAP@10=0.6338
+
+  Qwen3-0.6B x banking77 (final layer only)
+  Loading model Qwen/Qwen3-0.6B...
+  Inference done in 14.2s
+    Final layer 28/28: kappa=0.2821  MAP@10=0.6183
+
+  Qwen3-1.7B x banking77 (final layer only)
+  Loading model Qwen/Qwen3-1.7B...
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|#####     | 1/2 [00:01<00:01,  1.16s/it]Loading checkpoint shards: 100%|##########| 2/2 [00:01<00:00,  1.69it/s]
+  Inference done in 35.6s
+    Final layer 28/28: kappa=0.2582  MAP@10=0.5833
+
+[STEP 4] H3 combined n=9 analysis
+  n_models=9
+  H3 Spearman rho(kappa, MAP@10) = 0.8333  p=0.0053
+  PASS (significant p<0.05)
+    pythia-160m: kappa=0.2879  MAP@10=0.5941
+    pythia-410m: kappa=0.2981  MAP@10=0.6074
+    pythia-1b: kappa=0.3025  MAP@10=0.6235
+    pythia-1.4b: kappa=0.2843  MAP@10=0.6179
+    Qwen2.5-0.5B: kappa=0.2804  MAP@10=0.5668
+    OLMo-1B: kappa=0.3170  MAP@10=0.6672
+    TinyLlama-1.1B: kappa=0.3077  MAP@10=0.6338
+    Qwen3-0.6B: kappa=0.2821  MAP@10=0.6183
+    Qwen3-1.7B: kappa=0.2582  MAP@10=0.5833
+
+Saved to C:\Users\devan\OneDrive\Desktop\Projects\AI Moonshots\moonshot-cti-universal-law\results\cti_downstream_h3_n9.json

@@ -1,0 +1,153 @@
+{
+  "experiment": "cti_downstream_h3_extension",
+  "description": "H3 cross-model ranking extended to n=9 models on banking77 K=77",
+  "preregistration": "H3_extended: rho>0.50 AND p<0.05 (two-sided)",
+  "H3_extended": {
+    "n_models": 9,
+    "spearman_rho": 0.8333333333333333,
+    "p_value": 0.005265691029161747,
+    "PASS_threshold": true,
+    "PASS_significance": true,
+    "models": [
+      {
+        "model": "pythia-160m",
+        "kappa_nearest_final": 0.2878788969257027,
+        "map_at_10_final": 0.5941168893927927,
+        "q_1nn_final": 0.574878947368421,
+        "layer_idx": 12
+      },
+      {
+        "model": "pythia-410m",
+        "kappa_nearest_final": 0.29805494335123506,
+        "map_at_10_final": 0.6073602695263282,
+        "q_1nn_final": 0.5892657894736842,
+        "layer_idx": 24
+      },
+      {
+        "model": "pythia-1b",
+        "kappa_nearest_final": 0.30253960283679937,
+        "map_at_10_final": 0.6234613339002257,
+        "q_1nn_final": 0.61115,
+        "layer_idx": 16
+      },
+      {
+        "model": "pythia-1.4b",
+        "kappa_nearest_final": 0.28431979961841447,
+        "map_at_10_final": 0.617854559240364,
+        "q_1nn_final": 0.5991947368421053,
+        "layer_idx": 24
+      },
+      {
+        "model": "Qwen2.5-0.5B",
+        "kappa_nearest_final": 0.2804192687382893,
+        "map_at_10_final": 0.5668066556122466,
+        "q_1nn_final": 0.5396210526315789,
+        "layer_idx": 24
+      },
+      {
+        "model": "OLMo-1B",
+        "kappa_nearest_final": 0.3170313533646034,
+        "map_at_10_final": 0.6671786432665652,
+        "ceiling_frac": 0.057,
+        "layer_idx": 16,
+        "n_layers_total": 16
+      },
+      {
+        "model": "TinyLlama-1.1B",
+        "kappa_nearest_final": 0.30770040732044646,
+        "map_at_10_final": 0.6337881299760626,
+        "ceiling_frac": 0.0344,
+        "layer_idx": 22,
+        "n_layers_total": 22
+      },
+      {
+        "model": "Qwen3-0.6B",
+        "kappa_nearest_final": 0.28212562820016657,
+        "map_at_10_final": 0.6182567220332575,
+        "ceiling_frac": 0.027,
+        "layer_idx": 28,
+        "n_layers_total": 28
+      },
+      {
+        "model": "Qwen3-1.7B",
+        "kappa_nearest_final": 0.25821325138861356,
+        "map_at_10_final": 0.583336601095995,
+        "ceiling_frac": 0.0176,
+        "layer_idx": 28,
+        "n_layers_total": 28
+      }
+    ]
+  },
+  "v3_models": [
+    {
+      "model": "pythia-160m",
+      "kappa_nearest_final": 0.2878788969257027,
+      "map_at_10_final": 0.5941168893927927,
+      "q_1nn_final": 0.574878947368421,
+      "layer_idx": 12
+    },
+    {
+      "model": "pythia-410m",
+      "kappa_nearest_final": 0.29805494335123506,
+      "map_at_10_final": 0.6073602695263282,
+      "q_1nn_final": 0.5892657894736842,
+      "layer_idx": 24
+    },
+    {
+      "model": "pythia-1b",
+      "kappa_nearest_final": 0.30253960283679937,
+      "map_at_10_final": 0.6234613339002257,
+      "q_1nn_final": 0.61115,
+      "layer_idx": 16
+    },
+    {
+      "model": "pythia-1.4b",
+      "kappa_nearest_final": 0.28431979961841447,
+      "map_at_10_final": 0.617854559240364,
+      "q_1nn_final": 0.5991947368421053,
+      "layer_idx": 24
+    },
+    {
+      "model": "Qwen2.5-0.5B",
+      "kappa_nearest_final": 0.2804192687382893,
+      "map_at_10_final": 0.5668066556122466,
+      "q_1nn_final": 0.5396210526315789,
+      "layer_idx": 24
+    }
+  ],
+  "new_models": [
+    {
+      "model": "OLMo-1B",
+      "kappa_nearest_final": 0.3170313533646034,
+      "map_at_10_final": 0.6671786432665652,
+      "ceiling_frac": 0.057,
+      "layer_idx": 16,
+      "n_layers_total": 16
+    },
+    {
+      "model": "TinyLlama-1.1B",
+      "kappa_nearest_final": 0.30770040732044646,
+      "map_at_10_final": 0.6337881299760626,
+      "ceiling_frac": 0.0344,
+      "layer_idx": 22,
+      "n_layers_total": 22
+    },
+    {
+      "model": "Qwen3-0.6B",
+      "kappa_nearest_final": 0.28212562820016657,
+      "map_at_10_final": 0.6182567220332575,
+      "ceiling_frac": 0.027,
+      "layer_idx": 28,
+      "n_layers_total": 28
+    },
+    {
+      "model": "Qwen3-1.7B",
+      "kappa_nearest_final": 0.25821325138861356,
+      "map_at_10_final": 0.583336601095995,
+      "ceiling_frac": 0.0176,
+      "layer_idx": 28,
+      "n_layers_total": 28
+    }
+  ],
+  "status": "complete"
+}
