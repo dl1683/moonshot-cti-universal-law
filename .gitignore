@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+venv/
+ENV/
+.venv/
+
+# Data / binary artifacts — never commit these
+*.npz
+*.npy
+*.pkl
+*.pt
+*.bin
+*.h5
+*.hdf5
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.log
+
+# Private / secret sauce — NEVER commit
+CLAUDE.md
+.claude/
+memory/
+*.env
+.env*
+secrets/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Large result caches — keep only canonical JSON summaries
+results/kappa_near_cache_*.json
+results/embedding_cache_*.npy
+
+# Temp / scratch
+nul
+NUL
+*.tmp
+*_temp.*
+*_scratch.*
+demo/
