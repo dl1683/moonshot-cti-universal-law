@@ -1,0 +1,1188 @@
+{
+  "experiment": "cti_downstream_protocol_v2",
+  "preregistration": "H1_existing, H1_new, H2, H3 (committed before run)",
+  "thresholds": {
+    "mean_spearman_rho": 0.5,
+    "frac_positive": 0.6
+  },
+  "hypothesis_results": {
+    "H1_existing": {
+      "n_pairs": 48,
+      "mean_spearman_rho": 0.6879810176602995,
+      "frac_positive": 0.9375,
+      "threshold_mean_rho": 0.5,
+      "threshold_frac_pos": 0.6,
+      "PASS": true,
+      "pair_details": [
+        {
+          "model": "pythia-160m",
+          "dataset": "agnews",
+          "n_layers": 4,
+          "spearman_rho": 0.7999999999999999,
+          "p_value": 0.20000000000000007
+        },
+        {
+          "model": "pythia-410m",
+          "dataset": "agnews",
+          "n_layers": 4,
+          "spearman_rho": 0.8944271909999159,
+          "p_value": 0.10557280900008414
+        },
+        {
+          "model": "pythia-1b",
+          "dataset": "agnews",
+          "n_layers": 4,
+          "spearman_rho": 0.316227766016838,
+          "p_value": 0.683772233983162
+        },
+        {
+          "model": "gpt-neo-125m",
+          "dataset": "agnews",
+          "n_layers": 4,
+          "spearman_rho": 1.0,
+          "p_value": 0.0
+        },
+        {
+          "model": "Qwen2.5-0.5B",
+          "dataset": "agnews",
+          "n_layers": 4,
+          "spearman_rho": 0.7999999999999999,
+          "p_value": 0.20000000000000007
+        },
+        {
+          "model": "OLMo-1B-hf",
+          "dataset": "agnews",
+          "n_layers": 4,
+          "spearman_rho": 0.9486832980505139,
+          "p_value": 0.05131670194948612
+        },
+        {
+          "model": "TinyLlama-1.1B-intermediate-step-1431k-3T",
+          "dataset": "agnews",
+          "n_layers": 4,
+          "spearman_rho": 0.9486832980505139,
+          "p_value": 0.05131670194948612
+        },
+        {
+          "model": "Qwen3-0.6B",
+          "dataset": "agnews",
+          "n_layers": 4,
+          "spearman_rho": 1.0,
+          "p_value": 0.0
+        },
+        {
+          "model": "Qwen3-1.7B",
+          "dataset": "agnews",
+          "n_layers": 4,
+          "spearman_rho": 1.0,
+          "p_value": 0.0
+        },
+        {
+          "model": "Mistral-7B-v0.3",
+          "dataset": "agnews",
+          "n_layers": 4,
+          "spearman_rho": 0.7999999999999999,
+          "p_value": 0.20000000000000007
+        },
+        {
+          "model": "Falcon-H1-0.5B-Base",
+          "dataset": "agnews",
+          "n_layers": 4,
+          "spearman_rho": 1.0,
+          "p_value": 0.0
+        },
+        {
+          "model": "rwkv-4-169m-pile",
+          "dataset": "agnews",
+          "n_layers": 4,
+          "spearman_rho": 1.0,
+          "p_value": 0.0
+        },
+        {
+          "model": "pythia-160m",
+          "dataset": "dbpedia",
+          "n_layers": 4,
+          "spearman_rho": 0.7999999999999999,
+          "p_value": 0.20000000000000007
+        },
+        {
+          "model": "pythia-410m",
+          "dataset": "dbpedia",
+          "n_layers": 4,
+          "spearman_rho": 1.0,
+          "p_value": 0.0
+        },
+        {
+          "model": "pythia-1b",
+          "dataset": "dbpedia",
+          "n_layers": 4,
+          "spearman_rho": 0.6000000000000001,
+          "p_value": 0.3999999999999999
+        },
+        {
+          "model": "gpt-neo-125m",
+          "dataset": "dbpedia",
+          "n_layers": 4,
+          "spearman_rho": 0.7999999999999999,
+          "p_value": 0.20000000000000007
+        },
+        {
+          "model": "Qwen2.5-0.5B",
+          "dataset": "dbpedia",
+          "n_layers": 4,
+          "spearman_rho": 0.7999999999999999,
+          "p_value": 0.20000000000000007
+        },
+        {
+          "model": "OLMo-1B-hf",
+          "dataset": "dbpedia",
+          "n_layers": 4,
+          "spearman_rho": 0.7999999999999999,
+          "p_value": 0.20000000000000007
+        },
+        {
+          "model": "TinyLlama-1.1B-intermediate-step-1431k-3T",
+          "dataset": "dbpedia",
+          "n_layers": 4,
+          "spearman_rho": 1.0,
+          "p_value": 0.0
+        },
+        {
+          "model": "Qwen3-0.6B",
+          "dataset": "dbpedia",
+          "n_layers": 4,
+          "spearman_rho": 1.0,
+          "p_value": 0.0
+        },
+        {
+          "model": "Qwen3-1.7B",
+          "dataset": "dbpedia",
+          "n_layers": 4,
+          "spearman_rho": 0.7999999999999999,
+          "p_value": 0.20000000000000007
+        },
+        {
+          "model": "Mistral-7B-v0.3",
+          "dataset": "dbpedia",
+          "n_layers": 4,
+          "spearman_rho": 1.0,
+          "p_value": 0.0
+        },
+        {
+          "model": "Falcon-H1-0.5B-Base",
+          "dataset": "dbpedia",
+          "n_layers": 4,
+          "spearman_rho": 1.0,
+          "p_value": 0.0
+        },
+        {
+          "model": "rwkv-4-169m-pile",
+          "dataset": "dbpedia",
+          "n_layers": 4,
+          "spearman_rho": 0.7999999999999999,
+          "p_value": 0.20000000000000007
+        },
+        {
+          "model": "pythia-160m",
+          "dataset": "20newsgroups",
+          "n_layers": 4,
+          "spearman_rho": 0.39999999999999997,
+          "p_value": 0.6
+        },
+        {
+          "model": "pythia-410m",
+          "dataset": "20newsgroups",
+          "n_layers": 4,
+          "spearman_rho": 0.19999999999999998,
+          "p_value": 0.8
+        },
+        {
+          "model": "pythia-1b",
+          "dataset": "20newsgroups",
+          "n_layers": 4,
+          "spearman_rho": 0.9486832980505139,
+          "p_value": 0.05131670194948612
+        },
+        {
+          "model": "gpt-neo-125m",
+          "dataset": "20newsgroups",
+          "n_layers": 4,
+          "spearman_rho": 0.19999999999999998,
+          "p_value": 0.8
+        },
+        {
+          "model": "Qwen2.5-0.5B",
+          "dataset": "20newsgroups",
+          "n_layers": 4,
+          "spearman_rho": 0.7999999999999999,
+          "p_value": 0.20000000000000007
+        },
+        {
+          "model": "OLMo-1B-hf",
+          "dataset": "20newsgroups",
+          "n_layers": 4,
+          "spearman_rho": 1.0,
+          "p_value": 0.0
+        },
+        {
+          "model": "TinyLlama-1.1B-intermediate-step-1431k-3T",
+          "dataset": "20newsgroups",
+          "n_layers": 4,
+          "spearman_rho": 1.0,
+          "p_value": 0.0
+        },
+        {
+          "model": "Qwen3-0.6B",
+          "dataset": "20newsgroups",
+          "n_layers": 4,
+          "spearman_rho": 0.7999999999999999,
+          "p_value": 0.20000000000000007
+        },
+        {
+          "model": "Qwen3-1.7B",
+          "dataset": "20newsgroups",
+          "n_layers": 4,
+          "spearman_rho": 0.9486832980505139,
+          "p_value": 0.05131670194948612
+        },
+        {
+          "model": "Mistral-7B-v0.3",
+          "dataset": "20newsgroups",
+          "n_layers": 4,
+          "spearman_rho": 1.0,
+          "p_value": 0.0
+        },
+        {
+          "model": "Falcon-H1-0.5B-Base",
+          "dataset": "20newsgroups",
+          "n_layers": 4,
+          "spearman_rho": 0.39999999999999997,
+          "p_value": 0.6
+        },
+        {
+          "model": "rwkv-4-169m-pile",
+          "dataset": "20newsgroups",
+          "n_layers": 4,
+          "spearman_rho": 0.7999999999999999,
+          "p_value": 0.20000000000000007
+        },
+        {
+          "model": "pythia-160m",
+          "dataset": "go_emotions",
+          "n_layers": 4,
+          "spearman_rho": 0.7999999999999999,
+          "p_value": 0.20000000000000007
+        },
+        {
+          "model": "pythia-410m",
+          "dataset": "go_emotions",
+          "n_layers": 4,
+          "spearman_rho": -1.0,
+          "p_value": 0.0
+        },
+        {
+          "model": "pythia-1b",
+          "dataset": "go_emotions",
+          "n_layers": 4,
+          "spearman_rho": 0.7999999999999999,
+          "p_value": 0.20000000000000007
+        },
+        {
+          "model": "gpt-neo-125m",
+          "dataset": "go_emotions",
+          "n_layers": 4,
+          "spearman_rho": 1.0,
+          "p_value": 0.0
+        },
+        {
+          "model": "Qwen2.5-0.5B",
+          "dataset": "go_emotions",
+          "n_layers": 4,
+          "spearman_rho": 0.9486832980505139,
+          "p_value": 0.05131670194948612
+        },
+        {
+          "model": "OLMo-1B-hf",
+          "dataset": "go_emotions",
+          "n_layers": 4,
+          "spearman_rho": 0.316227766016838,
+          "p_value": 0.683772233983162
+        },
+        {
+          "model": "TinyLlama-1.1B-intermediate-step-1431k-3T",
+          "dataset": "go_emotions",
+          "n_layers": 4,
+          "spearman_rho": 0.7999999999999999,
+          "p_value": 0.20000000000000007
+        },
+        {
+          "model": "Qwen3-0.6B",
+          "dataset": "go_emotions",
+          "n_layers": 4,
+          "spearman_rho": 0.2581988897471611,
+          "p_value": 0.7418011102528389
+        },
+        {
+          "model": "Qwen3-1.7B",
+          "dataset": "go_emotions",
+          "n_layers": 4,
+          "spearman_rho": 0.19999999999999998,
+          "p_value": 0.8
+        },
+        {
+          "model": "Mistral-7B-v0.3",
+          "dataset": "go_emotions",
+          "n_layers": 4,
+          "spearman_rho": 0.632455532033676,
+          "p_value": 0.367544467966324
+        },
+        {
+          "model": "Falcon-H1-0.5B-Base",
+          "dataset": "go_emotions",
+          "n_layers": 4,
+          "spearman_rho": -0.39999999999999997,
+          "p_value": 0.6
+        },
+        {
+          "model": "rwkv-4-169m-pile",
+          "dataset": "go_emotions",
+          "n_layers": 4,
+          "spearman_rho": -0.7378647873726218,
+          "p_value": 0.2621352126273781
+        }
+      ]
+    },
+    "H1_new": {
+      "n_pairs": 10,
+      "mean_spearman_rho": 0.64,
+      "frac_positive": 1.0,
+      "PASS": true,
+      "pair_details": [
+        {
+          "model": "pythia-160m",
+          "dataset": "banking77",
+          "n_layers_valid": 6,
+          "spearman_rho_kappa_vs_q1nn": 0.8285714285714287,
+          "p_kappa_vs_q1nn": 0.04156268221574334,
+          "spearman_rho_kappa_vs_map10": 0.8285714285714287,
+          "p_kappa_vs_map10": 0.04156268221574334
+        },
+        {
+          "model": "pythia-160m",
+          "dataset": "amazon_massive_en",
+          "n_layers_valid": 6,
+          "spearman_rho_kappa_vs_q1nn": 0.7714285714285715,
+          "p_kappa_vs_q1nn": 0.07239650145772594,
+          "spearman_rho_kappa_vs_map10": 0.7714285714285715,
+          "p_kappa_vs_map10": 0.07239650145772594
+        },
+        {
+          "model": "pythia-410m",
+          "dataset": "banking77",
+          "n_layers_valid": 6,
+          "spearman_rho_kappa_vs_q1nn": 0.7714285714285715,
+          "p_kappa_vs_q1nn": 0.07239650145772594,
+          "spearman_rho_kappa_vs_map10": 0.7714285714285715,
+          "p_kappa_vs_map10": 0.07239650145772594
+        },
+        {
+          "model": "pythia-410m",
+          "dataset": "amazon_massive_en",
+          "n_layers_valid": 6,
+          "spearman_rho_kappa_vs_q1nn": 0.7714285714285715,
+          "p_kappa_vs_q1nn": 0.07239650145772594,
+          "spearman_rho_kappa_vs_map10": 0.7714285714285715,
+          "p_kappa_vs_map10": 0.07239650145772594
+        },
+        {
+          "model": "pythia-1b",
+          "dataset": "banking77",
+          "n_layers_valid": 6,
+          "spearman_rho_kappa_vs_q1nn": 0.7714285714285715,
+          "p_kappa_vs_q1nn": 0.07239650145772594,
+          "spearman_rho_kappa_vs_map10": 0.7714285714285715,
+          "p_kappa_vs_map10": 0.07239650145772594
+        },
+        {
+          "model": "pythia-1b",
+          "dataset": "amazon_massive_en",
+          "n_layers_valid": 6,
+          "spearman_rho_kappa_vs_q1nn": 0.3142857142857143,
+          "p_kappa_vs_q1nn": 0.5440932944606414,
+          "spearman_rho_kappa_vs_map10": 0.3142857142857143,
+          "p_kappa_vs_map10": 0.5440932944606414
+        },
+        {
+          "model": "pythia-1.4b",
+          "dataset": "banking77",
+          "n_layers_valid": 6,
+          "spearman_rho_kappa_vs_q1nn": 0.942857142857143,
+          "p_kappa_vs_q1nn": 0.0048046647230320545,
+          "spearman_rho_kappa_vs_map10": 0.942857142857143,
+          "p_kappa_vs_map10": 0.0048046647230320545
+        },
+        {
+          "model": "pythia-1.4b",
+          "dataset": "amazon_massive_en",
+          "n_layers_valid": 6,
+          "spearman_rho_kappa_vs_q1nn": 0.3714285714285715,
+          "p_kappa_vs_q1nn": 0.46847813411078715,
+          "spearman_rho_kappa_vs_map10": 0.3714285714285715,
+          "p_kappa_vs_map10": 0.46847813411078715
+        },
+        {
+          "model": "Qwen2.5-0.5B",
+          "dataset": "banking77",
+          "n_layers_valid": 6,
+          "spearman_rho_kappa_vs_q1nn": 0.2571428571428572,
+          "p_kappa_vs_q1nn": 0.6227871720116618,
+          "spearman_rho_kappa_vs_map10": 0.08571428571428573,
+          "p_kappa_vs_map10": 0.8717434402332361
+        },
+        {
+          "model": "Qwen2.5-0.5B",
+          "dataset": "amazon_massive_en",
+          "n_layers_valid": 6,
+          "spearman_rho_kappa_vs_q1nn": 0.6,
+          "p_kappa_vs_q1nn": 0.20799999999999985,
+          "spearman_rho_kappa_vs_map10": 0.6,
+          "p_kappa_vs_map10": 0.20799999999999985
+        }
+      ]
+    },
+    "H2": {
+      "n_pairs": 10,
+      "mean_spearman_rho_kappa_vs_map10": 0.6228571428571429,
+      "frac_positive": 1.0,
+      "PASS": true
+    },
+    "H3": {
+      "n_models": 5,
+      "spearman_rho": 0.7,
+      "p_value": 0.1881204043741873,
+      "models": [
+        {
+          "model": "pythia-160m",
+          "kappa_nearest_final": 0.2878788969257027,
+          "map_at_10_final": 0.5941168893927927,
+          "q_1nn_final": 0.574878947368421,
+          "layer_idx": 12
+        },
+        {
+          "model": "pythia-410m",
+          "kappa_nearest_final": 0.29805494335123506,
+          "map_at_10_final": 0.6073602695263282,
+          "q_1nn_final": 0.5892657894736842,
+          "layer_idx": 24
+        },
+        {
+          "model": "pythia-1b",
+          "kappa_nearest_final": 0.30253960283679937,
+          "map_at_10_final": 0.6234613339002257,
+          "q_1nn_final": 0.61115,
+          "layer_idx": 16
+        },
+        {
+          "model": "pythia-1.4b",
+          "kappa_nearest_final": 0.28431979961841447,
+          "map_at_10_final": 0.617854559240364,
+          "q_1nn_final": 0.5991947368421053,
+          "layer_idx": 24
+        },
+        {
+          "model": "Qwen2.5-0.5B",
+          "kappa_nearest_final": 0.2804192687382893,
+          "map_at_10_final": 0.5668066556122466,
+          "q_1nn_final": 0.5396210526315789,
+          "layer_idx": 24
+        }
+      ],
+      "PASS": true
+    }
+  },
+  "variance_diagnostics": {
+    "pythia-160m_banking77": {
+      "map_variance": {
+        "mean": 0.5556636898095657,
+        "std": 0.035829401021918436,
+        "min": 0.5164983155391788,
+        "max": 0.6076658084530117,
+        "cv": 0.0644803712730145,
+        "name": "map@10"
+      },
+      "mean_ceiling_frac": 0.009033333333333332
+    },
+    "pythia-160m_amazon_massive_en": {
+      "map_variance": {
+        "mean": 0.5781776664432782,
+        "std": 0.010157164865508956,
+        "min": 0.5662312328010984,
+        "max": 0.5936759262753883,
+        "cv": 0.017567549656447776,
+        "name": "map@10"
+      },
+      "mean_ceiling_frac": 0.04617798699843084
+    },
+    "pythia-410m_banking77": {
+      "map_variance": {
+        "mean": 0.6007611786344161,
+        "std": 0.028721555906617992,
+        "min": 0.5591347079868993,
+        "max": 0.6458039434996204,
+        "cv": 0.047808608358910355,
+        "name": "map@10"
+      },
+      "mean_ceiling_frac": 0.0175
+    },
+    "pythia-410m_amazon_massive_en": {
+      "map_variance": {
+        "mean": 0.6027847712406631,
+        "std": 0.015525459752261545,
+        "min": 0.5766106265851877,
+        "max": 0.6239667860095293,
+        "cv": 0.025756224266052695,
+        "name": "map@10"
+      },
+      "mean_ceiling_frac": 0.046794440708361355
+    },
+    "pythia-1b_banking77": {
+      "map_variance": {
+        "mean": 0.5909914451163178,
+        "std": 0.02101322465285301,
+        "min": 0.5629252692743757,
+        "max": 0.6234613339002257,
+        "cv": 0.035555886343975204,
+        "name": "map@10"
+      },
+      "mean_ceiling_frac": 0.015666666666666666
+    },
+    "pythia-1b_amazon_massive_en": {
+      "map_variance": {
+        "mean": 0.5908268611800574,
+        "std": 0.015071348430862823,
+        "min": 0.5687693043667448,
+        "max": 0.6108039625100585,
+        "cv": 0.025508908651741623,
+        "name": "map@10"
+      },
+      "mean_ceiling_frac": 0.051557946648733456
+    },
+    "pythia-1.4b_banking77": {
+      "map_variance": {
+        "mean": 0.6035026955624846,
+        "std": 0.019819171010242345,
+        "min": 0.5681677848009583,
+        "max": 0.6229230185500123,
+        "cv": 0.03284023610157595,
+        "name": "map@10"
+      },
+      "mean_ceiling_frac": 0.020800000000000003
+    },
+    "pythia-1.4b_amazon_massive_en": {
+      "map_variance": {
+        "mean": 0.6039774160554653,
+        "std": 0.016586080158190204,
+        "min": 0.5732704029424917,
+        "max": 0.6280687680312601,
+        "cv": 0.027461424412994255,
+        "name": "map@10"
+      },
+      "mean_ceiling_frac": 0.06119704102219233
+    },
+    "Qwen2.5-0.5B_banking77": {
+      "map_variance": {
+        "mean": 0.6005867314919802,
+        "std": 0.06897627577485982,
+        "min": 0.5603312571806498,
+        "max": 0.754403351631395,
+        "cv": 0.11484815124602205,
+        "name": "map@10"
+      },
+      "mean_ceiling_frac": 0.02463333333333333
+    },
+    "Qwen2.5-0.5B_amazon_massive_en": {
+      "map_variance": {
+        "mean": 0.5996435373701359,
+        "std": 0.03702842602357141,
+        "min": 0.5730457380653323,
+        "max": 0.6804059719699732,
+        "cv": 0.06175072975172165,
+        "name": "map@10"
+      },
+      "mean_ceiling_frac": 0.05817081371889712
+    }
+  },
+  "all_pair_results": [
+    {
+      "model": "pythia-160m",
+      "dataset": "banking77",
+      "n_examples": 5000,
+      "K": 77,
+      "n_layers_total": 12,
+      "layer_results": [
+        {
+          "layer_idx": 1,
+          "layer_frac": 0.083,
+          "kappa_nearest": 0.3019742000921723,
+          "q_1nn": 0.6058815789473684,
+          "map_at_10": 0.6076658084530117,
+          "ceiling_frac": 0.0162
+        },
+        {
+          "layer_idx": 2,
+          "layer_frac": 0.167,
+          "kappa_nearest": 0.24215410507816168,
+          "q_1nn": 0.5424578947368421,
+          "map_at_10": 0.5651320982615278,
+          "ceiling_frac": 0.0062
+        },
+        {
+          "layer_idx": 5,
+          "layer_frac": 0.417,
+          "kappa_nearest": 0.08181427762948908,
+          "q_1nn": 0.48491052631578946,
+          "map_at_10": 0.5202724795918369,
+          "ceiling_frac": 0.0034
+        },
+        {
+          "layer_idx": 7,
+          "layer_frac": 0.583,
+          "kappa_nearest": 0.0889885330065017,
+          "q_1nn": 0.4984868421052632,
+          "map_at_10": 0.5302965476190462,
+          "ceiling_frac": 0.0036
+        },
+        {
+          "layer_idx": 10,
+          "layer_frac": 0.833,
+          "kappa_nearest": 0.131556514834653,
+          "q_1nn": 0.47923684210526313,
+          "map_at_10": 0.5164983155391788,
+          "ceiling_frac": 0.0024
+        },
+        {
+          "layer_idx": 12,
+          "layer_frac": 1.0,
+          "kappa_nearest": 0.2878788969257027,
+          "q_1nn": 0.574878947368421,
+          "map_at_10": 0.5941168893927927,
+          "ceiling_frac": 0.0224
+        }
+      ]
+    },
+    {
+      "model": "pythia-160m",
+      "dataset": "amazon_massive_en",
+      "n_examples": 2974,
+      "K": 59,
+      "n_layers_total": 12,
+      "layer_results": [
+        {
+          "layer_idx": 1,
+          "layer_frac": 0.083,
+          "kappa_nearest": 0.2962849870139348,
+          "q_1nn": 0.5683394012475941,
+          "map_at_10": 0.5936759262753883,
+          "ceiling_frac": 0.05850706119704102
+        },
+        {
+          "layer_idx": 2,
+          "layer_frac": 0.167,
+          "kappa_nearest": 0.2850222138344368,
+          "q_1nn": 0.5594462351877189,
+          "map_at_10": 0.5866716976710734,
+          "ceiling_frac": 0.050773369199731
+        },
+        {
+          "layer_idx": 5,
+          "layer_frac": 0.417,
+          "kappa_nearest": 0.0725485049570552,
+          "q_1nn": 0.5310565127658095,
+          "map_at_10": 0.5662312328010984,
+          "ceiling_frac": 0.04404841963685272
+        },
+        {
+          "layer_idx": 7,
+          "layer_frac": 0.583,
+          "kappa_nearest": 0.07564619575017391,
+          "q_1nn": 0.5423439927648819,
+          "map_at_10": 0.5736383997140412,
+          "ceiling_frac": 0.04472091459314055
+        },
+        {
+          "layer_idx": 10,
+          "layer_frac": 0.833,
+          "kappa_nearest": 0.12132072597516727,
+          "q_1nn": 0.5337928715534634,
+          "map_at_10": 0.5668360019323417,
+          "ceiling_frac": 0.03160726294552791
+        },
+        {
+          "layer_idx": 12,
+          "layer_frac": 1.0,
+          "kappa_nearest": 0.31645251046211853,
+          "q_1nn": 0.5498689794309302,
+          "map_at_10": 0.5820127402657255,
+          "ceiling_frac": 0.04741089441829186
+        }
+      ]
+    },
+    {
+      "model": "pythia-410m",
+      "dataset": "banking77",
+      "n_examples": 5000,
+      "K": 77,
+      "n_layers_total": 24,
+      "layer_results": [
+        {
+          "layer_idx": 1,
+          "layer_frac": 0.042,
+          "kappa_nearest": 0.3124253722697183,
+          "q_1nn": 0.6460026315789473,
+          "map_at_10": 0.6458039434996204,
+          "ceiling_frac": 0.0242
+        },
+        {
+          "layer_idx": 5,
+          "layer_frac": 0.208,
+          "kappa_nearest": 0.2965531743140684,
+          "q_1nn": 0.6103394736842105,
+          "map_at_10": 0.6224007004283194,
+          "ceiling_frac": 0.02
+        },
+        {
+          "layer_idx": 10,
+          "layer_frac": 0.417,
+          "kappa_nearest": 0.04740876682409899,
+          "q_1nn": 0.5580605263157894,
+          "map_at_10": 0.5755763898966981,
+          "ceiling_frac": 0.0106
+        },
+        {
+          "layer_idx": 14,
+          "layer_frac": 0.583,
+          "kappa_nearest": 0.04761370233188417,
+          "q_1nn": 0.58035,
+          "map_at_10": 0.5942910604686314,
+          "ceiling_frac": 0.0142
+        },
+        {
+          "layer_idx": 19,
+          "layer_frac": 0.792,
+          "kappa_nearest": 0.07366512382127614,
+          "q_1nn": 0.5282736842105263,
+          "map_at_10": 0.5591347079868993,
+          "ceiling_frac": 0.0094
+        },
+        {
+          "layer_idx": 24,
+          "layer_frac": 1.0,
+          "kappa_nearest": 0.29805494335123506,
+          "q_1nn": 0.5892657894736842,
+          "map_at_10": 0.6073602695263282,
+          "ceiling_frac": 0.0266
+        }
+      ]
+    },
+    {
+      "model": "pythia-410m",
+      "dataset": "amazon_massive_en",
+      "n_examples": 2974,
+      "K": 59,
+      "n_layers_total": 24,
+      "layer_results": [
+        {
+          "layer_idx": 1,
+          "layer_frac": 0.042,
+          "kappa_nearest": 0.2728405025423192,
+          "q_1nn": 0.592282540639566,
+          "map_at_10": 0.6151971626249196,
+          "ceiling_frac": 0.06422326832548755
+        },
+        {
+          "layer_idx": 5,
+          "layer_frac": 0.208,
+          "kappa_nearest": 0.3205007740465038,
+          "q_1nn": 0.5998075273056143,
+          "map_at_10": 0.6239667860095293,
+          "ceiling_frac": 0.0605245460659045
+        },
+        {
+          "layer_idx": 10,
+          "layer_frac": 0.417,
+          "kappa_nearest": 0.03102559024942402,
+          "q_1nn": 0.5618405491269161,
+          "map_at_10": 0.5906507374612915,
+          "ceiling_frac": 0.03799596503026227
+        },
+        {
+          "layer_idx": 14,
+          "layer_frac": 0.583,
+          "kappa_nearest": 0.032694874720497986,
+          "q_1nn": 0.5751802982167289,
+          "map_at_10": 0.6049631289475602,
+          "ceiling_frac": 0.04270342972427707
+        },
+        {
+          "layer_idx": 19,
+          "layer_frac": 0.792,
+          "kappa_nearest": 0.0427006714469921,
+          "q_1nn": 0.5536314727639543,
+          "map_at_10": 0.5766106265851877,
+          "ceiling_frac": 0.025554808338937456
+        },
+        {
+          "layer_idx": 24,
+          "layer_frac": 1.0,
+          "kappa_nearest": 0.31691275717648804,
+          "q_1nn": 0.578942791549753,
+          "map_at_10": 0.6053201858154905,
+          "ceiling_frac": 0.04976462676529926
+        }
+      ]
+    },
+    {
+      "model": "pythia-1b",
+      "dataset": "banking77",
+      "n_examples": 5000,
+      "K": 77,
+      "n_layers_total": 16,
+      "layer_results": [
+        {
+          "layer_idx": 1,
+          "layer_frac": 0.062,
+          "kappa_nearest": 0.27933005118813053,
+          "q_1nn": 0.5467131578947368,
+          "map_at_10": 0.5664719316893427,
+          "ceiling_frac": 0.0088
+        },
+        {
+          "layer_idx": 3,
+          "layer_frac": 0.188,
+          "kappa_nearest": 0.2912000463884326,
+          "q_1nn": 0.5937236842105262,
+          "map_at_10": 0.6040690796800203,
+          "ceiling_frac": 0.0134
+        },
+        {
+          "layer_idx": 6,
+          "layer_frac": 0.375,
+          "kappa_nearest": 0.04924162026545212,
+          "q_1nn": 0.5365815789473684,
+          "map_at_10": 0.5629252692743757,
+          "ceiling_frac": 0.0094
+        },
+        {
+          "layer_idx": 10,
+          "layer_frac": 0.625,
+          "kappa_nearest": 0.061617937506564316,
+          "q_1nn": 0.578121052631579,
+          "map_at_10": 0.596783280108339,
+          "ceiling_frac": 0.0162
+        },
+        {
+          "layer_idx": 13,
+          "layer_frac": 0.812,
+          "kappa_nearest": 0.08866882086304712,
+          "q_1nn": 0.57265,
+          "map_at_10": 0.5922377760456032,
+          "ceiling_frac": 0.0148
+        },
+        {
+          "layer_idx": 16,
+          "layer_frac": 1.0,
+          "kappa_nearest": 0.30253960283679937,
+          "q_1nn": 0.61115,
+          "map_at_10": 0.6234613339002257,
+          "ceiling_frac": 0.0314
+        }
+      ]
+    },
+    {
+      "model": "pythia-1b",
+      "dataset": "amazon_massive_en",
+      "n_examples": 2974,
+      "K": 59,
+      "n_layers_total": 16,
+      "layer_results": [
+        {
+          "layer_idx": 1,
+          "layer_frac": 0.062,
+          "kappa_nearest": 0.2626053883661951,
+          "q_1nn": 0.5416599030679684,
+          "map_at_10": 0.5687693043667448,
+          "ceiling_frac": 0.05850706119704102
+        },
+        {
+          "layer_idx": 3,
+          "layer_frac": 0.188,
+          "kappa_nearest": 0.28638893090841644,
+          "q_1nn": 0.5628666836722862,
+          "map_at_10": 0.5909480199119677,
+          "ceiling_frac": 0.0675857431069267
+        },
+        {
+          "layer_idx": 6,
+          "layer_frac": 0.375,
+          "kappa_nearest": 0.02562458596881574,
+          "q_1nn": 0.5433701273102521,
+          "map_at_10": 0.5742798776089667,
+          "ceiling_frac": 0.03900470746469401
+        },
+        {
+          "layer_idx": 10,
+          "layer_frac": 0.625,
+          "kappa_nearest": 0.03485122060047344,
+          "q_1nn": 0.58031097094358,
+          "map_at_10": 0.604092127996681,
+          "ceiling_frac": 0.04505716207128446
+        },
+        {
+          "layer_idx": 13,
+          "layer_frac": 0.812,
+          "kappa_nearest": 0.050045605016761655,
+          "q_1nn": 0.5645769079145699,
+          "map_at_10": 0.5960678746859265,
+          "ceiling_frac": 0.03295225285810356
+        },
+        {
+          "layer_idx": 16,
+          "layer_frac": 1.0,
+          "kappa_nearest": 0.34039815653072514,
+          "q_1nn": 0.5915984509426524,
+          "map_at_10": 0.6108039625100585,
+          "ceiling_frac": 0.06624075319435105
+        }
+      ]
+    },
+    {
+      "model": "pythia-1.4b",
+      "dataset": "banking77",
+      "n_examples": 5000,
+      "K": 77,
+      "n_layers_total": 24,
+      "layer_results": [
+        {
+          "layer_idx": 1,
+          "layer_frac": 0.042,
+          "kappa_nearest": 0.30254767705977187,
+          "q_1nn": 0.616621052631579,
+          "map_at_10": 0.6229230185500123,
+          "ceiling_frac": 0.0174
+        },
+        {
+          "layer_idx": 5,
+          "layer_frac": 0.208,
+          "kappa_nearest": 0.07093234948870855,
+          "q_1nn": 0.5440789473684211,
+          "map_at_10": 0.5681677848009583,
+          "ceiling_frac": 0.008
+        },
+        {
+          "layer_idx": 10,
+          "layer_frac": 0.417,
+          "kappa_nearest": 0.0769777318988073,
+          "q_1nn": 0.5722447368421052,
+          "map_at_10": 0.5905948524502395,
+          "ceiling_frac": 0.0174
+        },
+        {
+          "layer_idx": 14,
+          "layer_frac": 0.583,
+          "kappa_nearest": 0.09198482822931817,
+          "q_1nn": 0.5799447368421053,
+          "map_at_10": 0.5994728712836989,
+          "ceiling_frac": 0.0202
+        },
+        {
+          "layer_idx": 19,
+          "layer_frac": 0.792,
+          "kappa_nearest": 0.15118019756320655,
+          "q_1nn": 0.6103394736842105,
+          "map_at_10": 0.6220030870496343,
+          "ceiling_frac": 0.0316
+        },
+        {
+          "layer_idx": 24,
+          "layer_frac": 1.0,
+          "kappa_nearest": 0.28431979961841447,
+          "q_1nn": 0.5991947368421053,
+          "map_at_10": 0.617854559240364,
+          "ceiling_frac": 0.0302
+        }
+      ]
+    },
+    {
+      "model": "pythia-1.4b",
+      "dataset": "amazon_massive_en",
+      "n_examples": 2974,
+      "K": 59,
+      "n_layers_total": 24,
+      "layer_results": [
+        {
+          "layer_idx": 1,
+          "layer_frac": 0.042,
+          "kappa_nearest": 0.2662368572467936,
+          "q_1nn": 0.573812118822902,
+          "map_at_10": 0.6008883580113895,
+          "ceiling_frac": 0.06960322797579019
+        },
+        {
+          "layer_idx": 5,
+          "layer_frac": 0.208,
+          "kappa_nearest": 0.04204324382401474,
+          "q_1nn": 0.5399496788256847,
+          "map_at_10": 0.5732704029424917,
+          "ceiling_frac": 0.03396099529253531
+        },
+        {
+          "layer_idx": 10,
+          "layer_frac": 0.417,
+          "kappa_nearest": 0.050296468765418836,
+          "q_1nn": 0.5748382533682721,
+          "map_at_10": 0.6016891397677147,
+          "ceiling_frac": 0.05783456624075319
+        },
+        {
+          "layer_idx": 14,
+          "layer_frac": 0.583,
+          "kappa_nearest": 0.05838390077774689,
+          "q_1nn": 0.5933086751849361,
+          "map_at_10": 0.6144783547992917,
+          "ceiling_frac": 0.06792199058507062
+        },
+        {
+          "layer_idx": 19,
+          "layer_frac": 0.792,
+          "kappa_nearest": 0.09747035964372606,
+          "q_1nn": 0.6001495721540709,
+          "map_at_10": 0.6280687680312601,
+          "ceiling_frac": 0.07531943510423672
+        },
+        {
+          "layer_idx": 24,
+          "layer_frac": 1.0,
+          "kappa_nearest": 0.3314523785148099,
+          "q_1nn": 0.583047329731234,
+          "map_at_10": 0.6054694727806441,
+          "ceiling_frac": 0.06254203093476798
+        }
+      ]
+    },
+    {
+      "model": "Qwen2.5-0.5B",
+      "dataset": "banking77",
+      "n_examples": 5000,
+      "K": 77,
+      "n_layers_total": 24,
+      "layer_results": [
+        {
+          "layer_idx": 1,
+          "layer_frac": 0.042,
+          "kappa_nearest": 0.35756607338439717,
+          "q_1nn": 0.7683921052631578,
+          "map_at_10": 0.754403351631395,
+          "ceiling_frac": 0.1028
+        },
+        {
+          "layer_idx": 5,
+          "layer_frac": 0.208,
+          "kappa_nearest": 0.01978472576545757,
+          "q_1nn": 0.5513736842105263,
+          "map_at_10": 0.5744445536974057,
+          "ceiling_frac": 0.0094
+        },
+        {
+          "layer_idx": 10,
+          "layer_frac": 0.417,
+          "kappa_nearest": 0.024484897863384078,
+          "q_1nn": 0.5580605263157894,
+          "map_at_10": 0.5750384096119918,
+          "ceiling_frac": 0.0104
+        },
+        {
+          "layer_idx": 14,
+          "layer_frac": 0.583,
+          "kappa_nearest": 0.025083737787273002,
+          "q_1nn": 0.5309078947368422,
+          "map_at_10": 0.5603312571806498,
+          "ceiling_frac": 0.0064
+        },
+        {
+          "layer_idx": 19,
+          "layer_frac": 0.792,
+          "kappa_nearest": 0.04626419139676872,
+          "q_1nn": 0.5546157894736842,
+          "map_at_10": 0.5724961612181916,
+          "ceiling_frac": 0.0084
+        },
+        {
+          "layer_idx": 24,
+          "layer_frac": 1.0,
+          "kappa_nearest": 0.2804192687382893,
+          "q_1nn": 0.5396210526315789,
+          "map_at_10": 0.5668066556122466,
+          "ceiling_frac": 0.0104
+        }
+      ]
+    },
+    {
+      "model": "Qwen2.5-0.5B",
+      "dataset": "amazon_massive_en",
+      "n_examples": 2974,
+      "K": 59,
+      "n_layers_total": 24,
+      "layer_results": [
+        {
+          "layer_idx": 1,
+          "layer_frac": 0.042,
+          "kappa_nearest": 0.31843757073194245,
+          "q_1nn": 0.6589812860886303,
+          "map_at_10": 0.6804059719699732,
+          "ceiling_frac": 0.10928043039677203
+        },
+        {
+          "layer_idx": 5,
+          "layer_frac": 0.208,
+          "kappa_nearest": 0.01599555742310642,
+          "q_1nn": 0.5406337685225983,
+          "map_at_10": 0.5730457380653323,
+          "ceiling_frac": 0.04909213180901143
+        },
+        {
+          "layer_idx": 10,
+          "layer_frac": 0.417,
+          "kappa_nearest": 0.018312436008247737,
+          "q_1nn": 0.5618405491269161,
+          "map_at_10": 0.5905309221343512,
+          "ceiling_frac": 0.05379959650302623
+        },
+        {
+          "layer_idx": 14,
+          "layer_frac": 0.583,
+          "kappa_nearest": 0.01912177986403112,
+          "q_1nn": 0.5580780557938919,
+          "map_at_10": 0.5816965492952031,
+          "ceiling_frac": 0.04707464694014795
+        },
+        {
+          "layer_idx": 19,
+          "layer_frac": 0.792,
+          "kappa_nearest": 0.031050292649682582,
+          "q_1nn": 0.5755223430651856,
+          "map_at_10": 0.5966772557300586,
+          "ceiling_frac": 0.04068594485541358
+        },
+        {
+          "layer_idx": 24,
+          "layer_frac": 1.0,
+          "kappa_nearest": 0.27880749466934407,
+          "q_1nn": 0.5433701273102521,
+          "map_at_10": 0.5755047870258969,
+          "ceiling_frac": 0.04909213180901143
+        }
+      ]
+    }
+  ],
+  "status": "complete"
+}
