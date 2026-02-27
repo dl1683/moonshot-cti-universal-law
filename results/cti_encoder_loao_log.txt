@@ -1,0 +1,106 @@
+CTI ENCODER LOAO
+Pre-registered: H_encoder: CV_alpha_encoder < 0.20
+============================================================
+Device: cuda
+
+[STEP 1] Load 4 datasets
+    Loading clinc...
+    clinc: n=2000, K=151
+    Loading dbpedia_classes...
+Downloading readme:   0%|          | 0.00/7.64k [00:00<?, ?B/s]Downloading readme: 100%|##########| 7.64k/7.64k [00:00<00:00, 91.1kB/s]
+    dbpedia_classes: n=2000, K=14
+    Loading agnews...
+    agnews: n=2000, K=4
+    Loading trec...
+Downloading builder script:   0%|          | 0.00/5.09k [00:00<?, ?B/s]Downloading builder script: 100%|##########| 5.09k/5.09k [00:00<00:00, 107kB/s]
+Downloading readme:   0%|          | 0.00/10.6k [00:00<?, ?B/s]Downloading readme: 100%|##########| 10.6k/10.6k [00:00<00:00, 70.9kB/s]Downloading readme: 100%|##########| 10.6k/10.6k [00:00<00:00, 70.3kB/s]
+Downloading data:   0%|          | 0.00/336k [00:00<?, ?B/s]Downloading data: 100%|##########| 336k/336k [00:00<00:00, 3.57MB/s]
+Downloading data:   0%|          | 0.00/23.4k [00:00<?, ?B/s]Downloading data: 100%|##########| 23.4k/23.4k [00:00<00:00, 1.17MB/s]
+Generating train split:   0%|          | 0/5452 [00:00<?, ? examples/s]Generating train split: 100%|##########| 5452/5452 [00:00<00:00, 87537.21 examples/s]
+Generating test split:   0%|          | 0/500 [00:00<?, ? examples/s]Generating test split: 100%|##########| 500/500 [00:00<00:00, 37176.30 examples/s]
+    trec: n=2000, K=6
+
+[STEP 2] Run 5 encoder models
+
+  === bert-base-uncased ===
+    Inference in 0.9s
+    clinc: kappa=0.3507 acc=0.5050 q_norm=0.5017 logit_q=0.0068
+    Inference in 2.7s
+    dbpedia_classes: kappa=0.4003 acc=0.9170 q_norm=0.9106 logit_q=2.3212
+    Inference in 2.4s
+    agnews: kappa=0.3482 acc=0.7630 q_norm=0.6840 logit_q=0.7722
+    Inference in 0.8s
+    trec: kappa=0.2781 acc=0.7095 q_norm=0.6514 logit_q=0.6252
+
+  === electra-small ===
+    Inference in 0.6s
+    clinc: kappa=0.3591 acc=0.2530 q_norm=0.2480 logit_q=-1.1092
+    Inference in 0.7s
+    dbpedia_classes: kappa=0.2230 acc=0.5025 q_norm=0.4642 logit_q=-0.1433
+    Inference in 0.6s
+    agnews: kappa=0.2483 acc=0.4575 q_norm=0.2767 logit_q=-0.9611
+    Inference in 0.5s
+    trec: kappa=0.1719 acc=0.5300 q_norm=0.4360 logit_q=-0.2574
+
+  === deberta-v3-small ===
+C:\Users\devan\AppData\Local\Programs\Python\Python313\Lib\site-packages\huggingface_hub\file_download.py:143: UserWarning: `huggingface_hub` cache-system uses symlinks by default to efficiently store duplicated files but your machine does not support them in C:\Users\devan\.cache\huggingface\hub\models--microsoft--deberta-v3-small. Caching files will still work but in a degraded version that might require more space on your disk. This warning can be disabled by setting the `HF_HUB_DISABLE_SYMLINKS_WARNING` environment variable. For more details, see https://huggingface.co/docs/huggingface_hub/how-to-cache#limitations.
+To support symlinks on Windows, you either need to activate Developer Mode or to run Python as an administrator. In order to activate developer mode, see this article: https://docs.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development
+  warnings.warn(message)
+C:\Users\devan\AppData\Local\Programs\Python\Python313\Lib\site-packages\transformers\convert_slow_tokenizer.py:564: UserWarning: The sentencepiece tokenizer that you are converting to a fast tokenizer uses the byte fallback option which is not implemented in the fast tokenizers. In practice this means that the fast version of the tokenizer can produce unknown tokens whereas the sentencepiece version would have converted these unknown tokens into a sequence of byte tokens matching the original piece of text.
+  warnings.warn(
+    Inference in 1.4s
+    clinc: kappa=0.3709 acc=0.4055 q_norm=0.4015 logit_q=-0.3991
+C:\Users\devan\AppData\Local\Programs\Python\Python313\Lib\site-packages\transformers\convert_slow_tokenizer.py:564: UserWarning: The sentencepiece tokenizer that you are converting to a fast tokenizer uses the byte fallback option which is not implemented in the fast tokenizers. In practice this means that the fast version of the tokenizer can produce unknown tokens whereas the sentencepiece version would have converted these unknown tokens into a sequence of byte tokens matching the original piece of text.
+  warnings.warn(
+    Inference in 1.8s
+    dbpedia_classes: kappa=0.2476 acc=0.5240 q_norm=0.4874 logit_q=-0.0505
+C:\Users\devan\AppData\Local\Programs\Python\Python313\Lib\site-packages\transformers\convert_slow_tokenizer.py:564: UserWarning: The sentencepiece tokenizer that you are converting to a fast tokenizer uses the byte fallback option which is not implemented in the fast tokenizers. In practice this means that the fast version of the tokenizer can produce unknown tokens whereas the sentencepiece version would have converted these unknown tokens into a sequence of byte tokens matching the original piece of text.
+  warnings.warn(
+    Inference in 1.8s
+    agnews: kappa=0.2179 acc=0.5610 q_norm=0.4147 logit_q=-0.3447
+C:\Users\devan\AppData\Local\Programs\Python\Python313\Lib\site-packages\transformers\convert_slow_tokenizer.py:564: UserWarning: The sentencepiece tokenizer that you are converting to a fast tokenizer uses the byte fallback option which is not implemented in the fast tokenizers. In practice this means that the fast version of the tokenizer can produce unknown tokens whereas the sentencepiece version would have converted these unknown tokens into a sequence of byte tokens matching the original piece of text.
+  warnings.warn(
+    Inference in 0.7s
+    trec: kappa=0.2893 acc=0.5910 q_norm=0.5092 logit_q=0.0368
+
+  === bge-small-en ===
+    Inference in 0.4s
+    clinc: kappa=0.4686 acc=0.8755 q_norm=0.8747 logit_q=1.9429
+    Inference in 0.9s
+    dbpedia_classes: kappa=0.2918 acc=0.8475 q_norm=0.8358 logit_q=1.6271
+    Inference in 0.9s
+    agnews: kappa=0.3347 acc=0.8440 q_norm=0.7920 logit_q=1.3370
+    Inference in 0.4s
+    trec: kappa=0.2513 acc=0.6515 q_norm=0.5818 logit_q=0.3302
+
+  === roberta-base ===
+Some weights of RobertaModel were not initialized from the model checkpoint at FacebookAI/roberta-base and are newly initialized: ['pooler.dense.bias', 'pooler.dense.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+    Inference in 0.7s
+    clinc: kappa=0.5256 acc=0.5955 q_norm=0.5928 logit_q=0.3756
+Some weights of RobertaModel were not initialized from the model checkpoint at FacebookAI/roberta-base and are newly initialized: ['pooler.dense.bias', 'pooler.dense.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+    Inference in 2.8s
+    dbpedia_classes: kappa=0.5337 acc=0.8815 q_norm=0.8724 logit_q=1.9222
+Some weights of RobertaModel were not initialized from the model checkpoint at FacebookAI/roberta-base and are newly initialized: ['pooler.dense.bias', 'pooler.dense.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+    Inference in 2.4s
+    agnews: kappa=0.3589 acc=0.8255 q_norm=0.7673 logit_q=1.1933
+Some weights of RobertaModel were not initialized from the model checkpoint at FacebookAI/roberta-base and are newly initialized: ['pooler.dense.bias', 'pooler.dense.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+    Inference in 0.8s
+    trec: kappa=0.2749 acc=0.6470 q_norm=0.5764 logit_q=0.3080
+
+[STEP 3] LOAO alpha computation
+  bert-base-uncased: alpha=16.9231 R2=0.6321
+  electra-small: alpha=4.1632 R2=0.1680
+  deberta-v3-small: alpha=10.5998 R2=0.7843
+  bge-small-en: alpha=13.3437 R2=0.7712
+  roberta-base: alpha=7.6056 R2=0.9880
+
+  Encoder alpha_mean=10.5271 +/- 4.4245 CV=0.4203
+  Decoder alpha for comparison: 1.4770
+  Ratio encoder/decoder: 7.13x
+  H_encoder (CV<0.20): FAIL
+
+Saved to C:\Users\devan\OneDrive\Desktop\Projects\AI Moonshots\moonshot-cti-universal-law\results\cti_encoder_loao.json
