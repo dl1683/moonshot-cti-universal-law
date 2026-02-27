@@ -1,0 +1,90 @@
+CTI Allen DANDI:000022 Cross-Cohort Replication
+Pre-registered: H_cross_cohort: frac_H1_pass >= 0.80
+============================================================
+Found 26 main NWB files
+
+[1/26] sub-744912845_sub-744912845_ses-766640955
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[2/26] sub-753795604_sub-753795604_ses-767871931
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[3/26] sub-754477355_sub-754477355_ses-768515987
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[4/26] sub-754488976_sub-754488976_ses-771160300
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[5/26] sub-756578432_sub-756578432_ses-771990200
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'invalid_times', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[6/26] sub-759674767_sub-759674767_ses-778998620
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[7/26] sub-759711149_sub-759711149_ses-774875821
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[8/26] sub-760938794_sub-760938794_ses-778240327
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[9/26] sub-760946810_sub-760946810_ses-781842082
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[10/26] sub-760960650_sub-760960650_ses-779839471
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[11/26] sub-763236006_sub-763236006_ses-787025148
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[12/26] sub-763808588_sub-763808588_ses-789848216
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[13/26] sub-763884096_sub-763884096_ses-786091066
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[14/26] sub-769319621_sub-769319621_ses-793224716
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'invalid_times', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[15/26] sub-774672354_sub-774672354_ses-794812542
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[16/26] sub-791857600_sub-791857600_ses-816200189
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[17/26] sub-795770029_sub-795770029_ses-819701982
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[18/26] sub-800249582_sub-800249582_ses-819186360
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[19/26] sub-800250054_sub-800250054_ses-821695405
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[20/26] sub-803390283_sub-803390283_ses-831882777
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[21/26] sub-811322604_sub-811322604_ses-829720705
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[22/26] sub-813701555_sub-813701555_ses-835479236
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[23/26] sub-817060743_sub-817060743_ses-839068429
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[24/26] sub-820866111_sub-820866111_ses-840012044
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'invalid_times', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[25/26] sub-821469659_sub-821469659_ses-839557629
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+[26/26] sub-827809879_sub-827809879_ses-847657808
+  SKIP: no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'invalid_times', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']
+
+============================================================
+SUMMARY: 0/0 sessions H1 PASS (0.0%)
+Normal-regime only: 0/0 (0.0%)
+No valid sessions
+H_cross_cohort (frac >= 0.80): FAIL
+
+Saved to C:\Users\devan\OneDrive\Desktop\Projects\AI Moonshots\moonshot-cti-universal-law\results\cti_allen_000022_crosscohort.json

@@ -1,0 +1,125 @@
+{
+  "experiment": "cti_allen_000022_crosscohort",
+  "dandiset": "000022",
+  "preregistration": "H_cross_cohort: frac_H1_pass(r>0.50) >= 0.80",
+  "reference_dandiset_000021": "30/32 PASS, mean_r=0.736",
+  "results": [],
+  "errors": [
+    {
+      "session": "sub-744912845_sub-744912845_ses-766640955",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-753795604_sub-753795604_ses-767871931",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-754477355_sub-754477355_ses-768515987",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-754488976_sub-754488976_ses-771160300",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-756578432_sub-756578432_ses-771990200",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'invalid_times', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-759674767_sub-759674767_ses-778998620",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-759711149_sub-759711149_ses-774875821",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-760938794_sub-760938794_ses-778240327",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-760946810_sub-760946810_ses-781842082",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-760960650_sub-760960650_ses-779839471",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-763236006_sub-763236006_ses-787025148",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-763808588_sub-763808588_ses-789848216",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-763884096_sub-763884096_ses-786091066",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-769319621_sub-769319621_ses-793224716",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'invalid_times', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-774672354_sub-774672354_ses-794812542",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-791857600_sub-791857600_ses-816200189",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-795770029_sub-795770029_ses-819701982",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-800249582_sub-800249582_ses-819186360",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-800250054_sub-800250054_ses-821695405",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-803390283_sub-803390283_ses-831882777",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-811322604_sub-811322604_ses-829720705",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-813701555_sub-813701555_ses-835479236",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-817060743_sub-817060743_ses-839068429",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-820866111_sub-820866111_ses-840012044",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'invalid_times', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-821469659_sub-821469659_ses-839557629",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    },
+    {
+      "session": "sub-827809879_sub-827809879_ses-847657808",
+      "error": "no_natural_scenes_key: ['dot_motion_presentations', 'drifting_gratings_75_repeats_presentations', 'drifting_gratings_contrast_presentations', 'flashes_presentations', 'gabors_presentations', 'invalid_times', 'natural_movie_one_more_repeats_presentations', 'natural_movie_one_shuffled_presentations', 'spontaneous_presentations']"
+    }
+  ],
+  "summary": {
+    "n_valid": 0,
+    "n_pass": 0,
+    "frac_pass": 0.0,
+    "n_normal": 0,
+    "n_normal_pass": 0,
+    "frac_normal_pass": 0.0,
+    "mean_r_kappa": null,
+    "cv_r_kappa": null,
+    "PASS_H_cross_cohort": false
+  },
+  "status": "complete"
+}
