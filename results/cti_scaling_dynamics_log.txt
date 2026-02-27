@@ -1,0 +1,50 @@
+CTI SCALING & TRAINING DYNAMICS
+============================================================
+
+[E1] Pythia scaling law: kappa_nearest vs N_params
+  pythia-160m: N=1.62e+08 kappa=0.2879 MAP@10=0.5941
+  pythia-410m: N=4.05e+08 kappa=0.2981 MAP@10=0.6074
+  pythia-1b: N=1.01e+09 kappa=0.3025 MAP@10=0.6235
+  pythia-1.4b: N=1.41e+09 kappa=0.2843 MAP@10=0.6179
+
+  kappa ~ N^gamma: a=0.2781 gamma=0.0026 R2=0.0076 p=0.9128
+  MAP@10 ~ N^gamma: a=0.4026 gamma=0.0207 R2=0.9016 p=0.0505
+  Spearman rho(kappa, N): -0.2000 p=0.8000
+
+[E2] Training dynamics: knn_l0 lag-correlation
+  pythia-160m x clinc: final=0.6345 peak=0.6785@step64000 lag1_r=0.844
+  pythia-160m x dbpedia_classes: final=0.7320 peak=0.7715@step8000 lag1_r=0.883
+  pythia-160m x agnews: final=0.8150 peak=0.8365@step64000 lag1_r=0.928
+  pythia-160m x trec: final=0.7540 peak=0.7820@step16000 lag1_r=0.096
+  pythia-410m x clinc: final=0.7145 peak=0.7145@step143000 lag1_r=0.958
+  pythia-410m x dbpedia_classes: final=0.7600 peak=0.7840@step16000 lag1_r=0.940
+  pythia-410m x agnews: final=0.8570 peak=0.8570@step143000 lag1_r=0.996
+  pythia-410m x trec: final=0.8020 peak=0.8220@step48000 lag1_r=0.886
+  pythia-1b x clinc: final=0.7285 peak=0.7415@step96000 lag1_r=0.975
+  pythia-1b x dbpedia_classes: final=0.7670 peak=0.7990@step8000 lag1_r=0.899
+  pythia-1b x agnews: final=0.8565 peak=0.8620@step64000 lag1_r=0.935
+  pythia-1b x trec: final=0.8240 peak=0.8540@step32000 lag1_r=0.810
+  pythia-1.4b x clinc: final=0.7270 peak=0.7485@step64000 lag1_r=0.975
+  pythia-1.4b x dbpedia_classes: final=0.7590 peak=0.7820@step8000 lag1_r=0.953
+  pythia-1.4b x agnews: final=0.8595 peak=0.8655@step64000 lag1_r=0.821
+  pythia-1.4b x trec: final=0.8220 peak=0.8520@step48000 lag1_r=0.936
+
+  Mean lag-1 autocorrelation: 0.8647 +/- 0.2055
+  Min lag-1 r: 0.0961
+  Fraction > 0.80: 0.94
+
+  Non-monotone series (peak > final by >0.01): 12/16
+    pythia-160m x clinc: peak=0.6785@64000 final=0.6345 drop=0.0440
+    pythia-160m x dbpedia_classes: peak=0.7715@8000 final=0.7320 drop=0.0395
+    pythia-160m x agnews: peak=0.8365@64000 final=0.8150 drop=0.0215
+    pythia-160m x trec: peak=0.7820@16000 final=0.7540 drop=0.0280
+    pythia-410m x dbpedia_classes: peak=0.7840@16000 final=0.7600 drop=0.0240
+    pythia-410m x trec: peak=0.8220@48000 final=0.8020 drop=0.0200
+    pythia-1b x clinc: peak=0.7415@96000 final=0.7285 drop=0.0130
+    pythia-1b x dbpedia_classes: peak=0.7990@8000 final=0.7670 drop=0.0320
+    pythia-1b x trec: peak=0.8540@32000 final=0.8240 drop=0.0300
+    pythia-1.4b x clinc: peak=0.7485@64000 final=0.7270 drop=0.0215
+    pythia-1.4b x dbpedia_classes: peak=0.7820@8000 final=0.7590 drop=0.0230
+    pythia-1.4b x trec: peak=0.8520@48000 final=0.8220 drop=0.0300
+
+Saved to C:\Users\devan\OneDrive\Desktop\Projects\AI Moonshots\moonshot-cti-universal-law\results\cti_scaling_dynamics.json

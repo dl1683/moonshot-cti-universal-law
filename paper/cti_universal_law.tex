@@ -51,7 +51,7 @@ is a \emph{conditional theorem}: the functional form follows from first principl
 Leave-one-architecture-out (LOAO) over 12 NLP architectures (transformers, SSM hybrid, pure linear-RNN RWKV-4; 125M--7B params, 2021--2025) yields $\hat\alpha=1.477\pm0.034$ with CV$=0.023$ ($10{\times}$ below the pre-registered threshold of 0.25; $R^2=0.955$).
 A pre-registered boundary test confirms RWKV's held-out $\hat\alpha=2.887\in[2.43,3.29]$ (\textbf{PASS}).
 Cross-modality validation finds the same functional form for ViT-Large ($R^2=0.964$) and ResNet50 on CIFAR.
-Frozen do-interventions and an orthogonal factorial identify nearest-class geometry as the sole causal driver.
+Frozen do-interventions, an orthogonal factorial, and a pre-registered causal confusion-matrix prediction ($r=0.842$--$0.776$, sign accuracy $92.9$--$100\%$ at three shift levels, zero refit, $n=182$ pairs, all $p<10^{-35}$) establish nearest-class geometry as the causal driver.
 A strictly blind OOD test---new architecture on new datasets, intercept from 6 other architectures---yields $r=0.817$, $p=0.013$ (\textbf{PASS}).
 Biological generalization: 30/32 mouse visual-cortex Neuropixels sessions satisfy the law ($\bar{r}_\kappa=0.736$, pre-registered); a 30-session pre-registered multi-area batch confirms $r>0.70$ in VISl (22/22) and VISam (24/25).
 Near-simplex competition geometry ($\rho\approx0.45$, CV$=3.9\%$ across NLP architectures, CV$=1.65\%$ across 5 cortical areas) provides a \emph{zero-parameter} prediction of $\alpha$ for NLP decoders: $\hat\alpha_\mathrm{pred}=\sqrt{4/\pi}\sqrt{d_\mathrm{eff,comp}}=1.525$ vs.\ observed $1.477$ (3.2\% error; the formula is derived from EVT, with only $\rho$ measured; encoder $\alpha$ is $4$--$5\times$ higher for the same $\rho$, indicating a second renormalization factor beyond $\rho$).
@@ -75,7 +75,7 @@ The key conceptual point: Eq.~\ref{eq:cti-law}'s structure is derived from first
 \item \textbf{Conditional derivation}: Under Gaussian/sub-Gaussian class conditionals and Gumbel domain-of-attraction (Assumptions A1--A3), EVT and Gumbel race competition require the logit-linear form of Eq.~\ref{eq:cti-law}.
 \item \textbf{12-architecture LOAO test} (pre-registered): LOAO $\mathrm{CV}_\alpha=0.023$ (per-dataset, $R^2=0.955$) and $0.019$ (single-intercept), spanning diverse model families 2021--2025 and 125M--7B parameters. Includes first test of pure linear RNN (RWKV-4) architecture.
 \item \textbf{Cross-modal validation}: ViT-Large reaches $R^2=0.964$ with same functional form; ResNet50 CNN on CIFAR-100 ($K=100$) shows $r=0.749$, matching ViT-Base at same $K$ ($r=0.773$).
-\item \textbf{Causal evidence}: Frozen do-interventions and orthogonal factorial confirm nearest-class dominance; cross-modal dose-response (6 unseen archs): 6/6 directional PASS.
+\item \textbf{Causal evidence (three tiers)}: (i) Frozen do-interventions and orthogonal factorial confirm nearest-class dominance (Arm A $r=0.899$, negative control $r=0.000$); (ii) cross-modal dose-response (6 unseen archs): 6/6 directional PASS; (iii) pre-registered causal confusion-matrix prediction: with \emph{fixed} $A=1.054$, $\tau^*=0.20$ and zero refit, the law predicts how every confusion-matrix entry changes under a centroid shift --- $r=0.842$--$0.776$, sign accuracy $92.9$--$100\%$, $n=182$ class-pair predictions at each of three shift levels (all $p<10^{-35}$).
 \item \textbf{K-scaling and practical prediction}: $A(K)=1.164/\log K+1.301$ ($r=0.93$). MAE$\leq$0.08 on all six prospective datasets; kappa spread ($17\times$ more predictive than $K$; $p=0.038$) is the mechanistic predictor of architecture-ranking reliability.
 \item \textbf{External blind OOD tests}: SmolLM2-1.7B (absent from training set) yields $r=0.817$, $p=0.013$ (PASS) with zero in-distribution calibration. Exploratory expanded test: Gemma-3-1B $r=0.998$, phi-2 $r=0.613$; within-model form confirmed for all three OOD architectures.
 \item \textbf{Expanded pre-registered holdout (H8+)}: 11 unseen models $\times$ 8 datasets ($n=77$), all parameters frozen. All 6 pre-registered criteria pass ($r=0.879$, MAE$=0.077$). Pointwise MAE is close to the dataset-mean baseline, confirming mechanistic ordering rather than high-precision calibration.
@@ -400,6 +400,11 @@ Dose-response directional (6 archs) & 6/6 & Cross-modal PASS \\
 Dose-response pooled $r$ & 0.896 & Near-pass (0.004 below 0.90) \\
 Dose-response MAE & 0.0104 & $\leq 0.03$ PASS \\
 Global surgery ratio / $d_{\mathrm{eff}}$ & $18.74/24.52$ & PASS ($\pm15\%$) \\
+\midrule
+Confusion-matrix $r$ ($\delta=1$, no refit) & 0.842 & PASS ($>0.50$) \\
+Confusion-matrix $r$ ($\delta=2$, no refit) & 0.808 & PASS ($>0.50$) \\
+Confusion-matrix $r$ ($\delta=3$, no refit) & 0.776 & PASS ($>0.50$) \\
+Confusion-matrix sign acc.\ ($\delta=2,3$) & 100\% & PASS ($>80\%$) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -411,8 +416,34 @@ $r(\kappa_{j2},\logit q)=0.811$ (sufficiency threshold $r<0.20$; exceeded).
 Upgrading to a soft-min competition field $\phi(\tau^*)$ with $\tau^*=0.20$ improves
 held-out R$^2$ from $0.451$ to $0.578$ (+28\%, 4/4 held-out architectures).
 An additivity RCT confirms linear effect superposition ($r=0.9964$, $n=84$ pairs).
-Causal confusion-matrix prediction at all three shift deltas ($\delta\in\{1,2,3\}$) passes
-H1 and H3 with no refit: $r=0.842$--$0.776$, sign accuracy $92.9$--$100\%$.
+
+\paragraph{Causal confusion-matrix prediction (pre-registered).}
+The soft-min competition field $\phi(\tau^*)$ enables a strict quantitative causal test:
+given a centroid shift of magnitude $\delta$ applied to class $c$'s nearest competitor,
+the law predicts \emph{without any refit} (fixed $A_\mathrm{NLP}=1.054$, $\tau^*=0.20$)
+how every off-diagonal confusion-matrix entry $C_{c,j}$ will change.
+This test was pre-registered on Pythia-160M, CLINC ($K=14$ focus classes, $n=182$ class-pair predictions per delta level)
+with thresholds $r>0.50$ (H1), sign accuracy $>0.80$ (H3).
+Table~\ref{tab:confusion-causal} summarises all three pre-registered shift levels.
+At $\delta=2$ and $\delta=3$, sign accuracy reaches \textbf{100\%}: every predicted direction of confusion change is correct.
+The $r$ values ($0.842$--$0.776$, all $p<10^{-35}$) show the law predicts not just the sign but the magnitude of confusion change across 182 class pairs.
+This is the strongest causal validation in the paper: with zero degrees of freedom and no refit, the Gumbel-race competition model tracks how a surgical centroid perturbation propagates through the full confusion matrix.
+
+\begin{table}[t]
+\centering
+\caption{Causal confusion-matrix prediction (pre-registered, Pythia-160M, CLINC $K=14$, $n=182$ pairs per level). $A=1.054$, $\tau^*=0.20$ fixed, no refit. Thresholds: $r>0.50$ (H1), sign accuracy $>80\%$ (H3).}
+\label{tab:confusion-causal}
+\small
+\begin{tabular}{cccccc}
+\toprule
+$\delta$ & $r$ & $p$-value & Sign acc. & H1 & H3 \\
+\midrule
+1.0 & 0.842 & $3.8\times10^{-50}$ & 92.9\% & PASS & PASS \\
+2.0 & 0.808 & $3.7\times10^{-43}$ & 100.0\% & PASS & PASS \\
+3.0 & 0.776 & $8.2\times10^{-38}$ & 100.0\% & PASS & PASS \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \paragraph{Top-$m$ competitor sweep.}
 A model-free sweep over $m=1,\ldots,K\!-\!1$ directional interventions (Pythia-160M, DBpedia $K=14$) directly localises the LOAO slope: moving the nearest $m$ centroid pairs by equal amounts, the fitted slope rises monotonically from $\alpha_1=1.052$ ($m=1$) to $\alpha_2=1.523$ ($m=2$) and $\alpha_{13}=3.015$ ($m=K\!-\!1$).
