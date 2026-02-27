@@ -1,0 +1,88 @@
+CTI DOWNSTREAM DECISION PROTOCOL V2
+Pre-registered thresholds: mean Spearman rho > 0.50, >=60% positive
+============================================================
+Device: cuda
+
+[STEP 1] H1 from existing 4-dataset NLP data
+H1_existing: within-model rho from existing data...
+  n_pairs=48, mean_rho=0.6880, frac_positive=0.94 -> PASS
+
+[STEP 2] New inference on banking77 + amazon_massive
+
+  pythia-160m x banking77
+  Loading dataset banking77...
+  banking77: n=5000, K=77
+  Loading model EleutherAI/pythia-160m...
+  n_layers=12, sampling at [1, 2, 5, 7, 10, 12]
+  Inference done in 3.4s
+    Layer  1/12: kappa=0.3020  q_1nn=0.6059  MAP@10=0.6077
+    Layer  2/12: kappa=0.2422  q_1nn=0.5425  MAP@10=0.5651
+    Layer  5/12: kappa=0.0818  q_1nn=0.4849  MAP@10=0.5203
+    Layer  7/12: kappa=0.0890  q_1nn=0.4985  MAP@10=0.5303
+    Layer 10/12: kappa=0.1316  q_1nn=0.4792  MAP@10=0.5165
+    Layer 12/12: kappa=0.2879  q_1nn=0.5749  MAP@10=0.5941
+
+  pythia-160m x amazon_massive_en
+  Loading dataset amazon_massive_en...
+Filter:   0%|          | 0/151674 [00:00<?, ? examples/s]Filter:  18%|#8        | 28000/151674 [00:00<00:00, 270147.11 examples/s]Filter:  43%|####2     | 65000/151674 [00:00<00:00, 321468.93 examples/s]Filter:  65%|######4   | 98000/151674 [00:00<00:00, 320764.14 examples/s]Filter:  89%|########9 | 135000/151674 [00:00<00:00, 335936.23 examples/s]Filter: 100%|##########| 151674/151674 [00:00<00:00, 311759.55 examples/s]
+  ERROR pythia-160m x amazon_massive_en: invalid literal for int() with base 10: 'alarm_set'
+
+  pythia-410m x banking77
+  Loading dataset banking77...
+  banking77: n=5000, K=77
+  Loading model EleutherAI/pythia-410m...
+  n_layers=24, sampling at [1, 5, 10, 14, 19, 24]
+  Inference done in 9.5s
+    Layer  1/24: kappa=0.3124  q_1nn=0.6460  MAP@10=0.6458
+    Layer  5/24: kappa=0.2966  q_1nn=0.6103  MAP@10=0.6224
+    Layer 10/24: kappa=0.0474  q_1nn=0.5581  MAP@10=0.5756
+    Layer 14/24: kappa=0.0476  q_1nn=0.5804  MAP@10=0.5943
+    Layer 19/24: kappa=0.0737  q_1nn=0.5283  MAP@10=0.5591
+    Layer 24/24: kappa=0.2981  q_1nn=0.5893  MAP@10=0.6074
+
+  pythia-410m x amazon_massive_en
+  Loading dataset amazon_massive_en...
+  ERROR pythia-410m x amazon_massive_en: invalid literal for int() with base 10: 'alarm_set'
+
+  Qwen2.5-0.5B x banking77
+  Loading dataset banking77...
+  banking77: n=5000, K=77
+  Loading model Qwen/Qwen2.5-0.5B...
+  n_layers=24, sampling at [1, 5, 10, 14, 19, 24]
+  Inference done in 10.9s
+    Layer  1/24: kappa=0.3576  q_1nn=0.7684  MAP@10=0.7544
+    Layer  5/24: kappa=0.0198  q_1nn=0.5514  MAP@10=0.5744
+    Layer 10/24: kappa=0.0245  q_1nn=0.5581  MAP@10=0.5750
+    Layer 14/24: kappa=0.0251  q_1nn=0.5309  MAP@10=0.5603
+    Layer 19/24: kappa=0.0463  q_1nn=0.5546  MAP@10=0.5725
+    Layer 24/24: kappa=0.2804  q_1nn=0.5396  MAP@10=0.5668
+
+  Qwen2.5-0.5B x amazon_massive_en
+  Loading dataset amazon_massive_en...
+  ERROR Qwen2.5-0.5B x amazon_massive_en: invalid literal for int() with base 10: 'alarm_set'
+
+[STEP 3] Within-model Spearman analysis
+  pythia-160m x banking77: rho(kappa,q)=0.829  rho(kappa,MAP@10)=0.829
+  pythia-410m x banking77: rho(kappa,q)=0.771  rho(kappa,MAP@10)=0.771
+  Qwen2.5-0.5B x banking77: rho(kappa,q)=0.257  rho(kappa,MAP@10)=0.086
+
+  H1_new: mean_rho(kappa,q_1nn)=0.6190, frac_pos=1.00 -> PASS
+  H2:     mean_rho(kappa,MAP@10)=0.5619, frac_pos=1.00 -> PASS
+
+[STEP 4] H3: cross-model ranking on banking77 (final layer)
+  H3: Spearman rho(kappa,MAP@10) across 3 models = 1.000 (p=0.000) -> PASS
+
+[STEP 5] Variance diagnostics
+  pythia-160m_banking77: MAP@10 range [0.5165, 0.6077], ceiling_frac=0.009033333333333332
+  pythia-410m_banking77: MAP@10 range [0.5591, 0.6458], ceiling_frac=0.0175
+  Qwen2.5-0.5B_banking77: MAP@10 range [0.5603, 0.7544], ceiling_frac=0.02463333333333333
+
+============================================================
+DOWNSTREAM DECISION PROTOCOL V2 SUMMARY
+============================================================
+  H1_existing: PASS (mean_rho=0.6880, frac_pos=0.94)
+  H1_new:      PASS (mean_rho=0.6190)
+  H2:          PASS (mean_rho=0.5619)
+  H3:          PASS
+
+Saved to C:\Users\devan\OneDrive\Desktop\Projects\AI Moonshots\moonshot-cti-universal-law\results\cti_downstream_protocol_v2.json

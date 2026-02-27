@@ -270,8 +270,13 @@ def load_dataset_examples(cfg, max_n=MAX_EXAMPLES):
     texts = ds[cfg["text_col"]]
     raw_labels = ds[cfg["label_col"]]
 
-    # Normalize labels to int
-    labels = np.array([int(l) for l in raw_labels])
+    # Normalize labels to int (handle string category labels gracefully)
+    try:
+        labels = np.array([int(l) for l in raw_labels])
+    except (ValueError, TypeError):
+        unique_str = sorted(set(str(l) for l in raw_labels))
+        str_to_int = {s: i for i, s in enumerate(unique_str)}
+        labels = np.array([str_to_int[str(l)] for l in raw_labels])
     texts = list(texts)
 
     # Subsample
