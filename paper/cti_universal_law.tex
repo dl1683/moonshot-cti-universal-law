@@ -53,7 +53,8 @@ A pre-registered boundary test confirms RWKV's held-out $\hat\alpha=2.887\in[2.4
 Cross-modality validation finds the same functional form for ViT-Large ($R^2=0.964$) and ResNet50 on CIFAR.
 Frozen do-interventions and an orthogonal factorial identify nearest-class geometry as the sole causal driver.
 A strictly blind OOD test---new architecture on new datasets, intercept from 6 other architectures---yields $r=0.817$, $p=0.013$ (\textbf{PASS}).
-Biological generalization: 30/32 mouse visual-cortex Neuropixels sessions satisfy the law ($\bar{r}_\kappa=0.736$, pre-registered).
+Biological generalization: 30/32 mouse visual-cortex Neuropixels sessions satisfy the law ($\bar{r}_\kappa=0.736$, pre-registered); a 30-session pre-registered multi-area batch confirms $r>0.70$ in VISl (22/22) and VISam (24/25).
+Near-simplex competition geometry ($\rho\approx0.45$, CV$=3.9\%$ across NLP architectures, CV$=1.65\%$ across 5 cortical areas) provides a \emph{zero-parameter} prediction of $\alpha$: $\hat\alpha_\mathrm{pred}=\sqrt{4/\pi}\sqrt{d_\mathrm{eff,comp}}=1.525$ vs.\ observed $1.477$ (3.2\% error, zero free parameters).
 
 \textbf{Honest scope:} $\alpha$ varies by architecture family (NLP decoders: 1.48, ViT: 0.63, CNN: 4.4); universality is of the \emph{functional form} only.
 Absolute prediction requires per-family intercept calibration (4 probe measurements reduce MAE by 86\%).
@@ -78,6 +79,7 @@ The key conceptual point: Eq.~\ref{eq:cti-law}'s structure is derived from first
 \item \textbf{K-scaling and practical prediction}: $A(K)=1.164/\log K+1.301$ ($r=0.93$). MAE$\leq$0.08 on all six prospective datasets; kappa spread ($17\times$ more predictive than $K$; $p=0.038$) is the mechanistic predictor of architecture-ranking reliability.
 \item \textbf{External blind OOD tests}: SmolLM2-1.7B (absent from training set) yields $r=0.817$, $p=0.013$ (PASS) with zero in-distribution calibration. Exploratory expanded test: Gemma-3-1B $r=0.998$, phi-2 $r=0.613$; within-model form confirmed for all three OOD architectures.
 \item \textbf{Expanded pre-registered holdout (H8+)}: 11 unseen models $\times$ 8 datasets ($n=77$), all parameters frozen. All 6 pre-registered criteria pass ($r=0.879$, MAE$=0.077$). Pointwise MAE is close to the dataset-mean baseline, confirming mechanistic ordering rather than high-precision calibration.
+\item \textbf{Zero-parameter prediction}: The near-simplex equicorrelation ($\rho\approx0.45$, CV$=3.9\%$ across NLP decoders, CV$=1.65\%$ across 5 mouse V1 areas) enables a zero-free-parameter prediction of $\alpha$: $\hat\alpha_\mathrm{pred}=\sqrt{4/\pi}\sqrt{1/(1-\rho)}=1.525$ vs.\ observed $\alpha=1.477$ (3.2\% error). The same $\rho$ value in biological cortex suggests near-simplex geometry is substrate-independent --- the critical link between the theory, the AI law, and the biological findings.
 \end{enumerate}
 
 \section{Related Work}
