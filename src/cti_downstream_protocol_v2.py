@@ -1,6 +1,8 @@
 """
-CTI DOWNSTREAM DECISION PROTOCOL V2
+CTI DOWNSTREAM DECISION PROTOCOL V3
 =====================================
+V3: Extended to 5 models (pythia-160m/410m/1b/1.4b + Qwen2.5-0.5B) for H3 n>=5.
+Output: cti_downstream_protocol_v3.json
 
 PRE-REGISTERED HYPOTHESES (committed before running):
   H1_existing: Within-model Spearman rho(kappa_nearest, q_1NN) > 0.50
@@ -33,11 +35,13 @@ from collections import defaultdict
 REPO_ROOT = Path(__file__).resolve().parent.parent
 RESULTS_DIR = REPO_ROOT / "results"
 DATA_FILE = RESULTS_DIR / "cti_kappa_nearest_universal.json"
-OUT_PATH = RESULTS_DIR / "cti_downstream_protocol_v2.json"
+OUT_PATH = RESULTS_DIR / "cti_downstream_protocol_v3.json"
 
 MODELS = [
-    {"name": "pythia-160m", "hf": "EleutherAI/pythia-160m"},
-    {"name": "pythia-410m", "hf": "EleutherAI/pythia-410m"},
+    {"name": "pythia-160m",  "hf": "EleutherAI/pythia-160m"},
+    {"name": "pythia-410m",  "hf": "EleutherAI/pythia-410m"},
+    {"name": "pythia-1b",    "hf": "EleutherAI/pythia-1b"},
+    {"name": "pythia-1.4b",  "hf": "EleutherAI/pythia-1.4b"},
     {"name": "Qwen2.5-0.5B", "hf": "Qwen/Qwen2.5-0.5B"},
 ]
 

@@ -3,7 +3,7 @@
   "description": "CTI utility: full decomposition + prospective blind test",
   "h1_within_model_layer_ranking": {
     "n_pairs": 205,
-    "mean_spearman_rho": NaN,
+    "mean_spearman_rho": null,
     "pct_rho_ge_080": 37.073170731707314,
     "pct_best_layer_match": 66.34146341463415,
     "mean_regret": 0.012244700096804685,
