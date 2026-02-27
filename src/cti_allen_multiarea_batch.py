@@ -231,13 +231,33 @@ def main():
         session_url_map[key] = a.get_content_url(follow_redirects=1, strip_query=True)
     print(f"  Found {len(session_url_map)} DANDI sessions", flush=True)
 
-    session_results = []
     out_path = RESULTS_DIR / "cti_allen_multiarea_batch.json"
+
+    # Resume: load already-completed sessions
+    session_results = []
+    done_sessions = set()
+    if out_path.exists():
+        try:
+            with open(out_path, encoding="ascii") as _f:
+                _existing = json.load(_f)
+            for _r in _existing.get("sessions", []):
+                if "areas" in _r:  # skip error entries
+                    session_results.append(_r)
+                    done_sessions.add(_r["session"])
+            if done_sessions:
+                print(f"  Resuming: {len(done_sessions)} sessions already done, "
+                      f"skipping to next.", flush=True)
+        except Exception:
+            pass
 
     for i, session_key in enumerate(passing_sessions):
         url = session_url_map.get(session_key)
         if url is None:
             print(f"[{i+1}/{len(passing_sessions)}] {session_key}: NOT IN DANDI", flush=True)
+            continue
+
+        if session_key in done_sessions:
+            print(f"[{i+1}/{len(passing_sessions)}] {session_key}: SKIP (already done)", flush=True)
             continue
 
         print(f"\n[{i+1}/{len(passing_sessions)}] {session_key}", flush=True)

@@ -1,0 +1,109 @@
+CTI ALLEN MULTI-AREA BATCH VALIDATION
+Pre-registered hypotheses: H_area1, H_area2, H_area3, H_hierarchy
+Sessions to process: 30
+Fetching DANDI asset list...
+  Found 32 DANDI sessions
+
+[1/30] sub-707296975_ses-721123822
+  ERROR: no_area_field
+
+[2/30] sub-719828686_ses-754312389
+  ERROR: no_area_field
+
+[3/30] sub-740268983_ses-759883607
+  ERROR: no_area_field
+
+[4/30] sub-757329617_ses-773418906
+  ERROR: no_area_field
+
+[5/30] sub-739783158_ses-760345702
+  ERROR: no_area_field
+
+[6/30] sub-744915196_ses-762602078
+  ERROR: no_area_field
+
+[7/30] sub-722882751_ses-743475441
+  ERROR: no_area_field
+
+[8/30] sub-699733573_ses-715093703
+  ERROR: no_area_field
+
+[9/30] sub-703279277_ses-719161530
+  ERROR: no_area_field
+
+[10/30] sub-716813540_ses-739448407
+  ERROR: no_area_field
+
+[11/30] sub-717038285_ses-732592105
+  ERROR: no_area_field
+
+[12/30] sub-718643564_ses-737581020
+  ERROR: no_area_field
+
+[13/30] sub-723627600_ses-742951821
+  ERROR: no_area_field
+
+[14/30] sub-726141242_ses-750332458
+  ERROR: no_area_field
+
+[15/30] sub-726162193_ses-750749662
+  ERROR: no_area_field
+
+[16/30] sub-726170927_ses-746083955
+  ERROR: no_area_field
+
+[17/30] sub-726298249_ses-754829445
+  ERROR: no_area_field
+
+[18/30] sub-730756767_ses-757970808
+  ERROR: no_area_field
+
+[19/30] sub-730760263_ses-755434585
+  ERROR: no_area_field
+
+[20/30] sub-732548371_ses-751348571
+  ERROR: no_area_field
+
+[21/30] sub-733457986_ses-757216464
+  ERROR: no_area_field
+
+[22/30] sub-734865729_ses-756029989
+  ERROR: no_area_field
+
+[23/30] sub-735109599_ses-758798717
+  ERROR: no_area_field
+
+[24/30] sub-738651046_ses-760693773
+  ERROR: no_area_field
+
+[25/30] sub-742602884_ses-763673393
+  ERROR: no_area_field
+
+[26/30] sub-745276220_ses-762120172
+  ERROR: no_area_field
+
+[27/30] sub-769360771_ses-791319847
+  ERROR: no_area_field
+
+[28/30] sub-772616820_ses-799864342
+  ERROR: no_area_field
+
+[29/30] sub-775876808_ses-798911424
+  ERROR: no_area_field
+
+[30/30] sub-776061236_ses-797828357
+  ERROR: no_area_field
+
+============================================================
+MULTI-AREA SUMMARY
+============================================================
+  VISp: no valid sessions
+  VISl: no valid sessions
+  VISal: no valid sessions
+  VISam: no valid sessions
+  VISrl: no valid sessions
+
+--- HYPOTHESIS VERDICTS ---
+  H_area3: FAIL | {'areas_passing_50pct': 0, 'out_of': 4, 'PASS': False}
+
+Saved to C:\Users\devan\OneDrive\Desktop\Projects\AI Moonshots\moonshot-cti-universal-law\results\cti_allen_multiarea_batch.json

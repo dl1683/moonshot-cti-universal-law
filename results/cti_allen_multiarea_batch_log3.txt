@@ -1,0 +1,125 @@
+CTI ALLEN MULTI-AREA BATCH VALIDATION
+Pre-registered hypotheses: H_area1, H_area2, H_area3, H_hierarchy
+Sessions to process: 30
+Fetching DANDI asset list...
+  Found 32 DANDI sessions
+  Resuming: 20 sessions already done, skipping to next.
+[1/30] sub-707296975_ses-721123822: SKIP (already done)
+[2/30] sub-719828686_ses-754312389: SKIP (already done)
+[3/30] sub-740268983_ses-759883607: SKIP (already done)
+[4/30] sub-757329617_ses-773418906: SKIP (already done)
+[5/30] sub-739783158_ses-760345702: SKIP (already done)
+[6/30] sub-744915196_ses-762602078: SKIP (already done)
+[7/30] sub-722882751_ses-743475441: SKIP (already done)
+[8/30] sub-699733573_ses-715093703: SKIP (already done)
+[9/30] sub-703279277_ses-719161530: SKIP (already done)
+[10/30] sub-716813540_ses-739448407: SKIP (already done)
+[11/30] sub-717038285_ses-732592105: SKIP (already done)
+[12/30] sub-718643564_ses-737581020: SKIP (already done)
+[13/30] sub-723627600_ses-742951821: SKIP (already done)
+[14/30] sub-726141242_ses-750332458: SKIP (already done)
+[15/30] sub-726162193_ses-750749662: SKIP (already done)
+[16/30] sub-726170927_ses-746083955: SKIP (already done)
+[17/30] sub-726298249_ses-754829445: SKIP (already done)
+[18/30] sub-730756767_ses-757970808: SKIP (already done)
+[19/30] sub-730760263_ses-755434585: SKIP (already done)
+[20/30] sub-732548371_ses-751348571: SKIP (already done)
+
+[21/30] sub-733457986_ses-757216464
+  VISp: r_kappa=0.801 (PASS), n_units=205, n_active=118
+  VISl: r_kappa=0.822 (PASS), n_units=126, n_active=118
+  VISal: r_kappa=0.812 (PASS), n_units=106, n_active=115
+  VISam: r_kappa=0.803 (PASS), n_units=122, n_active=106
+  VISrl: r_kappa=0.491 (FAIL), n_units=70, n_active=89
+  LP: r_kappa=0.633 (PASS), n_units=230, n_active=117
+
+[22/30] sub-734865729_ses-756029989
+  VISp: r_kappa=0.848 (PASS), n_units=140, n_active=118
+  VISl: r_kappa=0.856 (PASS), n_units=98, n_active=117
+  VISal: r_kappa=0.837 (PASS), n_units=104, n_active=118
+  VISam: r_kappa=0.742 (PASS), n_units=133, n_active=113
+  VISrl: r_kappa=0.591 (PASS), n_units=59, n_active=100
+  LP: r_kappa=0.652 (PASS), n_units=85, n_active=102
+
+[23/30] sub-735109599_ses-758798717
+  VISp: r_kappa=0.797 (PASS), n_units=147, n_active=118
+  VISl: insufficient_units (n_units=0)
+  VISal: r_kappa=0.858 (PASS), n_units=164, n_active=118
+  VISam: r_kappa=0.759 (PASS), n_units=99, n_active=108
+  VISrl: insufficient_units (n_units=0)
+  LP: r_kappa=-0.160 (FAIL), n_units=72, n_active=41
+
+[24/30] sub-738651046_ses-760693773
+  VISp: r_kappa=0.599 (PASS), n_units=181, n_active=118
+  VISl: insufficient_units (n_units=0)
+  VISal: r_kappa=0.872 (PASS), n_units=239, n_active=118
+  VISam: r_kappa=0.857 (PASS), n_units=128, n_active=118
+  VISrl: r_kappa=0.756 (PASS), n_units=119, n_active=114
+  LP: insufficient_units (n_units=0)
+
+[25/30] sub-742602884_ses-763673393
+  VISp: r_kappa=0.847 (PASS), n_units=145, n_active=118
+  VISl: r_kappa=0.729 (PASS), n_units=89, n_active=113
+  VISal: insufficient_units (n_units=0)
+  VISam: r_kappa=0.772 (PASS), n_units=174, n_active=114
+  VISrl: r_kappa=0.697 (PASS), n_units=137, n_active=112
+  LP: insufficient_units (n_units=7)
+
+[26/30] sub-745276220_ses-762120172
+  VISp: r_kappa=0.798 (PASS), n_units=189, n_active=118
+  VISl: r_kappa=0.713 (PASS), n_units=141, n_active=117
+  VISal: r_kappa=0.818 (PASS), n_units=183, n_active=114
+  VISam: r_kappa=0.703 (PASS), n_units=61, n_active=92
+  VISrl: insufficient_units (n_units=0)
+  LP: insufficient_units (n_units=0)
+
+[27/30] sub-769360771_ses-791319847
+  VISp: r_kappa=0.867 (PASS), n_units=190, n_active=118
+  VISl: r_kappa=0.721 (PASS), n_units=124, n_active=111
+  VISal: r_kappa=0.793 (PASS), n_units=97, n_active=116
+  VISam: r_kappa=0.793 (PASS), n_units=116, n_active=109
+  VISrl: r_kappa=0.760 (PASS), n_units=124, n_active=110
+  LP: insufficient_units (n_units=40)
+
+[28/30] sub-772616820_ses-799864342
+  VISp: r_kappa=0.849 (PASS), n_units=155, n_active=118
+  VISl: r_kappa=0.793 (PASS), n_units=88, n_active=117
+  VISal: r_kappa=0.858 (PASS), n_units=119, n_active=118
+  VISam: r_kappa=0.825 (PASS), n_units=77, n_active=118
+  VISrl: r_kappa=0.634 (PASS), n_units=74, n_active=98
+  LP: r_kappa=0.357 (FAIL), n_units=116, n_active=103
+
+[29/30] sub-775876808_ses-798911424
+  VISp: r_kappa=0.841 (PASS), n_units=200, n_active=118
+  VISl: r_kappa=0.842 (PASS), n_units=145, n_active=118
+  VISal: r_kappa=0.873 (PASS), n_units=175, n_active=118
+  VISam: r_kappa=0.818 (PASS), n_units=264, n_active=110
+  VISrl: r_kappa=0.759 (PASS), n_units=102, n_active=106
+  LP: r_kappa=0.525 (PASS), n_units=123, n_active=103
+
+[30/30] sub-776061236_ses-797828357
+  VISp: r_kappa=0.778 (PASS), n_units=190, n_active=118
+  VISl: r_kappa=0.542 (PASS), n_units=135, n_active=108
+  VISal: r_kappa=0.480 (FAIL), n_units=121, n_active=82
+  VISam: r_kappa=0.567 (PASS), n_units=144, n_active=85
+  VISrl: insufficient_units (n_units=29)
+  LP: r_kappa=0.792 (PASS), n_units=142, n_active=111
+
+============================================================
+MULTI-AREA SUMMARY
+============================================================
+  VISp: n=30, mean_r=0.792, H1=30/30
+  VISl: n=22, mean_r=0.769, H1=22/22
+  VISal: n=21, mean_r=0.796, H1=20/21
+  VISam: n=25, mean_r=0.742, H1=24/25
+  VISrl: n=24, mean_r=0.663, H1=21/24
+
+  Hierarchy Spearman rho=0.700, p=0.188 (FAIL)
+
+--- HYPOTHESIS VERDICTS ---
+  H_area1: PASS | {'area': 'VISl', 'mean_r_kappa': 0.7685220562607135, 'H1_pass_rate': '22/22', 'PASS': True}
+  H_area2: PASS | {'area': 'VISam', 'mean_r_kappa': 0.7423601122352117, 'H1_pass_rate': '24/25', 'PASS': True}
+  H_area3: PASS | {'areas_passing_50pct': 4, 'out_of': 4, 'PASS': True}
+  H_hierarchy: FAIL | {'areas': ['VISp', 'VISl', 'VISal', 'VISam', 'VISrl'], 'predicted_order': ['VISp', 'VISl', 'VISal', 'VISam', 'VISrl'], 'mean_r_kappa_observed': [0.7918790864175365, 0.7685220562607135, 0.7956289048565852, 0.7423601122352117, 0.6625189973893663], 'spearman_rho': 0.7, 'p_value': 0.1881204043741873, 'PASS': False}
+
+Saved to C:\Users\devan\OneDrive\Desktop\Projects\AI Moonshots\moonshot-cti-universal-law\results\cti_allen_multiarea_batch.json

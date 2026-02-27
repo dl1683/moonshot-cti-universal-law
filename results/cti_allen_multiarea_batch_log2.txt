@@ -5,3 +5,260 @@ Fetching DANDI asset list...
   Found 32 DANDI sessions
 
 [1/30] sub-707296975_ses-721123822
+  VISp: r_kappa=0.812 (PASS), n_units=110, n_active=118
+  VISl: r_kappa=0.868 (PASS), n_units=95, n_active=117
+  VISal: r_kappa=0.805 (PASS), n_units=139, n_active=115
+  VISam: r_kappa=0.871 (PASS), n_units=92, n_active=117
+  VISrl: r_kappa=0.690 (PASS), n_units=89, n_active=101
+  LP: r_kappa=0.645 (PASS), n_units=180, n_active=118
+
+[2/30] sub-719828686_ses-754312389
+  VISp: r_kappa=0.761 (PASS), n_units=202, n_active=118
+  VISl: insufficient_units (n_units=26)
+  VISal: r_kappa=0.730 (PASS), n_units=73, n_active=99
+  VISam: r_kappa=0.759 (PASS), n_units=115, n_active=115
+  VISrl: r_kappa=0.572 (PASS), n_units=83, n_active=79
+  LP: insufficient_units (n_units=0)
+
+[3/30] sub-740268983_ses-759883607
+  VISp: r_kappa=0.814 (PASS), n_units=182, n_active=118
+  VISl: insufficient_units (n_units=0)
+  VISal: r_kappa=0.844 (PASS), n_units=144, n_active=118
+  VISam: r_kappa=0.789 (PASS), n_units=151, n_active=118
+  VISrl: insufficient_units (n_units=0)
+  LP: insufficient_units (n_units=0)
+
+[4/30] sub-757329617_ses-773418906
+  VISp: r_kappa=0.869 (PASS), n_units=135, n_active=118
+  VISl: insufficient_units (n_units=0)
+  VISal: r_kappa=0.827 (PASS), n_units=347, n_active=117
+  VISam: insufficient_units (n_units=38)
+  VISrl: r_kappa=0.678 (PASS), n_units=94, n_active=90
+  LP: insufficient_units (n_units=0)
+
+[5/30] sub-739783158_ses-760345702
+  VISp: r_kappa=0.752 (PASS), n_units=155, n_active=118
+  VISl: r_kappa=0.764 (PASS), n_units=112, n_active=118
+  VISal: r_kappa=0.853 (PASS), n_units=136, n_active=118
+  VISam: r_kappa=0.816 (PASS), n_units=109, n_active=113
+  VISrl: insufficient_units (n_units=0)
+  LP: insufficient_units (n_units=46)
+
+[6/30] sub-744915196_ses-762602078
+  VISp: r_kappa=0.621 (PASS), n_units=164, n_active=118
+  VISl: insufficient_units (n_units=0)
+  VISal: insufficient_units (n_units=0)
+  VISam: r_kappa=0.861 (PASS), n_units=119, n_active=116
+  VISrl: r_kappa=0.862 (PASS), n_units=133, n_active=118
+  LP: insufficient_units (n_units=49)
+
+[7/30] sub-722882751_ses-743475441
+  VISp: r_kappa=0.774 (PASS), n_units=113, n_active=114
+  VISl: r_kappa=0.658 (PASS), n_units=64, n_active=113
+  VISal: insufficient_units (n_units=0)
+  VISam: r_kappa=0.355 (FAIL), n_units=127, n_active=82
+  VISrl: r_kappa=0.515 (PASS), n_units=193, n_active=104
+  LP: r_kappa=0.617 (PASS), n_units=263, n_active=112
+
+[8/30] sub-699733573_ses-715093703
+  VISp: r_kappa=0.833 (PASS), n_units=135, n_active=118
+  VISl: r_kappa=0.848 (PASS), n_units=126, n_active=117
+  VISal: insufficient_units (n_units=0)
+  VISam: r_kappa=0.728 (PASS), n_units=74, n_active=105
+  VISrl: r_kappa=0.825 (PASS), n_units=183, n_active=117
+  LP: r_kappa=0.807 (PASS), n_units=272, n_active=115
+
+[9/30] sub-703279277_ses-719161530
+  VISp: r_kappa=0.800 (PASS), n_units=112, n_active=117
+  VISl: r_kappa=0.772 (PASS), n_units=83, n_active=118
+  VISal: insufficient_units (n_units=30)
+  VISam: r_kappa=0.561 (PASS), n_units=85, n_active=96
+  VISrl: insufficient_units (n_units=36)
+  LP: r_kappa=0.390 (FAIL), n_units=59, n_active=74
+
+[10/30] sub-716813540_ses-739448407
+  VISp: r_kappa=0.776 (PASS), n_units=50, n_active=118
+  VISl: r_kappa=0.880 (PASS), n_units=108, n_active=116
+  VISal: insufficient_units (n_units=0)
+  VISam: r_kappa=0.796 (PASS), n_units=115, n_active=112
+  VISrl: r_kappa=0.758 (PASS), n_units=161, n_active=105
+  LP: insufficient_units (n_units=0)
+
+[11/30] sub-717038285_ses-732592105
+  VISp: r_kappa=0.824 (PASS), n_units=244, n_active=118
+  VISl: r_kappa=0.734 (PASS), n_units=206, n_active=94
+  VISal: r_kappa=0.772 (PASS), n_units=185, n_active=112
+  VISam: insufficient_units (n_units=0)
+  VISrl: r_kappa=0.623 (PASS), n_units=163, n_active=103
+  LP: insufficient_units (n_units=0)
+
+[12/30] sub-718643564_ses-737581020
+  VISp: r_kappa=0.813 (PASS), n_units=119, n_active=118
+  VISl: r_kappa=0.809 (PASS), n_units=59, n_active=118
+  VISal: insufficient_units (n_units=0)
+  VISam: insufficient_units (n_units=0)
+  VISrl: r_kappa=0.797 (PASS), n_units=145, n_active=118
+  LP: insufficient_units (n_units=0)
+
+[13/30] sub-723627600_ses-742951821
+  VISp: r_kappa=0.777 (PASS), n_units=122, n_active=116
+  VISl: r_kappa=0.673 (PASS), n_units=107, n_active=111
+  VISal: r_kappa=0.837 (PASS), n_units=92, n_active=115
+  VISam: insufficient_units (n_units=0)
+  VISrl: r_kappa=0.827 (PASS), n_units=122, n_active=113
+  LP: insufficient_units (n_units=0)
+
+[14/30] sub-726141242_ses-750332458
+  VISp: r_kappa=0.709 (PASS), n_units=150, n_active=118
+  VISl: r_kappa=0.782 (PASS), n_units=103, n_active=117
+  VISal: r_kappa=0.868 (PASS), n_units=147, n_active=117
+  VISam: r_kappa=0.727 (PASS), n_units=114, n_active=116
+  VISrl: r_kappa=0.543 (PASS), n_units=124, n_active=91
+  LP: insufficient_units (n_units=0)
+
+[15/30] sub-726162193_ses-750749662
+  VISp: r_kappa=0.778 (PASS), n_units=143, n_active=117
+  VISl: r_kappa=0.787 (PASS), n_units=79, n_active=109
+  VISal: r_kappa=0.780 (PASS), n_units=109, n_active=115
+  VISam: r_kappa=0.635 (PASS), n_units=150, n_active=98
+  VISrl: r_kappa=0.657 (PASS), n_units=125, n_active=105
+  LP: r_kappa=0.292 (FAIL), n_units=258, n_active=52
+
+[16/30] sub-726170927_ses-746083955
+  VISp: r_kappa=0.833 (PASS), n_units=50, n_active=116
+  VISl: r_kappa=0.757 (PASS), n_units=87, n_active=108
+  VISal: r_kappa=0.714 (PASS), n_units=76, n_active=82
+  VISam: insufficient_units (n_units=0)
+  VISrl: r_kappa=0.768 (PASS), n_units=96, n_active=105
+  LP: insufficient_units (n_units=0)
+
+[17/30] sub-726298249_ses-754829445
+  VISp: r_kappa=0.806 (PASS), n_units=195, n_active=118
+  VISl: insufficient_units (n_units=0)
+  VISal: insufficient_units (n_units=0)
+  VISam: r_kappa=0.732 (PASS), n_units=97, n_active=105
+  VISrl: r_kappa=0.403 (FAIL), n_units=88, n_active=80
+  LP: r_kappa=0.543 (PASS), n_units=293, n_active=105
+
+[18/30] sub-730756767_ses-757970808
+  VISp: r_kappa=0.824 (PASS), n_units=193, n_active=118
+  VISl: insufficient_units (n_units=0)
+  VISal: r_kappa=0.740 (PASS), n_units=148, n_active=104
+  VISam: r_kappa=0.804 (PASS), n_units=142, n_active=118
+  VISrl: r_kappa=0.731 (PASS), n_units=131, n_active=104
+  LP: r_kappa=0.424 (FAIL), n_units=118, n_active=78
+
+[19/30] sub-730760263_ses-755434585
+  VISp: r_kappa=0.785 (PASS), n_units=184, n_active=118
+  VISl: r_kappa=0.754 (PASS), n_units=110, n_active=117
+  VISal: r_kappa=0.737 (PASS), n_units=89, n_active=113
+  VISam: r_kappa=0.717 (PASS), n_units=172, n_active=115
+  VISrl: r_kappa=0.217 (FAIL), n_units=108, n_active=75
+  LP: insufficient_units (n_units=43)
+
+[20/30] sub-732548371_ses-751348571
+  VISp: r_kappa=0.772 (PASS), n_units=119, n_active=118
+  VISl: r_kappa=0.802 (PASS), n_units=56, n_active=116
+  VISal: insufficient_units (n_units=0)
+  VISam: r_kappa=0.769 (PASS), n_units=135, n_active=104
+  VISrl: r_kappa=0.747 (PASS), n_units=231, n_active=110
+  LP: r_kappa=0.524 (PASS), n_units=268, n_active=87
+
+[21/30] sub-733457986_ses-757216464
+  VISp: r_kappa=0.801 (PASS), n_units=205, n_active=118
+  VISl: r_kappa=0.822 (PASS), n_units=126, n_active=118
+  VISal: r_kappa=0.812 (PASS), n_units=106, n_active=115
+  VISam: r_kappa=0.803 (PASS), n_units=122, n_active=106
+  VISrl: r_kappa=0.491 (FAIL), n_units=70, n_active=89
+  LP: r_kappa=0.633 (PASS), n_units=230, n_active=117
+
+[22/30] sub-734865729_ses-756029989
+  VISp: r_kappa=0.848 (PASS), n_units=140, n_active=118
+  VISl: r_kappa=0.856 (PASS), n_units=98, n_active=117
+  VISal: r_kappa=0.837 (PASS), n_units=104, n_active=118
+  VISam: r_kappa=0.742 (PASS), n_units=133, n_active=113
+  VISrl: r_kappa=0.591 (PASS), n_units=59, n_active=100
+  LP: r_kappa=0.652 (PASS), n_units=85, n_active=102
+
+[23/30] sub-735109599_ses-758798717
+  VISp: r_kappa=0.797 (PASS), n_units=147, n_active=118
+  VISl: insufficient_units (n_units=0)
+  VISal: r_kappa=0.858 (PASS), n_units=164, n_active=118
+  VISam: r_kappa=0.759 (PASS), n_units=99, n_active=108
+  VISrl: insufficient_units (n_units=0)
+  LP: r_kappa=-0.160 (FAIL), n_units=72, n_active=41
+
+[24/30] sub-738651046_ses-760693773
+  VISp: r_kappa=0.599 (PASS), n_units=181, n_active=118
+  VISl: insufficient_units (n_units=0)
+  VISal: r_kappa=0.872 (PASS), n_units=239, n_active=118
+  VISam: r_kappa=0.857 (PASS), n_units=128, n_active=118
+  VISrl: r_kappa=0.756 (PASS), n_units=119, n_active=114
+  LP: insufficient_units (n_units=0)
+
+[25/30] sub-742602884_ses-763673393
+  VISp: r_kappa=0.847 (PASS), n_units=145, n_active=118
+  VISl: r_kappa=0.729 (PASS), n_units=89, n_active=113
+  VISal: insufficient_units (n_units=0)
+  VISam: r_kappa=0.772 (PASS), n_units=174, n_active=114
+  VISrl: r_kappa=0.697 (PASS), n_units=137, n_active=112
+  LP: insufficient_units (n_units=7)
+
+[26/30] sub-745276220_ses-762120172
+  VISp: r_kappa=0.798 (PASS), n_units=189, n_active=118
+  VISl: r_kappa=0.713 (PASS), n_units=141, n_active=117
+  VISal: r_kappa=0.818 (PASS), n_units=183, n_active=114
+  VISam: r_kappa=0.703 (PASS), n_units=61, n_active=92
+  VISrl: insufficient_units (n_units=0)
+  LP: insufficient_units (n_units=0)
+
+[27/30] sub-769360771_ses-791319847
+  VISp: r_kappa=0.867 (PASS), n_units=190, n_active=118
+  VISl: r_kappa=0.721 (PASS), n_units=124, n_active=111
+  VISal: r_kappa=0.793 (PASS), n_units=97, n_active=116
+  VISam: r_kappa=0.793 (PASS), n_units=116, n_active=109
+  VISrl: r_kappa=0.760 (PASS), n_units=124, n_active=110
+  LP: insufficient_units (n_units=40)
+
+[28/30] sub-772616820_ses-799864342
+  VISp: r_kappa=0.849 (PASS), n_units=155, n_active=118
+  VISl: r_kappa=0.793 (PASS), n_units=88, n_active=117
+  VISal: r_kappa=0.858 (PASS), n_units=119, n_active=118
+  VISam: r_kappa=0.825 (PASS), n_units=77, n_active=118
+  VISrl: r_kappa=0.634 (PASS), n_units=74, n_active=98
+  LP: r_kappa=0.357 (FAIL), n_units=116, n_active=103
+
+[29/30] sub-775876808_ses-798911424
+  VISp: r_kappa=0.841 (PASS), n_units=200, n_active=118
+  VISl: r_kappa=0.842 (PASS), n_units=145, n_active=118
+  VISal: r_kappa=0.873 (PASS), n_units=175, n_active=118
+  VISam: r_kappa=0.818 (PASS), n_units=264, n_active=110
+  VISrl: r_kappa=0.759 (PASS), n_units=102, n_active=106
+  LP: r_kappa=0.525 (PASS), n_units=123, n_active=103
+
+[30/30] sub-776061236_ses-797828357
+  VISp: r_kappa=0.778 (PASS), n_units=190, n_active=118
+  VISl: r_kappa=0.542 (PASS), n_units=135, n_active=108
+  VISal: r_kappa=0.480 (FAIL), n_units=121, n_active=82
+  VISam: r_kappa=0.567 (PASS), n_units=144, n_active=85
+  VISrl: insufficient_units (n_units=29)
+  LP: r_kappa=0.792 (PASS), n_units=142, n_active=111
+
+============================================================
+MULTI-AREA SUMMARY
+============================================================
+  VISp: n=30, mean_r=0.792, H1=30/30
+  VISl: n=22, mean_r=0.769, H1=22/22
+  VISal: n=21, mean_r=0.796, H1=20/21
+  VISam: n=25, mean_r=0.742, H1=24/25
+  VISrl: n=24, mean_r=0.663, H1=21/24
+
+  Hierarchy Spearman rho=0.700, p=0.188 (FAIL)
+
+--- HYPOTHESIS VERDICTS ---
+  H_area1: PASS | {'area': 'VISl', 'mean_r_kappa': 0.7685220562607135, 'H1_pass_rate': '22/22', 'PASS': True}
+  H_area2: PASS | {'area': 'VISam', 'mean_r_kappa': 0.7423601122352117, 'H1_pass_rate': '24/25', 'PASS': True}
+  H_area3: PASS | {'areas_passing_50pct': 4, 'out_of': 4, 'PASS': True}
+  H_hierarchy: FAIL | {'areas': ['VISp', 'VISl', 'VISal', 'VISam', 'VISrl'], 'predicted_order': ['VISp', 'VISl', 'VISal', 'VISam', 'VISrl'], 'mean_r_kappa_observed': [0.7918790864175365, 0.7685220562607135, 0.7956289048565852, 0.7423601122352117, 0.6625189973893663], 'spearman_rho': 0.7, 'p_value': 0.1881204043741873, 'PASS': False}
+
+Saved to C:\Users\devan\OneDrive\Desktop\Projects\AI Moonshots\moonshot-cti-universal-law\results\cti_allen_multiarea_batch.json

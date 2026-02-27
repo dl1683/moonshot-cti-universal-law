@@ -1,4 +1,225 @@
 {
+  "experiment": "cti_allen_multiarea_batch",
+  "preregistration": "H_area1, H_area2, H_area3, H_hierarchy (pre-registered before run)",
+  "dataset": "DANDI:000021",
+  "min_units_per_area": 50,
+  "min_active_classes": 10,
+  "n_sessions_attempted": 30,
+  "n_sessions_processed": 30,
+  "per_area_summary": {
+    "VISp": {
+      "n_sessions_valid": 30,
+      "mean_r_kappa": 0.7918790864175365,
+      "std_r_kappa": 0.06001560546513888,
+      "H1_pass_rate": "30/30",
+      "H1_pass_frac": 1.0,
+      "all_r_kappa": [
+        0.8120626832756388,
+        0.7608771080073403,
+        0.8142784762425695,
+        0.8685719549922883,
+        0.7515781322357282,
+        0.6207021943326133,
+        0.7741556387962301,
+        0.8327046741558999,
+        0.8002530172248293,
+        0.776423705380712,
+        0.824158175202966,
+        0.8134055655297994,
+        0.7768914904727231,
+        0.7089601210021061,
+        0.7775037422548533,
+        0.8334142388954211,
+        0.8064034922476929,
+        0.8239361190641058,
+        0.7846512465369657,
+        0.7722970609739005,
+        0.8009030023913615,
+        0.8477057242692835,
+        0.7968832121359446,
+        0.5991437487388915,
+        0.847114004883389,
+        0.7975184586337716,
+        0.8667586980054177,
+        0.8486406128403285,
+        0.8408038378123857,
+        0.7776724559909439
+      ]
+    },
+    "VISl": {
+      "n_sessions_valid": 22,
+      "mean_r_kappa": 0.7685220562607135,
+      "std_r_kappa": 0.0767491549418958,
+      "H1_pass_rate": "22/22",
+      "H1_pass_frac": 1.0,
+      "all_r_kappa": [
+        0.8684269227806848,
+        0.7644661152752685,
+        0.6580124244585935,
+        0.8477651285706936,
+        0.7720034839699215,
+        0.8800444153859394,
+        0.7343640826070568,
+        0.8094594953478151,
+        0.6725781343201568,
+        0.7821949363090053,
+        0.7865341414434263,
+        0.756614592860737,
+        0.7539753937351696,
+        0.8024039268185621,
+        0.8217179452320982,
+        0.8562188866181126,
+        0.7289563060035742,
+        0.7130603685391212,
+        0.7207753985830133,
+        0.7932567774482722,
+        0.8422043072480013,
+        0.542452054180471
+      ]
+    },
+    "VISal": {
+      "n_sessions_valid": 21,
+      "mean_r_kappa": 0.7956289048565852,
+      "std_r_kappa": 0.0855454944714956,
+      "H1_pass_rate": "20/21",
+      "H1_pass_frac": 0.9523809523809523,
+      "all_r_kappa": [
+        0.8045226855856031,
+        0.7302262983586593,
+        0.8438767904741926,
+        0.8272965173583481,
+        0.8531450927741379,
+        0.7719870334098439,
+        0.8374566014298855,
+        0.8679632452830396,
+        0.780490637107432,
+        0.7139743589491309,
+        0.7399330597210119,
+        0.7365890306962519,
+        0.8118177978181812,
+        0.8365176857697137,
+        0.8578494660025976,
+        0.8721198957343208,
+        0.8183349573939348,
+        0.7931241642274961,
+        0.8579753356232449,
+        0.8729861260838804,
+        0.48002022218738083
+      ]
+    },
+    "VISam": {
+      "n_sessions_valid": 25,
+      "mean_r_kappa": 0.7423601122352117,
+      "std_r_kappa": 0.11066206443891224,
+      "H1_pass_rate": "24/25",
+      "H1_pass_frac": 0.96,
+      "all_r_kappa": [
+        0.8705123052079418,
+        0.7590522296115277,
+        0.7890934925245393,
+        0.8155274023234927,
+        0.8612406241119582,
+        0.35537241417046134,
+        0.7283518890530256,
+        0.5612104023011918,
+        0.7962533799729374,
+        0.7270600435546402,
+        0.635303646637446,
+        0.7316567211462629,
+        0.8042855950281502,
+        0.7167294150837862,
+        0.7691542454609457,
+        0.8028652939999106,
+        0.7418418030366841,
+        0.7588880328994384,
+        0.8571067543867961,
+        0.7718639656380616,
+        0.7031695323033472,
+        0.792948561683466,
+        0.8245660982173929,
+        0.8175429231512362,
+        0.5674060343756544
+      ]
+    },
+    "VISrl": {
+      "n_sessions_valid": 24,
+      "mean_r_kappa": 0.6625189973893663,
+      "std_r_kappa": 0.1472125846052904,
+      "H1_pass_rate": "21/24",
+      "H1_pass_frac": 0.875,
+      "all_r_kappa": [
+        0.6901014095122443,
+        0.5720254128705144,
+        0.6782759967344398,
+        0.8620185432372572,
+        0.5153008734866512,
+        0.8250192402095249,
+        0.7583994218218527,
+        0.6227121984883326,
+        0.797070689566883,
+        0.8268982260251376,
+        0.5432609655894852,
+        0.6573564327859567,
+        0.7680296266143782,
+        0.4030103807649054,
+        0.7308374493710432,
+        0.2168568742518383,
+        0.7468943608973753,
+        0.49053447034215586,
+        0.5909473703463496,
+        0.7555017429808455,
+        0.6965989641399238,
+        0.7595040677643904,
+        0.634341354695934,
+        0.7589598648473717
+      ]
+    }
+  },
+  "hypothesis_results": {
+    "H_area1": {
+      "area": "VISl",
+      "mean_r_kappa": 0.7685220562607135,
+      "H1_pass_rate": "22/22",
+      "PASS": true
+    },
+    "H_area2": {
+      "area": "VISam",
+      "mean_r_kappa": 0.7423601122352117,
+      "H1_pass_rate": "24/25",
+      "PASS": true
+    },
+    "H_area3": {
+      "areas_passing_50pct": 4,
+      "out_of": 4,
+      "PASS": true
+    },
+    "H_hierarchy": {
+      "areas": [
+        "VISp",
+        "VISl",
+        "VISal",
+        "VISam",
+        "VISrl"
+      ],
+      "predicted_order": [
+        "VISp",
+        "VISl",
+        "VISal",
+        "VISam",
+        "VISrl"
+      ],
+      "mean_r_kappa_observed": [
+        0.7918790864175365,
+        0.7685220562607135,
+        0.7956289048565852,
+        0.7423601122352117,
+        0.6625189973893663
+      ],
+      "spearman_rho": 0.7,
+      "p_value": 0.1881204043741873,
+      "PASS": false
+    }
+  },
   "sessions": [
     {
       "session": "sub-707296975_ses-721123822",
@@ -99,7 +320,1351 @@
         }
       },
       "elapsed_s": 66.0
+    },
+    {
+      "session": "sub-740268983_ses-759883607",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.8142784762425695,
+          "n_active": 118,
+          "mean_q": 0.4901694915254237,
+          "H1": true,
+          "n_units": 182,
+          "status": "ok"
+        },
+        "VISl": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISal": {
+          "r_kappa": 0.8438767904741926,
+          "n_active": 118,
+          "mean_q": 0.2979661016949153,
+          "H1": true,
+          "n_units": 144,
+          "status": "ok"
+        },
+        "VISam": {
+          "r_kappa": 0.7890934925245393,
+          "n_active": 118,
+          "mean_q": 0.24881355932203392,
+          "H1": true,
+          "n_units": 151,
+          "status": "ok"
+        },
+        "VISrl": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "LP": {
+          "status": "insufficient_units",
+          "n_units": 0
+        }
+      },
+      "elapsed_s": 61.2
+    },
+    {
+      "session": "sub-757329617_ses-773418906",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.8685719549922883,
+          "n_active": 118,
+          "mean_q": 0.29237288135593215,
+          "H1": true,
+          "n_units": 135,
+          "status": "ok"
+        },
+        "VISl": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISal": {
+          "r_kappa": 0.8272965173583481,
+          "n_active": 117,
+          "mean_q": 0.26170940170940177,
+          "H1": true,
+          "n_units": 347,
+          "status": "ok"
+        },
+        "VISam": {
+          "status": "insufficient_units",
+          "n_units": 38
+        },
+        "VISrl": {
+          "r_kappa": 0.6782759967344398,
+          "n_active": 90,
+          "mean_q": 0.06666666666666667,
+          "H1": true,
+          "n_units": 94,
+          "status": "ok"
+        },
+        "LP": {
+          "status": "insufficient_units",
+          "n_units": 0
+        }
+      },
+      "elapsed_s": 64.9
+    },
+    {
+      "session": "sub-739783158_ses-760345702",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.7515781322357282,
+          "n_active": 118,
+          "mean_q": 0.6113559322033898,
+          "H1": true,
+          "n_units": 155,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.7644661152752685,
+          "n_active": 118,
+          "mean_q": 0.42949152542372887,
+          "H1": true,
+          "n_units": 112,
+          "status": "ok"
+        },
+        "VISal": {
+          "r_kappa": 0.8531450927741379,
+          "n_active": 118,
+          "mean_q": 0.4874576271186441,
+          "H1": true,
+          "n_units": 136,
+          "status": "ok"
+        },
+        "VISam": {
+          "r_kappa": 0.8155274023234927,
+          "n_active": 113,
+          "mean_q": 0.1529203539823009,
+          "H1": true,
+          "n_units": 109,
+          "status": "ok"
+        },
+        "VISrl": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "LP": {
+          "status": "insufficient_units",
+          "n_units": 46
+        }
+      },
+      "elapsed_s": 60.4
+    },
+    {
+      "session": "sub-744915196_ses-762602078",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.6207021943326133,
+          "n_active": 118,
+          "mean_q": 0.8062711864406781,
+          "H1": true,
+          "n_units": 164,
+          "status": "ok"
+        },
+        "VISl": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISal": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISam": {
+          "r_kappa": 0.8612406241119582,
+          "n_active": 116,
+          "mean_q": 0.3875862068965517,
+          "H1": true,
+          "n_units": 119,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.8620185432372572,
+          "n_active": 118,
+          "mean_q": 0.5750847457627118,
+          "H1": true,
+          "n_units": 133,
+          "status": "ok"
+        },
+        "LP": {
+          "status": "insufficient_units",
+          "n_units": 49
+        }
+      },
+      "elapsed_s": 65.0
+    },
+    {
+      "session": "sub-722882751_ses-743475441",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.7741556387962301,
+          "n_active": 114,
+          "mean_q": 0.21140350877192987,
+          "H1": true,
+          "n_units": 113,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.6580124244585935,
+          "n_active": 113,
+          "mean_q": 0.12123893805309735,
+          "H1": true,
+          "n_units": 64,
+          "status": "ok"
+        },
+        "VISal": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISam": {
+          "r_kappa": 0.35537241417046134,
+          "n_active": 82,
+          "mean_q": 0.03853658536585366,
+          "H1": false,
+          "n_units": 127,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.5153008734866512,
+          "n_active": 104,
+          "mean_q": 0.0728846153846154,
+          "H1": true,
+          "n_units": 193,
+          "status": "ok"
+        },
+        "LP": {
+          "r_kappa": 0.6169093314055873,
+          "n_active": 112,
+          "mean_q": 0.0892857142857143,
+          "H1": true,
+          "n_units": 263,
+          "status": "ok"
+        }
+      },
+      "elapsed_s": 64.6
+    },
+    {
+      "session": "sub-699733573_ses-715093703",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.8327046741558999,
+          "n_active": 118,
+          "mean_q": 0.4096610169491526,
+          "H1": true,
+          "n_units": 135,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.8477651285706936,
+          "n_active": 117,
+          "mean_q": 0.337948717948718,
+          "H1": true,
+          "n_units": 126,
+          "status": "ok"
+        },
+        "VISal": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISam": {
+          "r_kappa": 0.7283518890530256,
+          "n_active": 105,
+          "mean_q": 0.10495238095238096,
+          "H1": true,
+          "n_units": 74,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.8250192402095249,
+          "n_active": 117,
+          "mean_q": 0.18615384615384623,
+          "H1": true,
+          "n_units": 183,
+          "status": "ok"
+        },
+        "LP": {
+          "r_kappa": 0.807279316288823,
+          "n_active": 115,
+          "mean_q": 0.18052173913043482,
+          "H1": true,
+          "n_units": 272,
+          "status": "ok"
+        }
+      },
+      "elapsed_s": 74.6
+    },
+    {
+      "session": "sub-703279277_ses-719161530",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.8002530172248293,
+          "n_active": 117,
+          "mean_q": 0.35623931623931626,
+          "H1": true,
+          "n_units": 112,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.7720034839699215,
+          "n_active": 118,
+          "mean_q": 0.1857627118644068,
+          "H1": true,
+          "n_units": 83,
+          "status": "ok"
+        },
+        "VISal": {
+          "status": "insufficient_units",
+          "n_units": 30
+        },
+        "VISam": {
+          "r_kappa": 0.5612104023011918,
+          "n_active": 96,
+          "mean_q": 0.06520833333333334,
+          "H1": true,
+          "n_units": 85,
+          "status": "ok"
+        },
+        "VISrl": {
+          "status": "insufficient_units",
+          "n_units": 36
+        },
+        "LP": {
+          "r_kappa": 0.3903328858537506,
+          "n_active": 74,
+          "mean_q": 0.042702702702702704,
+          "H1": false,
+          "n_units": 59,
+          "status": "ok"
+        }
+      },
+      "elapsed_s": 61.2
+    },
+    {
+      "session": "sub-716813540_ses-739448407",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.776423705380712,
+          "n_active": 118,
+          "mean_q": 0.21966101694915255,
+          "H1": true,
+          "n_units": 50,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.8800444153859394,
+          "n_active": 116,
+          "mean_q": 0.2951724137931034,
+          "H1": true,
+          "n_units": 108,
+          "status": "ok"
+        },
+        "VISal": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISam": {
+          "r_kappa": 0.7962533799729374,
+          "n_active": 112,
+          "mean_q": 0.12000000000000001,
+          "H1": true,
+          "n_units": 115,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.7583994218218527,
+          "n_active": 105,
+          "mean_q": 0.11200000000000002,
+          "H1": true,
+          "n_units": 161,
+          "status": "ok"
+        },
+        "LP": {
+          "status": "insufficient_units",
+          "n_units": 0
+        }
+      },
+      "elapsed_s": 71.4
+    },
+    {
+      "session": "sub-717038285_ses-732592105",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.824158175202966,
+          "n_active": 118,
+          "mean_q": 0.45033898305084746,
+          "H1": true,
+          "n_units": 244,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.7343640826070568,
+          "n_active": 94,
+          "mean_q": 0.08872340425531913,
+          "H1": true,
+          "n_units": 206,
+          "status": "ok"
+        },
+        "VISal": {
+          "r_kappa": 0.7719870334098439,
+          "n_active": 112,
+          "mean_q": 0.1448214285714286,
+          "H1": true,
+          "n_units": 185,
+          "status": "ok"
+        },
+        "VISam": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISrl": {
+          "r_kappa": 0.6227121984883326,
+          "n_active": 103,
+          "mean_q": 0.09009708737864076,
+          "H1": true,
+          "n_units": 163,
+          "status": "ok"
+        },
+        "LP": {
+          "status": "insufficient_units",
+          "n_units": 0
+        }
+      },
+      "elapsed_s": 66.3
+    },
+    {
+      "session": "sub-718643564_ses-737581020",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.8134055655297994,
+          "n_active": 118,
+          "mean_q": 0.4791525423728814,
+          "H1": true,
+          "n_units": 119,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.8094594953478151,
+          "n_active": 118,
+          "mean_q": 0.2813559322033899,
+          "H1": true,
+          "n_units": 59,
+          "status": "ok"
+        },
+        "VISal": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISam": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISrl": {
+          "r_kappa": 0.797070689566883,
+          "n_active": 118,
+          "mean_q": 0.40203389830508474,
+          "H1": true,
+          "n_units": 145,
+          "status": "ok"
+        },
+        "LP": {
+          "status": "insufficient_units",
+          "n_units": 0
+        }
+      },
+      "elapsed_s": 47.5
+    },
+    {
+      "session": "sub-723627600_ses-742951821",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.7768914904727231,
+          "n_active": 116,
+          "mean_q": 0.1874137931034483,
+          "H1": true,
+          "n_units": 122,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.6725781343201568,
+          "n_active": 111,
+          "mean_q": 0.10036036036036038,
+          "H1": true,
+          "n_units": 107,
+          "status": "ok"
+        },
+        "VISal": {
+          "r_kappa": 0.8374566014298855,
+          "n_active": 115,
+          "mean_q": 0.2213913043478261,
+          "H1": true,
+          "n_units": 92,
+          "status": "ok"
+        },
+        "VISam": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISrl": {
+          "r_kappa": 0.8268982260251376,
+          "n_active": 113,
+          "mean_q": 0.15008849557522128,
+          "H1": true,
+          "n_units": 122,
+          "status": "ok"
+        },
+        "LP": {
+          "status": "insufficient_units",
+          "n_units": 0
+        }
+      },
+      "elapsed_s": 65.5
+    },
+    {
+      "session": "sub-726141242_ses-750332458",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.7089601210021061,
+          "n_active": 118,
+          "mean_q": 0.24135593220338986,
+          "H1": true,
+          "n_units": 150,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.7821949363090053,
+          "n_active": 117,
+          "mean_q": 0.2558974358974359,
+          "H1": true,
+          "n_units": 103,
+          "status": "ok"
+        },
+        "VISal": {
+          "r_kappa": 0.8679632452830396,
+          "n_active": 117,
+          "mean_q": 0.25230769230769234,
+          "H1": true,
+          "n_units": 147,
+          "status": "ok"
+        },
+        "VISam": {
+          "r_kappa": 0.7270600435546402,
+          "n_active": 116,
+          "mean_q": 0.12586206896551724,
+          "H1": true,
+          "n_units": 114,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.5432609655894852,
+          "n_active": 91,
+          "mean_q": 0.06373626373626373,
+          "H1": true,
+          "n_units": 124,
+          "status": "ok"
+        },
+        "LP": {
+          "status": "insufficient_units",
+          "n_units": 0
+        }
+      },
+      "elapsed_s": 81.9
+    },
+    {
+      "session": "sub-726162193_ses-750749662",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.7775037422548533,
+          "n_active": 117,
+          "mean_q": 0.25094017094017096,
+          "H1": true,
+          "n_units": 143,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.7865341414434263,
+          "n_active": 109,
+          "mean_q": 0.15431192660550455,
+          "H1": true,
+          "n_units": 79,
+          "status": "ok"
+        },
+        "VISal": {
+          "r_kappa": 0.780490637107432,
+          "n_active": 115,
+          "mean_q": 0.14730434782608692,
+          "H1": true,
+          "n_units": 109,
+          "status": "ok"
+        },
+        "VISam": {
+          "r_kappa": 0.635303646637446,
+          "n_active": 98,
+          "mean_q": 0.06326530612244897,
+          "H1": true,
+          "n_units": 150,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.6573564327859567,
+          "n_active": 105,
+          "mean_q": 0.10095238095238096,
+          "H1": true,
+          "n_units": 125,
+          "status": "ok"
+        },
+        "LP": {
+          "r_kappa": 0.29237160971279436,
+          "n_active": 52,
+          "mean_q": 0.03653846153846154,
+          "H1": false,
+          "n_units": 258,
+          "status": "ok"
+        }
+      },
+      "elapsed_s": 85.9
+    },
+    {
+      "session": "sub-726170927_ses-746083955",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.8334142388954211,
+          "n_active": 116,
+          "mean_q": 0.22620689655172413,
+          "H1": true,
+          "n_units": 50,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.756614592860737,
+          "n_active": 108,
+          "mean_q": 0.11722222222222221,
+          "H1": true,
+          "n_units": 87,
+          "status": "ok"
+        },
+        "VISal": {
+          "r_kappa": 0.7139743589491309,
+          "n_active": 82,
+          "mean_q": 0.05292682926829267,
+          "H1": true,
+          "n_units": 76,
+          "status": "ok"
+        },
+        "VISam": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISrl": {
+          "r_kappa": 0.7680296266143782,
+          "n_active": 105,
+          "mean_q": 0.12380952380952383,
+          "H1": true,
+          "n_units": 96,
+          "status": "ok"
+        },
+        "LP": {
+          "status": "insufficient_units",
+          "n_units": 0
+        }
+      },
+      "elapsed_s": 54.0
+    },
+    {
+      "session": "sub-726298249_ses-754829445",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.8064034922476929,
+          "n_active": 118,
+          "mean_q": 0.4961016949152542,
+          "H1": true,
+          "n_units": 195,
+          "status": "ok"
+        },
+        "VISl": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISal": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISam": {
+          "r_kappa": 0.7316567211462629,
+          "n_active": 105,
+          "mean_q": 0.1100952380952381,
+          "H1": true,
+          "n_units": 97,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.4030103807649054,
+          "n_active": 80,
+          "mean_q": 0.03825,
+          "H1": false,
+          "n_units": 88,
+          "status": "ok"
+        },
+        "LP": {
+          "r_kappa": 0.5426913153021307,
+          "n_active": 105,
+          "mean_q": 0.07980952380952382,
+          "H1": true,
+          "n_units": 293,
+          "status": "ok"
+        }
+      },
+      "elapsed_s": 63.5
+    },
+    {
+      "session": "sub-730756767_ses-757970808",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.8239361190641058,
+          "n_active": 118,
+          "mean_q": 0.46610169491525416,
+          "H1": true,
+          "n_units": 193,
+          "status": "ok"
+        },
+        "VISl": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISal": {
+          "r_kappa": 0.7399330597210119,
+          "n_active": 104,
+          "mean_q": 0.10846153846153847,
+          "H1": true,
+          "n_units": 148,
+          "status": "ok"
+        },
+        "VISam": {
+          "r_kappa": 0.8042855950281502,
+          "n_active": 118,
+          "mean_q": 0.2501694915254238,
+          "H1": true,
+          "n_units": 142,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.7308374493710432,
+          "n_active": 104,
+          "mean_q": 0.1105769230769231,
+          "H1": true,
+          "n_units": 131,
+          "status": "ok"
+        },
+        "LP": {
+          "r_kappa": 0.42376872363130286,
+          "n_active": 78,
+          "mean_q": 0.04692307692307693,
+          "H1": false,
+          "n_units": 118,
+          "status": "ok"
+        }
+      },
+      "elapsed_s": 69.8
+    },
+    {
+      "session": "sub-730760263_ses-755434585",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.7846512465369657,
+          "n_active": 118,
+          "mean_q": 0.4305084745762712,
+          "H1": true,
+          "n_units": 184,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.7539753937351696,
+          "n_active": 117,
+          "mean_q": 0.2193162393162394,
+          "H1": true,
+          "n_units": 110,
+          "status": "ok"
+        },
+        "VISal": {
+          "r_kappa": 0.7365890306962519,
+          "n_active": 113,
+          "mean_q": 0.16300884955752215,
+          "H1": true,
+          "n_units": 89,
+          "status": "ok"
+        },
+        "VISam": {
+          "r_kappa": 0.7167294150837862,
+          "n_active": 115,
+          "mean_q": 0.1511304347826087,
+          "H1": true,
+          "n_units": 172,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.2168568742518383,
+          "n_active": 75,
+          "mean_q": 0.037866666666666667,
+          "H1": false,
+          "n_units": 108,
+          "status": "ok"
+        },
+        "LP": {
+          "status": "insufficient_units",
+          "n_units": 43
+        }
+      },
+      "elapsed_s": 67.6
+    },
+    {
+      "session": "sub-732548371_ses-751348571",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.7722970609739005,
+          "n_active": 118,
+          "mean_q": 0.22186440677966104,
+          "H1": true,
+          "n_units": 119,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.8024039268185621,
+          "n_active": 116,
+          "mean_q": 0.19810344827586207,
+          "H1": true,
+          "n_units": 56,
+          "status": "ok"
+        },
+        "VISal": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISam": {
+          "r_kappa": 0.7691542454609457,
+          "n_active": 104,
+          "mean_q": 0.11153846153846156,
+          "H1": true,
+          "n_units": 135,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.7468943608973753,
+          "n_active": 110,
+          "mean_q": 0.1398181818181818,
+          "H1": true,
+          "n_units": 231,
+          "status": "ok"
+        },
+        "LP": {
+          "r_kappa": 0.5238211306349755,
+          "n_active": 87,
+          "mean_q": 0.046666666666666676,
+          "H1": true,
+          "n_units": 268,
+          "status": "ok"
+        }
+      },
+      "elapsed_s": 88.1
+    },
+    {
+      "session": "sub-733457986_ses-757216464",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.8009030023913615,
+          "n_active": 118,
+          "mean_q": 0.4466101694915254,
+          "H1": true,
+          "n_units": 205,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.8217179452320982,
+          "n_active": 118,
+          "mean_q": 0.4093220338983051,
+          "H1": true,
+          "n_units": 126,
+          "status": "ok"
+        },
+        "VISal": {
+          "r_kappa": 0.8118177978181812,
+          "n_active": 115,
+          "mean_q": 0.23652173913043478,
+          "H1": true,
+          "n_units": 106,
+          "status": "ok"
+        },
+        "VISam": {
+          "r_kappa": 0.8028652939999106,
+          "n_active": 106,
+          "mean_q": 0.11245283018867924,
+          "H1": true,
+          "n_units": 122,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.49053447034215586,
+          "n_active": 89,
+          "mean_q": 0.06719101123595506,
+          "H1": false,
+          "n_units": 70,
+          "status": "ok"
+        },
+        "LP": {
+          "r_kappa": 0.633064107073499,
+          "n_active": 117,
+          "mean_q": 0.16957264957264961,
+          "H1": true,
+          "n_units": 230,
+          "status": "ok"
+        }
+      },
+      "elapsed_s": 138.9
+    },
+    {
+      "session": "sub-734865729_ses-756029989",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.8477057242692835,
+          "n_active": 118,
+          "mean_q": 0.4132203389830509,
+          "H1": true,
+          "n_units": 140,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.8562188866181126,
+          "n_active": 117,
+          "mean_q": 0.3051282051282052,
+          "H1": true,
+          "n_units": 98,
+          "status": "ok"
+        },
+        "VISal": {
+          "r_kappa": 0.8365176857697137,
+          "n_active": 118,
+          "mean_q": 0.2889830508474576,
+          "H1": true,
+          "n_units": 104,
+          "status": "ok"
+        },
+        "VISam": {
+          "r_kappa": 0.7418418030366841,
+          "n_active": 113,
+          "mean_q": 0.13592920353982302,
+          "H1": true,
+          "n_units": 133,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.5909473703463496,
+          "n_active": 100,
+          "mean_q": 0.06280000000000001,
+          "H1": true,
+          "n_units": 59,
+          "status": "ok"
+        },
+        "LP": {
+          "r_kappa": 0.6522923169351977,
+          "n_active": 102,
+          "mean_q": 0.07176470588235292,
+          "H1": true,
+          "n_units": 85,
+          "status": "ok"
+        }
+      },
+      "elapsed_s": 92.5
+    },
+    {
+      "session": "sub-735109599_ses-758798717",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.7968832121359446,
+          "n_active": 118,
+          "mean_q": 0.5515254237288136,
+          "H1": true,
+          "n_units": 147,
+          "status": "ok"
+        },
+        "VISl": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISal": {
+          "r_kappa": 0.8578494660025976,
+          "n_active": 118,
+          "mean_q": 0.580677966101695,
+          "H1": true,
+          "n_units": 164,
+          "status": "ok"
+        },
+        "VISam": {
+          "r_kappa": 0.7588880328994384,
+          "n_active": 108,
+          "mean_q": 0.1364814814814815,
+          "H1": true,
+          "n_units": 99,
+          "status": "ok"
+        },
+        "VISrl": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "LP": {
+          "r_kappa": -0.15988304288935407,
+          "n_active": 41,
+          "mean_q": 0.02682926829268293,
+          "H1": false,
+          "n_units": 72,
+          "status": "ok"
+        }
+      },
+      "elapsed_s": 71.2
+    },
+    {
+      "session": "sub-738651046_ses-760693773",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.5991437487388915,
+          "n_active": 118,
+          "mean_q": 0.8047457627118644,
+          "H1": true,
+          "n_units": 181,
+          "status": "ok"
+        },
+        "VISl": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISal": {
+          "r_kappa": 0.8721198957343208,
+          "n_active": 118,
+          "mean_q": 0.3452542372881356,
+          "H1": true,
+          "n_units": 239,
+          "status": "ok"
+        },
+        "VISam": {
+          "r_kappa": 0.8571067543867961,
+          "n_active": 118,
+          "mean_q": 0.26915254237288133,
+          "H1": true,
+          "n_units": 128,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.7555017429808455,
+          "n_active": 114,
+          "mean_q": 0.1836842105263158,
+          "H1": true,
+          "n_units": 119,
+          "status": "ok"
+        },
+        "LP": {
+          "status": "insufficient_units",
+          "n_units": 0
+        }
+      },
+      "elapsed_s": 82.3
+    },
+    {
+      "session": "sub-742602884_ses-763673393",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.847114004883389,
+          "n_active": 118,
+          "mean_q": 0.45322033898305086,
+          "H1": true,
+          "n_units": 145,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.7289563060035742,
+          "n_active": 113,
+          "mean_q": 0.15008849557522125,
+          "H1": true,
+          "n_units": 89,
+          "status": "ok"
+        },
+        "VISal": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "VISam": {
+          "r_kappa": 0.7718639656380616,
+          "n_active": 114,
+          "mean_q": 0.18087719298245614,
+          "H1": true,
+          "n_units": 174,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.6965989641399238,
+          "n_active": 112,
+          "mean_q": 0.11339285714285717,
+          "H1": true,
+          "n_units": 137,
+          "status": "ok"
+        },
+        "LP": {
+          "status": "insufficient_units",
+          "n_units": 7
+        }
+      },
+      "elapsed_s": 75.2
+    },
+    {
+      "session": "sub-745276220_ses-762120172",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.7975184586337716,
+          "n_active": 118,
+          "mean_q": 0.5950847457627119,
+          "H1": true,
+          "n_units": 189,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.7130603685391212,
+          "n_active": 117,
+          "mean_q": 0.18239316239316244,
+          "H1": true,
+          "n_units": 141,
+          "status": "ok"
+        },
+        "VISal": {
+          "r_kappa": 0.8183349573939348,
+          "n_active": 114,
+          "mean_q": 0.14228070175438598,
+          "H1": true,
+          "n_units": 183,
+          "status": "ok"
+        },
+        "VISam": {
+          "r_kappa": 0.7031695323033472,
+          "n_active": 92,
+          "mean_q": 0.07652173913043478,
+          "H1": true,
+          "n_units": 61,
+          "status": "ok"
+        },
+        "VISrl": {
+          "status": "insufficient_units",
+          "n_units": 0
+        },
+        "LP": {
+          "status": "insufficient_units",
+          "n_units": 0
+        }
+      },
+      "elapsed_s": 77.5
+    },
+    {
+      "session": "sub-769360771_ses-791319847",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.8667586980054177,
+          "n_active": 118,
+          "mean_q": 0.4745762711864407,
+          "H1": true,
+          "n_units": 190,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.7207753985830133,
+          "n_active": 111,
+          "mean_q": 0.11063063063063062,
+          "H1": true,
+          "n_units": 124,
+          "status": "ok"
+        },
+        "VISal": {
+          "r_kappa": 0.7931241642274961,
+          "n_active": 116,
+          "mean_q": 0.17034482758620692,
+          "H1": true,
+          "n_units": 97,
+          "status": "ok"
+        },
+        "VISam": {
+          "r_kappa": 0.792948561683466,
+          "n_active": 109,
+          "mean_q": 0.14844036697247706,
+          "H1": true,
+          "n_units": 116,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.7595040677643904,
+          "n_active": 110,
+          "mean_q": 0.11818181818181818,
+          "H1": true,
+          "n_units": 124,
+          "status": "ok"
+        },
+        "LP": {
+          "status": "insufficient_units",
+          "n_units": 40
+        }
+      },
+      "elapsed_s": 118.0
+    },
+    {
+      "session": "sub-772616820_ses-799864342",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.8486406128403285,
+          "n_active": 118,
+          "mean_q": 0.519322033898305,
+          "H1": true,
+          "n_units": 155,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.7932567774482722,
+          "n_active": 117,
+          "mean_q": 0.25931623931623937,
+          "H1": true,
+          "n_units": 88,
+          "status": "ok"
+        },
+        "VISal": {
+          "r_kappa": 0.8579753356232449,
+          "n_active": 118,
+          "mean_q": 0.18728813559322036,
+          "H1": true,
+          "n_units": 119,
+          "status": "ok"
+        },
+        "VISam": {
+          "r_kappa": 0.8245660982173929,
+          "n_active": 118,
+          "mean_q": 0.298135593220339,
+          "H1": true,
+          "n_units": 77,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.634341354695934,
+          "n_active": 98,
+          "mean_q": 0.07877551020408163,
+          "H1": true,
+          "n_units": 74,
+          "status": "ok"
+        },
+        "LP": {
+          "r_kappa": 0.3572323222905676,
+          "n_active": 103,
+          "mean_q": 0.06640776699029126,
+          "H1": false,
+          "n_units": 116,
+          "status": "ok"
+        }
+      },
+      "elapsed_s": 80.4
+    },
+    {
+      "session": "sub-775876808_ses-798911424",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.8408038378123857,
+          "n_active": 118,
+          "mean_q": 0.460677966101695,
+          "H1": true,
+          "n_units": 200,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.8422043072480013,
+          "n_active": 118,
+          "mean_q": 0.3450847457627119,
+          "H1": true,
+          "n_units": 145,
+          "status": "ok"
+        },
+        "VISal": {
+          "r_kappa": 0.8729861260838804,
+          "n_active": 118,
+          "mean_q": 0.3698305084745762,
+          "H1": true,
+          "n_units": 175,
+          "status": "ok"
+        },
+        "VISam": {
+          "r_kappa": 0.8175429231512362,
+          "n_active": 110,
+          "mean_q": 0.12745454545454543,
+          "H1": true,
+          "n_units": 264,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.7589598648473717,
+          "n_active": 106,
+          "mean_q": 0.09566037735849058,
+          "H1": true,
+          "n_units": 102,
+          "status": "ok"
+        },
+        "LP": {
+          "r_kappa": 0.5245060869240932,
+          "n_active": 103,
+          "mean_q": 0.08970873786407765,
+          "H1": true,
+          "n_units": 123,
+          "status": "ok"
+        }
+      },
+      "elapsed_s": 108.8
+    },
+    {
+      "session": "sub-776061236_ses-797828357",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.7776724559909439,
+          "n_active": 118,
+          "mean_q": 0.27084745762711865,
+          "H1": true,
+          "n_units": 190,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.542452054180471,
+          "n_active": 108,
+          "mean_q": 0.1190740740740741,
+          "H1": true,
+          "n_units": 135,
+          "status": "ok"
+        },
+        "VISal": {
+          "r_kappa": 0.48002022218738083,
+          "n_active": 82,
+          "mean_q": 0.042682926829268296,
+          "H1": false,
+          "n_units": 121,
+          "status": "ok"
+        },
+        "VISam": {
+          "r_kappa": 0.5674060343756544,
+          "n_active": 85,
+          "mean_q": 0.06870588235294117,
+          "H1": true,
+          "n_units": 144,
+          "status": "ok"
+        },
+        "VISrl": {
+          "status": "insufficient_units",
+          "n_units": 29
+        },
+        "LP": {
+          "r_kappa": 0.7921964595434665,
+          "n_active": 111,
+          "mean_q": 0.15513513513513516,
+          "H1": true,
+          "n_units": 142,
+          "status": "ok"
+        }
+      },
+      "elapsed_s": 97.7
     }
   ],
-  "status": "in_progress"
+  "status": "complete"
 }

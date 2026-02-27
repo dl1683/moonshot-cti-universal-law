@@ -36,6 +36,8 @@ memory/
 *.env
 .env*
 secrets/
+REHYDRATE.md
+STARTUP_PROMPT.md
 
 # OS / editor
 .DS_Store
