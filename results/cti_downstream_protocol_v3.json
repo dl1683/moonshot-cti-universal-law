@@ -1,5 +1,5 @@
 {
-  "experiment": "cti_downstream_protocol_v2",
+  "experiment": "cti_downstream_protocol_v3",
   "preregistration": "H1_existing, H1_new, H2, H3 (committed before run)",
   "thresholds": {
     "mean_spearman_rho": 0.5,
