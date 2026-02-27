@@ -1,0 +1,57 @@
+CTI ALLEN EQUICORRELATION MULTI-AREA TEST
+Reference (VISp, 5 sessions): rho=0.466, CV=1.6%
+LM decoders: rho=0.452, simplex: rho=0.500
+Found 32 DANDI sessions
+
+--- sub-699733573_ses-715093703 ---
+  Loading sub-699733573_ses-715093703...
+    VISp: rho=0.4177 +/- 0.2234, d_eff=1.717
+    VISl: rho=0.4501 +/- 0.1725, d_eff=1.819
+    VISam: rho=0.4649 +/- 0.1625, d_eff=1.869
+    VISrl: rho=0.4319 +/- 0.2022, d_eff=1.760
+
+--- sub-718643564_ses-737581020 ---
+  Loading sub-718643564_ses-737581020...
+    VISp: rho=0.4414 +/- 0.1836, d_eff=1.790
+    VISl: rho=0.4252 +/- 0.2164, d_eff=1.740
+    VISrl: rho=0.4536 +/- 0.1734, d_eff=1.830
+
+--- sub-726170927_ses-746083955 ---
+  Loading sub-726170927_ses-746083955...
+    VISp: rho=0.4123 +/- 0.2284, d_eff=1.702
+    VISl: rho=0.4444 +/- 0.1856, d_eff=1.800
+    VISal: rho=0.4400 +/- 0.1976, d_eff=1.786
+    VISrl: rho=0.4410 +/- 0.1916, d_eff=1.789
+
+--- sub-734865729_ses-756029989 ---
+  Loading sub-734865729_ses-756029989...
+    VISp: rho=0.4164 +/- 0.2177, d_eff=1.713
+    VISl: rho=0.4356 +/- 0.1992, d_eff=1.772
+    VISal: rho=0.4445 +/- 0.1789, d_eff=1.800
+    VISam: rho=0.4512 +/- 0.1741, d_eff=1.822
+    VISrl: rho=0.4660 +/- 0.1501, d_eff=1.873
+
+--- sub-738651046_ses-760693773 ---
+  Loading sub-738651046_ses-760693773...
+    VISp: rho=0.4537 +/- 0.1682, d_eff=1.831
+    VISal: rho=0.4694 +/- 0.1404, d_eff=1.884
+    VISam: rho=0.4708 +/- 0.1512, d_eff=1.889
+    VISrl: rho=0.4468 +/- 0.1780, d_eff=1.808
+
+============================================================
+EQUICORRELATION MULTI-AREA SUMMARY
+============================================================
+  VISp: n=5, mean_rho=0.4283 +/- 0.0163
+  VISl: n=4, mean_rho=0.4388 +/- 0.0094
+  VISal: n=3, mean_rho=0.4513 +/- 0.0129
+  VISam: n=3, mean_rho=0.4623 +/- 0.0082
+  VISrl: n=5, mean_rho=0.4479 +/- 0.0116
+
+  Hierarchy Spearman rho=-0.700, p=0.188 (FAIL)
+
+  H_equicorr1 (preservation): PASS
+  H_equicorr_alt (degradation): FAIL
+
+  VISp rho this run: 0.4283 (prior run: 0.466, LM: 0.452, simplex: 0.500)
+
+Saved to C:\Users\devan\OneDrive\Desktop\Projects\AI Moonshots\moonshot-cti-universal-law\results\cti_allen_equicorr_multiarea.json

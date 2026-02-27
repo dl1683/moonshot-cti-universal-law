@@ -1,0 +1,105 @@
+{
+  "sessions": [
+    {
+      "session": "sub-707296975_ses-721123822",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.8120626832756388,
+          "n_active": 118,
+          "mean_q": 0.2916949152542373,
+          "H1": true,
+          "n_units": 110,
+          "status": "ok"
+        },
+        "VISl": {
+          "r_kappa": 0.8684269227806848,
+          "n_active": 117,
+          "mean_q": 0.2745299145299145,
+          "H1": true,
+          "n_units": 95,
+          "status": "ok"
+        },
+        "VISal": {
+          "r_kappa": 0.8045226855856031,
+          "n_active": 115,
+          "mean_q": 0.1801739130434783,
+          "H1": true,
+          "n_units": 139,
+          "status": "ok"
+        },
+        "VISam": {
+          "r_kappa": 0.8705123052079418,
+          "n_active": 117,
+          "mean_q": 0.23931623931623933,
+          "H1": true,
+          "n_units": 92,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.6901014095122443,
+          "n_active": 101,
+          "mean_q": 0.09425742574257426,
+          "H1": true,
+          "n_units": 89,
+          "status": "ok"
+        },
+        "LP": {
+          "r_kappa": 0.6445832164220676,
+          "n_active": 118,
+          "mean_q": 0.18067796610169495,
+          "H1": true,
+          "n_units": 180,
+          "status": "ok"
+        }
+      },
+      "elapsed_s": 77.7
+    },
+    {
+      "session": "sub-719828686_ses-754312389",
+      "areas": {
+        "VISp": {
+          "r_kappa": 0.7608771080073403,
+          "n_active": 118,
+          "mean_q": 0.2415254237288136,
+          "H1": true,
+          "n_units": 202,
+          "status": "ok"
+        },
+        "VISl": {
+          "status": "insufficient_units",
+          "n_units": 26
+        },
+        "VISal": {
+          "r_kappa": 0.7302262983586593,
+          "n_active": 99,
+          "mean_q": 0.07474747474747476,
+          "H1": true,
+          "n_units": 73,
+          "status": "ok"
+        },
+        "VISam": {
+          "r_kappa": 0.7590522296115277,
+          "n_active": 115,
+          "mean_q": 0.17878260869565216,
+          "H1": true,
+          "n_units": 115,
+          "status": "ok"
+        },
+        "VISrl": {
+          "r_kappa": 0.5720254128705144,
+          "n_active": 79,
+          "mean_q": 0.05974683544303796,
+          "H1": true,
+          "n_units": 83,
+          "status": "ok"
+        },
+        "LP": {
+          "status": "insufficient_units",
+          "n_units": 0
+        }
+      },
+      "elapsed_s": 66.0
+    }
+  ],
+  "status": "in_progress"
+}

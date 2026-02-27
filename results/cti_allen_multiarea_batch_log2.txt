@@ -1,0 +1,7 @@
+CTI ALLEN MULTI-AREA BATCH VALIDATION
+Pre-registered hypotheses: H_area1, H_area2, H_area3, H_hierarchy
+Sessions to process: 30
+Fetching DANDI asset list...
+  Found 32 DANDI sessions
+
+[1/30] sub-707296975_ses-721123822

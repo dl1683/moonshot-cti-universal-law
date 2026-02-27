@@ -150,16 +150,13 @@ def process_session_equicorr(url, session_key):
                  if quality is not None
                  else np.ones(len(units["id"][:]), dtype=bool))
 
-    area_field = None
-    for fname in ["location", "ecephys_structure_acronym", "brain_area"]:
-        if fname in units:
-            area_field = fname
-            break
-    if area_field is None:
-        f.close()
-        return None, "no_area_field"
-
-    area_labels = units[area_field][:].astype(str)
+    # Get area labels via peak_channel_id -> electrodes["location"] join
+    elec_table = f["general"]["extracellular_ephys"]["electrodes"]
+    elec_ids = elec_table["id"][:]
+    elec_locs = elec_table["location"][:].astype(str)
+    id_to_loc = {int(eid): loc for eid, loc in zip(elec_ids, elec_locs)}
+    peak_cids = units["peak_channel_id"][:]
+    area_labels = np.array([id_to_loc.get(int(pc), "") for pc in peak_cids])
     all_spike_times = units["spike_times"][:]
     all_idx = units["spike_times_index"][:]
     f.close()
