@@ -1,0 +1,206 @@
+{
+  "experiment": "cti_alpha_family_law",
+  "preregistration": "H_alpha1, H_alpha2, H_alpha3, H_alpha4 (pre-registered before run)",
+  "framing": "Alpha is an architectural constant, not a universal constant. The form (logit-linear in kappa) is universal. The slope alpha encodes the kappa-to-logit sensitivity of the architecture family.",
+  "nlp_family_results": {
+    "gpt_decoder": {
+      "alpha": 1.597186921263694,
+      "ci_lo": 1.2704891672582184,
+      "ci_hi": 1.9102734005573039,
+      "se": 0.1600958743134175,
+      "r2_within": 0.41573885288659207,
+      "n_points": 112,
+      "n_datasets": 4,
+      "cv": 0.10023615406689505
+    },
+    "qwen_decoder": {
+      "alpha": 1.4502023269012336,
+      "ci_lo": 1.162801246502358,
+      "ci_hi": 1.7522749135397566,
+      "se": 0.1516500213496609,
+      "r2_within": 0.6387521181752343,
+      "n_points": 48,
+      "n_datasets": 4,
+      "cv": 0.10457163013501974
+    },
+    "hybrid": {
+      "alpha": 1.808403165612676,
+      "ci_lo": 0.8184673080571934,
+      "ci_hi": 2.545475275987816,
+      "se": 0.4350208947459949,
+      "r2_within": 0.5104082292144256,
+      "n_points": 16,
+      "n_datasets": 4,
+      "cv": 0.24055526058461207
+    },
+    "ssm_rwkv": {
+      "alpha": 1.2566475250465334,
+      "ci_lo": 0.5484463525508019,
+      "ci_hi": 1.8892263235379272,
+      "se": 0.34023623359099936,
+      "r2_within": 0.27671427358790446,
+      "n_points": 16,
+      "n_datasets": 4,
+      "cv": 0.27074913753432983
+    }
+  },
+  "vit_results": {
+    "per_model": {
+      "vit-base-patch16-224": {
+        "alpha": 3.2827143397710996,
+        "ci_lo": 0.8957222157668676,
+        "ci_hi": 4.027030952249272,
+        "se": 0.8309303568292328,
+        "n_points": 12,
+        "cv": 0.2531229558302574
+      },
+      "vit-large-patch16-224": {
+        "alpha": 5.002066335098289,
+        "ci_lo": 3.9784939310894316,
+        "ci_hi": 5.652320959614456,
+        "se": 0.4282684803246409,
+        "n_points": 24,
+        "cv": 0.08561831283995266
+      }
+    },
+    "combined": {
+      "alpha": 4.488790090311718,
+      "ci_lo": 3.5829068428274358,
+      "ci_hi": 5.082471036431469,
+      "se": 0.38761752371503055,
+      "n_points": 36,
+      "cv": 0.08635233903042967
+    }
+  },
+  "cnn_results": {
+    "alpha": 4.0263002339271114,
+    "ci_lo": 3.070795071254059,
+    "ci_hi": 4.981805396600164,
+    "se": 0.4777525813365261,
+    "n_points": 4,
+    "cv": 0.11865796229272822,
+    "note": "4 layers only; CI is approximate (mean +/- 2*std); treat as descriptive"
+  },
+  "slope_law_summary": {
+    "NLP_gpt_decoder": {
+      "alpha": 1.597186921263694,
+      "ci": [
+        1.2704891672582184,
+        1.9102734005573039
+      ],
+      "cv": 0.10023615406689505,
+      "method": "per-dataset demeaned OLS, bootstrap CI"
+    },
+    "NLP_canonical_perds": {
+      "alpha": 1.4773,
+      "source": "cti_kappa_loao_per_dataset.json",
+      "method": "per-dataset intercept fit, 12 archs x 4 datasets"
+    },
+    "NLP_rwkv_ssm": {
+      "alpha": 1.2566475250465334,
+      "ci": [
+        0.5484463525508019,
+        1.8892263235379272
+      ],
+      "cv": 0.27074913753432983,
+      "method": "per-dataset demeaned OLS, bootstrap CI"
+    },
+    "NLP_qwen_decoder": {
+      "alpha": 1.4502023269012336,
+      "ci": [
+        1.162801246502358,
+        1.7522749135397566
+      ],
+      "method": "per-dataset demeaned OLS, bootstrap CI"
+    },
+    "NLP_hybrid_falcon": {
+      "alpha": 1.808403165612676,
+      "ci": [
+        0.8184673080571934,
+        2.545475275987816
+      ],
+      "method": "per-dataset demeaned OLS, bootstrap CI"
+    },
+    "ViT_combined": {
+      "alpha": 4.488790090311718,
+      "ci": [
+        3.5829068428274358,
+        5.082471036431469
+      ],
+      "cv": 0.08635233903042967,
+      "method": "per-layer simple OLS, bootstrap CI (DIFFERENT setup from NLP)",
+      "note": "cross-modal comparison is descriptive only"
+    },
+    "CNN_resnet50": {
+      "alpha": 4.0263002339271114,
+      "ci": [
+        3.070795071254059,
+        4.981805396600164
+      ],
+      "cv": 0.11865796229272822,
+      "method": "per-layer alphas, only 4 layers (descriptive)",
+      "note": "wide CI due to n=4 layers only"
+    }
+  },
+  "hypothesis_results": {
+    "H_alpha1": {
+      "family": "gpt_decoder",
+      "alpha": 1.597186921263694,
+      "cv": 0.10023615406689505,
+      "ci": [
+        1.2704891672582184,
+        1.9102734005573039
+      ],
+      "PASS": false
+    },
+    "H_alpha2": {
+      "gpt_ci": [
+        1.2704891672582184,
+        1.9102734005573039
+      ],
+      "rwkv_ci": [
+        0.5484463525508019,
+        1.8892263235379272
+      ],
+      "gpt_alpha": 1.597186921263694,
+      "rwkv_alpha": 1.2566475250465334,
+      "CIs_overlap": true,
+      "PASS": false
+    },
+    "H_alpha3": {
+      "families_with_CIs": [
+        "gpt_decoder",
+        "qwen_decoder",
+        "hybrid",
+        "ssm_rwkv",
+        "ViT"
+      ],
+      "non_overlapping_pairs": [
+        [
+          "gpt_decoder",
+          "ViT"
+        ],
+        [
+          "qwen_decoder",
+          "ViT"
+        ],
+        [
+          "hybrid",
+          "ViT"
+        ],
+        [
+          "ssm_rwkv",
+          "ViT"
+        ]
+      ],
+      "n_distinct_families_non_overlapping": 5,
+      "PASS": true
+    },
+    "H_alpha4": {
+      "vit_cv": 0.08635233903042967,
+      "n_points": 36,
+      "PASS": true
+    }
+  },
+  "honest_scope": "NLP families use per-dataset debiased OLS (multi-dataset, multi-architecture). ViT uses per-layer simple OLS (single dataset, 2 models). CNN uses mean of 4 per-layer alphas. Cross-modal comparisons are descriptive; the large magnitude difference (NLP ~1.5 vs ViT ~8.0) is robust to methodological differences."
+}

@@ -390,7 +390,9 @@ def main():
         a = v.get("alpha")
         ci = v.get("ci", [None, None])
         if a is not None:
-            print(f"    {fam:35s}: alpha={a:.4f}  CI=[{ci[0]:.4f}, {ci[1]:.4f}]", flush=True)
+            ci0 = f"{ci[0]:.4f}" if ci[0] is not None else "N/A"
+            ci1 = f"{ci[1]:.4f}" if ci[1] is not None else "N/A"
+            print(f"    {fam:35s}: alpha={a:.4f}  CI=[{ci0}, {ci1}]", flush=True)
 
     # ======================================================
     # OUTPUT
