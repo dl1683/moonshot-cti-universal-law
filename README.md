@@ -35,7 +35,7 @@ The functional form is derived from **extreme value theory** (Gumbel race) befor
 
 ## Paper
 
-`paper/cti_universal_law.pdf` — submitted to COLM 2026
+`paper/cti_universal_law.pdf` — 25 pages
 
 ## Structure
 
