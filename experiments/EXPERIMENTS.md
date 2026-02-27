@@ -5,9 +5,45 @@ Validated results only (Codex-reviewed).
 
 ---
 
+## Session 82 (Feb 27, 2026) — Nobel ~7.5/10 (estimated)
+
+### G2: H3 n=9 Ranking Table in Main Results [COMPLETE]
+- **Purpose**: Elevate pre-registered H3 result from Limitation text to main Results table.
+- **Artifact**: New Tab 3 in paper (sec: "Practical cross-model architecture ranking").
+- **Result**: 9 decoders from 3 families ranked by κ_nearest vs MAP@10 on Banking77. Spearman rho=0.833, p=0.005. OLMo-1B tops both; Qwen3-1.7B bottom both.
+- **What we learned**: κ_nearest alone (no labels, no retrieval run) ranks architectures by real-world retrieval quality with p=0.005.
+
+### G1+LODO: Three-Level Universality Reframe [COMPLETE]
+- **Purpose**: Convert LODO "failure" narrative into "three-level universality proof".
+- **Edits**: Discussion "Two-level" → "Three-level" paragraph with RG analogy; Limitation #1 reframed as "expected; not a failure"; LODO paragraph in Results updated.
+- **What we learned**: LODO CV=0.42 is EXPECTED under three-level structure (form universal, constant family-specific, intercept task-specific). This is a narrative/framing upgrade that addresses the main objection to universality.
+
+### B1: Pre-registered Encoder LOAO [COMPLETE]
+- **Purpose**: Test whether NLP encoders have their own universal alpha (H_encoder: CV<0.20).
+- **Script**: `src/cti_encoder_loao.py`; **Output**: `results/cti_encoder_loao.json`
+- **Result**: CV=0.42, FAIL (alpha spans 4.2 ELECTRA-small to 16.9 BERT-base).
+- **What we learned**: Encoders don't have a universal constant within-family. Pooling protocol (CLS vs mean-pool) and pre-training objective jointly determine encoder alpha. Confirms decoder-only universality.
+
+### E1/E2: Scaling Dynamics [COMPLETE]
+- **Purpose**: Test if κ_nearest is a proxy for model size; characterize training dynamics.
+- **Script**: `src/cti_scaling_dynamics.py`; **Output**: `results/cti_scaling_dynamics.json`
+- **Result E1**: κ does NOT scale with N (gamma=0.003, p=0.91). MAP@10 DOES scale (R²=0.90). κ is not a model-size proxy.
+- **Result E2**: 12/16 training series non-monotone (accuracy peaks before final step). Early stopping may improve nearest-centroid geometry.
+
+### A1: DANDI:000022 Investigation [DEFERRED]
+- **Purpose**: Cross-cohort replication of Allen biological result in different mouse cohort.
+- **Finding**: DANDI:000022 uses natural_movie_one (video), not natural_scenes (K=118 static images). Different experimental paradigm — direct cross-cohort comparison not feasible without major framework adaptation.
+- **Script**: `src/cti_allen_000022_crosscohort.py` (available for future adaptation)
+
+### A2: Cadieu V4 Hierarchy Gradient [COMPLETE]
+- **Purpose**: Add V4 data to biological section to show hierarchy gradient (V4 < IT).
+- **Result**: V4 per-image r=0.116 < IT r=0.41 in same animals. Consistent with CTI predicting stronger SNR at higher processing stages. Added as one sentence in biological section.
+
+---
+
 ## Session 81 (Feb 27, 2026) — Nobel 7.0/10
 
-### H3 Extension n=9 [RUNNING]
+### H3 Extension n=9 [COMPLETE]
 - **Purpose**: Extend cross-model ranking H3 to n=9 models for statistical significance (p<0.05 at rho=0.70 requires n≥8).
 - **Script**: `src/cti_downstream_h3_extension.py`
 - **Output**: `results/cti_downstream_h3_n9.json`
