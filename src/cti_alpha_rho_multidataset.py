@@ -186,21 +186,25 @@ N_PCA = 256
 
 
 @torch.no_grad()
-def embed_model(model_id, model_short, text_list, layers):
-    """Return dict: layer_idx -> ndarray (N, d)."""
+def load_model_and_tokenizer(model_id, model_short):
+    """Load model once. Returns (model, tokenizer)."""
     trust = model_short in TRUST_REMOTE_CODE
-    print(f"    Loading {model_short}...", flush=True)
+    print(f"  Loading {model_short}...", flush=True)
     tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=trust)
     model = AutoModel.from_pretrained(
         model_id,
         output_hidden_states=True,
-        torch_dtype=torch.float16,
+        dtype=torch.float16,
         trust_remote_code=trust,
     ).to(DEVICE).eval()
-
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
+    return model, tokenizer
 
+
+@torch.no_grad()
+def embed_texts(model, tokenizer, model_short, text_list, layers):
+    """Embed texts using already-loaded model. Returns layer -> ndarray."""
     bs = MODEL_BATCH_SIZE.get(model_short, BATCH_SIZE)
     layer_embs = {l: [] for l in layers}
     for i in range(0, len(text_list), bs):
@@ -219,9 +223,6 @@ def embed_model(model_id, model_short, text_list, layers):
             mask3 = attn_mask.unsqueeze(-1)
             pooled = (h * mask3).sum(dim=1) / seq_len.squeeze(-1)
             layer_embs[l].append(pooled.cpu().numpy())
-
-    del model
-    torch.cuda.empty_cache()
     return {l: np.concatenate(layer_embs[l], axis=0) for l in layers}
 
 
@@ -290,35 +291,92 @@ def compute_kappa_nearest(embeddings, labels, classes):
 
 
 # ============================================================
-# BOOTSTRAP RHO
+# FAST BOOTSTRAP RHO (fit SVD once, recompute centroids per replicate)
 # ============================================================
+def precompute_svd(embeddings, labels, classes):
+    """Fit TruncatedSVD on full data. Returns V, sqrt_Lambda for fast rho."""
+    from sklearn.decomposition import TruncatedSVD
+
+    N, d = embeddings.shape
+    centroids = {}
+    for c in classes:
+        mask = labels == c
+        if mask.sum() >= 2:
+            centroids[c] = embeddings[mask].mean(0).astype(np.float64)
+
+    Xc_list = []
+    for c in classes:
+        mask = labels == c
+        if mask.sum() >= 2:
+            Xc_list.append((embeddings[mask] - centroids[c]).astype(np.float64))
+    Z = np.concatenate(Xc_list, axis=0)
+    N_total = len(Z)
+
+    n_comp = min(N_PCA, d, N_total - 1)
+    svd = TruncatedSVD(n_components=n_comp, random_state=42)
+    svd.fit(Z)
+    V = svd.components_.T
+    Lambda = (svd.singular_values_ ** 2) / N_total
+    sqrt_Lambda = np.sqrt(Lambda + 1e-12)
+    return V, sqrt_Lambda
+
+
+def compute_rho_fast(embeddings, labels, classes, V, sqrt_Lambda):
+    """Compute rho using pre-computed SVD. ~100x faster than compute_rho."""
+    K_local = len(classes)
+
+    centroids = {}
+    for c in classes:
+        mask = labels == c
+        if mask.sum() >= 2:
+            centroids[c] = embeddings[mask].mean(0).astype(np.float64)
+    if len(centroids) < K_local:
+        return float("nan")
+
+    centroid_array = np.array([centroids[c] for c in classes])
+
+    rho_per_class = []
+    for i_c, c in enumerate(classes):
+        other_idx = [i for i in range(K_local) if i != i_c]
+        deltas = centroid_array[other_idx] - centroids[c]
+        proj     = deltas @ V
+        whitened = proj * sqrt_Lambda[None, :]
+        norms    = np.linalg.norm(whitened, axis=1, keepdims=True)
+        norms    = np.maximum(norms, 1e-12)
+        w_norm   = whitened / norms
+        cos_mat  = w_norm @ w_norm.T
+        n_off = K_local - 1
+        off_vals = cos_mat[~np.eye(n_off, dtype=bool)]
+        rho_per_class.append(float(off_vals.mean()))
+
+    return float(np.mean(rho_per_class))
+
+
 def bootstrap_rho(embeddings, labels, classes, n_boot=200, frac=0.80, seed=42):
-    """Stratified bootstrap: sample frac of each class, compute rho."""
+    """Fast stratified bootstrap: fit SVD once, recompute centroids per rep."""
     rng = np.random.default_rng(seed)
     K_local = len(classes)
-    N = len(labels)
+
+    # Fit SVD once on full data
+    V, sqrt_Lambda = precompute_svd(embeddings, labels, classes)
 
     # Pre-compute class indices
     class_idx = {c: np.where(labels == c)[0] for c in classes}
 
     rho_boot = []
     n_invalid = 0
-    max_retries = 10
 
     for b in range(n_boot):
-        for retry in range(max_retries):
-            boot_idx = []
-            valid = True
-            for c in classes:
-                cidx = class_idx[c]
-                n_take = max(2, int(len(cidx) * frac))
-                if len(cidx) < 2:
-                    valid = False
-                    break
-                chosen = rng.choice(cidx, size=n_take, replace=False)
-                boot_idx.append(chosen)
-            if valid:
+        boot_idx = []
+        valid = True
+        for c in classes:
+            cidx = class_idx[c]
+            n_take = max(2, int(len(cidx) * frac))
+            if len(cidx) < 2:
+                valid = False
                 break
+            chosen = rng.choice(cidx, size=n_take, replace=False)
+            boot_idx.append(chosen)
         if not valid:
             n_invalid += 1
             continue
@@ -326,7 +384,7 @@ def bootstrap_rho(embeddings, labels, classes, n_boot=200, frac=0.80, seed=42):
         boot_idx = np.concatenate(boot_idx)
         emb_boot = embeddings[boot_idx]
         lab_boot = labels[boot_idx]
-        rho_val, _ = compute_rho(emb_boot, lab_boot, classes)
+        rho_val = compute_rho_fast(emb_boot, lab_boot, classes, V, sqrt_Lambda)
         if not np.isnan(rho_val):
             rho_boot.append(rho_val)
         else:
@@ -455,15 +513,16 @@ for model_short, model_id in MODELS.items():
     t0 = time.time()
 
     try:
-        # Embed all needed datasets while model is loaded
+        # Load model ONCE, embed all datasets, then free
+        model_obj, tokenizer = load_model_and_tokenizer(model_id, model_short)
+
         ds_embeddings = {}
         for ds_name in needed_ds:
             ds_info = dataset_cache[ds_name]
-            print(f"\n  Embedding {ds_name} (K={ds_info['K']}, "
+            print(f"  Embedding {ds_name} (K={ds_info['K']}, "
                   f"N={len(ds_info['texts'])})...", flush=True)
-            layer_embs = embed_model(model_id, model_short,
+            layer_embs = embed_texts(model_obj, tokenizer, model_short,
                                      ds_info["texts"], layers)
-            # Select best layer by kappa_nearest
             best_layer = max(
                 layers,
                 key=lambda l: compute_kappa_nearest(
@@ -475,28 +534,32 @@ for model_short, model_id in MODELS.items():
             }
             kappa = compute_kappa_nearest(
                 layer_embs[best_layer], ds_info["labels"], ds_info["classes"])
-            print(f"    best_layer={best_layer}, "
-                  f"kappa={kappa:.4f}", flush=True)
-            # Free layer embeddings except best
+            print(f"    best_layer={best_layer}, kappa={kappa:.4f}", flush=True)
             del layer_embs
 
-        # Now run bootstrap rho for each dataset (CPU-only, model unloaded)
+        # Free GPU
+        del model_obj, tokenizer
+        torch.cuda.empty_cache()
+        print(f"  Model freed. Running bootstrap (CPU)...", flush=True)
+
+        # Bootstrap rho for each dataset (CPU-only, fast SVD)
         if model_short not in model_dataset_results:
             model_dataset_results[model_short] = {}
 
         for ds_name in needed_ds:
             ds_info = dataset_cache[ds_name]
-            emb_data = ds_embeddings[ds_name]
-            emb = emb_data["emb"]
+            emb = ds_embeddings[ds_name]["emb"]
 
             # Point estimate
             rho_point, rho_std = compute_rho(
                 emb, ds_info["labels"], ds_info["classes"])
-            print(f"\n  {ds_name}: rho_point={rho_point:.4f} +/- {rho_std:.4f}",
+            print(f"  {ds_name}: rho_point={rho_point:.4f} +/- {rho_std:.4f}",
                   flush=True)
 
-            # Bootstrap
-            print(f"  Running {RHO_BOOT} bootstrap resamples...", flush=True)
+            # Fast bootstrap (SVD fitted once, centroids recomputed per rep)
+            print(f"  {ds_name}: Running {RHO_BOOT} bootstrap resamples...",
+                  flush=True)
+            t_boot = time.time()
             rho_boots, n_invalid = bootstrap_rho(
                 emb, ds_info["labels"], ds_info["classes"],
                 n_boot=RHO_BOOT, frac=RHO_BOOT_FRAC,
@@ -505,13 +568,13 @@ for model_short, model_id in MODELS.items():
             rho_boot_mean = float(np.mean(rho_boots)) if len(rho_boots) > 0 else float("nan")
             rho_boot_std  = float(np.std(rho_boots))  if len(rho_boots) > 0 else float("nan")
             print(f"    boot: mean={rho_boot_mean:.4f}, std={rho_boot_std:.4f}, "
-                  f"n_ok={len(rho_boots)}/{RHO_BOOT}, n_invalid={n_invalid}", flush=True)
+                  f"n_ok={len(rho_boots)}/{RHO_BOOT}, n_invalid={n_invalid}, "
+                  f"took {time.time()-t_boot:.1f}s", flush=True)
 
-            # alpha_pred per bootstrap replicate
             alpha_pred_boots = A_RENORM / np.sqrt(np.maximum(1.0 - rho_boots, 1e-6))
 
             model_dataset_results[model_short][ds_name] = {
-                "best_layer": emb_data["best_layer"],
+                "best_layer": ds_embeddings[ds_name]["best_layer"],
                 "K": ds_info["K"],
                 "rho_point": rho_point,
                 "rho_std": rho_std,
@@ -523,8 +586,6 @@ for model_short, model_id in MODELS.items():
             }
 
         del ds_embeddings
-        torch.cuda.empty_cache()
-
         elapsed = time.time() - t0
         print(f"\n  {model_short} done in {elapsed:.0f}s", flush=True)
 

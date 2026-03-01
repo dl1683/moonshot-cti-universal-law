@@ -1,0 +1,212 @@
+{
+  "experiment": "cti_alpha_rho_multidataset",
+  "date": "2026-03-01",
+  "description": "Multi-dataset alpha(rho) validation with bootstrap. Tests alpha = sqrt(4/pi)/sqrt(1-rho) across 3 datasets (AG News K=4, DBpedia K=14, Banking77 K=77) with 200 stratified bootstrap resamples per (model, dataset) pair. Includes Spearman disattenuation correction for measurement noise.",
+  "theory": {
+    "formula": "alpha = sqrt(4/pi) / sqrt(1 - rho)",
+    "A_renorm": 1.1283791670955126,
+    "datasets": [
+      "agnews",
+      "dbpedia",
+      "banking77"
+    ],
+    "K_values": {
+      "agnews": 4,
+      "dbpedia": 14,
+      "banking77": 77
+    }
+  },
+  "pre_registered_criteria": {
+    "H1_mae_max": 0.15,
+    "H2_raw_pearson_r_min": 0.7,
+    "H3_disatten_spearman_min": 0.7
+  },
+  "config": {
+    "n_boot_rho": 200,
+    "boot_frac": 0.8,
+    "n_boot_corr": 2000,
+    "seed": 42,
+    "n_pca": 256,
+    "n_samples_per_dataset": 2000
+  },
+  "aggregate": {
+    "N_models": 11,
+    "raw_pearson_r": -0.5461612407799171,
+    "raw_pearson_p": 0.08217382678953307,
+    "raw_spearman_r": -0.5181818181818182,
+    "raw_spearman_p": 0.10249153979096381,
+    "raw_mae": 0.06772672108164829,
+    "raw_rmse": 0.0784313854105027,
+    "mean_error": 0.06290578507711073,
+    "mean_rel_error": 0.0465135684472763,
+    "reliability_alpha_pred": 0.9978732313537703,
+    "reliability_alpha_loao": 1.0,
+    "disattenuated_spearman": -0.5187337250937211,
+    "disattenuated_spearman_bca_ci_95": [
+      -0.9070683620574662,
+      0.22505217234804206
+    ],
+    "pass_H1_mae": true,
+    "pass_H2_raw_r": false,
+    "pass_H3_disatten": false,
+    "alpha_pred_mean": 1.5397009024842263,
+    "alpha_loao_mean": 1.4767951174071157
+  },
+  "per_model": {
+    "pythia-160m": {
+      "rho_pooled": 0.46008283128717825,
+      "rho_pooled_std": 0.031381147605668826,
+      "rho_per_dataset": {
+        "agnews": 0.4916513534425854,
+        "dbpedia": 0.41728494504982905,
+        "banking77": 0.47131219536912006
+      },
+      "alpha_pred": 1.535647335172257,
+      "alpha_loao": 1.4781815666549367,
+      "error": 0.057465768517320326,
+      "abs_error": 0.057465768517320326,
+      "n_datasets": 3
+    },
+    "pythia-410m": {
+      "rho_pooled": 0.47366216398251654,
+      "rho_pooled_std": 0.009567028910204037,
+      "rho_per_dataset": {
+        "agnews": 0.4871826408606201,
+        "dbpedia": 0.46733734717191294,
+        "banking77": 0.4664665039150166
+      },
+      "alpha_pred": 1.5553307701653245,
+      "alpha_loao": 1.4822064340211247,
+      "error": 0.07312433614419978,
+      "abs_error": 0.07312433614419978,
+      "n_datasets": 3
+    },
+    "pythia-1b": {
+      "rho_pooled": 0.46938344706558066,
+      "rho_pooled_std": 0.011731809338889478,
+      "rho_per_dataset": {
+        "agnews": 0.4859735493790292,
+        "dbpedia": 0.46125987321949835,
+        "banking77": 0.4609169185982146
+      },
+      "alpha_pred": 1.5490472402103563,
+      "alpha_loao": 1.5006714261391747,
+      "error": 0.04837581407118163,
+      "abs_error": 0.04837581407118163,
+      "n_datasets": 3
+    },
+    "gpt-neo-125m": {
+      "rho_pooled": 0.47397265103420944,
+      "rho_pooled_std": 0.012271360253814097,
+      "rho_per_dataset": {
+        "agnews": 0.49129587125920393,
+        "dbpedia": 0.4662104598983792,
+        "banking77": 0.46441162194504515
+      },
+      "alpha_pred": 1.5557897185716452,
+      "alpha_loao": 1.393508486589556,
+      "error": 0.1622812319820892,
+      "abs_error": 0.1622812319820892,
+      "n_datasets": 3
+    },
+    "Qwen2.5-0.5B": {
+      "rho_pooled": 0.4603000479449449,
+      "rho_pooled_std": 0.011266904634432128,
+      "rho_per_dataset": {
+        "agnews": 0.4762316243785662,
+        "dbpedia": 0.45210325254892736,
+        "banking77": 0.4525652669073413
+      },
+      "alpha_pred": 1.535956335222916,
+      "alpha_loao": 1.4927446181347421,
+      "error": 0.04321171708817384,
+      "abs_error": 0.04321171708817384,
+      "n_datasets": 3
+    },
+    "OLMo-1B-hf": {
+      "rho_pooled": 0.46827388012933563,
+      "rho_pooled_std": 0.007738343494990177,
+      "rho_per_dataset": {
+        "agnews": 0.4791982197498865,
+        "dbpedia": 0.4622486446383162,
+        "banking77": 0.46337477599980414
+      },
+      "alpha_pred": 1.5474301772860124,
+      "alpha_loao": 1.5140706023037478,
+      "error": 0.033359574982264606,
+      "abs_error": 0.033359574982264606,
+      "n_datasets": 3
+    },
+    "TinyLlama-1.1B-intermediate-step-1431k-3T": {
+      "rho_pooled": 0.47400119957628567,
+      "rho_pooled_std": 0.008226911884975943,
+      "rho_per_dataset": {
+        "agnews": 0.48508752879087763,
+        "dbpedia": 0.47151468299485105,
+        "banking77": 0.46540138694312844
+      },
+      "alpha_pred": 1.5558319381789527,
+      "alpha_loao": 1.4421441537845692,
+      "error": 0.11368778439438354,
+      "abs_error": 0.11368778439438354,
+      "n_datasets": 3
+    },
+    "Qwen3-0.6B": {
+      "rho_pooled": 0.46364732546060994,
+      "rho_pooled_std": 0.011975843032587126,
+      "rho_per_dataset": {
+        "agnews": 0.479973277270227,
+        "dbpedia": 0.4593867459534391,
+        "banking77": 0.4515819531581638
+      },
+      "alpha_pred": 1.5407416899449478,
+      "alpha_loao": 1.4505801002120025,
+      "error": 0.0901615897329453,
+      "abs_error": 0.0901615897329453,
+      "n_datasets": 3
+    },
+    "Qwen3-1.7B": {
+      "rho_pooled": 0.4452202457127777,
+      "rho_pooled_std": 0.013579166348172921,
+      "rho_per_dataset": {
+        "agnews": 0.46270300859902397,
+        "dbpedia": 0.44336038949771966,
+        "banking77": 0.42959733904158953
+      },
+      "alpha_pred": 1.5149376442371356,
+      "alpha_loao": 1.4879568031801793,
+      "error": 0.026980841056956306,
+      "abs_error": 0.026980841056956306,
+      "n_datasets": 3
+    },
+    "Mistral-7B-v0.3": {
+      "rho_pooled": 0.46826272807524943,
+      "rho_pooled_std": 0.016627464134699548,
+      "rho_per_dataset": {
+        "agnews": 0.4864776922277716,
+        "dbpedia": 0.4720343048162245,
+        "banking77": 0.44627618718175216
+      },
+      "alpha_pred": 1.54741395017873,
+      "alpha_loao": 1.47758382427507,
+      "error": 0.06983012590366,
+      "abs_error": 0.06983012590366,
+      "n_datasets": 3
+    },
+    "rwkv-4-169m-pile": {
+      "rho_pooled": 0.4330451940181171,
+      "rho_pooled_std": 0.047396611071957695,
+      "rho_per_dataset": {
+        "agnews": 0.46904574182809355,
+        "dbpedia": 0.36607933495685985,
+        "banking77": 0.4640105052693979
+      },
+      "alpha_pred": 1.4985831281582136,
+      "alpha_loao": 1.5250982761831702,
+      "error": -0.02651514802495658,
+      "abs_error": 0.02651514802495658,
+      "n_datasets": 3
+    }
+  },
+  "elapsed_s": 5286.752948999405
+}
