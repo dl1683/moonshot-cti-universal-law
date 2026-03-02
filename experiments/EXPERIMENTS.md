@@ -5,6 +5,36 @@ Validated results only (Codex-reviewed).
 
 ---
 
+## Session 84 (Mar 1, 2026) — Nobel ~7.5/10
+
+### Multi-Dataset Alpha-Rho Validation with Bootstrap [COMPLETE]
+- **Purpose**: Test alpha(rho) = sqrt(4/pi)/sqrt(1-rho) across 3 datasets with bootstrap uncertainty.
+- **Script**: `src/cti_alpha_rho_multidataset.py`
+- **Output**: `results/cti_alpha_rho_multidataset.json`
+- **Pre-reg**: H1 MAE<0.15, H2 raw r>0.70, H3 disattenuated Spearman>0.70
+- **Result**: H1 MAE=0.068 **PASS**; H2 r=-0.546 **FAIL**; H3 disatten=-0.519 **FAIL**
+- **Key finding**: rho~0.46 is a universal structural constant (reliability=0.998), NOT a per-model predictor. Formula predicts mean alpha to +4.7% error with zero free parameters. Disattenuation cannot rescue per-model correlation.
+- **What we learned**: Alpha-rho formula is a mean-level geometric baseline. Per-model alpha variance requires higher-order centroid-overlap statistics (variance/skew of off-diagonal whitened cosines).
+
+### Paper Language Update [COMPLETE]
+- Abstract line 57: Updated to multi-dataset pooled values (1.540 vs 1.477, +4.7%)
+- Connection to theory (line 194+): Updated to 11 architectures, added monotonicity failure disclosure
+- Reframed as "mean-level geometric baseline" per Codex PR gate prescription
+
+---
+
+## Session 83 (Feb 28, 2026) — Nobel ~7.6/10
+
+### Alpha-Rho Derivation Validation [COMPLETE]
+- **Purpose**: Validate alpha(rho) = sqrt(4/pi)/sqrt(1-rho) across 11/12 LOAO NLP architectures on single dataset (DBpedia K=14).
+- **Script**: `src/cti_alpha_rho_derivation.py`
+- **Output**: `results/cti_alpha_rho_derivation.json`
+- **Result**: MAE=0.063 **PASS** (<0.15); Pearson r=-0.477 **FAIL** (>0.70)
+- **Key finding**: Mean prediction error 1.8% with zero free parameters (alpha_pred=1.519 vs alpha_loao=1.477). Per-model ranking inverted. Falcon-H1-0.5B-Base skipped (naive Mamba kernel).
+- **What we learned**: The formula predicts the MEAN alpha excellently but per-model rho does not rank per-model alpha. rho captures universal near-simplex geometry, not per-model deviations.
+
+---
+
 ## Session 82 (Feb 27, 2026) — Nobel ~7.5/10 (estimated)
 
 ### G2: H3 n=9 Ranking Table in Main Results [COMPLETE]
@@ -44,11 +74,11 @@ Validated results only (Codex-reviewed).
 ## Session 81 (Feb 27, 2026) — Nobel 7.0/10
 
 ### H3 Extension n=9 [COMPLETE]
-- **Purpose**: Extend cross-model ranking H3 to n=9 models for statistical significance (p<0.05 at rho=0.70 requires n≥8).
+- **Purpose**: Extend cross-model ranking H3 to n=9 models for statistical significance (p<0.05 at rho=0.70 requires n>=8).
 - **Script**: `src/cti_downstream_h3_extension.py`
 - **Output**: `results/cti_downstream_h3_n9.json`
 - **Pre-reg**: H3_extended: rho>0.50 AND p<0.05 two-sided
-- **Status**: RUNNING (adding OLMo-1B, TinyLlama-1.1B, Qwen3-0.6B, Qwen3-1.7B to existing n=5)
+- **Result**: Spearman rho=0.833, p=0.005. **PASS** on both criteria. OLMo-1B tops both kappa and MAP@10; Qwen3-1.7B bottom both.
 
 ### Exp D V3 — Downstream Protocol (5 models × 2 datasets) [COMPLETE]
 - **Purpose**: Validate κ_nearest as layer-selection signal beyond 1-NN; extend H3 to n=5 (previously n=3).
@@ -115,10 +145,13 @@ Validated results only (Codex-reviewed).
 | ~70 | 6.4 | 8.0 | 7.1 | Base law, Allen 32-session, H8+ |
 | 80 | 6.9 | 8.3 | 7.2 | Exp A (multi-area), St-Yves citation, fixes |
 | 81 | 7.0 | 8.2 | 7.1 | Exp D V3, pre-arXiv fixes, H3 extension |
+| 82 | 7.5 | 8.0 | 7.1 | G1-G2 paper elevations, B1 encoder LOAO, E1/E2 scaling |
+| 83 | 7.6 | 8.0 | 7.1 | Alpha-rho derivation (mean error 1.8%, zero params) |
+| 84 | 7.5 | 7.8 | 7.0 | Multi-dataset alpha-rho (confirms mean-level, per-model FAIL) |
 
 **Path to 9+:**
-1. H3 n=9 with p<0.05 (+0.3)
+1. arXiv submission (+0.2-0.3) -- HIGHEST PRIORITY
 2. External replication by another lab (+0.3-0.5)
-3. arXiv visibility (+0.2-0.3)
-4. LODO improvement via kappa-spread conditioning (+0.15)
+3. COLM 2026 acceptance (+0.3)
+4. Centroid-overlap dispersion (2-param model for per-model alpha) (+0.2)
 5. Second species biological validation (+0.25)

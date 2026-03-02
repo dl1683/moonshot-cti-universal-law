@@ -1,81 +1,74 @@
-# Claim-to-Evidence Checklist
+# CTI Universal Law -- Claim-to-Evidence Checklist
 
-## Status: Updated Feb 12, 2026
+## Status: Updated Mar 1, 2026
 
-Every claim in the abstract and main text mapped to supporting evidence.
+Every claim in the paper abstract and main text mapped to supporting result files.
 
 ---
 
 ## Abstract Claims
 
-| # | Claim | Evidence | Status |
-|---|-------|----------|--------|
-| 1 | MRL has no mechanism to steer between coarse/fine | By construction: MRL trains all prefixes on same L1 loss | PROVED |
-| 2 | Short prefixes learn coarse, full learn fine | Table 1 (teaser), Table 3 (retrieval ramp) | VERIFIED |
-| 3 | Four ablations: alignment causally drives steerability | Table 4 (ablation): inverted reverses, no-prefix collapses, UHMT collapses | VERIFIED (p<0.001, d>=6.1 CLINC) |
-| 4 | Meta-analysis pooled d=1.49, p=0.0003 | meta_analysis.py output, Table 2 | VERIFIED |
-| 5 | 8/8 sign test p=0.004 | compute_paper_stats.py, binomial test | VERIFIED |
-| 6 | CLINC S=+0.150+/-0.028 vs MRL +0.007+/-0.016 | benchmark_bge-small_clinc.json, Table 2 | VERIFIED |
-| 7 | Goldilocks quadratic R^2=0.964 | Fig 6 (synthetic), scaling_robustness.py | VERIFIED |
-| 8 | Product predictor rho=0.90, p=0.002 | scaling_robustness.py, Fig 5 | VERIFIED |
-| 9 | Backbone control: 4.5x params -> zero steerability | backbone_finetune_control.json, Table 7, Fig backbone | VERIFIED |
-| 10 | d=11.6, 7.4, 4.4 on CLINC, DBPedia, TREC | backbone_finetune_control.json | VERIFIED |
-| 11 | Three encoder families (architecture invariance) | Table 5 (cross-model): BGE, E5, Qwen3 | VERIFIED |
-| 12 | Successive refinement theory, converse bound | Section 9 (theory), 5 theorems | PROVED |
+| # | Claim | Evidence File | Status |
+|---|-------|---------------|--------|
+| 1 | Functional form derived from EVT/Gumbel-race (conditional theorem) | `research/OBSERVABLE_ORDER_PARAMETER_THEOREM.md` | DERIVED |
+| 2 | LOAO 12 NLP archs: alpha=1.477, CV=0.023, R^2=0.955 | `results/cti_kappa_loao_per_dataset.json` | VERIFIED |
+| 3 | RWKV-4 boundary: alpha=2.887 in [2.43, 3.29] | `results/cti_kappa_loao_per_dataset.json` (RWKV entry) | VERIFIED |
+| 4 | ViT-Large R^2=0.964 cross-modal | `results/cti_vit_cross_modality.json` | VERIFIED |
+| 5 | Causal confusion-matrix: r=0.842-0.776, sign acc 93-100%, n=182, p<10^-35 | `results/cti_confusion_causal_prediction.json` | VERIFIED |
+| 6 | Blind OOD: r=0.817, p=0.013 | `results/cti_expanded_blind_ood.json` | VERIFIED |
+| 7 | Biological 30/32 V1 sessions, mean r=0.736 | `results/cti_allen_all_sessions_complete.json` | VERIFIED |
+| 8 | Multi-area batch: VISl 22/22, VISam 24/25 | `results/cti_allen_multiarea_batch.json` | VERIFIED |
+| 9 | Near-simplex rho~0.46, CV=3.9% NLP, CV=1.65% cortex | `results/cti_allen_equicorr_multiarea.json`, `results/cti_cross_family_equicorr.json` | VERIFIED |
+| 10 | Alpha-rho prediction: 1.540 vs 1.477 (+4.7%, zero params) | `results/cti_alpha_rho_multidataset.json` | VERIFIED |
+| 11 | Per-model rho doesn't predict alpha (r=-0.55) | `results/cti_alpha_rho_multidataset.json` | VERIFIED |
+| 12 | Encoder alpha 4-5x higher for same rho | `results/cti_cross_family_equicorr.json`, `results/cti_encoder_loao.json` | VERIFIED |
+| 13 | Honest scope: alpha varies by family (NLP 1.48, ViT 0.63, CNN 4.4) | `results/cti_extended_family_loao.json`, `results/cti_alpha_family_law.json` | VERIFIED |
+| 14 | 4 probe calibration reduces MAE by 86% | `results/cti_one_point_calibration.json` | VERIFIED |
 
 ## Main Text Claims
 
-| # | Claim | Evidence | Status |
-|---|-------|----------|--------|
-| 13 | MRL retrieval ramp +0.6pp vs V5 +6.3pp (10x) | retrieval_benchmark_clinc.json, Table 3 | VERIFIED |
-| 14 | Workload-adaptive Pareto: dominates at >=35% coarse | Fig 11 (pareto), appendix | VERIFIED |
-| 15 | Single model replaces dual-encoder | Three-seed comparison, Section 5.5 | VERIFIED |
-| 16 | Three-level hierarchy: d=10.9 | three_level results, Table 8 | VERIFIED |
-| 17 | Million-scale retrieval: prefix truncation works at 4.6M | BEIR results (Table BEIR), Fig BEIR | VERIFIED |
-| 18 | SVD rotation +38% vs truncation at 64d | beir_contrastive_projection.json | VERIFIED |
-| 19 | Hierarchy-aligned projection: 94-97% of SVD quality | beir_contrastive_projection.json | VERIFIED |
-| 20 | Classification projection collapses (-88%) | beir_v5_mrl_retrieval.json | VERIFIED |
-| 21 | Capacity sweep: rho=1.000, r=0.989, p=0.011 | capacity_sweep results | VERIFIED |
-| 22 | Hierarchy noise: 85% retained at 10% corruption | noise_robustness results | VERIFIED |
+| # | Claim | Evidence File | Status |
+|---|-------|---------------|--------|
+| 15 | H8+ holdout: r=0.879, MAE=0.077, n=77, all 6 criteria PASS | `results/cti_utility_revised.json` | VERIFIED |
+| 16 | LOMFO all 4 families: r>=0.84 each | `results/cti_lomfo_lodo_stress_test.json` | VERIFIED |
+| 17 | LODO cross-dataset: mean r=0.125 (honest scope limit) | `results/cti_lomfo_lodo_stress_test.json` | VERIFIED |
+| 18 | Do-interventions confirm causal direction | `results/cti_do_intervention_multi_arch.json`, `results/cti_do_intervention_text.json` | VERIFIED |
+| 19 | Orthogonal factorial: kappa is causal driver | `results/cti_orthogonal_factorial.json` | VERIFIED |
+| 20 | H3 ranking: 9 models, rho=0.833, p=0.005 (kappa ranks by MAP@10) | `results/cti_downstream_h3_n9.json` | VERIFIED |
+| 21 | Multi-area: VISp 30/30, all areas >=87% pass | `results/cti_allen_multiarea_batch.json` | VERIFIED |
+| 22 | Equicorrelation: rho area-invariant (0.43-0.46) | `results/cti_allen_equicorr_multiarea.json` | VERIFIED |
+| 23 | Three-level universality (form/constant/intercept) | `results/cti_lomfo_lodo_stress_test.json`, `results/cti_extended_family_loao.json` | VERIFIED |
+| 24 | Alpha-rho: MAE=0.068 PASS, bootstrap reliability=0.998 | `results/cti_alpha_rho_multidataset.json` | VERIFIED |
+| 25 | Encoder LOAO: CV=0.42 (confirms decoder-only universality) | `results/cti_encoder_loao.json` | VERIFIED |
+| 26 | kappa not a model-size proxy (gamma=0.003, p=0.91) | `results/cti_scaling_dynamics.json` | VERIFIED |
+| 27 | Simplex ETF gives rho=1/2, alpha_simplex=1.595 | `research/OBSERVABLE_ORDER_PARAMETER_THEOREM.md` (analytic) | DERIVED |
+| 28 | Beta_infinity=1.0 renormalized to 0.746 | `results/cti_kappa_loao_per_dataset.json` | VERIFIED |
+
+## Biological Claims
+
+| # | Claim | Evidence File | Status |
+|---|-------|---------------|--------|
+| 29 | Allen Neuropixels: K=118, 32 sessions, 50-250ms window | `results/cti_allen_all_sessions_complete.json` | VERIFIED |
+| 30 | Multi-area: VISp, VISl, VISal, VISam, VISrl all PASS | `results/cti_allen_multiarea_batch.json` | VERIFIED |
+| 31 | Rho~0.466 in 5 cortical areas (CV=1.65%) | `results/cti_allen_equicorr_multiarea.json` | VERIFIED |
+| 32 | Cadieu V4 < IT hierarchy gradient | `results/cti_neuroscience_cadieu2014.json` | VERIFIED |
 
 ## Theory Claims
 
-| # | Claim | Evidence | Status |
-|---|-------|----------|--------|
-| 23 | Theorem 1: Hierarchy -> prefix allocates MI to coarse | Formal proof in Section 9 | PROVED |
-| 24 | Theorem 2: Goldilocks from capacity-demand matching | Formal proof + synthetic validation R^2=0.964 | PROVED + VERIFIED |
-| 25 | Converse bound: flat supervision cannot achieve high S | Formal proof (Theorem 4) | PROVED |
-| 26 | Product scaling law derivable from theory | Corollary 2, empirical rho=0.90 | PROVED + VERIFIED |
-| 27 | Log-loss universality connection (No 2019) | Citation + formal connection | CITED + PROVED |
-
-## Deep Hierarchy
-
-| # | Claim | Evidence | Status |
-|---|-------|----------|--------|
-| 28 | V5 steerability on HUPD Sec->Cls (natural hierarchy) | 5 seeds: S=+0.043+/-0.017, d=1.8, p=0.022 | VERIFIED |
-| 29 | MRL near-zero on HUPD Sec->Cls | 5 seeds: S=-0.002+/-0.016 | VERIFIED |
-| 30 | HUPD Sec->Sub (587 classes, H=4.44) | Running (hupd_sec_sub) | IN PROGRESS |
-| 31 | HWV Root->L2 (253 classes, H=4.09) | Queued after hupd_sec_sub | PENDING |
-| 32 | HWV Root->L3 (230 classes, H=4.59) | Queued after hwv_l0_l2 | PENDING |
-| 33 | Pre-registered prediction: sec_sub S > sec_cls S | Prediction frozen in deep_hierarchy_predictions.json | REGISTERED |
-
-## Gaps / Future Work
-
-- [x] HUPD sec_cls complete (5 seeds, d=1.8, p=0.022)
-- [ ] Deep hierarchy remaining (hupd_sec_sub, hwv_l0_l2, hwv_l0_l3) - running
-- [ ] Vision replication (CIFAR-100 with image hierarchies) - stretch goal
-- [ ] Cross-domain transfer (train on one hierarchy, test on another) - future work
-- [ ] Larger models (>1B params) - resource constrained
+| # | Claim | Evidence File | Status |
+|---|-------|---------------|--------|
+| 33 | Gumbel-race competition gives logit-linear form | `research/OBSERVABLE_ORDER_PARAMETER_THEOREM.md` (Theorem 1) | DERIVED |
+| 34 | d_eff_comp = 1/(1-rho) from whitened cosine structure | `research/OBSERVABLE_ORDER_PARAMETER_THEOREM.md` | DERIVED |
+| 35 | KS test: Gumbel fit fails at d=200, but logit-linear margin passes (p=0.265) | `results/cti_gumbel_theory.json` | VERIFIED |
 
 ---
 
-## Pre-submission Checks
+## Pre-Submission Checks
 
-- [x] All p-values verified against compute_paper_stats.py output
-- [x] All effect sizes verified against meta_analysis.py output
-- [x] Cross-references checked (all \ref point to existing \label)
-- [x] SMRL/SMEC naming fixed to SMEC throughout
-- [x] Missing citations added (20 Newsgroups, DBPedia)
-- [x] Grammar/spelling consistency (British throughout)
-- [ ] PDF compilation clean (no warnings)
-- [ ] Deep hierarchy results added to paper (when complete)
+- [x] All alpha/CV/R^2 values verified against `cti_kappa_loao_per_dataset.json`
+- [x] Causal r and p-values verified against `cti_confusion_causal_prediction.json`
+- [x] Biological pass rates verified against `cti_allen_all_sessions_complete.json`
+- [x] H8+ holdout all 6 criteria verified against `cti_utility_revised.json`
+- [x] Alpha-rho numbers verified against `cti_alpha_rho_multidataset.json`
+- [x] H3 ranking rho/p verified against `cti_downstream_h3_n9.json`
+- [x] Paper PDF compiles clean (28 pages)

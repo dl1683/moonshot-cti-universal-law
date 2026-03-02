@@ -53,6 +53,11 @@ Thumbs.db
 # Large result caches — keep only canonical JSON summaries
 results/kappa_near_cache_*.json
 results/embedding_cache_*.npy
+results/cti_*_cache.json
+results/cti_multidata_*_cache.json
+
+# Compile output logs
+paper/compile_*.txt
 
 # Temp / scratch
 nul
