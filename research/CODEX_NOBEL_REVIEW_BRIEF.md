@@ -34,7 +34,7 @@ The functional form is **derived** from EVT/Gumbel-race theory (conditional theo
 | LOAO 12 NLP architectures | alpha=1.477, CV=2.3%, R^2=0.955 | `cti_kappa_loao_per_dataset.json` |
 | H8+ holdout (n=77) | r=0.879, MAE=0.077, all 6 pass | `cti_utility_revised.json` |
 | Causal confusion prediction | r=0.842-0.776, sign 93-100%, p<10^-35 | `cti_confusion_causal_prediction.json` |
-| Blind OOD test | r=0.817, p=0.013 | `cti_expanded_blind_ood.json` |
+| Blind OOD test (SmolLM2-1.7B) | r=0.817, p=0.013 | `cti_smollm2_ood_prediction.json` |
 | Biological 32 V1 sessions | 30/32 PASS, mean r=0.736 | `cti_allen_all_sessions_complete.json` |
 
 ### TIER 2: STRONG

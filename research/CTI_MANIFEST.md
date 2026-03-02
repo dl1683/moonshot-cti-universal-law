@@ -20,7 +20,8 @@ This manifest lists only the canonical files that support the paper's claims.
 | `results/cti_do_intervention_multi_arch.json` | Do-intervention confirms direction | Causal evidence |
 | `results/cti_orthogonal_factorial.json` | Factorial design confirms kappa | Causal evidence |
 | `results/cti_vit_cross_modality.json` | ViT-Large R^2=0.964 | Cross-modal |
-| `results/cti_expanded_blind_ood.json` | Blind OOD r=0.817, p=0.013 | OOD validation |
+| `results/cti_smollm2_ood_prediction.json` | Blind OOD r=0.817, p=0.013 (SmolLM2) | OOD validation |
+| `results/cti_resnet50_cifar100.json` | ResNet-50 CIFAR-100 cross-modal | Cross-modal |
 | `results/cti_lomfo_lodo_stress_test.json` | LOMFO all 4 families r>=0.84 | Stress test |
 | `results/cti_downstream_h3_n9.json` | H3 ranking rho=0.833, p=0.005 | Practical utility |
 | `results/cti_downstream_protocol_v3.json` | H1/H2 layer-selection PASS | Practical utility |

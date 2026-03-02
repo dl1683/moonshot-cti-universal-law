@@ -15,7 +15,7 @@ Every claim in the paper abstract and main text mapped to supporting result file
 | 3 | RWKV-4 boundary: alpha=2.887 in [2.43, 3.29] | `results/cti_kappa_loao_per_dataset.json` (RWKV entry) | VERIFIED |
 | 4 | ViT-Large R^2=0.964 cross-modal | `results/cti_vit_cross_modality.json` | VERIFIED |
 | 5 | Causal confusion-matrix: r=0.842-0.776, sign acc 93-100%, n=182, p<10^-35 | `results/cti_confusion_causal_prediction.json` | VERIFIED |
-| 6 | Blind OOD: r=0.817, p=0.013 | `results/cti_expanded_blind_ood.json` | VERIFIED |
+| 6 | Blind OOD: r=0.817, p=0.013 (SmolLM2-1.7B) | `results/cti_smollm2_ood_prediction.json` | VERIFIED |
 | 7 | Biological 30/32 V1 sessions, mean r=0.736 | `results/cti_allen_all_sessions_complete.json` | VERIFIED |
 | 8 | Multi-area batch: VISl 22/22, VISam 24/25 | `results/cti_allen_multiarea_batch.json` | VERIFIED |
 | 9 | Near-simplex rho~0.46, CV=3.9% NLP, CV=1.65% cortex | `results/cti_allen_equicorr_multiarea.json`, `results/cti_cross_family_equicorr.json` | VERIFIED |
@@ -24,6 +24,7 @@ Every claim in the paper abstract and main text mapped to supporting result file
 | 12 | Encoder alpha 4-5x higher for same rho | `results/cti_cross_family_equicorr.json`, `results/cti_encoder_loao.json` | VERIFIED |
 | 13 | Honest scope: alpha varies by family (NLP 1.48, ViT 0.63, CNN 4.4) | `results/cti_extended_family_loao.json`, `results/cti_alpha_family_law.json` | VERIFIED |
 | 14 | 4 probe calibration reduces MAE by 86% | `results/cti_one_point_calibration.json` | VERIFIED |
+| 14b | ResNet-50 CIFAR-100 same functional form | `results/cti_resnet50_cifar100.json` | VERIFIED |
 
 ## Main Text Claims
 
