@@ -69,7 +69,7 @@ MODELS = {
     "falcon-h1-3b":   ("Falcon-H1-3B",   "tiiuae/Falcon-H1-3B-Base",   "falcon-h1"),
     "smollm2-360m":   ("SmolLM2-360M",   "HuggingFaceTB/SmolLM2-360M", "smollm2"),
     "granite-micro":  ("Granite-Micro",  "ibm-granite/granite-4.0-micro", "granite"),
-    "granite-tiny":   ("Granite-Tiny",   "ibm-granite/granite-4.0-tiny",  "granite"),
+    "granite-tiny":   ("Granite-Tiny",   "ibm-granite/granite-4.0-tiny-preview",  "granite"),
     "llama-3.2-3b":   ("Llama-3.2-3B",  "meta-llama/Llama-3.2-3B",       "llama3"),
     "gemma-3-4b":     ("Gemma-3-4B",    "google/gemma-3-4b-pt",          "gemma3"),
     "phi-4":          ("Phi-4",          "microsoft/phi-4",               "phi4"),

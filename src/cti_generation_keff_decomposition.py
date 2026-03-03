@@ -39,6 +39,12 @@ MODELS = [
     ("pythia-1b",      "EleutherAI/pythia-1b"),
     ("pythia-1.4b",    "EleutherAI/pythia-1.4b"),
     ("pythia-2.8b",    "EleutherAI/pythia-2.8b"),
+    # --- Mamba (SSM, V=50280, Pile) ---
+    ("mamba-130m",     "state-spaces/mamba-130m-hf"),
+    ("mamba-370m",     "state-spaces/mamba-370m-hf"),
+    ("mamba-790m",     "state-spaces/mamba-790m-hf"),
+    ("mamba-1.4b",     "state-spaces/mamba-1.4b-hf"),
+    ("mamba-2.8b",     "state-spaces/mamba-2.8b-hf"),
     # --- GPT-2 (Transformer, V=50257, WebText) ---
     ("gpt2",           "openai-community/gpt2"),
     # --- Qwen3 (Transformer, V=151936) ---
@@ -55,7 +61,7 @@ MODELS = [
     ("smollm2-360m",   "HuggingFaceTB/SmolLM2-360M"),
     # --- Granite 4.0 (Hybrid: Transformer+Mamba2, V=32000) ---
     ("granite-micro",  "ibm-granite/granite-4.0-micro"),
-    ("granite-tiny",   "ibm-granite/granite-4.0-tiny"),
+    ("granite-tiny",   "ibm-granite/granite-4.0-tiny-preview"),
     # --- Llama 3.2 (Transformer, V=128256) ---
     ("llama-3.2-3b",   "meta-llama/Llama-3.2-3B"),
     # --- Gemma 3 (Transformer, V~256000) ---
