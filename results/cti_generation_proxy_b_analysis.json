@@ -1,0 +1,48 @@
+{
+  "_meta": {
+    "description": "Proxy B (whitened kappa) analysis",
+    "date": "2026-03-03",
+    "n_models_total": 11,
+    "models": [
+      "pythia-160m",
+      "pythia-410m",
+      "pythia-1b",
+      "pythia-1.4b",
+      "pythia-2.8b",
+      "gpt2",
+      "qwen3-0.6b",
+      "qwen3-1.7b",
+      "mamba-130m",
+      "mamba-370m",
+      "mamba-790m"
+    ]
+  },
+  "all_models": {
+    "n": 11,
+    "r_kt1K": -0.6300689072397692,
+    "r_kbar": -0.6123267843542671,
+    "r_kw": -0.6166308470477365,
+    "delta_r_kw_vs_kt1K": -0.013438060192032641,
+    "H_gen5": "FAIL"
+  },
+  "no_160m": {
+    "n": 10,
+    "r_kt1K": -0.5648806863290552,
+    "r_kbar": -0.42460165364052604,
+    "r_kw": -0.8171637806191877,
+    "delta_r_kw_vs_kt1K": 0.2522830942901325,
+    "H_gen5": "PASS"
+  },
+  "fixed_V": {
+    "n": 8,
+    "r_kt1K": -0.8047876014537652,
+    "r_kbar": -0.8538866988143617,
+    "r_kw": -0.7985021312460169
+  },
+  "pythia_160m_pathology": {
+    "d_eff": 125.85810298374805,
+    "rho_whitened": 0.8498744368553162,
+    "kappa_whitened": 0.33704280853271484,
+    "interpretation": "d_eff=126 indicates nearly all eigenvalues are comparable (no dominant direction). Whitening amplifies noise rather than correcting for it because the model has not developed sufficient Neural Collapse structure."
+  }
+}

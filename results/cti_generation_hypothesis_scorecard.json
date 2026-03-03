@@ -126,5 +126,17 @@
     "total_mixed": 1,
     "total_not_tested": 2,
     "interpretation": "Strong support for generation law. Failures are localized: H_gen1 cross-V threshold too strict (law IS significant, p<0.001); H_gen4 driven by single extreme outlier (Pythia-160M). Core claims validated: architecture independence (H_gen10), confound control (H_gen8), fixed-V superiority (H_gen12)."
+  },
+  "H_gen_keff": {
+    "description": "K_eff approximately constant (~2-3) across architectures; beta_gen approximately 0",
+    "keff_mean": 2.340010035054798,
+    "keff_range": [
+      1.552998918468599,
+      3.5237434330574278
+    ],
+    "beta_gen": -0.007471549029085909,
+    "delta_R2": 0.0004324937021197295,
+    "n": 21,
+    "status": "VERIFIED (beta_gen ~ 0, K_eff in [1.55, 3.52])"
   }
 }

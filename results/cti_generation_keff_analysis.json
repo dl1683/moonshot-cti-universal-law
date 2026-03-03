@@ -1,0 +1,31 @@
+{
+  "_meta": {
+    "description": "K_eff decomposition and beta_gen analysis",
+    "date": "2026-03-03",
+    "n_models": 21,
+    "finding": "beta_gen approximately zero; vocabulary size drops out of generation law"
+  },
+  "keff_statistics": {
+    "mean": 2.340010035054798,
+    "std": 0.48163721633182466,
+    "min": 1.552998918468599,
+    "max": 3.5237434330574278,
+    "cv": 0.2058269875413358,
+    "n": 21
+  },
+  "beta_gen_test": {
+    "R2_kappa_only": 0.48580113697046645,
+    "R2_kappa_plus_logV": 0.4862336306725862,
+    "delta_R2": 0.0004324937021197295,
+    "beta_gen": -0.007471549029085909,
+    "alpha_gen_2pred": -0.9465090303802063,
+    "interpretation": "beta_gen=-0.008 is negligibly small; adding log(V-1) provides no improvement (Delta R2=0.0004)"
+  },
+  "ce_decomposition": {
+    "mean_ce": 2.3219856625492272,
+    "mean_margin": 1.4921741496050696,
+    "mean_log_keff": 0.8298115129441574,
+    "identity_check": "CE = margin + log(K_eff) (exact)"
+  },
+  "interpretation": "Despite V ranging from 32K to 152K, K_eff is approximately 2-3 across all architectures. This means next-token prediction is effectively a 2-3 way competition, not a V-way competition. Vocabulary size is therefore irrelevant to the generation law, confirming the Gumbel-race spontaneous sparsification prediction."
+}
