@@ -44,5 +44,26 @@
     "rho_whitened": 0.8498744368553162,
     "kappa_whitened": 0.33704280853271484,
     "interpretation": "d_eff=126 indicates nearly all eigenvalues are comparable (no dominant direction). Whitening amplifies noise rather than correcting for it because the model has not developed sufficient Neural Collapse structure."
+  },
+  "n14_update": {
+    "n": 14,
+    "models_added": [
+      "smollm2-360m",
+      "qwen2-0.5b",
+      "falcon-h1-0.5b"
+    ],
+    "all": {
+      "r_kt1K": -0.518,
+      "r_kw": -0.455,
+      "delta": -0.063,
+      "H_gen5": "FAIL"
+    },
+    "no_160m": {
+      "r_kt1K": -0.27,
+      "r_kw": -0.011,
+      "delta": -0.258,
+      "H_gen5": "FAIL"
+    },
+    "interpretation": "Cross-architecture whitened kappa fails because Sigma_W is model-specific. Whitening helps within-family (where noise structures are similar) but hurts across families. The n=10 PASS was a false positive from within-family homogeneity. Proxy A (raw kappa from W_U geometry alone) remains the correct cross-architecture metric."
   }
 }

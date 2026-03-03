@@ -631,8 +631,8 @@ In classification, $\kappa_{\mathrm{nearest}}$ captures the \emph{full} race con
 (centroid separation in $\mathbf{h}$-space), yielding $R^2 = 0.955$.
 The residuals correlate with model size ($r = -0.466$, $p = 0.033$), confirming that
 the unexplained variance is attributable to $\mathbf{h}(x)$ quality differences.
-Hypothesis scorecard: 7/13 PASS, 1 FAIL (Pythia LOAO, driven by 160M outlier),
-2 partial, 1 mixed, 2 not yet tested
+Hypothesis scorecard: 7/13 PASS, 2 FAIL (Pythia LOAO driven by 160M outlier; whitened-$\kappa$ Proxy~B fails cross-architecture due to incomparable $\Sigma_W$),
+2 partial, 1 mixed, 1 not yet tested
 (\texttt{results/cti\_generation\_hypothesis\_scorecard.json}).
 
 \begin{figure}[t]
@@ -1418,5 +1418,48 @@ bloom-560m operates near chance on 4/8 datasets (all excluded by floor filter or
 gemma-3-1b catastrophically mispredicts DBpedia ($\mathrm{err}=0.533$, predicted $q=0.681$, actual $q=0.148$).
 These two models account for all outliers $>0.20$. Excluding them yields
 $r=0.938$, MAE$=0.067$ ($n=69$). The three newly added models (falcon-rw-1b, phi-1.5, qwen2.5-1.5b) all perform well (MAE $\leq 0.082$), confirming that the law generalizes beyond the initial 8-model set. The pre-registered test reports the full set; the sensitivity rows are exploratory.
+
+\section{Generation Law: Model Details}
+\label{app:generation-law}
+
+Table~\ref{tab:generation-law-models} lists all 22 models in the generation law analysis (Section~\ref{sec:generation-law}).
+$\kappa_{\mathrm{top1K}}$ is computed from $W_U$ alone (zero forward passes); CE is measured on 20K tokens from WikiText-103 validation.
+$K_{\mathrm{eff}}$ comes from the exact decomposition $\mathrm{CE}=\mathrm{margin}+\log K_{\mathrm{eff}}$.
+
+\begin{table}[h]
+\centering
+\caption{Generation law: 22-model suite ordered by CE. Arch = architecture type.
+$\kappa_{\mathrm{top1K}}$ and $\bar\kappa$ are from $W_U$ geometry; CE and $K_{\mathrm{eff}}$ from WikiText-103 inference.}
+\label{tab:generation-law-models}
+\small
+\begin{tabular}{llrrrrrr}
+\toprule
+Model & Arch & $N$ (M) & $V$ & $\kappa_{\mathrm{top1K}}$ & $\bar\kappa$ & CE & $K_{\mathrm{eff}}$ \\
+\midrule
+Mistral-7B & Trans. & 7000 & 32K & 0.876 & 0.873 & 1.551 & 1.87 \\
+Falcon-H1-3B & Hybrid & 3000 & 131K & 0.949 & 0.915 & 1.564 & 1.92 \\
+Falcon-H1-1.5B & Hybrid & 1500 & 131K & 0.977 & 0.950 & 1.741 & 2.00 \\
+Falcon-H1-0.5B & Hybrid & 500 & 131K & 0.716 & 0.820 & 1.935 & 2.17 \\
+Mamba-2.8B & SSM & 2800 & 50K & 0.720 & 0.884 & 2.110 & 2.27 \\
+Pythia-2.8B & Trans. & 2800 & 50K & 0.794 & 0.917 & 2.174 & 2.32 \\
+SmolLM2-360M & Trans. & 360 & 49K & 0.725 & 0.761 & 2.179 & 2.32 \\
+Granite-Micro & Hybrid & 500 & 49K & 0.773 & 0.934 & 2.183 & 1.87 \\
+Mamba-1.4B & SSM & 1400 & 50K & 0.720 & 0.899 & 2.218 & 2.35 \\
+Qwen2-0.5B & Trans. & 500 & 152K & 0.716 & 0.838 & 2.292 & 2.42 \\
+Pythia-1.4B & Trans. & 1400 & 50K & 0.795 & 0.918 & 2.292 & 2.41 \\
+Mamba-790M & SSM & 790 & 50K & 0.724 & 0.766 & 2.308 & 2.42 \\
+Pythia-1B & Trans. & 1000 & 50K & 0.821 & 0.932 & 2.398 & 2.48 \\
+Qwen3-4B & Trans. & 4000 & 152K & 0.710 & 0.898 & 2.422 & 1.55 \\
+Mamba-370M & SSM & 370 & 50K & 0.711 & 0.759 & 2.455 & 2.52 \\
+Pythia-410M & Trans. & 410 & 50K & 0.791 & 0.894 & 2.565 & 2.69 \\
+Qwen3-1.7B & Trans. & 1700 & 152K & 0.698 & 0.911 & 2.588 & 1.63 \\
+Qwen3-0.6B & Trans. & 600 & 152K & 0.673 & 0.861 & 2.777 & 2.13 \\
+Mamba-130M & SSM & 130 & 50K & 0.697 & 0.670 & 2.808 & 2.95 \\
+Pythia-160M & Trans. & 160 & 50K & 0.251 & 0.273 & 3.093 & 3.33 \\
+GPT-2 & Trans. & 124 & 50K & 0.730 & 0.798 & 3.108 & 3.52 \\
+LFM2.5-1.2B & Novel & 1200 & 66K & 0.863 & 0.947 & 3.349 & 2.42 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \end{document}

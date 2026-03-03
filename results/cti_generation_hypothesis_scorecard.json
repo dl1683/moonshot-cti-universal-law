@@ -49,7 +49,14 @@
   },
   "H_gen5": {
     "description": "Whitened kappa improves by 0.05+",
-    "status": "NOT TESTED (Proxy B not computed)"
+    "status": "FAIL (cross-architecture Sigma_W incompatibility)",
+    "n14_update": {
+      "n": 14,
+      "r_kw": -0.455,
+      "r_kt1K": -0.518,
+      "delta": -0.063,
+      "note": "Proxy B fails at n=14 because Sigma_W is model-specific; whitened kappa values are not comparable across architectures with different noise structures"
+    }
   },
   "H_gen6": {
     "description": "alpha_gen in [0.8, 2.0]",
@@ -107,7 +114,8 @@
       "H_gen12"
     ],
     "FAIL": [
-      "H_gen4"
+      "H_gen4",
+      "H_gen5"
     ],
     "PARTIAL_PASS": [
       "H_gen1 (fixed-V PASS, cross-V FAIL)",
@@ -117,14 +125,13 @@
       "H_gen13 (residual PASS, beats-mean FAIL)"
     ],
     "NOT_TESTED": [
-      "H_gen5",
       "H_gen11"
     ],
     "total_pass": 7,
-    "total_fail": 1,
+    "total_fail": 2,
     "total_partial": 2,
     "total_mixed": 1,
-    "total_not_tested": 2,
+    "total_not_tested": 1,
     "interpretation": "Strong support for generation law. Failures are localized: H_gen1 cross-V threshold too strict (law IS significant, p<0.001); H_gen4 driven by single extreme outlier (Pythia-160M). Core claims validated: architecture independence (H_gen10), confound control (H_gen8), fixed-V superiority (H_gen12)."
   },
   "H_gen_keff": {
