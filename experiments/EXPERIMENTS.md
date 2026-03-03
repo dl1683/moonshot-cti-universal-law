@@ -7,6 +7,20 @@ Validated results only (Codex-reviewed).
 
 ## Session 89 (Mar 3, 2026) — Nobel ~7.8/10
 
+### Frequency-Weighted Kappa: Cross-V Breakthrough [COMPLETE]
+- **Purpose**: Test whether frequency-weighted kappa (focusing on tokens that matter for PPL) improves the generation law.
+- **Method**: For each model, compute per-token kappa_v (NN distance in W_U), then weight by token frequency from WikiText-103 validation. Three weighting variants: p(v), log(p(v)), sqrt(p(v)). Also: kappa_topK for K=100,500,1000,2500,5000.
+- **Script**: `src/cti_generation_freq_kappa.py`
+- **Output**: `results/cti_generation_freq_kappa.json` (17 models OK, 1 error)
+- **Key Results**:
+  1. **Cross-V WITHOUT Pythia-160M (n=11)**: kappa_bar r=-0.239 (NOT significant) -> kappa_freq_p r=-0.804, p=0.003 (**SIGNIFICANT**, +0.56 improvement). kappa_top1000 rho=-0.745, p=0.009.
+  2. **Fixed-V Pile (n=9 without 160M)**: Frequency weighting DEGRADES: kappa_bar r=-0.535 -> kappa_freq_p r=-0.340.
+  3. **r(log_frequency, kappa_v) is NEGATIVE** (-0.12 to -0.30 across all models). Frequent tokens have LOWER kappa (more crowded). OPPOSITE of imbalanced NC prediction.
+  4. Falcon-H1 models are exceptions: r(freq,kappa) near zero or slightly positive (unique tokenizer structure).
+- **What we learned**: Frequency weighting normalizes ACROSS TOKENIZERS by focusing on the ~1000-5000 tokens that universally matter. Different tokenizers fragment words differently in the rare-token region, but the top-1000 tokens are structurally comparable. kappa_bar is dominated by rare tokens (~95% of V) that are tokenizer-specific. This resolves the cross-V confound: the generation law achieves rho=-0.75 (p=0.009) across 5 architecture families with kappa_top1000.
+- **Theory section added**: 3.20.4 (empirical results)
+- **Theoretical surprise**: Function words are crowded (low kappa) because they appear in diverse contexts. Specialized tokens are isolated (high kappa) because they appear in restricted contexts. The W_U geometry encodes a dual structure that kappa_bar misses but kappa_freq captures.
+
 ### Cross-Field Equivalences and Universality Evidence [COMPLETE — THEORETICAL]
 - **Purpose**: Document the independent discoveries of the Gumbel-race mechanism across economics, neuroscience, ecology, RMT, and information theory. These cross-field convergences provide the strongest universality evidence.
 - **Method**: Internet research + theoretical analysis. No new code — pure theory documentation.

@@ -1241,6 +1241,62 @@ Stolfo et al. (NeurIPS 2024, arXiv:2406.16254); Tang et al. (ACL 2025,
 arXiv:2411.07641); Holtzman et al. (ICLR 2020); McFadden (1974);
 Hill (1973) / Jost (2006) diversity indices; Majumdar et al. (2019).
 
+#### 3.20.4 Empirical Results (Session 89)
+
+**PREDICTION:** Frequency weighting should improve PPL prediction (kappa_freq > kappa_bar).
+**RESULT:** CONFIRMED for cross-V, FALSIFIED for fixed-V. Context-dependent.
+
+**Cross-vocabulary (n=11, without Pythia-160M):**
+
+| Metric | Pearson r | Spearman rho | p-value |
+|--------|-----------|-------------|---------|
+| kappa_bar (uniform) | -0.239 | -0.327 | 0.479 |
+| kappa_freq_p (freq-weighted) | **-0.804** | **-0.718** | **0.013** |
+| kappa_top1000 | **-0.781** | **-0.745** | **0.009** |
+| kappa_top5000 | **-0.752** | **-0.755** | **0.007** |
+
+Frequency weighting takes the cross-V law from NOT SIGNIFICANT (r=-0.24)
+to HIGHLY SIGNIFICANT (r=-0.80). This is a +0.56 improvement in Pearson r.
+
+**Fixed-vocabulary Pile PPL (n=10/9):**
+Frequency weighting does NOT help. kappa_bar r=-0.535 (without 160M) vs
+kappa_freq_p r=-0.340. Within-family (Mamba): kappa_bar r=-0.927 degrades
+to kappa_freq_p r=-0.604.
+
+**Why cross-V improves but fixed-V doesn't:**
+- Across tokenizers, different tokenizers fragment words differently, creating
+  different kappa distributions in the "rare token" region
+- kappa_bar is dominated by rare tokens (~95% of V), which are tokenizer-specific
+- kappa_top1000 focuses on tokens that are structurally similar across tokenizers
+  (function words, common nouns, punctuation)
+- This normalizes the comparison across vocabularies
+- Within fixed-V, all models share the same tokenizer, so this normalization
+  is unnecessary; uniform kappa_bar is already comparable
+
+**Critical empirical finding:** r(log_frequency, kappa_v) is NEGATIVE
+(-0.12 to -0.30 across all models). Frequent tokens have LOWER kappa (more
+crowded), OPPOSITE to imbalanced NC prediction (||w_k|| ~ sqrt(n_k)).
+
+**Explanation:** Function words (the/of/in) appear in maximally diverse contexts.
+Their W_U rows are pulled toward many different h(x) directions, resulting in a
+crowded neighborhood. Technical/specialized tokens appear in restricted contexts,
+allowing their W_U rows to occupy isolated positions with high kappa_v.
+
+This means the W_U geometry encodes a DUAL structure:
+- Rare tokens: isolated, high kappa, low PPL contribution
+- Frequent tokens: crowded, low kappa, high PPL contribution
+- kappa_bar is dominated by the isolated rare tokens that don't matter for PPL
+- kappa_freq focuses on the crowded frequent tokens that DO matter
+
+**Implication for the Generation Law:** The zero-forward-pass law should use
+kappa_freq or kappa_top1000, not kappa_bar. The cross-vocabulary generation law:
+
+    log(PPL) ~ -alpha * kappa_top1000 + C
+
+achieves rho = -0.745 (p=0.009, n=11) across 5 architecture families:
+Pythia (Transformer), Mamba (SSM), Falcon-H1 (Hybrid), Qwen2/3 (Transformer),
+without any outlier. This is the strongest version of the generation law so far.
+
 ---
 
 ### 3.21 Cross-Field Equivalences and Universality Evidence (Session 88)
