@@ -1,0 +1,62 @@
+{
+  "pythia-160m": {
+    "ppl": 29.64,
+    "source": "Mamba paper Table 3",
+    "log_ppl": 3.389124800427886,
+    "corpus": "The Pile validation"
+  },
+  "pythia-410m": {
+    "ppl": 9.95,
+    "source": "Mamba paper Table 3",
+    "log_ppl": 2.2975725511705014,
+    "corpus": "The Pile validation"
+  },
+  "pythia-1b": {
+    "ppl": 7.82,
+    "source": "Mamba paper Table 3",
+    "log_ppl": 2.05668455455722,
+    "corpus": "The Pile validation"
+  },
+  "pythia-1.4b": {
+    "ppl": 7.51,
+    "source": "Mamba paper Table 3",
+    "log_ppl": 2.0162354657760435,
+    "corpus": "The Pile validation"
+  },
+  "pythia-2.8b": {
+    "ppl": 6.73,
+    "source": "Mamba paper Table 3",
+    "log_ppl": 1.9065751436566365,
+    "corpus": "The Pile validation"
+  },
+  "mamba-130m": {
+    "ppl": 10.56,
+    "source": "Mamba paper Table 3",
+    "log_ppl": 2.3570732782781154,
+    "corpus": "The Pile validation"
+  },
+  "mamba-370m": {
+    "ppl": 8.28,
+    "source": "Mamba paper Table 3",
+    "log_ppl": 2.1138429683971682,
+    "corpus": "The Pile validation"
+  },
+  "mamba-790m": {
+    "ppl": 7.33,
+    "source": "Mamba paper Table 3",
+    "log_ppl": 1.9919755158985601,
+    "corpus": "The Pile validation"
+  },
+  "mamba-1.4b": {
+    "ppl": 6.8,
+    "source": "Mamba paper Table 3",
+    "log_ppl": 1.916922612182061,
+    "corpus": "The Pile validation"
+  },
+  "mamba-2.8b": {
+    "ppl": 6.22,
+    "source": "Mamba paper Table 3",
+    "log_ppl": 1.827769906751088,
+    "corpus": "The Pile validation"
+  }
+}

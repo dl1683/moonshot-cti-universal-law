@@ -1,0 +1,117 @@
+{
+  "pythia-160m": {
+    "model": "Pythia-160M",
+    "hf_id": "EleutherAI/pythia-160m",
+    "ppl": 35.15693691499209,
+    "log_ppl": 3.5598219505632422,
+    "time_s": 13.655577659606934
+  },
+  "pythia-410m": {
+    "model": "Pythia-410M",
+    "hf_id": "EleutherAI/pythia-410m",
+    "ppl": 20.880562426571302,
+    "log_ppl": 3.038818698790139,
+    "time_s": 9.894960403442383
+  },
+  "pythia-1b": {
+    "model": "Pythia-1B",
+    "hf_id": "EleutherAI/pythia-1b",
+    "ppl": 16.916794912541125,
+    "log_ppl": 2.828306910261965,
+    "time_s": 11.357103824615479
+  },
+  "pythia-1.4b": {
+    "model": "Pythia-1.4B",
+    "hf_id": "EleutherAI/pythia-1.4b",
+    "ppl": 15.07364244174491,
+    "log_ppl": 2.712947684942584,
+    "time_s": 13.7251136302948
+  },
+  "pythia-2.8b": {
+    "model": "Pythia-2.8B",
+    "hf_id": "EleutherAI/pythia-2.8b",
+    "ppl": 13.180994850560609,
+    "log_ppl": 2.5787760080588775,
+    "time_s": 19.02991771697998
+  },
+  "mamba-130m": {
+    "model": "Mamba-130M",
+    "error": "Error(s) in loading state_dict for Linear:\n\tsize mismatch for weight: copying a param with shape torch.Size([50280, 768]) from checkpoint, the shape in current model is torch.Size([50277, 768])."
+  },
+  "mamba-370m": {
+    "model": "Mamba-370M",
+    "error": "Error(s) in loading state_dict for MambaMixer:\n\tsize mismatch for D: copying a param with shape torch.Size([2048]) from checkpoint, the shape in current model is torch.Size([1536])."
+  },
+  "mamba-790m": {
+    "model": "Mamba-790M",
+    "error": "Error(s) in loading state_dict for MambaMixer:\n\tsize mismatch for D: copying a param with shape torch.Size([3072]) from checkpoint, the shape in current model is torch.Size([1536])."
+  },
+  "mamba-1.4b": {
+    "model": "Mamba-1.4B",
+    "error": "Error(s) in loading state_dict for MambaMixer:\n\tsize mismatch for D: copying a param with shape torch.Size([4096]) from checkpoint, the shape in current model is torch.Size([1536])."
+  },
+  "mamba-2.8b": {
+    "model": "Mamba-2.8B",
+    "error": "Error(s) in loading state_dict for MambaMixer:\n\tsize mismatch for A_log: copying a param with shape torch.Size([5120, 16]) from checkpoint, the shape in current model is torch.Size([1536, 16])."
+  },
+  "gpt2": {
+    "model": "GPT-2",
+    "hf_id": "openai-community/gpt2",
+    "ppl": 34.36499134407292,
+    "log_ppl": 3.537038352691474,
+    "time_s": 7.861846446990967
+  },
+  "qwen3-0.6b": {
+    "model": "Qwen3-0.6B",
+    "hf_id": "Qwen/Qwen3-0.6B",
+    "ppl": 27.503484019551372,
+    "log_ppl": 3.31431268826787,
+    "time_s": 15.581635236740112
+  },
+  "qwen3-1.7b": {
+    "model": "Qwen3-1.7B",
+    "hf_id": "Qwen/Qwen3-1.7B",
+    "ppl": 21.082389713441046,
+    "log_ppl": 3.048438081263177,
+    "time_s": 18.3291277885437
+  },
+  "qwen3-4b": {
+    "model": "Qwen3-4B",
+    "hf_id": "Qwen/Qwen3-4B",
+    "ppl": 17.911702618355555,
+    "log_ppl": 2.8854542767890234,
+    "time_s": 28.21121120452881
+  },
+  "llama-3.2-3b": {
+    "model": "Llama-3.2-3B",
+    "error": "You are trying to access a gated repo.\nMake sure to have access to it at https://huggingface.co/meta-llama/Llama-3.2-3B.\n403 Client Error. (Request ID: Root=1-69a6f77a-557248cc564ab48179f781b6;4b222800-2890-4017-a8b9-d269cb0673d5)\n\nCannot access gated repo for url https://huggingface.co/meta-llama/Llama-3.2-3B/resolve/main/config.json.\nAccess to model meta-llama/Llama-3.2-3B is restricted and you are not in the authorized list. Visit https://huggingface.co/meta-llama/Llama-3.2-3B to ask for access."
+  },
+  "falcon-h1-0.5b": {
+    "model": "Falcon-H1-0.5B",
+    "hf_id": "tiiuae/Falcon-H1-0.5B-Base",
+    "ppl": 10.973855093352695,
+    "log_ppl": 2.3955156340072934,
+    "time_s": 69.40615892410278
+  },
+  "falcon-h1-1.5b": {
+    "model": "Falcon-H1-1.5B",
+    "hf_id": "tiiuae/Falcon-H1-1.5B-Base",
+    "ppl": 8.88519013288265,
+    "log_ppl": 2.1843858606891495,
+    "time_s": 165.42129158973694
+  },
+  "smollm2-360m": {
+    "model": "SmolLM2-360M",
+    "hf_id": "HuggingFaceTB/SmolLM2-360M",
+    "ppl": 14.582520296694316,
+    "log_ppl": 2.679823571497546,
+    "time_s": 15.433209657669067
+  },
+  "mistral-7b": {
+    "model": "Mistral-7B",
+    "hf_id": "mistralai/Mistral-7B-v0.3",
+    "ppl": 6.715819459551174,
+    "log_ppl": 1.9044658567144714,
+    "time_s": 42.6797661781311
+  }
+}

@@ -1,0 +1,220 @@
+{
+  "timestamp": "2026-03-03 10:08:03",
+  "data_summary": {
+    "n_kappa": 18,
+    "n_pile": 10,
+    "n_wikitext": 13
+  },
+  "fixed_v": {
+    "n": 10,
+    "r": -0.9235812449629137,
+    "p": 0.00013595171942507167,
+    "rho": -0.5151515151515151,
+    "p_rho": 0.12755286970323426,
+    "alpha_gen": 2.076921560555505,
+    "intercept": 3.829915091505057,
+    "R_squared": 0.8530023160472456,
+    "models": [
+      "Pythia-160M",
+      "Mamba-130M",
+      "Mamba-370M",
+      "Mamba-790M",
+      "Mamba-2.8B",
+      "Pythia-410M",
+      "Mamba-1.4B",
+      "Pythia-2.8B",
+      "Pythia-1.4B",
+      "Pythia-1B"
+    ]
+  },
+  "H_gen10": {
+    "description": "Architecture independence (F-test p > 0.05)",
+    "f_stat": 6.514909514305858,
+    "p": 0.031343664967621754,
+    "rss_base": 0.27288784051251846,
+    "rss_full": 0.0860400742967317,
+    "pass": false
+  },
+  "per_arch": {
+    "transformer": {
+      "r": -0.9786647269387818,
+      "alpha": 2.067560164088917,
+      "n": 5
+    },
+    "ssm": {
+      "r": -0.926790299237709,
+      "alpha": 1.99439756448371,
+      "n": 5
+    },
+    "alpha_ratio": 1.0366840598424751
+  },
+  "H_gen4": {
+    "description": "LOAO within Pythia",
+    "mean_residual": 0.8201180090428263,
+    "beats_baseline": 3,
+    "n_folds": 5,
+    "pass": false,
+    "fold_details": {
+      "Pythia-160M": {
+        "residual": 3.5552596339043174,
+        "baseline": 1.3198578716377858
+      },
+      "Pythia-410M": {
+        "residual": 0.2438549323150765,
+        "baseline": 0.04458243993394495
+      },
+      "Pythia-2.8B": {
+        "residual": 0.21070949603115618,
+        "baseline": 0.5333291993262761
+      },
+      "Pythia-1.4B": {
+        "residual": 0.060300537387899755,
+        "baseline": 0.39625379667701743
+      },
+      "Pythia-1B": {
+        "residual": 0.03046544557568298,
+        "baseline": 0.34569243570054686
+      }
+    }
+  },
+  "H_gen13": {
+    "description": "LOAO within Mamba",
+    "mean_residual": 0.10805237900716369,
+    "beats_baseline": 3,
+    "n_folds": 5,
+    "pass": false
+  },
+  "cross_arch": {
+    "n": 13,
+    "r": -0.48763424952205897,
+    "p": 0.0909584080525671,
+    "alpha_gen": 1.3682072317526885,
+    "models": [
+      "Pythia-160M",
+      "SmolLM2-360M",
+      "GPT-2",
+      "Falcon-H1-0.5B",
+      "Qwen3-0.6B",
+      "Mistral-7B",
+      "Pythia-410M",
+      "Qwen3-4B",
+      "Qwen3-1.7B",
+      "Pythia-2.8B",
+      "Pythia-1.4B",
+      "Pythia-1B",
+      "Falcon-H1-1.5B"
+    ]
+  },
+  "H_gen3": {
+    "description": "Random W_U correlation |r| < 0.30",
+    "r_random": -0.7268971560581431,
+    "p_random": 0.004879027045363999,
+    "pass": false
+  },
+  "H_gen8": {
+    "description": "Partial r(kappa, log(PPL) | log(N_params))",
+    "r_partial": -0.14485238655542676,
+    "p_partial": 0.636818482236118,
+    "pass": false
+  },
+  "H_gen9": {
+    "description": "kappa outperforms simpler geometric baselines",
+    "r_kappa": -0.48763424952205897,
+    "baseline_rs": {
+      "effective_rank": -0.6993514491643895,
+      "mean_cossim": 0.5310998922534025,
+      "condition_number": 0.297843761282131
+    },
+    "max_baseline": 0.6993514491643895,
+    "pass": false
+  },
+  "H_gen7": {
+    "description": "Residual correlates with log(V-1)",
+    "r": 0.5576356360061644,
+    "p": 0.04768932519713753,
+    "direction_correct": true
+  },
+  "H_gen12": {
+    "description": "Fixed-V achieves stronger r than full suite",
+    "r_fixed_v": -0.9235812449629137,
+    "r_cross": -0.48763424952205897,
+    "pass": true
+  },
+  "two_param_model": {
+    "alpha_gen": 1.6278089594837937,
+    "beta_v": 0.4575783530446704,
+    "C": -0.8774305300329424,
+    "R_squared": 0.4830747892115774,
+    "R_squared_1param": 0.23778716130694166
+  },
+  "theory": {
+    "alpha_class": 1.477,
+    "alpha_gen_fixed_v": 2.076921560555505,
+    "implied_rho_class": 0.4163545179847884,
+    "implied_rho_gen": 0.704831553821677
+  },
+  "scorecard": {
+    "n_pass": 4,
+    "n_total": 11,
+    "details": {
+      "H_gen1 (Fixed-V, n=10)": {
+        "value": "r=-0.9236",
+        "pass": true
+      },
+      "H_gen1 (Cross-arch, n=13)": {
+        "value": "r=-0.4876",
+        "pass": false
+      },
+      "H_gen2 (alpha range)": {
+        "value": "alpha=2.0769",
+        "pass": true
+      },
+      "H_gen3 (Null check)": {
+        "value": "|r|=0.7269",
+        "pass": false
+      },
+      "H_gen4 (Pythia LOAO)": {
+        "value": "resid=0.8201",
+        "pass": false
+      },
+      "H_gen7 (beta direction)": {
+        "value": "r_v=0.5576",
+        "pass": true
+      },
+      "H_gen8 (Size confound)": {
+        "value": "|r_part|=0.1449",
+        "pass": false
+      },
+      "H_gen9 (vs baselines)": {
+        "value": "|r_k|=0.4876",
+        "pass": false
+      },
+      "H_gen10 (Arch indep)": {
+        "value": "p=0.0313",
+        "pass": false
+      },
+      "H_gen12 (Fixed>Full)": {
+        "value": "0.924>0.488",
+        "pass": true
+      },
+      "H_gen13 (Mamba LOAO)": {
+        "value": "resid=0.1081",
+        "pass": false
+      }
+    }
+  },
+  "sensitivity_no_pythia160m": {
+    "n": 9,
+    "r": -0.5363778020832891,
+    "p": 0.13655582865388688,
+    "rho": -0.33333333333333337,
+    "p_rho": 0.38071318167686347,
+    "alpha_gen": 1.0258694539138329
+  },
+  "H_gen3_recheck": {
+    "r_structured": -0.9235812449629137,
+    "r_random": -0.7686857949049344,
+    "r_random_vs_dmodel": 0.9761312985980564,
+    "structured_better": true
+  }
+}

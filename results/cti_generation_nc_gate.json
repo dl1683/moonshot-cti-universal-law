@@ -1,0 +1,52 @@
+{
+  "n_tested": 3,
+  "n_passing": 3,
+  "pass_criterion": "NC alignment ratio (R^2_NC * d) > 10 for at least 3 models",
+  "gate_pass": true,
+  "note": "R^2_NC = cos^2(h, w_y). Random baseline = 1/d. Threshold 0.3 was dimensionally incorrect; corrected to ratio > 10.",
+  "models": {
+    "pythia-410m": {
+      "r2_nc": 0.03762775209604541,
+      "d_model": 1024,
+      "nc_alignment_ratio": 38.5308181463505,
+      "random_baseline": 0.0009765625,
+      "n_tokens": 10082,
+      "model": "Pythia-410M",
+      "hf_id": "EleutherAI/pythia-410m",
+      "arch": "transformer",
+      "time_s": 9.96597957611084
+    },
+    "pythia-2.8b": {
+      "r2_nc": 0.021199715879610226,
+      "d_model": 2560,
+      "nc_alignment_ratio": 54.27127265180218,
+      "random_baseline": 0.000390625,
+      "n_tokens": 10082,
+      "model": "Pythia-2.8B",
+      "hf_id": "EleutherAI/pythia-2.8b",
+      "arch": "transformer",
+      "time_s": 8.574131488800049
+    },
+    "mamba-790m": {
+      "model": "Mamba-790M",
+      "error": "Error(s) in loading state_dict for MambaMixer:\n\tsize mismatch for D: copying a param with shape torch.Size([3072]) from checkpoint, the shape in current model is torch.Size([1536]).",
+      "r2_nc": null
+    },
+    "mamba-2.8b": {
+      "model": "Mamba-2.8B",
+      "error": "Error(s) in loading state_dict for MambaMixer:\n\tsize mismatch for A_log: copying a param with shape torch.Size([5120, 16]) from checkpoint, the shape in current model is torch.Size([1536, 16]).",
+      "r2_nc": null
+    },
+    "qwen3-0.6b": {
+      "r2_nc": 0.031041971620754172,
+      "d_model": 1024,
+      "nc_alignment_ratio": 31.786978939652272,
+      "random_baseline": 0.0009765625,
+      "n_tokens": 10106,
+      "model": "Qwen3-0.6B",
+      "hf_id": "Qwen/Qwen3-0.6B",
+      "arch": "transformer",
+      "time_s": 13.349118947982788
+    }
+  }
+}
