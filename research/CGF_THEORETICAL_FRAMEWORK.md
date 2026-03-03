@@ -1370,23 +1370,47 @@ but empirically kappa predicts both. This makes sense: better W_U geometry
 (lower K_eff). The two components are NOT independent — they are both
 consequences of W_U quality.
 
-**Key finding 4: Margin fraction is V-dependent (Session 90).**
-r(log_V, frac_margin) = 0.738 (p=0.015, n=10). Larger vocabularies have
-higher margin fractions:
-- V ~ 50K (Pythia, GPT-2, SmolLM2): frac_margin = 61.3% +/- 0.8%
-- V ~ 152K (Qwen3-0.6B): frac_margin = 72.8%
-- V ~ 152K (Qwen3-1.7B): frac_margin = 81.0%
+**Key finding 4: Margin/K_eff split reveals TWO distinct scaling strategies (Session 90).**
+Initial analysis (n=10) suggested V-dependence (r=0.738). But with n=12, the
+pattern is TRAINING-METHOD-SPECIFIC, not V-dependent:
 
-This reveals TWO distinct strategies for achieving low PPL:
-1. **Small-V strategy** (Pythia, GPT-2): moderate margin + moderate K_eff.
-   Both improve proportionally with model quality. Margin fraction stable.
-2. **Large-V strategy** (Qwen3): high margin (unavoidable with V=152K) but
-   extremely low K_eff (1.6 for Qwen3-1.7B). The model compensates for the
-   geometrically harder competition by being extremely precise about which
-   tokens are viable at each position.
+| Model family | V | frac_margin | K_eff range | Strategy |
+|--------------|---|-------------|-------------|----------|
+| Pythia (5 sizes) | 50280 | 61.1-62.1% | 2.3-3.3 | Proportional |
+| GPT-2 | 50257 | 59.5% | 3.5 | Proportional |
+| SmolLM2-360M | 49152 | 61.3% | 2.3 | Proportional |
+| Qwen2-0.5B | 151936 | 61.5% | 2.4 | Proportional |
+| Falcon-H1-0.5B | 130048 | 60.0% | 2.2 | Proportional |
+| Qwen3-0.6B | 151936 | 72.8% | 2.1 | K_eff-dominated |
+| Qwen3-1.7B | 151936 | 81.0% | 1.6 | K_eff-dominated |
+| Qwen3-4B | 151936 | 81.8% | 1.6 | K_eff-dominated |
 
-Qwen2-0.5B is an exception: V=152K but frac_margin=61.5% (like V~50K models).
-This suggests the margin fraction depends on training approach, not just V.
+**Critical: Qwen2-0.5B (V=152K) has frac_margin=61.5%, same as V~50K models.**
+Falcon-H1 (V=130K) also shows 60.0%. Only QWEN3 shows elevated margin.
+V alone does NOT determine the split. It is training-method-specific.
+
+**Two strategies for language modeling:**
+1. **Proportional scaling** (Pythia, GPT-2, SmolLM2, Qwen2, Falcon-H1):
+   Margin and K_eff improve proportionally. frac_margin ~ 61% is stable across
+   model sizes. Logit distributions are "balanced."
+2. **K_eff-dominated scaling** (Qwen3 only so far):
+   Margin stays high or INCREASES (72-82%) while K_eff drops sharply (2.1 → 1.6).
+   Improvement comes entirely from better context modeling (narrower posterior),
+   not from better token separation. When Qwen3 is wrong, it's VERY wrong
+   (E[margin|wrong] = 4.37 for 4B vs 3.10 for Pythia-410M) — but it's wrong
+   less often (top1=55% vs 49%).
+
+**Update (Session 90, n=16):** Granite-Micro (V=32K, Hybrid) shows frac_margin=71.3%.
+This DEBUNKS the V-dependence hypothesis — V=32K should have LOWER margin than V=50K
+if V were the driver. The high-margin pattern is about MODERN TRAINING METHODS:
+- Older training (Pythia, GPT-2, SmolLM2, Qwen2): proportional scaling, ~61% margin
+- Newer training (Qwen3, Granite 4.0): K_eff-dominated scaling, 71-82% margin
+- Falcon-H1: hybrid architecture but older-style logit distribution, ~60% margin
+
+The margin fraction reflects how the model distributes logit mass, which is
+determined by training methodology (loss function, data mix, regularization),
+not vocabulary size. This is a TRAINING-METHOD FINGERPRINT, not a geometric
+property of the vocabulary embedding space.
 
 **Key finding 5: Classification-generation gap explained.**
 In CLASSIFICATION (K=4 for AG News): K_eff ~ K-1 = 3 (all alternatives
@@ -1664,10 +1688,7 @@ determines outcomes," the underlying mathematical structure is real.
 
 ---
 
-### 3.22 Synthesis: The Generation Law Story (Session 89)
-
-After extensive empirical investigation (Sessions 87-89, 28 models, 16 metrics,
-5 architecture families), the generation law has a clear picture:
+### 3.22 Synthesis: The Generation Law Story (Sessions 87-90)
 
 **What works:**
 1. Classification law (Law 1): logit(q) = alpha * kappa_nearest - beta * log(K-1) + C
