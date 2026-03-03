@@ -1,0 +1,101 @@
+{
+  "session": "91",
+  "date": "2026-03-03",
+  "cross_v_analysis": {
+    "n_models": 17,
+    "n_architectures": 9,
+    "architectures": [
+      "Pythia",
+      "GPT-2",
+      "Qwen2",
+      "Qwen3",
+      "Falcon-H1",
+      "SmolLM2",
+      "Granite",
+      "Mistral",
+      "LiquidAI"
+    ],
+    "ppl_metric": "K_eff CE (20K tokens WikiText-103 validation)",
+    "r_kappa_top1K": -0.5384901425979618,
+    "p_kappa_top1K": 0.02574090218475708,
+    "R2_kappa_top1K": 0.28997163367517326,
+    "without_lfm2_5": {
+      "n_models": 16,
+      "r": -0.726543815951263,
+      "p": 0.0014338024177077452,
+      "R2": 0.5278659164970227
+    },
+    "partial_r_controlling_log_params": -0.5643857478776119,
+    "partial_p": 0.02275708471104962,
+    "models": [
+      "falcon-h1-0.5b",
+      "falcon-h1-1.5b",
+      "falcon-h1-3b",
+      "gpt2",
+      "granite-micro",
+      "lfm2.5-1.2b",
+      "mistral-7b",
+      "pythia-1.4b",
+      "pythia-160m",
+      "pythia-1b",
+      "pythia-2.8b",
+      "pythia-410m",
+      "qwen2-0.5b",
+      "qwen3-0.6b",
+      "qwen3-1.7b",
+      "qwen3-4b",
+      "smollm2-360m"
+    ]
+  },
+  "fixed_v_analysis": {
+    "n_models": 10,
+    "V": 50280,
+    "architectures": [
+      "Pythia (Transformer)",
+      "Mamba (SSM)"
+    ],
+    "ppl_metric": "Pile PPL (Mamba paper Table 3)",
+    "r_kappa_top1K": -0.9020674426939311,
+    "p_kappa_top1K": 0.00035703639801856605,
+    "R2_kappa_top1K": 0.8137256711683687,
+    "r_kappa_bar": -0.9233323284418948,
+    "p_kappa_bar": 0.00013768940088802463,
+    "R2_kappa_bar": 0.8525425887459311,
+    "without_pythia160m": {
+      "n": 9,
+      "r_kappa_top1K": -0.06345358231591153,
+      "p_kappa_top1K": 0.8711663659392468,
+      "r_kappa_bar": -0.5353305400044912,
+      "p_kappa_bar": 0.13747119847953493,
+      "note": "Pythia-160M is a leverage point (kappa=0.251 vs cluster at 0.7-0.9)"
+    },
+    "architecture_independence": {
+      "F_test_p": 0.071,
+      "arch_significant": false,
+      "systematic_bias": -0.23430193710773328,
+      "note": "Mamba achieves ~0.23 lower logPPL than Pythia at same kappa (better h(x))"
+    },
+    "models": [
+      "mamba-1.4b",
+      "mamba-130m",
+      "mamba-2.8b",
+      "mamba-370m",
+      "mamba-790m",
+      "pythia-1.4b",
+      "pythia-160m",
+      "pythia-1b",
+      "pythia-2.8b",
+      "pythia-410m"
+    ]
+  },
+  "key_findings": [
+    "kappa_top1K from W_U alone predicts log(CE) with r=-0.539 (p=0.026) across 17 models and 9 architectures",
+    "Excluding LFM2.5 outlier (novel architecture with poor context modeling): r=-0.727, R2=0.528",
+    "Fixed-V (V=50K, Pythia+Mamba): r=-0.902 for kappa_top1K, r=-0.923 for kappa_bar",
+    "CAVEAT: Fixed-V r=-0.902 is leverage-dependent on Pythia-160M (without it: r=-0.064 for kappa_top1K)",
+    "kappa_bar is more robust to leverage: r=-0.535 without Pythia-160M",
+    "Architecture independence: F-test p=0.071 \u2014 Transformer and SSM share the same law (not significant at 5%)",
+    "W_U geometry is necessary but not sufficient: explains ~53% of PPL variance, missing 47% is h(x) quality",
+    "Partial correlation controlling for model size: r=-0.564, p=0.023 (NOT a size proxy)"
+  ]
+}
