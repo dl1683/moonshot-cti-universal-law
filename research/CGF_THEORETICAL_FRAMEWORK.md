@@ -1106,7 +1106,144 @@ Ref: Tang & Yang 2025 (arXiv:2512.02807, Stable Rank); Kulkarni et al. 2026
 (arXiv:2602.20433, eRank in OLMo models); Martin & Mahoney 2021 (Nature Communications,
 WeightWatcher); Godey et al. 2024 (arXiv:2404.07647, LM Saturation).
 
-### 3.20 Cross-Field Equivalences and Universality Evidence (Session 88)
+### 3.20 Frequency-Weighted Kappa and Effective K (Session 89)
+
+#### 3.20.0 The Fundamental Mismatch
+
+The kappa saturation problem (Section 3.18) has a clean theoretical explanation:
+kappa_bar averages UNIFORMLY over all V tokens, but PPL averages UNDER THE DATA
+DISTRIBUTION p(v). These are different expectations:
+
+    kappa_bar = (1/V) * sum_v kappa_v         (uniform average)
+    PPL = exp( -sum_v p(v|x) log p(v|x) )     (frequency-weighted)
+
+Since token frequencies follow Zipf's law (s ~ 1.0 for English BPE), the top
+~2,500 tokens account for ~75% of CE loss (Limisiewicz, Stanczak & Meister,
+NeurIPS 2025). The remaining 47,500+ tokens (for V=50K) contribute negligibly
+to PPL but dominate kappa_bar. The uniform average is the WRONG statistic.
+
+#### 3.20.1 Frequency-Weighted Kappa
+
+**Definition:**
+
+    kappa_freq = sum_v p(v) * kappa_v
+
+where p(v) is the unigram frequency of token v in the evaluation corpus.
+
+**Theoretical justification from imbalanced Neural Collapse:**
+
+Hong & Ling (JMLR 2024) prove that under class imbalance with cross-entropy loss:
+- Classifier weight norms scale as ||w_k|| proportional to sqrt(n_k)
+- Class means form orthogonal vectors with DIFFERENT LENGTHS (not simplex ETF)
+- Rare classes undergo "minority collapse" when n_k falls below a threshold
+
+Zhou & Qu (2024) give the explicit formula for optimal singular values:
+
+    sigma_i* = sqrt( sqrt(n_i * lambda_W / lambda_H) - N * lambda_W )
+
+which equals ZERO when n_i < N^2 * lambda_H * lambda_W. Rare tokens literally
+collapse to zero separation.
+
+**Empirical evidence from LLM internals:**
+
+LLMs universally learn a feature direction in embeddings that correlates ~0.9
+with log token frequency (LessWrong 2024). This holds across 20+ models from
+10M to 70B parameters, both in embedding and unembedding matrices. The geometry
+IS frequency-dependent by construction.
+
+Stolfo et al. (NeurIPS 2024) identified "confidence regulation neurons" that
+boost/suppress each token's logit proportionally to its log frequency. The model
+has dedicated circuitry for frequency-dependent logit calibration.
+
+**Predicted behavior:**
+
+| Property | Frequent tokens (top 2.5K) | Rare tokens (bottom 45K+) |
+|----------|---------------------------|--------------------------|
+| ||w_v|| | Higher (corr ~0.9 with log freq) | Lower |
+| kappa_v | Higher (well separated) | Lower (crowded, minority collapse) |
+| Contribution to PPL | ~75% of total CE loss | ~25% collectively |
+| Contribution to kappa_bar | ~5% (uniformly weighted) | ~95% (dominates) |
+
+kappa_bar is dominated by the 95% of tokens that contribute only 25% of PPL.
+kappa_freq corrects this by weighting each token proportional to its contribution.
+
+**Weighting variants to test:**
+1. p(v) weighting (proportional to frequency) — matches PPL weighting exactly
+2. log p(v) weighting — since ||w_v|| ~ log freq (empirical)
+3. sqrt(p(v)) weighting — since NC theory predicts sqrt(n_k) scaling
+
+#### 3.20.2 Effective K Decomposition (Exact, Non-Circular)
+
+The cross-entropy loss decomposes EXACTLY as:
+
+    CE(x) = -log p(y|x) = (z_max - z_y) + (LSE(z) - z_max)
+           = margin_deficit + log(K_eff)
+
+where:
+- margin_deficit = z_max - z_y = how far the correct token is from the top
+  (0 when the correct token has the highest logit)
+- K_eff = exp(LSE(z) - z_max) = the effective number of competitors
+
+This decomposition is exact (not approximate) and separates the loss into:
+1. A GEOMETRIC QUALITY term (margin) that kappa_nearest should predict
+2. A COMPETITION term (K_eff) that captures the irreducible difficulty
+
+**K_eff is NOT PPL** — it measures the competitive landscape at the logit level,
+not the probability-weighted entropy. A distribution can have PPL=10 with
+K_eff=3 (one dominant + two competitors) or K_eff=20 (many similar tokens).
+
+**Empirical K_eff values (from Tang et al. ACL 2025, Top-n-sigma):**
+LLM logit distributions naturally separate into a Gaussian noise floor and an
+informative region with 1-100 tokens. The geometric mean K_eff is typically
+5-30 for frontier LLMs — 3-4 orders of magnitude smaller than V.
+
+**For the generation law, this means:**
+
+    log(PPL) = E[margin_deficit] + E[log(K_eff)]
+             = f(kappa_bar, alpha) + g(context_difficulty)
+
+The first term is what kappa should predict. The second term is
+architecture-dependent (how well the model constrains the competition space)
+and context-dependent (grammatical slots have K_eff ~ 1-3, open-ended
+continuations have K_eff ~ 20-100).
+
+**Why kappa_bar fails for well-trained models:** All models saturate kappa_bar
+(geometric quality of the average token), but they DIFFER in how well they
+reduce K_eff (context-dependent competition). The variation in PPL among
+well-trained models comes from the K_eff term, not the kappa term.
+
+**Correlation-length interpretation (Majumdar et al. 2019):**
+K_eff = V / zeta, where zeta is the correlation length of the logit vector.
+Tokens in similar semantic neighborhoods have highly correlated logits. Better
+models have larger zeta (more correlated logits → fewer effective competitors).
+
+#### 3.20.3 Revised Generation Law
+
+The generation law should be:
+
+    log(PPL) = -alpha_gen * kappa_freq + beta * E[log(K_eff)] + C_arch
+
+where kappa_freq is frequency-weighted (measurable from W_U + unigram stats)
+and E[log(K_eff)] is the mean log-effective-competitors (measurable from
+one forward pass). Both are measurable and neither IS perplexity.
+
+For the zero-forward-pass version (W_U only), the law becomes:
+
+    log(PPL) ~ -alpha_gen * kappa_freq + C_arch
+
+with kappa_freq replacing kappa_bar. This should have wider dynamic range
+because it focuses on the ~2,500 tokens that matter, where models differ
+meaningfully in geometric quality.
+
+Ref: Limisiewicz, Stanczak & Meister (NeurIPS 2025, arXiv:2508.15390);
+Hong & Ling (JMLR 2024); Zhou & Qu (2024, arXiv:2401.02058);
+Stolfo et al. (NeurIPS 2024, arXiv:2406.16254); Tang et al. (ACL 2025,
+arXiv:2411.07641); Holtzman et al. (ICLR 2020); McFadden (1974);
+Hill (1973) / Jost (2006) diversity indices; Majumdar et al. (2019).
+
+---
+
+### 3.21 Cross-Field Equivalences and Universality Evidence (Session 88)
 
 The CTI/CGF Gumbel-race framework is NOT an isolated ML result. It is a
 specific instance of a universal mathematical structure that appears across
@@ -1114,7 +1251,7 @@ economics, neuroscience, ecology, random matrix theory, and information theory.
 These independent derivations in other fields provide the strongest possible
 evidence that the framework captures real structure, not a curve-fitting artifact.
 
-#### 3.20.1 McFadden Equivalence (Nobel Economics 2000)
+#### 3.21.1 McFadden Equivalence (Nobel Economics 2000)
 
 **Theorem (McFadden-CTI Equivalence):** The CTI classification law is
 mathematically identical to McFadden's multinomial logit model for discrete
@@ -1160,7 +1297,7 @@ Ref: McFadden (1973) "Conditional logit analysis of qualitative choice
 behavior" in Frontiers in Econometrics; McFadden (2000) Nobel Lecture;
 Train (2009) "Discrete Choice Methods with Simulation" Ch. 3.
 
-#### 3.20.2 Information-Theoretic Canonicality (Johnson 2024)
+#### 3.21.2 Information-Theoretic Canonicality (Johnson 2024)
 
 **Theorem (Johnson 2024):** The Gumbel distribution is the maximum-entropy
 distribution for extreme-value statistics. Among all distributions with a
@@ -1190,7 +1327,7 @@ for sums (by CLT) and the exponential is canonical for waiting times
 Ref: Johnson (2024) arXiv (exact reference from agent research); Jaynes (1957)
 "Information theory and statistical mechanics" Physical Review.
 
-#### 3.20.3 Biological Universality: Four Independent Domains
+#### 3.21.3 Biological Universality: Four Independent Domains
 
 The Gumbel-race / geometric-separation mechanism has been independently
 discovered in four biological domains, each by different research groups
@@ -1226,7 +1363,7 @@ three different species, four different recording technologies, all converge
 on: geometric separation of population codes determines decision accuracy.
 The probability of this convergence being coincidental is negligible.
 
-#### 3.20.4 Ecological Species-Area Law (Borda-de-Agua et al., Nature Comms 2025)
+#### 3.21.4 Ecological Species-Area Law (Borda-de-Agua et al., Nature Comms 2025)
 
 **The species-area relationship** (one of ecology's oldest empirical laws,
 dating to Arrhenius 1921) can be derived from extreme value theory:
@@ -1253,7 +1390,7 @@ competition outcomes in high-dimensional spaces.
 Ref: Borda-de-Agua et al. (2025) Nature Communications (exact DOI from
 agent research).
 
-#### 3.20.5 Random Matrix Theory: Spiked Models (Dandi et al., AISTATS 2025)
+#### 3.21.5 Random Matrix Theory: Spiked Models (Dandi et al., AISTATS 2025)
 
 Dandi et al. (2025) analyze spiked random matrix models for neural networks.
 In their framework, the "spikes" (eigenvalues that separate from the bulk
@@ -1275,7 +1412,7 @@ the spiked regime where further spike growth has diminishing returns.
 Ref: Dandi et al. (2025) AISTATS; Baik, Ben Arous & Peche (2005) "Phase
 transition of the largest eigenvalue" Annals of Probability.
 
-#### 3.20.6 Universal Latent Dimensions (Chen & Bonner, Science Advances 2025)
+#### 3.21.6 Universal Latent Dimensions (Chen & Bonner, Science Advances 2025)
 
 Chen & Bonner (2025) find that 200K representational dimensions from DNNs
 converge on fewer than 10 universal latent dimensions aligned with brain
@@ -1292,7 +1429,7 @@ representations. This validates WHY alpha universality is plausible:
 
 Ref: Chen & Bonner (2025) Science Advances; arXiv:2408.12804.
 
-#### 3.20.7 Geometric Complexity and Neural Collapse (Munn et al., NeurIPS 2024)
+#### 3.21.7 Geometric Complexity and Neural Collapse (Munn et al., NeurIPS 2024)
 
 Munn, Dherin & Gonzalvo (2024) show that geometric complexity (a measure
 of the curvature of the loss landscape) controls both the degree of neural
@@ -1314,7 +1451,7 @@ to Zhao et al. ICLR 2026 (SGD vs AdamW determining NC emergence).
 
 Ref: Munn, Dherin & Gonzalvo (2024) NeurIPS; arXiv:2405.15706.
 
-#### 3.20.8 EVT Decision Boundaries (Scheirer et al., various)
+#### 3.21.8 EVT Decision Boundaries (Scheirer et al., various)
 
 Scheirer et al. have developed an EVT-based framework for open set
 recognition, where the decision boundary is placed using extreme value
@@ -1331,7 +1468,7 @@ distances govern classification outcomes.
 Ref: Scheirer et al. (2014) PAMI "Probability models for open set
 recognition"; Rudd et al. (2018) PAMI "The Extreme Value Machine."
 
-#### 3.20.9 Summary: CTI as a Cross-Field Universal Law
+#### 3.21.9 Summary: CTI as a Cross-Field Universal Law
 
 The convergence of independent discoveries across 6+ fields provides
 the strongest evidence for CTI's universality:
