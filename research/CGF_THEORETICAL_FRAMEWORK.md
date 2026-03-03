@@ -255,13 +255,41 @@ This provides a STRONGER test of the generation law because:
 3. Any correlation between kappa and log(PPL) CANNOT be an artifact
    of vocabulary size differences
 
-**Application:** The following models share V = 50280 (GPT-NeoX tokenizer):
+**Application:** The following models share V ~ 50280 (GPT-NeoX tokenizer):
 Pythia-{160M, 410M, 1B, 1.4B, 2.8B}, Mamba-{130M, 370M, 790M, 1.4B, 2.8B},
-and GPT-2 (V=50257, effectively identical). This gives n=11 models for
-a clean, V-controlled test of kappa vs log(PPL).
+Mamba2-{130M, 370M, 780M, 1.3B, 2.7B} (V=50288), and GPT-2 (V=50257).
+This gives up to n=16 models for a clean, V-controlled test of kappa vs log(PPL),
+spanning THREE architecture families (Transformer, SSM v1, SSM v2).
 
-With n=11, a Pearson r of -0.80 has p < 0.003 — genuinely significant
-even without the cross-tokenizer extension suite.
+Current result (n=10, Pile PPL): r=-0.924, p=0.00014.
+
+### 3.7.1 Observation: alpha_gen / alpha_class = sqrt(2) (Session 88)
+
+**Empirical finding:** alpha_gen (fixed-V) = 2.077, alpha_class (LOAO) = 1.477.
+The ratio = 1.4062, which is within 0.57% of sqrt(2) = 1.4142.
+
+**Equivalently:** alpha_class * sqrt(2) = 2.0888, matching alpha_gen = 2.077.
+
+**Status: Observed but not theoretically explained.** The relationship persists
+across different bootstrap samples but the CI is wide (bootstrap mean=1.70,
+95% CI includes both alpha_class and alpha_class*sqrt(2)).
+
+**Candidate explanations (all tentative):**
+1. Normalization artifact: classification kappa uses whitened centroids divided
+   by sqrt(d), while generation kappa uses L2 distance of unit-normalized W_U
+   rows. For unit vectors: ||w-v||^2 = 2(1-cos), introducing a sqrt(2) factor.
+   However, replacing generation kappa with whitened kappa (Proxy B) does NOT
+   change alpha (alpha_whitened=2.126 vs alpha_raw=2.068 for Pythia Pile).
+2. Different dependent variable regimes: classification uses logit(q_norm)
+   (centered around 0 for moderate accuracy), generation uses log(PPL)
+   (centered around 2-3.5 for typical LLMs). The nonlinear link functions
+   may introduce different effective slopes.
+3. Coincidence: with n=10 and a leverage-dominated fit (Pythia-160M), the
+   bootstrap CI is too wide to confirm sqrt(2) vs other special values.
+
+This observation motivates a future test: compute classification kappa for the
+same Pythia/Mamba models on AG News (by running kNN classification on sentence
+embeddings), then compare alpha directly within-model.
 
 ### 3.8 Local Equicorrelation Theorem (NEW — Session 86)
 

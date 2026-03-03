@@ -113,5 +113,33 @@
     "ppl": 6.715819459551174,
     "log_ppl": 1.9044658567144714,
     "time_s": 42.6797661781311
+  },
+  "qwen2-0.5b": {
+    "model": "Qwen2-0.5B",
+    "hf_id": "Qwen/Qwen2-0.5B",
+    "ppl": 16.271169012866693,
+    "log_ppl": 2.7893947694713543,
+    "time_s": 16.574652433395386
+  },
+  "falcon-h1-3b": {
+    "model": "Falcon-H1-3B",
+    "hf_id": "tiiuae/Falcon-H1-3B-Base",
+    "ppl": 7.289035040921761,
+    "log_ppl": 1.9863711697587718,
+    "time_s": 317.1360523700714
+  },
+  "granite-micro": {
+    "model": "Granite-4.0-Micro",
+    "hf_id": "ibm-granite/granite-4.0-micro",
+    "ppl": 13.724084619050657,
+    "log_ppl": 2.619152290748884,
+    "time_s": 28.269593954086304
+  },
+  "lfm2.5-1.2b": {
+    "model": "LFM2.5-1.2B",
+    "hf_id": "LiquidAI/LFM2.5-1.2B-Base",
+    "ppl": 132.43747934735256,
+    "log_ppl": 4.886110680085911,
+    "time_s": 15.687911748886108
   }
 }
