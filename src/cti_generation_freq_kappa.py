@@ -74,6 +74,7 @@ MODELS = {
     "gemma-3-4b":     ("Gemma-3-4B",    "google/gemma-3-4b-pt",          "gemma3"),
     "phi-4":          ("Phi-4",          "microsoft/phi-4",               "phi4"),
     "lfm2.5-1.2b":   ("LFM2.5-1.2B",   "LiquidAI/LFM2.5-1.2B-Base",   "lfm"),
+    "mistral-7b":     ("Mistral-7B",    "mistralai/Mistral-7B-v0.3",   "mistral"),
 }
 
 

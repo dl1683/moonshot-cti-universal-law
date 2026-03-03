@@ -64,6 +64,8 @@ MODELS = [
     ("phi-4",          "microsoft/phi-4"),
     # --- Liquid AI (Novel architecture, V=65536) ---
     ("lfm2.5-1.2b",   "LiquidAI/LFM2.5-1.2B-Base"),
+    # --- Mistral (Transformer, V=32768) ---
+    ("mistral-7b",     "mistralai/Mistral-7B-v0.3"),
 ]
 
 
@@ -74,9 +76,15 @@ def compute_keff_stats(model_key, hf_id, max_tokens=20000):
 
     print(f"    Loading model {hf_id}...", flush=True)
     tokenizer = AutoTokenizer.from_pretrained(hf_id, trust_remote_code=True)
-    model = AutoModelForCausalLM.from_pretrained(
-        hf_id, torch_dtype=torch.float16, trust_remote_code=True
-    ).to(DEVICE)
+    # Try bf16 first (Gemma needs it), fall back to fp16
+    try:
+        model = AutoModelForCausalLM.from_pretrained(
+            hf_id, torch_dtype=torch.bfloat16, trust_remote_code=True
+        ).to(DEVICE)
+    except Exception:
+        model = AutoModelForCausalLM.from_pretrained(
+            hf_id, torch_dtype=torch.float16, trust_remote_code=True
+        ).to(DEVICE)
     model.eval()
     print(f"    Model loaded on {DEVICE}", flush=True)
 

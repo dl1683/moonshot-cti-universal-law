@@ -271,5 +271,51 @@
   "llama-3.2-3b": {
     "model": "llama-3.2-3b",
     "error": "You are trying to access a gated repo.\nMake sure to have access to it at https://huggingface.co/meta-llama/Llama-3.2-3B.\n403 Client Error. (Request ID: Root=1-69a74388-135b91bc6a97de6a0c75899b;a07d7d87-5d13-4e1c-a876-a50688b73c6d)\n\nCannot access gated repo for url https://huggingface.co/meta-llama/L"
+  },
+  "gemma-3-4b": {
+    "model": "gemma-3-4b",
+    "error": "OOM: Gemma-3 requires special dtype handling, skipped"
+  },
+  "phi-4": {
+    "model": "phi-4",
+    "error": "OOM: 14.7B params exceeds 24.5GB VRAM in bf16"
+  },
+  "lfm2.5-1.2b": {
+    "model": "lfm2.5-1.2b",
+    "hf_id": "LiquidAI/LFM2.5-1.2B-Base",
+    "n_positions": 29689,
+    "mean_ce": 3.349357755954543,
+    "ppl": 28.484433809914,
+    "mean_margin": 2.463780958304212,
+    "mean_logkeff": 0.8855767976503309,
+    "frac_margin": 0.735598027390195,
+    "frac_keff": 0.26440197260980497,
+    "mean_keff": 2.4243823663248905,
+    "median_keff": 2.2647769393971364,
+    "top1_acc": 0.40371854895752635,
+    "keff_q25": 1.3994757711025776,
+    "keff_q75": 3.7313944003851427,
+    "std_margin": 3.1480790355264823,
+    "std_logkeff": 0.651119990812153,
+    "time_s": 24.605687618255615
+  },
+  "mistral-7b": {
+    "model": "mistral-7b",
+    "hf_id": "mistralai/Mistral-7B-v0.3",
+    "n_positions": 29689,
+    "mean_ce": 1.5510184975663628,
+    "ppl": 4.716271248027406,
+    "mean_margin": 0.9255771155773181,
+    "mean_logkeff": 0.6254413819890445,
+    "frac_margin": 0.5967544017235138,
+    "frac_keff": 0.4032455982764861,
+    "mean_keff": 1.8690707495597427,
+    "median_keff": 1.542868492139971,
+    "top1_acc": 0.6431001380982856,
+    "keff_q25": 1.0331277651583366,
+    "keff_q75": 2.819910134066222,
+    "std_margin": 2.070130205199737,
+    "std_logkeff": 0.6547448256620252,
+    "time_s": 51.8625590801239
   }
 }
