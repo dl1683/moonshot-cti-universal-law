@@ -300,8 +300,21 @@
     "time_s": 28.220308303833008
   },
   "gpt2": {
-    "model": "GPT-2",
-    "error": "W_U not found. Keys: ['h.3.attn.c_proj.bias', 'h.2.mlp.c_fc.bias', 'h.3.mlp.c_proj.bias', 'h.0.attn.c_proj.weight', 'h.5.ln_1.weight', 'h.1.attn.c_attn.weight', 'ln_f.weight', 'h.9.attn.c_attn.bias', "
+    "model": "gpt2",
+    "hf_id": "openai-community/gpt2",
+    "V": 50257,
+    "d": 768,
+    "kappa_bar": 0.7979945540428162,
+    "kappa_std": 0.13102325797080994,
+    "kappa_freq_p": 0.7393705215733339,
+    "kappa_freq_logp": 0.7393705215733339,
+    "kappa_freq_sqrt": 0.7568740849695151,
+    "kappa_top100": 0.7293168902397156,
+    "kappa_top500": 0.7291737198829651,
+    "kappa_top1000": 0.729621410369873,
+    "kappa_top2500": 0.7334334850311279,
+    "kappa_top5000": 0.7404723167419434,
+    "r_logfreq_kappa": -0.17311607268385165
   },
   "qwen3-0.6b": {
     "kappa_bar": 0.8610253930091858,

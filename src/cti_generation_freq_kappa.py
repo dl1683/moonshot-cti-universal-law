@@ -68,8 +68,12 @@ MODELS = {
     "falcon-h1-1.5b": ("Falcon-H1-1.5B", "tiiuae/Falcon-H1-1.5B-Base", "falcon-h1"),
     "falcon-h1-3b":   ("Falcon-H1-3B",   "tiiuae/Falcon-H1-3B-Base",   "falcon-h1"),
     "smollm2-360m":   ("SmolLM2-360M",   "HuggingFaceTB/SmolLM2-360M", "smollm2"),
-    "mistral-7b":     ("Mistral-7B",     "mistralai/Mistral-7B-v0.3",  "mistral"),
     "granite-micro":  ("Granite-Micro",  "ibm-granite/granite-4.0-micro", "granite"),
+    "granite-tiny":   ("Granite-Tiny",   "ibm-granite/granite-4.0-tiny",  "granite"),
+    "llama-3.2-3b":   ("Llama-3.2-3B",  "meta-llama/Llama-3.2-3B",       "llama3"),
+    "gemma-3-4b":     ("Gemma-3-4B",    "google/gemma-3-4b-pt",          "gemma3"),
+    "phi-4":          ("Phi-4",          "microsoft/phi-4",               "phi4"),
+    "lfm2.5-1.2b":   ("LFM2.5-1.2B",   "LiquidAI/LFM2.5-1.2B-Base",   "lfm"),
 }
 
 
@@ -160,7 +164,8 @@ def extract_wu(hf_id):
                 idx = json.load(f)
             weight_map = idx.get("weight_map", {})
             for key in ["lm_head.weight", "output.weight", "embed_out.weight",
-                        "model.embed_tokens.weight", "backbone.embedding.weight"]:
+                        "model.embed_tokens.weight", "backbone.embedding.weight",
+                        "transformer.wte.weight", "wte.weight"]:
                 if key in weight_map:
                     shard = weight_map[key]
                     shard_path = hf_hub_download(hf_id, shard)
@@ -177,7 +182,7 @@ def extract_wu(hf_id):
         if key in sd:
             return sd[key].float().numpy()
     for key in ["backbone.embedding.weight", "model.embed_tokens.weight",
-                "transformer.wte.weight"]:
+                "transformer.wte.weight", "wte.weight"]:
         if key in sd:
             return sd[key].float().numpy()
     raise ValueError(f"W_U not found. Keys: {list(sd.keys())[:20]}")

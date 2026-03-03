@@ -28,23 +28,42 @@ PPL_FILE = RESULTS / "cti_generation_ppl.json"
 FREQ_KAPPA_FILE = RESULTS / "cti_generation_freq_kappa.json"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-# Models to test: only those where we have WikiText-103 PPL AND can run inference
-# Skip 7B+ (too large for full inference on 24GB GPU with this simple approach)
+# Models: maximum architecture diversity from MODEL_DIRECTORY.md
+# Tier 1: Pythia (Transformer, V=50280) — scaling series
+# Tier 2: Cross-architecture (Hybrid, Liquid, various V)
+# Tier 3: Larger models (3-4B, FP16 fits in 25.7GB)
 MODELS = [
-    ("pythia-160m",  "EleutherAI/pythia-160m"),
-    ("pythia-410m",  "EleutherAI/pythia-410m"),
-    ("pythia-1b",    "EleutherAI/pythia-1b"),
-    ("pythia-1.4b",  "EleutherAI/pythia-1.4b"),
-    ("pythia-2.8b",  "EleutherAI/pythia-2.8b"),
-    ("gpt2",         "openai-community/gpt2"),
-    ("qwen3-0.6b",   "Qwen/Qwen3-0.6B"),
-    ("qwen3-1.7b",   "Qwen/Qwen3-1.7B"),
-    ("qwen3-4b",     "Qwen/Qwen3-4B"),
-    ("qwen2-0.5b",   "Qwen/Qwen2-0.5B"),
+    # --- Pythia (Transformer, V=50280, Pile) ---
+    ("pythia-160m",    "EleutherAI/pythia-160m"),
+    ("pythia-410m",    "EleutherAI/pythia-410m"),
+    ("pythia-1b",      "EleutherAI/pythia-1b"),
+    ("pythia-1.4b",    "EleutherAI/pythia-1.4b"),
+    ("pythia-2.8b",    "EleutherAI/pythia-2.8b"),
+    # --- GPT-2 (Transformer, V=50257, WebText) ---
+    ("gpt2",           "openai-community/gpt2"),
+    # --- Qwen3 (Transformer, V=151936) ---
+    ("qwen3-0.6b",     "Qwen/Qwen3-0.6B"),
+    ("qwen3-1.7b",     "Qwen/Qwen3-1.7B"),
+    ("qwen3-4b",       "Qwen/Qwen3-4B"),
+    # --- Qwen2 (Transformer, V=151936) ---
+    ("qwen2-0.5b",     "Qwen/Qwen2-0.5B"),
+    # --- Falcon-H1 (Hybrid: Transformer+Mamba, V~130048) ---
     ("falcon-h1-0.5b", "tiiuae/Falcon-H1-0.5B-Base"),
     ("falcon-h1-1.5b", "tiiuae/Falcon-H1-1.5B-Base"),
-    ("smollm2-360m", "HuggingFaceTB/SmolLM2-360M"),
-    ("granite-micro", "ibm-granite/granite-4.0-micro"),
+    ("falcon-h1-3b",   "tiiuae/Falcon-H1-3B-Base"),
+    # --- SmolLM2 (Transformer, V=49152) ---
+    ("smollm2-360m",   "HuggingFaceTB/SmolLM2-360M"),
+    # --- Granite 4.0 (Hybrid: Transformer+Mamba2, V=32000) ---
+    ("granite-micro",  "ibm-granite/granite-4.0-micro"),
+    ("granite-tiny",   "ibm-granite/granite-4.0-tiny"),
+    # --- Llama 3.2 (Transformer, V=128256) ---
+    ("llama-3.2-3b",   "meta-llama/Llama-3.2-3B"),
+    # --- Gemma 3 (Transformer, V~256000) ---
+    ("gemma-3-4b",     "google/gemma-3-4b-pt"),
+    # --- Phi-4 (Transformer, V~32000) ---
+    ("phi-4",          "microsoft/phi-4"),
+    # --- Liquid AI (Novel architecture, V=65536) ---
+    ("lfm2.5-1.2b",   "LiquidAI/LFM2.5-1.2B-Base"),
 ]
 
 
@@ -118,31 +137,24 @@ def compute_keff_stats(model_key, hf_id, max_tokens=20000):
     ce_arr = np.array(all_ce)
     correct_arr = np.array(all_correct)
 
-    # Compute statistics
+    # Compute statistics — use standardized key names matching cached entries
     result = {
         "model": model_key,
         "hf_id": hf_id,
         "n_positions": len(ce_arr),
         "mean_ce": float(np.mean(ce_arr)),
-        "mean_margin_deficit": float(np.mean(margin_arr)),
-        "mean_log_keff": float(np.mean(log_keff_arr)),
-        "median_margin_deficit": float(np.median(margin_arr)),
-        "median_log_keff": float(np.median(log_keff_arr)),
-        "std_margin_deficit": float(np.std(margin_arr)),
-        "std_log_keff": float(np.std(log_keff_arr)),
-        "ppl_from_ce": float(np.exp(np.mean(ce_arr))),
+        "ppl": float(np.exp(np.mean(ce_arr))),
+        "mean_margin": float(np.mean(margin_arr)),
+        "mean_logkeff": float(np.mean(log_keff_arr)),
+        "frac_margin": float(np.mean(margin_arr) / np.mean(ce_arr)),
+        "frac_keff": float(np.mean(log_keff_arr) / np.mean(ce_arr)),
         "mean_keff": float(np.exp(np.mean(log_keff_arr))),
         "median_keff": float(np.exp(np.median(log_keff_arr))),
-        "accuracy_top1": float(np.mean(correct_arr)),
-        # Percentiles of K_eff
-        "keff_q10": float(np.exp(np.percentile(log_keff_arr, 10))),
+        "top1_acc": float(np.mean(correct_arr)),
         "keff_q25": float(np.exp(np.percentile(log_keff_arr, 25))),
-        "keff_q50": float(np.exp(np.percentile(log_keff_arr, 50))),
         "keff_q75": float(np.exp(np.percentile(log_keff_arr, 75))),
-        "keff_q90": float(np.exp(np.percentile(log_keff_arr, 90))),
-        # Fraction of CE from margin vs K_eff
-        "fraction_margin": float(np.mean(margin_arr) / np.mean(ce_arr)),
-        "fraction_keff": float(np.mean(log_keff_arr) / np.mean(ce_arr)),
+        "std_margin": float(np.std(margin_arr)),
+        "std_logkeff": float(np.std(log_keff_arr)),
     }
 
     del model, tokenizer
@@ -166,9 +178,9 @@ def analyze_results(results):
     print("-" * 75)
     for k in sorted(ok.keys(), key=lambda x: ok[x].get("mean_ce", 99)):
         v = ok[k]
-        print(f"{k:20s} {v['mean_ce']:7.3f} {v['mean_margin_deficit']:7.3f} "
-              f"{v['mean_log_keff']:7.3f} {v['fraction_margin']:7.1%} "
-              f"{v['mean_keff']:7.1f} {v['accuracy_top1']:7.1%}")
+        print(f"{k:20s} {v['mean_ce']:7.3f} {v['mean_margin']:7.3f} "
+              f"{v['mean_logkeff']:7.3f} {v['frac_margin']:7.1%} "
+              f"{v['mean_keff']:7.1f} {v['top1_acc']:7.1%}")
 
     # Load kappa data for correlation
     if FREQ_KAPPA_FILE.exists():
@@ -184,7 +196,7 @@ def analyze_results(results):
                 valid_keys = [both[i] for i in range(len(both)) if valid[i]]
                 kv = [kappas[i] for i in range(len(kappas)) if valid[i]]
 
-                for ce_comp in ["mean_ce", "mean_margin_deficit", "mean_log_keff"]:
+                for ce_comp in ["mean_ce", "mean_margin", "mean_logkeff"]:
                     cv = [ok[k][ce_comp] for k in valid_keys]
                     r, p = pearsonr(kv, cv)
                     print(f"  r({kappa_metric:15s}, {ce_comp:22s}) = {r:+.3f} (p={p:.4f})")
@@ -219,9 +231,9 @@ def main():
                 results[key] = result
 
                 print(f"    CE={result['mean_ce']:.3f}, "
-                      f"margin={result['mean_margin_deficit']:.3f} ({result['fraction_margin']:.1%}), "
-                      f"log(K_eff)={result['mean_log_keff']:.3f} ({result['fraction_keff']:.1%})")
-                print(f"    K_eff={result['mean_keff']:.1f}, top1_acc={result['accuracy_top1']:.1%}")
+                      f"margin={result['mean_margin']:.3f} ({result['frac_margin']:.1%}), "
+                      f"log(K_eff)={result['mean_logkeff']:.3f} ({result['frac_keff']:.1%})")
+                print(f"    K_eff={result['mean_keff']:.1f}, top1_acc={result['top1_acc']:.1%}")
 
                 with open(OUT_FILE, "w") as f:
                     json.dump(results, f, indent=2)
