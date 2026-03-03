@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-03-03 10:08:03",
+  "timestamp": "2026-03-03 10:29:51",
   "data_summary": {
     "n_kappa": 18,
     "n_pile": 10,
@@ -216,5 +216,17 @@
     "r_random": -0.7686857949049344,
     "r_random_vs_dmodel": 0.9761312985980564,
     "structured_better": true
+  },
+  "arch_split_model": {
+    "R2_kappa_only": 0.8530023160472457,
+    "R2_kappa_plus_arch": 0.9535579195944366,
+    "R2_logparams_only": 0.5631504587503762,
+    "alpha_shared": 2.0603056170226126,
+    "C_transformer": 3.953439512242622,
+    "C_ssm": 3.6801091689492385,
+    "delta_C": 0.27333034329338357,
+    "ppl_ratio_trans_vs_ssm": 1.3143343546574802,
+    "F_arch_intercept": 15.156281085677092,
+    "p_arch_intercept": 0.005951505281037606
   }
 }

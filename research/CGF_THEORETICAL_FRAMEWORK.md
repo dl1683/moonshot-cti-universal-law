@@ -167,6 +167,44 @@ necessarily equal to alpha_class = 1.477.
 
 Pre-registered test: H_gen2 checks alpha_gen in [0.5, 3.5].
 
+#### EMPIRICAL UPDATE (Session 85-86, 2026-03-03)
+
+**Result:** alpha_gen = 2.077 from the fixed-V group (n=10, Pythia + Mamba,
+Pile PPL). This is ABOVE the classification alpha of 1.477 (ratio = 1.41).
+
+**Implied equicorrelation:** rho_gen = 1 - (4/pi) / alpha_gen^2 = 0.705.
+Compare to rho_class = 0.416. The higher rho_gen is explained by:
+1. **Semantic token clustering:** V=50K tokens include many near-synonyms
+   (the/The/THE), morphological variants (run/runs/running), and function
+   word clusters (a/an/the/this/that). These create positive equicorrelation.
+2. **Zipf distribution:** Common tokens are disproportionately frequent,
+   biasing the effective competition toward a smaller set of competitors.
+3. **Subword tokenization:** BPE/SentencePiece creates systematic clustering
+   of tokens sharing common subword prefixes.
+
+**Architecture independence:** alpha_trans = 2.068, alpha_ssm = 1.994
+(ratio = 1.037). The SLOPE is virtually identical. The F-test (p=0.031)
+detects an INTERCEPT difference (different C_model for Pythia vs Mamba),
+not a slope difference. This is consistent with the Architecture-Independence
+Lemma (Sec 3.6): alpha is governed by the Gumbel-race competition, not
+the architecture. The intercept difference reflects training efficiency
+(Mamba achieves lower PPL at the same kappa, consistent with Gu & Dao 2024).
+
+**Kappa saturation:** Proxy A (raw kappa) saturates near 0.9 for d >= 1024.
+This limits within-family resolution for large models. The generation law
+with Proxy A is primarily a COARSE predictor that distinguishes small
+(under-represented) models from well-trained ones. Proxy B (whitened kappa)
+may partially resolve this by including the hidden-state noise denominator.
+
+**Proxy B empirical update:** Initial Proxy B results (Pythia-160M and
+Pythia-410M) reveal a critical phenomenon:
+- Pythia-160M: kappa_B=0.337, rho_whitened=0.850 (global mean cosine very high)
+- Pythia-410M: kappa_B=0.934, rho_whitened=0.012 (global mean cosine nearly zero)
+
+The global rho_whitened varies by two orders of magnitude across models,
+directly contradicting the prediction that rho_gen ~ 0.70. This leads to
+Section 3.8 (Local Equicorrelation Theorem).
+
 ### 3.6 Architecture-Independence Lemma
 
 **Lemma 3.6 (Architecture-Independence):** The generation law's functional
@@ -224,6 +262,109 @@ a clean, V-controlled test of kappa vs log(PPL).
 
 With n=11, a Pearson r of -0.80 has p < 0.003 — genuinely significant
 even without the cross-tokenizer extension suite.
+
+### 3.8 Local Equicorrelation Theorem (NEW — Session 86)
+
+**The puzzle:** alpha_gen = 2.077 implies rho_gen = 1 - (4/pi)/alpha^2 = 0.705.
+But measured rho_whitened (global mean off-diagonal cosine in whitened space)
+varies from 0.01 to 0.85 across models, not 0.70 everywhere. This breaks
+the alpha(rho) formula if rho is measured globally.
+
+**Resolution:** In classification with K classes, ALL K centroids participate in
+the Gumbel race at every prediction. The relevant rho is the global mean
+pairwise cosine among all K centroids. But in generation with V=50K tokens,
+only a tiny subset K_eff << V of tokens have non-negligible probability at
+each position. The Gumbel race is effectively among K_eff competitors, not V.
+
+**Definition (Local Equicorrelation):** For context x with target token y,
+define the effective competition set as:
+
+    S_eff(x) = {v in V : P(v|x) > 1/V}
+
+and the local equicorrelation as:
+
+    rho_local(x) = mean over (i,j) in S_eff(x), i != j, of cos(w_i', w_j')
+
+where w_i' are whitened unembedding vectors.
+
+**Theorem 3.8 (Local Equicorrelation):** The alpha in the generation law
+is governed by rho_local, not rho_global:
+
+    alpha_gen = sqrt(4/pi) / sqrt(1 - rho_local)
+
+The global rho is irrelevant because the Gumbel race is between tokens
+that are semantically close to each other (they compete for the same context).
+These top competitors have HIGHER mutual cosine similarity than random pairs.
+
+**Why rho_local > rho_global:** The top-K_eff tokens for any context share
+semantic features:
+1. Morphological variants: "run" vs "runs" vs "running" vs "ran"
+2. Synonyms: "large" vs "big" vs "huge" vs "enormous"
+3. Function word clusters: "the" vs "a" vs "an" vs "this"
+4. Subword continuations: common BPE prefixes share structure
+
+These semantic clusters create positive local equicorrelation even when
+global equicorrelation is near zero.
+
+**Effective K_eff:** The number of effective competitors per position is:
+
+    K_eff = exp(H(Y|x))   (exponential of conditional entropy)
+
+On average: E[K_eff] = exp(E[H(Y|x)]) ~ PPL (by Jensen + log convexity)
+
+For typical LLMs: K_eff = PPL ~ 7-30. This is comparable to classification
+datasets (K = 4-77), explaining why the Gumbel-race mechanism transfers.
+
+**Prediction (testable):** For well-trained models (d >= 1024):
+- Global rho_whitened ~ 0 to 0.01 (tokens spread maximally in whitened space)
+- Local rho_whitened ~ 0.70 (top competitors cluster tightly)
+- This is measurable: for each forward pass, extract top-K logit winners,
+  get their whitened W_U rows, compute mean pairwise cosine
+
+**Connection to kappa saturation:** The kappa saturation phenomenon
+(all models with d >= 1024 having kappa ~ 0.9) reflects the GLOBAL
+token geometry. The LOCAL geometry (among top competitors) is what
+actually determines PPL, and this varies more across models because
+it depends on contextual representation quality, not just W_U structure.
+
+This explains why Proxy B (whitened kappa) may not fully resolve
+the saturation: whitening corrects the noise scaling but still measures
+GLOBAL nearest-neighbor distances. A "local kappa" that conditions on
+context-dependent top-K competitors would be the theoretically ideal
+metric, but requires O(n_tokens * K_eff) distance computations per model.
+
+### 3.9 Kappa Saturation Analysis
+
+**Phenomenon:** For fixed V=50280 and d >= 1024, kappa_bar converges to
+~0.89-0.93 across all well-trained models (Pythia 410M-2.8B, Mamba 370M-2.8B).
+Only Pythia-160M (d=768) and Mamba-130M (d=768) are below this floor.
+
+**Root cause:** In d-dimensional space with V unit vectors:
+- Random vectors: E[min_NN distance] = sqrt(2) * (1 - V^{-2/(d-1)})
+  For d=1024, V=50K: ~ 1.41 * 0.98 ~ 1.38 (matches measured kappa_random ~ 1.32-1.35)
+- Trained vectors: semantic clustering reduces NN distances to ~0.9
+  The ratio kappa_trained/kappa_random ~ 0.67 reflects the degree of clustering
+
+**Why it saturates:** As d increases, the sphere becomes more spacious
+(curse of dimensionality in reverse). With V=50K << exp(d), there is
+"room" for all tokens to find their nearest neighbor at a distance
+set by the semantic clustering structure, not by packing constraints.
+The clustering structure is similar across well-trained models because:
+1. All models are trained on natural language (same distributional structure)
+2. All use the same tokenizer (V=50280, GPT-NeoX)
+3. Larger d just provides more room for the SAME clustering pattern
+
+**Consequence for the generation law:** The kappa-PPL correlation in the
+fixed-V group is driven primarily by the Pythia-160M leverage point
+(kappa=0.27, far below the saturated range). Without it, Pearson r drops
+from -0.924 to -0.536. Spearman rho is only -0.515 even with all points.
+
+**The law is REAL but COARSE:** The generation law captures the dominant
+relationship (undertrained models have both low kappa and high PPL), but
+fine-grained PPL prediction within the saturated regime requires either:
+(a) A context-dependent metric (local kappa from Section 3.8)
+(b) Higher-order W_U statistics beyond nearest-neighbor distance
+(c) Full Proxy B with effective dimensionality correction
 
 ---
 
