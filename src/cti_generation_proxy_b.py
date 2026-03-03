@@ -8,10 +8,9 @@ This extends Proxy A (raw kappa) by accounting for hidden-state noise.
 Proxy B is the theoretically correct measurement:
   kappa_y = min_{j!=y} ||Sigma_W^{-1/2} (w_y - w_j)|| / sqrt(d_eff)
 
-Also measures rho_whitened: mean off-diagonal cosine in whitened space,
-which should verify rho_gen ~ 0.70 (predicted from alpha_gen = 2.08).
+Also measures rho_whitened: mean off-diagonal cosine in whitened space.
 
-Requires forward passes, so cannot be computed for Mamba (HF bug).
+Tests H_gen5: |r(kappa_whitened, logCE)| - |r(kappa_raw, logCE)| > 0.05
 """
 
 import json
@@ -27,21 +26,42 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 RESULTS_DIR = REPO_ROOT / "results"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-# Models for Proxy B (all that can do forward passes)
+# All models matching the 25-model generation law suite
 PROXY_B_MODELS = [
-    ("pythia-160m", "EleutherAI/pythia-160m", "Pythia-160M"),
-    ("pythia-410m", "EleutherAI/pythia-410m", "Pythia-410M"),
-    ("pythia-1b", "EleutherAI/pythia-1b", "Pythia-1B"),
-    ("pythia-1.4b", "EleutherAI/pythia-1.4b", "Pythia-1.4B"),
-    ("pythia-2.8b", "EleutherAI/pythia-2.8b", "Pythia-2.8B"),
-    ("gpt2", "openai-community/gpt2", "GPT-2"),
-    ("qwen3-0.6b", "Qwen/Qwen3-0.6B", "Qwen3-0.6B"),
-    ("qwen3-1.7b", "Qwen/Qwen3-1.7B", "Qwen3-1.7B"),
-    ("qwen3-4b", "Qwen/Qwen3-4B", "Qwen3-4B"),
-    ("falcon-h1-0.5b", "tiiuae/Falcon-H1-0.5B-Base", "Falcon-H1-0.5B"),
-    ("falcon-h1-1.5b", "tiiuae/Falcon-H1-1.5B-Base", "Falcon-H1-1.5B"),
-    ("smollm2-360m", "HuggingFaceTB/SmolLM2-360M", "SmolLM2-360M"),
-    ("mistral-7b", "mistralai/Mistral-7B-v0.3", "Mistral-7B"),
+    # --- Pythia (Transformer, V=50280) ---
+    ("pythia-160m",    "EleutherAI/pythia-160m",           "Pythia-160M"),
+    ("pythia-410m",    "EleutherAI/pythia-410m",           "Pythia-410M"),
+    ("pythia-1b",      "EleutherAI/pythia-1b",             "Pythia-1B"),
+    ("pythia-1.4b",    "EleutherAI/pythia-1.4b",           "Pythia-1.4B"),
+    ("pythia-2.8b",    "EleutherAI/pythia-2.8b",           "Pythia-2.8B"),
+    # --- Mamba (SSM, V=50280) ---
+    ("mamba-130m",     "state-spaces/mamba-130m-hf",       "Mamba-130M"),
+    ("mamba-370m",     "state-spaces/mamba-370m-hf",       "Mamba-370M"),
+    ("mamba-790m",     "state-spaces/mamba-790m-hf",       "Mamba-790M"),
+    ("mamba-1.4b",     "state-spaces/mamba-1.4b-hf",       "Mamba-1.4B"),
+    ("mamba-2.8b",     "state-spaces/mamba-2.8b-hf",       "Mamba-2.8B"),
+    # --- GPT-2 (Transformer, V=50257) ---
+    ("gpt2",           "openai-community/gpt2",            "GPT-2"),
+    # --- Qwen3 (Transformer, V=151936) ---
+    ("qwen3-0.6b",     "Qwen/Qwen3-0.6B",                 "Qwen3-0.6B"),
+    ("qwen3-1.7b",     "Qwen/Qwen3-1.7B",                 "Qwen3-1.7B"),
+    ("qwen3-4b",       "Qwen/Qwen3-4B",                   "Qwen3-4B"),
+    # --- Qwen2 (Transformer, V=151936) ---
+    ("qwen2-0.5b",     "Qwen/Qwen2-0.5B",                 "Qwen2-0.5B"),
+    # --- Falcon-H1 (Hybrid, V=131072) ---
+    ("falcon-h1-0.5b", "tiiuae/Falcon-H1-0.5B-Base",      "Falcon-H1-0.5B"),
+    ("falcon-h1-1.5b", "tiiuae/Falcon-H1-1.5B-Base",      "Falcon-H1-1.5B"),
+    ("falcon-h1-3b",   "tiiuae/Falcon-H1-3B-Base",        "Falcon-H1-3B"),
+    # --- SmolLM2 (Transformer, V=49152) ---
+    ("smollm2-360m",   "HuggingFaceTB/SmolLM2-360M",      "SmolLM2-360M"),
+    # --- Granite (Hybrid, V=49152) ---
+    ("granite-micro",  "ibm-granite/granite-4.0-micro",    "Granite-Micro"),
+    # --- Phi-4 (Transformer, V=100352) ---
+    ("phi-4",          "microsoft/phi-4",                   "Phi-4"),
+    # --- Liquid AI (Novel, V=65536) ---
+    ("lfm2.5-1.2b",   "LiquidAI/LFM2.5-1.2B-Base",       "LFM2.5-1.2B"),
+    # --- Mistral (Transformer, V=32768) ---
+    ("mistral-7b",     "mistralai/Mistral-7B-v0.3",        "Mistral-7B"),
 ]
 
 
@@ -237,14 +257,19 @@ def main():
         t0 = time.time()
 
         try:
-            # Load model
+            # Load model (bf16 first, fall back to fp16)
             tokenizer = AutoTokenizer.from_pretrained(hf_id, trust_remote_code=True)
             if tokenizer.pad_token is None:
                 tokenizer.pad_token = tokenizer.eos_token
 
-            model = AutoModelForCausalLM.from_pretrained(
-                hf_id, dtype=torch.float16, trust_remote_code=True
-            ).to(DEVICE)
+            try:
+                model = AutoModelForCausalLM.from_pretrained(
+                    hf_id, torch_dtype=torch.bfloat16, trust_remote_code=True
+                ).to(DEVICE)
+            except Exception:
+                model = AutoModelForCausalLM.from_pretrained(
+                    hf_id, torch_dtype=torch.float16, trust_remote_code=True
+                ).to(DEVICE)
             model.eval()
 
             result = compute_proxy_b(model, tokenizer, model_key, hf_id)
@@ -278,25 +303,26 @@ def main():
     print("  PROXY B ANALYSIS")
     print("=" * 72)
 
-    # Load Proxy A for comparison
-    with open(RESULTS_DIR / "cti_generation_kappa.json") as f:
+    # Load Proxy A kappa and CE data for comparison
+    with open(RESULTS_DIR / "cti_generation_freq_kappa.json") as f:
         kappa_a = json.load(f)
-    with open(RESULTS_DIR / "cti_generation_ppl.json") as f:
-        ppl_data = json.load(f)
-    with open(RESULTS_DIR / "cti_generation_ppl_pile.json") as f:
-        pile_ppl = json.load(f)
+    with open(RESULTS_DIR / "cti_generation_keff.json") as f:
+        keff_data = json.load(f)
 
     # Compare Proxy A vs Proxy B
-    print(f"\n  {'Model':<20s} {'kappa_A':>10s} {'kappa_B':>10s} {'rho_w':>10s} {'d_eff':>8s}")
+    print(f"\n  {'Model':<20s} {'kt1K_A':>10s} {'kappa_B':>10s} {'rho_w':>10s} {'d_eff':>8s}")
     print(f"  {'-' * 20} {'-' * 10} {'-' * 10} {'-' * 10} {'-' * 8}")
 
     keys_with_both = []
     for key in results:
         if "kappa_whitened" not in results[key]:
             continue
-        ka = kappa_a.get(key, {}).get("kappa_bar", None)
-        if ka is None:
+        ka_entry = kappa_a.get(key, {})
+        if "error" in ka_entry or "kappa_top1000" not in ka_entry:
             continue
+        if key not in keff_data or "error" in keff_data.get(key, {}):
+            continue
+        ka = ka_entry["kappa_top1000"]
         kb = results[key]["kappa_whitened"]
         rho_w = results[key]["rho_whitened"]
         d_eff = results[key]["d_eff"]
@@ -304,39 +330,46 @@ def main():
         print(f"  {name:<20s} {ka:>10.4f} {kb:>10.4f} {rho_w:>10.4f} {d_eff:>8.1f}")
         keys_with_both.append(key)
 
-    # Correlations with PPL
+    # Correlations with log(CE)
     if len(keys_with_both) >= 3:
-        kappa_a_vals = np.array([kappa_a[k]["kappa_bar"] for k in keys_with_both])
+        kappa_a_vals = np.array([kappa_a[k]["kappa_top1000"] for k in keys_with_both])
         kappa_b_vals = np.array([results[k]["kappa_whitened"] for k in keys_with_both])
         rho_w_vals = np.array([results[k]["rho_whitened"] for k in keys_with_both])
+        log_ces = np.array([np.log(keff_data[k]["mean_ce"]) for k in keys_with_both])
 
-        # Use WikiText PPL for cross-arch, Pile for fixed-V
-        log_ppls = []
-        for k in keys_with_both:
-            if k in ppl_data and "ppl" in ppl_data[k]:
-                log_ppls.append(np.log(ppl_data[k]["ppl"]))
-            elif k in pile_ppl:
-                log_ppls.append(pile_ppl[k]["log_ppl"])
-            else:
-                log_ppls.append(np.nan)
-        log_ppls = np.array(log_ppls)
-        valid = ~np.isnan(log_ppls)
+        # Exclude LFM outlier
+        no_lfm = np.array(["lfm" not in k for k in keys_with_both])
+        labels = ["All models", "Without LFM"]
+        masks = [np.ones(len(keys_with_both), dtype=bool), no_lfm]
 
-        if valid.sum() >= 3:
-            r_a, p_a = pearsonr(kappa_a_vals[valid], log_ppls[valid])
-            r_b, p_b = pearsonr(kappa_b_vals[valid], log_ppls[valid])
-            print(f"\n  H_gen5 (Proxy B > Proxy A):")
-            print(f"    |r_A| = {abs(r_a):.4f} (p = {p_a:.4f})")
-            print(f"    |r_B| = {abs(r_b):.4f} (p = {p_b:.4f})")
-            print(f"    Improvement: {abs(r_b) - abs(r_a):.4f}")
-            print(f"    H_gen5 ({'PASS' if abs(r_b) - abs(r_a) > 0.05 else 'FAIL'}): "
-                  f"|r_B| - |r_A| > 0.05")
+        for label, mask in zip(labels, masks):
+            if mask.sum() < 3:
+                continue
+            r_a, p_a = pearsonr(kappa_a_vals[mask], log_ces[mask])
+            r_b, p_b = pearsonr(kappa_b_vals[mask], log_ces[mask])
+            print(f"\n  --- {label} (n={mask.sum()}) ---")
+            print(f"    r(kappa_A, logCE) = {r_a:.4f} (p={p_a:.4f})")
+            print(f"    r(kappa_B, logCE) = {r_b:.4f} (p={p_b:.4f})")
+            delta = abs(r_b) - abs(r_a)
+            print(f"    Delta |r| = {delta:+.4f}")
+            status = "PASS" if delta > 0.05 else "FAIL"
+            print(f"    H_gen5: {status} (threshold: +0.05)")
+
+        # Fixed-V group (V ~ 50280: Pythia + Mamba + GPT-2)
+        fixed_v = np.array([k.startswith("pythia") or k.startswith("mamba")
+                            or k == "gpt2" for k in keys_with_both])
+        if fixed_v.sum() >= 3:
+            r_a_fv, _ = pearsonr(kappa_a_vals[fixed_v], log_ces[fixed_v])
+            r_b_fv, _ = pearsonr(kappa_b_vals[fixed_v], log_ces[fixed_v])
+            print(f"\n  --- Fixed-V (n={fixed_v.sum()}) ---")
+            print(f"    r(kappa_A, logCE) = {r_a_fv:.4f}")
+            print(f"    r(kappa_B, logCE) = {r_b_fv:.4f}")
+            print(f"    Delta |r| = {abs(r_b_fv) - abs(r_a_fv):+.4f}")
 
         # rho_whitened analysis
         mean_rho = float(np.mean(rho_w_vals))
         print(f"\n  rho_whitened mean = {mean_rho:.4f}")
-        print(f"  Predicted from alpha_gen=2.08: rho = {1 - (4/np.pi)/2.077**2:.4f}")
-        print(f"  Predicted from alpha_class=1.48: rho = {1 - (4/np.pi)/1.477**2:.4f}")
+        print(f"  Predicted from alpha_gen=0.95: rho = {1 - (4/np.pi)/0.95**2:.4f}")
 
     print(f"\n  Saved: {cache_path}")
 

@@ -56,6 +56,7 @@ A strictly blind OOD test---new architecture on new datasets, intercept from 6 o
 Biological generalization: 30/32 mouse visual-cortex Neuropixels sessions satisfy the law ($\bar{r}_\kappa=0.736$, pre-registered); a 30-session pre-registered multi-area batch confirms $r>0.70$ in VISl (22/22) and VISam (24/25).
 Near-simplex competition geometry ($\rho\approx0.46$, CV$=3.9\%$ across NLP architectures, CV$=1.65\%$ across 5 cortical areas) provides a \emph{zero-parameter mean-level} prediction of $\alpha$ for NLP decoders: pooling $\rho$ across 11 architectures and 3 datasets ($K=4,14,77$; 200 bootstrap resamples each), $\hat\alpha_\mathrm{pred}=1.540$ vs.\ observed $1.477$ ($+4.7\%$ error, zero free parameters).
 Per-model deviations around this mean are not monotonically predicted by $\rho$ ($r=-0.55$, $n=11$), indicating that $\rho$ captures the \emph{universal geometric baseline} but not architecture-specific residuals; encoder $\alpha$ is $4$--$5\times$ higher for the same $\rho$, indicating a second renormalization factor beyond $\rho$.
+The Gumbel-race mechanism extends beyond classification: across 22 generation models (Transformers, SSMs, Hybrids, novel architectures), $\kappa$ from the unembedding matrix $W_U$ alone (zero forward passes) predicts $\log\mathrm{CE}$ ($r{=}{-}0.70$, $p{<}0.001$; fixed-vocabulary Transformer vs.\ SSM: $r{=}{-}0.84$, architecture-independent).
 
 \textbf{Honest scope:} $\alpha$ varies by architecture family (NLP decoders: 1.48, ViT: 0.63, CNN: 4.4); universality is of the \emph{functional form} only.
 Absolute prediction requires per-family intercept calibration (4 probe measurements reduce MAE by 86\%).
@@ -81,6 +82,7 @@ The key conceptual point: Eq.~\ref{eq:cti-law}'s structure is derived from first
 \item \textbf{External blind OOD tests}: SmolLM2-1.7B (absent from training set) yields $r=0.817$, $p=0.013$ (PASS) with zero in-distribution calibration. Exploratory expanded test: Gemma-3-1B $r=0.998$, phi-2 $r=0.613$; within-model form confirmed for all three OOD architectures.
 \item \textbf{Expanded pre-registered holdout (H8+)}: 11 unseen models $\times$ 8 datasets ($n=77$), all parameters frozen. All 6 pre-registered criteria pass ($r=0.879$, MAE$=0.077$). Pointwise MAE is close to the dataset-mean baseline, confirming mechanistic ordering rather than high-precision calibration.
 \item \textbf{Zero-parameter prediction (NLP decoders)}: The near-simplex equicorrelation ($\rho\approx0.45$, CV$=3.9\%$ across NLP decoders, CV$=1.65\%$ across 5 mouse V1 areas) enables an EVT-derived prediction of $\alpha$ with only $\rho$ as a measured structural input: $\hat\alpha_\mathrm{pred}=\sqrt{4/\pi}\sqrt{1/(1-\rho)}=1.525$ vs.\ observed $\alpha=1.477$ (3.2\% error). The same $\rho\approx0.45$ in biological cortex suggests near-simplex geometry is substrate-independent; however, for encoders with the same $\rho$, the formula underpredicts $\alpha$ by $4$--$5\times$, indicating a second renormalization factor (bidirectionality) beyond $\rho$.
+\item \textbf{Generation law}: The same Gumbel-race mechanism extends to next-token prediction: $\kappa$ from the unembedding matrix $W_U$ (zero forward passes) predicts $\log\mathrm{CE}$ across 22 models spanning Transformers, SSMs, Hybrids, and novel architectures ($r=-0.70$, $p<0.001$). Within a fixed-$V$ group (Pythia + Mamba, $n=10$), $r=-0.84$ with no significant architecture interaction ($F$-test $p=0.147$): Transformers and SSMs lie on the same regression line. The vocabulary-size term vanishes ($\beta_\mathrm{gen}\approx 0$) because softmax competition spontaneously reduces $V$-way to $K_\mathrm{eff}\approx 2$--$3$-way.
 \end{enumerate}
 
 \section{Related Work}
@@ -602,6 +604,10 @@ Cross-entropy is measured on 20K tokens from WikiText-103 validation via exact
 $K_{\mathrm{eff}}$ decomposition: $\mathrm{CE} = \mathrm{margin} + \log K_{\mathrm{eff}}$.
 This decomposition reveals that only $K_{\mathrm{eff}} \approx 2$--$3$ tokens effectively
 compete at each position, despite $V = 32$K--$152$K.
+Consequently, fitting $\log\mathrm{CE} = -\alpha_\mathrm{gen}\kappa + \beta_\mathrm{gen}\log(V{-}1) + C$
+yields $\beta_\mathrm{gen} \approx 0$ ($R^2$ increases by only $0.0004$ when adding $\log V$):
+the vocabulary-size term vanishes because the Gumbel race spontaneously reduces $V$-way competition
+to $K_{\mathrm{eff}}$-way, and $K_{\mathrm{eff}}$ is approximately constant across architectures.
 
 \textbf{Key results (pre-registered, addendum locked before first forward pass):}
 Excluding the LFM2.5 outlier ($n{=}21$):
