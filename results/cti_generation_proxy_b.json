@@ -88,5 +88,39 @@
     "name": "GPT-2",
     "hf_id": "openai-community/gpt2",
     "time_s": 40.37292504310608
+  },
+  "qwen3-0.6b": {
+    "model": "qwen3-0.6b",
+    "kappa_whitened": 0.9077990651130676,
+    "kappa_whitened_std": 0.2250126153230667,
+    "rho_whitened": 0.027690531685948372,
+    "d_eff": 27.875168718595862,
+    "V": 151936,
+    "d_model": 1024,
+    "n_tokens": 10106,
+    "sigma_W_trace": 7340.84326171875,
+    "sigma_W_top_eigenvalue": 1066.701171875,
+    "name": "Qwen3-0.6B",
+    "hf_id": "Qwen/Qwen3-0.6B",
+    "time_s": 129.9342474937439
+  },
+  "qwen3-1.7b": {
+    "model": "qwen3-1.7b",
+    "kappa_whitened": 0.9421947002410889,
+    "kappa_whitened_std": 0.22589269280433655,
+    "rho_whitened": 0.00999930314719677,
+    "d_eff": 19.61079185068504,
+    "V": 151936,
+    "d_model": 2048,
+    "n_tokens": 10106,
+    "sigma_W_trace": 6062.7763671875,
+    "sigma_W_top_eigenvalue": 1092.181640625,
+    "name": "Qwen3-1.7B",
+    "hf_id": "Qwen/Qwen3-1.7B",
+    "time_s": 1449.8439865112305
+  },
+  "qwen3-4b": {
+    "name": "Qwen3-4B",
+    "error": "CUDA error: an illegal memory access was encountered\nSearch for `cudaErrorIllegalAddress' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1\nCompile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.\n"
   }
 }

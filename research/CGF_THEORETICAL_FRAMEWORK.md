@@ -581,6 +581,98 @@ By AIC, this is the best model (AIC=-45.3 vs -41.5 for kappa+arch alone).
 | kappa + arch | 0.954 | 0.940 | -41.5 |
 | kappa + arch + log(N) | 0.974 | 0.961 | -45.3 |
 
+### 3.12 Centroid-Overlap Dispersion Analysis (Session 87)
+
+**Purpose:** Extend the 0-parameter alpha formula alpha = sqrt(4/pi)/sqrt(1-rho)
+by capturing higher moments (variance, skew) of the off-diagonal whitened cosine
+similarity matrix. The hypothesis was that per-model alpha variance could be
+explained by the SHAPE of the centroid-cosine distribution, not just its mean.
+
+**Setup:** 10 NLP decoder architectures x 3 datasets (AG News K=4, DBpedia K=14,
+Banking77 K=77). For each (model, dataset) pair:
+1. Extract final-layer hidden states for 2000 texts
+2. Compute class centroids, within-class covariance, SVD whitening (256 PCA dims)
+3. Compute full K x K whitened cosine similarity matrix
+4. Record: rho_mean, off_diag_var, off_diag_std, off_diag_skew
+5. Pool across datasets (weighted by n_off_diag pairs)
+
+**Models:** Pythia-{160M, 410M, 1B}, GPT-Neo-125M, Qwen2.5-0.5B, OLMo-1B,
+TinyLlama-1.1B, Qwen3-{0.6B, 1.7B}, RWKV-4-169M. (Mistral-7B excluded: OOM)
+
+**Key finding 1: rho and std are DEGENERATE.**
+r(rho_pooled, off_diag_std_pooled) = -0.985. VIF(rho) = 152, VIF(std) = 188.
+These two variables carry essentially the same information. Models with higher
+mean equicorrelation have tighter cosine distributions (lower std), and vice versa.
+Any model using both is numerically unstable.
+
+**Key finding 2: SKEW is the independent geometric predictor.**
+r(off_diag_skew, alpha_loao) = -0.757, p = 0.011.
+VIF(skew) = 7.38 (acceptable, no collinearity issue).
+This is the strongest single predictor of per-model alpha deviation.
+
+**Physical interpretation of skew:**
+- Negative skew = left-tailed cosine distribution (a few class pairs very dissimilar)
+- More negative skew -> higher alpha_loao
+- gpt-neo-125m: least negative skew (-0.35) -> lowest alpha (1.39)
+- rwkv-4-169m: skew = -0.74 -> highest alpha (1.53)
+- Interpretation: heterogeneous centroid geometry (some very well-separated pairs)
+  creates easy discriminations in the Gumbel race. The competition can exploit
+  these outlier separations, amplifying the kappa-to-accuracy sensitivity.
+
+**Model comparison (n=10):**
+
+| Model | Free params | MAE | r(pred, actual) | p |
+|-------|-------------|------|-----------------|---|
+| M0: A/sqrt(1-rho) | 0 | 0.066 | -0.53 | 0.11 |
+| M1: A/sqrt(1-(rho+c*std)) | 1 | 0.040 | -0.56 | 0.09 |
+| M2: A/sqrt(1-(rho+c1*std+c2*skew)) | 2 | 0.042 | -0.68 | 0.03 |
+| M3: a+b*rho+c*std [linear] | 2 | 0.025 | 0.64 | 0.045 |
+| M4: a+b*rho+c*std+d*skew [linear] | 3 | 0.017 | 0.85 | 0.002 |
+
+**Leave-one-out cross-validation:**
+- M4 (3 params): LOO MAE = 0.032, LOO r = 0.70 (p=0.024)
+  Pearson survives LOO. Spearman collapses (0.30, p=0.40) — driven by
+  gpt-neo-125m outlier. Signal is genuine but not robust for ranking.
+- M3 (2 params): LOO r = 0.18 — completely dies. Rho+std without skew
+  has no generalizable predictive power.
+
+**Residual analysis (alpha_loao - alpha_pred_0param):**
+- Mean residual: -0.064 (systematic 4.5% overprediction, consistent with Session 84)
+- r(rho, residual) = -0.74, p=0.014
+- r(std, residual) = +0.78, p=0.008
+- r(skew, residual) = -0.76, p=0.010
+- All three geometric descriptors predict the residual, but rho and std are degenerate
+
+**Per-model residuals:**
+
+| Model | alpha_loao | alpha_0p | residual |
+|-------|-----------|---------|----------|
+| pythia-160m | 1.478 | 1.536 | -0.058 |
+| pythia-410m | 1.482 | 1.555 | -0.073 |
+| pythia-1b | 1.501 | 1.549 | -0.048 |
+| gpt-neo-125m | 1.394 | 1.556 | -0.162 |
+| Qwen2.5-0.5B | 1.493 | 1.536 | -0.043 |
+| OLMo-1B | 1.514 | 1.547 | -0.033 |
+| TinyLlama-1.1B | 1.442 | 1.556 | -0.114 |
+| Qwen3-0.6B | 1.451 | 1.541 | -0.090 |
+| Qwen3-1.7B | 1.488 | 1.515 | -0.027 |
+| rwkv-4-169m | 1.525 | 1.514 | +0.011 |
+
+**Verdict:**
+- **CONFIRMED:** Centroid-cosine distribution shape matters for per-model alpha
+- **IDENTIFIED:** Skew is the key missing variable (r=-0.76, p=0.011)
+- **LIMITATION:** n=10 with 3 params is marginal; gpt-neo-125m is influential
+- **IMPLICATION:** The 0-param formula alpha=A/sqrt(1-rho) predicts the POPULATION MEAN
+  alpha to ~5%, but per-model deviations (~10%) are driven by skew of the centroid geometry.
+  A 1-param extension alpha = f(rho, skew) is the natural next step but needs n>15 for
+  reliable fitting.
+
+**Theoretical status:** The Gumbel-race derivation assumes equicorrelated centroids.
+When the actual pairwise cosine distribution has negative skew (heavy left tail),
+the extreme-value statistics shift: the "worst-case" competitor is less competitive
+than the Gaussian approximation predicts, effectively increasing the race advantage
+for the correct class. This provides a mechanism for skew -> alpha.
+
 ---
 
 ## 4. Law 3: Diffusion (DERIVED, untested)

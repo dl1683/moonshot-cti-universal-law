@@ -5,6 +5,37 @@ Validated results only (Codex-reviewed).
 
 ---
 
+## Session 87 (Mar 3, 2026) — Nobel ~7.8/10
+
+### NC Amplification Test [COMPLETE — AMPLIFICATION THEOREM FALSIFIED]
+- **Purpose**: Test whether gamma_NC (NC alignment strength) amplifies kappa -> alpha relationship.
+- **Script**: `src/cti_generation_nc_amplification.py`
+- **Output**: `results/cti_generation_nc_amplification.json` (9 models)
+- **Hypothesis**: gamma_NC increases with kappa, giving lambda_NC = alpha_gen / alpha_race ~ 1.66.
+- **Result**: **FALSIFIED** — gamma_NC DECREASES with kappa (r=-0.776, p=0.014). Opposite direction.
+  - cos(h, w_y) saturates at ~0.14-0.19 for well-trained models (invariant of kappa)
+  - Margins uniformly negative; best PPL predictor is margin (r=-0.647)
+  - lambda_NC = -0.36 +/- 0.44 (negative, highly variable)
+- **Literature support**: Wu & Papyan (NeurIPS 2024) show NC3 does NOT converge with scale in LMs.
+- **Theoretical revision**: Replaced Amplification Theorem with Regime Transition Interpretation.
+- **What we learned**: The explanation for alpha_gen > alpha_race is NOT NC alignment amplification. It is the softmax bottleneck regime transition (d < 1024 → d >= 1024) inflating the apparent slope.
+
+### Centroid-Overlap Dispersion: 2-Parameter Alpha Model [COMPLETE]
+- **Purpose**: Extend alpha(rho) formula with dispersion (variance, skew) of off-diagonal whitened cosines.
+- **Script**: `src/cti_centroid_dispersion.py`
+- **Output**: `results/cti_centroid_dispersion.json` (10 models x 3 datasets)
+- **Models**: Pythia-{160M,410M,1B}, GPT-Neo-125M, Qwen2.5-0.5B, OLMo-1B, TinyLlama-1.1B, Qwen3-{0.6B,1.7B}, RWKV-4-169M.
+- **Key Results**:
+  - **rho and std are degenerate**: r(rho, std) = -0.985, VIF > 150. Same information.
+  - **Skew is the independent predictor**: r(skew, alpha_loao) = -0.757, p=0.011
+  - **0-param formula**: MAE=0.066, r=-0.53. Predicts mean but wrong per-model direction.
+  - **3-param linear (rho+std+skew)**: R2=0.72, LOO r=0.70 (p=0.024). First per-model prediction.
+  - **Residual correlates with all three**: r(skew, residual) = -0.76, p=0.01
+  - gpt-neo-125m has least negative skew (-0.35) and lowest alpha (1.39) — influential outlier
+- **What we learned**: The 0-param alpha(rho) formula is correct at the population mean level (~5% error). Per-model deviations (~10%) are driven by the SKEW of the centroid-cosine distribution. More negative skew (more extreme class separations) → higher alpha. This provides a mechanistic explanation: heterogeneous centroid geometry creates "easy wins" in the Gumbel race that amplify kappa sensitivity.
+
+---
+
 ## Session 85-86 (Mar 3, 2026) — Nobel ~7.8/10
 
 ### CGF Generation Law: Extension to Next-Token Prediction [COMPLETE]
