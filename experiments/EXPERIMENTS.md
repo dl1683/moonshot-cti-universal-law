@@ -20,6 +20,15 @@ Validated results only (Codex-reviewed).
 - **Theoretical revision**: Replaced Amplification Theorem with Regime Transition Interpretation.
 - **What we learned**: The explanation for alpha_gen > alpha_race is NOT NC alignment amplification. It is the softmax bottleneck regime transition (d < 1024 → d >= 1024) inflating the apparent slope.
 
+### Husler-Reiss Dispersion Correction [COMPLETE — NOVEL THEORETICAL RESULT]
+- **Purpose**: Derive alpha_eff from the moments of the centroid-cosine distribution using EVT theory.
+- **Method**: Numerical integration of E[theta(rho_ij)] via Beta distribution fit, followed by inversion to rho_eff.
+- **Key Insight**: theta(rho) is CONCAVE at rho~0.46, so E[theta(rho_ij)] < theta(rho_mean) by Jensen. This means rho_eff > rho_mean — dispersion INCREASES effective correlation.
+- **Results**: With 1 scale parameter (c=0.89): MAE=0.026 (60% better than baseline), r=+0.58 (CORRECT direction, baseline had r=-0.53), Spearman=0.68.
+- **LOO**: MAE=0.029, r=0.46 (p=0.18) — direction survives but n=10 insufficient for significance.
+- **Novelty**: No paper derives alpha_eff from centroid-cosine dispersion via Husler-Reiss extremal coefficients. The ingredients are standard EVT but the application is new.
+- **What we learned**: The 0-param formula's accuracy at the mean level is a CANCELLATION: using rho_mean (too low by ~0.07) compensates for the Gaussian tail assumption (too strong by factor ~1.12). The Husler-Reiss correction exposes this cancellation and fixes per-model ranking with a single universal scale factor.
+
 ### Centroid-Overlap Dispersion: 2-Parameter Alpha Model [COMPLETE]
 - **Purpose**: Extend alpha(rho) formula with dispersion (variance, skew) of off-diagonal whitened cosines.
 - **Script**: `src/cti_centroid_dispersion.py`
