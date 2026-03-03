@@ -1573,6 +1573,71 @@ determines outcomes," the underlying mathematical structure is real.
 
 ---
 
+### 3.22 Synthesis: The Generation Law Story (Session 89)
+
+After extensive empirical investigation (Sessions 87-89, 28 models, 16 metrics,
+5 architecture families), the generation law has a clear picture:
+
+**What works:**
+1. Classification law (Law 1): logit(q) = alpha * kappa_nearest - beta * log(K-1) + C
+   - Validated across 19 architectures, 10 datasets, n=444 points
+   - alpha = 1.477 (CV = 2.3%)
+   - The "right" kappa is minimum centroid separation in feature space
+
+2. Generation law (cross-V): log(PPL) ~ -alpha * kappa_top1000 + C_arch
+   - kappa_top1000 = mean NN distance among the 1000 most frequent tokens
+   - r = -0.78 (p=0.005), rho = -0.75 (p=0.009), n=11 cross-vocabulary
+   - Partial r(kappa_top1K, PPL | params) = -0.751 (p=0.008)
+   - NOT a model-size proxy: Delta R^2 = +0.489 beyond size alone
+
+**What doesn't work:**
+1. kappa_bar (uniform average over all V tokens): r = -0.24 cross-V (nonsignificant)
+   - Dominated by rare tokens (95% of V) that contribute only 25% of PPL
+   - IS a model-size proxy (r(kappa_bar, params) = 0.61)
+   - Saturates for well-trained models (0.87-0.93 range)
+2. Frequency weighting within fixed-V: no improvement (normalization unnecessary)
+3. Architecture independence: FAILS (Mamba 24% lower PPL at same kappa)
+4. Single alpha_gen: varies from 2.1 to 4.1 depending on kappa definition
+
+**The theoretical resolution:**
+
+The classification law works because kappa_nearest is the SUFFICIENT STATISTIC
+for the Gumbel race: it captures both the quality of the features AND the
+geometry of the centroids in a single number. The derivation proves this.
+
+The generation law from W_U alone captures only HALF the picture:
+- W_U geometry (how well-separated the output tokens are) = kappa
+- h(x) quality (how well the backbone constrains the posterior) = NOT captured
+
+The classification law measures kappa in FEATURE SPACE (where features and
+centroids live together). The generation law measures kappa in OUTPUT SPACE
+(W_U only), missing the feature quality.
+
+The partial correlation result (p=0.008) proves that W_U geometry contains
+GENUINE information about model quality beyond size, but it's an INCOMPLETE
+predictor. The missing information is in h(x) — specifically, how well the
+model reduces the effective competition from V tokens to K_eff ~ 5-100.
+
+**The complete generation law should be:**
+
+    CE(x) = margin_deficit(x) + log(K_eff(x))
+
+where:
+- margin_deficit = (z_max - z_y) captures GEOMETRIC QUALITY (how far the
+  correct token is from the top, predicted by kappa)
+- log(K_eff) = (LSE(z) - z_max) captures CONTEXT QUALITY (how well the
+  model constrains the competition, predicted by h(x) quality)
+
+kappa_top1000 approximates the first term (better W_U geometry → smaller
+margin deficit on average), but cannot capture the second term.
+
+**Status:** The generation law from W_U alone is a PARTIAL law — significant
+(r ~ -0.78 cross-V) but fundamentally weaker than the classification law
+because it only captures the output geometry. The FULL generation law
+requires forward passes to measure K_eff, which is the missing ingredient.
+
+---
+
 ## 4. Law 3: Diffusion (DERIVED, untested)
 
     FID ~ C * sum_t w(t) * exp(-alpha * (1+w_cfg)^2 * kappa^{(t)^2} / 2) * K^{beta/alpha}
