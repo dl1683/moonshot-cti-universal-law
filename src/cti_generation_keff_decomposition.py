@@ -48,26 +48,26 @@ MODELS = [
 ]
 
 
-def compute_keff_stats(model_key, hf_id, max_tokens=50000):
+def compute_keff_stats(model_key, hf_id, max_tokens=20000):
     """Run forward pass and compute K_eff decomposition."""
     from transformers import AutoModelForCausalLM, AutoTokenizer
     from datasets import load_dataset
 
-    print(f"    Loading model {hf_id}...")
+    print(f"    Loading model {hf_id}...", flush=True)
     tokenizer = AutoTokenizer.from_pretrained(hf_id, trust_remote_code=True)
     model = AutoModelForCausalLM.from_pretrained(
-        hf_id, torch_dtype=torch.float16, device_map="auto",
-        trust_remote_code=True
-    )
+        hf_id, torch_dtype=torch.float16, trust_remote_code=True
+    ).to(DEVICE)
     model.eval()
+    print(f"    Model loaded on {DEVICE}", flush=True)
 
-    print(f"    Loading WikiText-103 validation...")
+    print(f"    Loading WikiText-103 validation...", flush=True)
     ds = load_dataset("wikitext", "wikitext-103-v1", split="validation")
     text = "\n\n".join([t for t in ds["text"] if t.strip()])
     tokens = tokenizer.encode(text, add_special_tokens=False, return_tensors="pt")[0]
     tokens = tokens[:max_tokens]
     n_tokens = len(tokens)
-    print(f"    {n_tokens} tokens")
+    print(f"    {n_tokens} tokens", flush=True)
 
     # Process in chunks (context window)
     ctx_len = min(1024, getattr(model.config, 'max_position_embeddings', 2048))
@@ -81,7 +81,7 @@ def compute_keff_stats(model_key, hf_id, max_tokens=50000):
     with torch.no_grad():
         for start in range(0, n_tokens - 1, stride):
             end = min(start + ctx_len, n_tokens)
-            input_ids = tokens[start:end].unsqueeze(0).to(model.device)
+            input_ids = tokens[start:end].unsqueeze(0).to(DEVICE)
 
             outputs = model(input_ids)
             logits = outputs.logits[0]  # (seq_len, V)

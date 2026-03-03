@@ -55,6 +55,7 @@ results/kappa_near_cache_*.json
 results/embedding_cache_*.npy
 results/cti_*_cache.json
 results/cti_multidata_*_cache.json
+results/token_freq_cache_*.json
 
 # Compile output logs
 paper/compile_*.txt
