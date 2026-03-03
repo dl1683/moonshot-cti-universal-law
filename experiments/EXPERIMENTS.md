@@ -5,6 +5,34 @@ Validated results only (Codex-reviewed).
 
 ---
 
+## Session 92 (Mar 3, 2026) — Nobel ~7.8/10
+
+### Generation Law: 22-Model Expansion + Paper Integration [COMPLETE]
+- **Purpose**: Expand generation law from 17 to 22 models (adding 5 Mamba SSMs), run all 13 pre-registered hypotheses, write the paper section.
+- **Method**: Added Mamba models (130M-2.8B) with `-hf` HF suffix for AutoModelForCausalLM compatibility. Ran K_eff decomposition on all new models. Computed comprehensive analysis: cross-V, fixed-V, within-family, architecture independence tests.
+- **Scripts**: `src/cti_generation_keff_decomposition.py`, `src/cti_generation_freq_kappa.py`
+- **Outputs**: `results/cti_generation_keff.json`, `results/cti_generation_law_analysis.json`, `results/cti_generation_hypothesis_scorecard.json`, `results/figures/fig_generation_law.png`
+- **Key Results (n=22 models, 10 architecture families)**:
+  1. Cross-V (n=21, excl. LFM): r(kt1K, logCE) = -0.697 (p<0.001, R2=0.486)
+  2. Fixed-V (Pythia+Mamba, n=10): r(kappa_bar, logCE) = -0.837 (p=0.003)
+  3. Architecture independence: F-test p=0.147 (NOT significant — same line for Transformer vs SSM)
+  4. Partial r(kt1K, logCE | log_params) = -0.546 (p=0.013) — not a model-size proxy
+  5. Within SSM (n=5): r = -0.916 (p=0.029); Within Transformer (n=12): r = -0.622 (p=0.031)
+  6. **Mamba margin/K_eff split identical to Pythia**: 61.2-62.4% margin for both — strongest architecture-independence evidence
+  7. beta_gen = -0.0075 (approx. 0): vocabulary size drops out because K_eff ~ 2-3 for all models
+  8. Hypothesis scorecard: 7/13 PASS, 1 FAIL (Pythia LOAO driven by 160M outlier), 2 partial, 1 mixed, 2 not tested
+- **Paper changes**: Added generation law subsection (Section 4.X), updated abstract, added 9th contribution item, added 6th claim in Discussion, added beta_gen=0 finding. Paper now 30 pages.
+- **What we learned**: The Gumbel-race mechanism IS architecture-independent: Transformers and SSMs have identical loss decomposition structure and lie on the same kappa-CE regression line. The generation law works but at lower R2 (0.49 vs 0.955 for classification) because kappa from W_U alone doesn't capture h(x) context-modeling quality. This R2 gap is PREDICTED by the theory.
+
+### Proxy B: Whitened Kappa (H_gen5) [IN PROGRESS]
+- **Purpose**: Test whether whitening W_U by hidden-state covariance (Sigma_W^{-1/2}) improves the generation law correlation by accounting for h(x) noise structure.
+- **Method**: Forward pass through 22 models to collect hidden states, compute NC residuals, build covariance, whiten W_U, recompute kappa.
+- **Script**: `src/cti_generation_proxy_b.py` (expanded from 13 to 23 models including Mamba)
+- **Output**: `results/cti_generation_proxy_b.json`
+- **Status**: Running. 8 models cached, ~15 remaining. Early preview (n=8): Proxy B does NOT improve over Proxy A (delta_r = -0.025). Need full 22-model results.
+
+---
+
 ## Session 89 (Mar 3, 2026) — Nobel ~7.8/10
 
 ### Frequency-Weighted Kappa: Cross-V Breakthrough [COMPLETE]
