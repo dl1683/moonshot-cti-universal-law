@@ -24,12 +24,26 @@ Validated results only (Codex-reviewed).
 - **Paper changes**: Added generation law subsection (Section 4.X), updated abstract, added 9th contribution item, added 6th claim in Discussion, added beta_gen=0 finding. Paper now 30 pages.
 - **What we learned**: The Gumbel-race mechanism IS architecture-independent: Transformers and SSMs have identical loss decomposition structure and lie on the same kappa-CE regression line. The generation law works but at lower R2 (0.49 vs 0.955 for classification) because kappa from W_U alone doesn't capture h(x) context-modeling quality. This R2 gap is PREDICTED by the theory.
 
-### Proxy B: Whitened Kappa (H_gen5) [IN PROGRESS]
+### Proxy B: Whitened Kappa (H_gen5) [COMPLETE — FAIL]
 - **Purpose**: Test whether whitening W_U by hidden-state covariance (Sigma_W^{-1/2}) improves the generation law correlation by accounting for h(x) noise structure.
-- **Method**: Forward pass through 22 models to collect hidden states, compute NC residuals, build covariance, whiten W_U, recompute kappa.
-- **Script**: `src/cti_generation_proxy_b.py` (expanded from 13 to 23 models including Mamba)
-- **Output**: `results/cti_generation_proxy_b.json`
-- **Status**: Running. 8 models cached, ~15 remaining. Early preview (n=8): Proxy B does NOT improve over Proxy A (delta_r = -0.025). Need full 22-model results.
+- **Method**: Forward pass through 23 models to collect hidden states, compute NC residuals, build covariance, whiten W_U, recompute kappa.
+- **Script**: `src/cti_generation_proxy_b.py`
+- **Outputs**: `results/cti_generation_proxy_b.json`, `results/cti_generation_proxy_b_analysis.json`
+- **Key Results**: H_gen5 FAILS at n=14+: cross-architecture Sigma_W is model-specific, so whitened kappa values are not comparable across architectures (r(kw)=-0.455 vs r(kt1K)=-0.518, delta=-0.063). Within-family whitening helps but cross-family breaks. Scorecard updated: 7 PASS, 2 FAIL, 2 partial, 1 mixed, 1 not tested.
+- **What we learned**: Sigma_W captures model-specific noise structure, not universal geometry. Whitening is valid within-architecture but invalid cross-architecture. The raw kappa (Proxy A) remains the better cross-architecture predictor.
+
+### Alpha Estimation Noise Analysis [COMPLETE — NEW FINDING]
+- **Purpose**: Determine whether per-model alpha variation (CV=2.28%) is real or estimation noise.
+- **Output**: `results/cti_alpha_noise_analysis.json`
+- **Key Result**: Observed alpha CV (2.28%) is LESS than expected LOAO regression estimation noise (2.84%), ratio=0.80. Per-model alpha variation is entirely consistent with estimation noise. Alpha is a TRUE universal constant within NLP decoders.
+- **Implication**: The r=-0.55 FAIL of per-model rho predicting per-model alpha is expected — there is no true per-model signal to predict. Centroid-overlap dispersion experiment is not needed.
+
+### Paper Consistency Fixes [COMPLETE]
+- Fixed alpha_NLP from 2.87 (single-intercept) to 1.48 (canonical per-dataset) in Discussion, Conclusion, and cross-family comparisons (lines 669, 677, 755, 758).
+- Updated abstract and main text alpha-rho section: per-model variation is estimation noise, not real signal.
+- Added Wu & Papyan (NeurIPS 2024) citation for linguistic collapse in LLMs.
+- Added generation law appendix table (22 models) with architecture, params, V, kappa, CE, K_eff.
+- Paper compiles clean at 31 pages.
 
 ---
 

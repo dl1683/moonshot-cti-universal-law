@@ -223,5 +223,35 @@
     "sigma_W_trace": 319254.0,
     "sigma_W_top_eigenvalue": 30885.376953125,
     "time_s": 787.2648646831512
+  },
+  "qwen3-4b": {
+    "model": "qwen3-4b",
+    "name": "Qwen3-4B",
+    "hf_id": "Qwen/Qwen3-4B",
+    "kappa_whitened": 0.9670687913894653,
+    "kappa_whitened_std": 0.21858055889606476,
+    "rho_whitened": 0.018341023474931717,
+    "d_eff": 35.02922787747418,
+    "V": 151936,
+    "d_model": 2560,
+    "n_tokens": 10106,
+    "sigma_W_trace": 11678.6181640625,
+    "sigma_W_top_eigenvalue": 1476.58544921875,
+    "time_s": 1019.3626017570496
+  },
+  "mamba-1.4b": {
+    "model": "mamba-1.4b",
+    "kappa_whitened": 0.9240765571594238,
+    "kappa_whitened_std": 0.2057499885559082,
+    "rho_whitened": 0.009899450466036797,
+    "d_eff": 7.772103773231245,
+    "V": 50280,
+    "d_model": 2048,
+    "n_tokens": 10082,
+    "sigma_W_trace": 3395.71142578125,
+    "sigma_W_top_eigenvalue": 898.017578125,
+    "name": "Mamba-1.4B",
+    "hf_id": "state-spaces/mamba-1.4b-hf",
+    "time_s": 579.1871535778046
   }
 }

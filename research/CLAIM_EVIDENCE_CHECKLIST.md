@@ -19,8 +19,8 @@ Every claim in the paper abstract and main text mapped to supporting result file
 | 7 | Biological 30/32 V1 sessions, mean r=0.736 | `results/cti_allen_all_sessions_complete.json` | VERIFIED |
 | 8 | Multi-area batch: VISl 22/22, VISam 24/25 | `results/cti_allen_multiarea_batch.json` | VERIFIED |
 | 9 | Near-simplex rho~0.46, CV=3.9% NLP, CV=1.65% cortex | `results/cti_allen_equicorr_multiarea.json`, `results/cti_cross_family_equicorr.json` | VERIFIED |
-| 10 | Alpha-rho prediction: 1.540 vs 1.477 (+4.7%, zero params) | `results/cti_alpha_rho_multidataset.json` | VERIFIED |
-| 11 | Per-model rho doesn't predict alpha (r=-0.55) | `results/cti_alpha_rho_multidataset.json` | VERIFIED |
+| 10 | Alpha-rho prediction: 1.540 vs 1.477 (+4.3%, zero params) | `results/cti_alpha_rho_multidataset.json` | VERIFIED |
+| 11 | Per-model alpha CV (2.3%) consistent with estimation noise (expected 2.8%) | `results/cti_alpha_noise_analysis.json` | VERIFIED |
 | 12 | Encoder alpha 4-5x higher for same rho | `results/cti_cross_family_equicorr.json`, `results/cti_encoder_loao.json` | VERIFIED |
 | 13 | Honest scope: alpha varies by family (NLP 1.48, ViT 0.63, CNN 4.4) | `results/cti_extended_family_loao.json`, `results/cti_alpha_family_law.json` | VERIFIED |
 | 14 | 4 probe calibration reduces MAE by 86% | `results/cti_one_point_calibration.json` | VERIFIED |

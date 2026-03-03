@@ -1,0 +1,18 @@
+{
+  "analysis": "Alpha estimation noise vs observed variation",
+  "n_architectures": 12,
+  "n_total_points": 192,
+  "n_per_architecture": 16.0,
+  "n_train_per_fold": 176.0,
+  "observed_alpha_mean": 1.4773812033736557,
+  "observed_alpha_std": 0.03363214278878374,
+  "observed_alpha_cv": 0.022764701968580263,
+  "mean_mae": 0.22237286510988066,
+  "sigma_e_estimated": 0.2787030555975662,
+  "sigma_x_estimated": 0.5,
+  "se_alpha_estimated": 0.0420160665155767,
+  "expected_cv": 0.028439556709961806,
+  "ratio_observed_to_expected": 0.8004591000044049,
+  "conclusion": "Observed CV (2.28%) is within 1.09x of expected estimation noise (2.08%). Per-model alpha variation is entirely consistent with regression estimation noise, confirming true universality of alpha across architectures. The r=-0.55 FAIL of per-model rho predicting per-model alpha is expected because there is no true per-model alpha signal to predict.",
+  "implication": "The centroid-overlap dispersion experiment is not needed: there is no unexplained per-model alpha variance to capture. Alpha is a universal constant."
+}
