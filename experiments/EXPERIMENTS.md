@@ -7,6 +7,36 @@ Validated results only (Codex-reviewed).
 
 ## Session 88 (Mar 3, 2026) — Nobel ~7.8/10
 
+### Cai-Jiang Normalization + Kappa Dynamic Range Diagnostic [COMPLETE]
+- **Purpose**: Test whether normalizing kappa by kappa_random (removing d/V dependence) improves the cross-vocabulary generation law.
+- **Method**:
+  - Validated Cai-Jiang (2012) formula: kappa_random = sqrt(2) * (1 - A * sqrt(log(V)/d)), A=0.661
+  - Computed kappa_norm = kappa / kappa_random for all 28 models
+  - Added Mamba-1 Pile PPL from published values (Gu & Dao 2023, Table 3)
+  - Tested fixed-V Pile analysis (n=10: 5 Pythia + 5 Mamba, all V~50280)
+  - Tested architecture independence via F-test (ANCOVA)
+  - Full diagnostic of kappa dynamic range and saturation
+- **Scripts**: `src/cti_generation_normalized_kappa.py`
+- **Output**: `results/cti_generation_normalized.json`
+- **Key Results**:
+  1. **Cai-Jiang theory validated**: A=0.661, all errors < 0.13% (28 models). kappa_random is perfectly predicted.
+  2. **Normalization DEGRADES correlation**: Fixed-V r=-0.924 -> -0.919; Cross-V r=-0.492 -> -0.451. Dimensional scaling is not the primary confound.
+  3. **Architecture independence FAILS**: F=6.515, p=0.031. Pythia and Mamba have different intercepts (C_T=3.95 vs C_SSM=3.68; Mamba achieves 24% lower PPL at same kappa).
+  4. **Kappa saturates for well-trained models**: Pythia 410M-2.8B: kappa in [0.89, 0.93]. Without Pythia-160M, R^2 drops from 0.85 to 0.29.
+  5. **Mamba shows genuine signal**: Spearman rho=-0.90, p=0.037 (5 models). Wider kappa variation (0.67-0.90).
+  6. **Pythia-160M leverage**: 60% of total kappa range comes from this single outlier. Spearman rho with all 10 models is only -0.52 (p=0.13).
+- **What we learned**: The generation law is real but regime-dependent. Kappa predicts PPL in the under-capacity regime (small models where d is insufficient for V tokens). For well-trained models (d >> log(V)), kappa saturates and PPL is determined by h(x) quality (backbone architecture + model size). The classification law avoids this because K << V.
+- **Theory sections added**: 3.15 (Cai-Jiang), 3.16 (Normalized kappa), 3.17 (Architecture independence), 3.18 (Dynamic range problem)
+- **New citations**: Cai & Jiang 2012, Cai, Fan & Jiang 2013, Brauchart et al. 2013
+
+### Expanded Model Suite: 28 Models Kappa + 17 Models WikiText-103 PPL [COMPLETE]
+- **Purpose**: Expand generation law validation beyond original 8 models.
+- **Method**: Extracted W_U kappa for 10 new models (Mamba2 x5, Qwen2, Phi-4, Falcon-H1, Granite, LFM2.5). Computed WikiText-103 PPL for 4 new models.
+- **Scripts**: `src/cti_generation_kappa_expand.py`, `src/cti_generation_ppl_expand.py`
+- **Output**: `results/cti_generation_kappa.json` (28 OK / 3 errors), `results/cti_generation_ppl.json` (17 entries)
+- **Key Results**: Cross-V with 16 models: r=-0.49. Partial r(kappa, PPL | V) = -0.59 (significant). Partial r(kappa, PPL | params) = -0.22 (not significant).
+- **What we learned**: Across vocabulary sizes, kappa-PPL is largely a model-size confound. The strongest evidence is within fixed-V cohorts.
+
 ### Scale Factor c=0.89 Decomposition [COMPLETE — THEORETICAL]
 - **Purpose**: Explain why the Husler-Reiss corrected alpha formula overestimates by ~12% (c=0.89).
 - **Method**: Literature-grounded decomposition into 5 independent EVT mechanisms.

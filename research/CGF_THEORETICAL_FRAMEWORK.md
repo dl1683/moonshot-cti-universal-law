@@ -535,18 +535,19 @@ fixed-V group is driven primarily by the Pythia-160M leverage point
 (kappa=0.27, far below the saturated range). Without it, Pearson r drops
 from -0.924 to -0.536. Spearman rho is only -0.515 even with all points.
 
-**The law is REAL and STRONG (controlled analysis):** Despite Pearson
-sensitivity to the Pythia-160M leverage point, the partial correlation
-analysis vindicates the generation law:
+**The law is REAL but REGIME-DEPENDENT (refined analysis):** The partial
+correlation analysis shows kappa has genuine predictive power:
 
 - r(kappa, log(PPL) | log(params)) = -0.831, p=0.003
-  Kappa adds STRONG predictive info beyond model size
-- r(kappa, log(PPL) | arch) = -0.973, p<0.0001
-  Controlling for architecture, kappa nearly perfectly predicts PPL
+  Kappa adds predictive info beyond model size (n=10, fixed-V Pile)
 - R2(kappa alone) = 0.853 >> R2(log(params) alone) = 0.563
-  Kappa is far more informative than model size
+  Kappa is more informative than model size
+- R2(kappa + arch) = 0.954 (architecture-split model)
 
-Fine-grained prediction improves with the architecture-split model (R2=0.954).
+BUT: the strong R2 is leverage-dependent. Without Pythia-160M, R2 drops
+to 0.29. The Spearman rho is only -0.52 (p=0.13). The Mamba family (rho=-0.90,
+p=0.037) provides the cleanest positive evidence. See Section 3.18 for the
+full dynamic range analysis.
 
 ### 3.10 Architecture Intercept Theorem
 
@@ -864,6 +865,179 @@ effect (bivariate-to-K-variate) has a rigorous mathematical basis in the
 Husler-Reiss multivariate model. This places the entire alpha-from-geometry
 pipeline on firm theoretical ground: rho_eff from Jensen, c from multivariate
 EVT, and the functional form from the Gumbel-race mechanism.
+
+### 3.15 Cai-Jiang Theory of Random Kappa (Session 88)
+
+**Theorem (Cai-Jiang 2012, Annals of Statistics 39(3):1496-1525):**
+For V independent random unit vectors on S^{d-1}, the maximum absolute inner
+product (coherence) satisfies:
+
+    max_{i != j} |<w_i, w_j>| ~ sqrt(2 * log(V) / d)
+
+with a Gumbel limiting distribution, in three regimes depending on log(V)/d:
+- Sub-exponential (log(V)/d -> 0): all vectors nearly orthogonal, min distance -> sqrt(2)
+- Exponential (log(V)/d -> beta > 0): non-trivial limit
+- Super-exponential (log(V)/d -> inf): vectors crowd together
+
+**Language models are in Regime 1** (sub-exponential): for V ~ 50K, d ~ 768-5120,
+log(V)/d ~ 0.002-0.015. This predicts kappa_random -> sqrt(2) = 1.4142 from below.
+
+**Closed-form approximation:** Calibrated against empirical kappa_random for 28 models:
+
+    kappa_random(V, d) = sqrt(2) * (1 - A * sqrt(log(V) / d))
+
+with A = 0.661 (std = 0.005). This predicts kappa_random to < 0.13% error for ALL
+28 models (V from 32K to 152K, d from 768 to 5120).
+
+| d_model | V      | kappa_random (measured) | kappa_random (theory) | error |
+|---------|--------|------------------------|-----------------------|-------|
+| 768     | 50280  | 1.3024                 | 1.3033                | +0.07%|
+| 1024    | 50280  | 1.3178                 | 1.3181                | +0.03%|
+| 2048    | 50280  | 1.3466                 | 1.3463                | -0.02%|
+| 2560    | 151936 | 1.3503                 | 1.3504                | +0.00%|
+| 4096    | 32768  | 1.3678                 | 1.3671                | -0.05%|
+| 5120    | 100352 | 1.3702                 | 1.3699                | -0.03%|
+
+**Connection to Thompson/Tammes problem:** The Welch bound gives the optimal
+packing lower bound: max |<w_i, w_j>| >= sqrt((V-d)/(d*(V-1))) ~ 1/sqrt(d).
+Language models (V >> d) are far from this bound; their nearest-neighbor
+distances are determined by semantic clustering, not by packing constraints.
+
+Ref: Cai & Jiang 2012 (arXiv:1102.2925); Cai, Fan & Jiang 2013 (JMLR 14:1837-1864);
+Brauchart et al. 2013 (arXiv:1312.1854, generalized Thomson problem).
+
+### 3.16 Normalized Kappa: kappa_norm = kappa / kappa_random (Session 88)
+
+**Definition:** To disentangle learned geometric structure from dimensional scaling:
+
+    kappa_norm = kappa_observed / kappa_random(V, d)
+
+**Properties:**
+- Removes d-dependence (both sqrt(2) limit and convergence rate)
+- Removes V-dependence (different vocabularies have different packing constraints)
+- Remaining signal is purely learned structure
+- Range: [0, 1] in theory; empirically [0.21, 0.70] for all tested models
+
+**Empirical finding: normalization DEGRADES PPL prediction.**
+
+| Analysis | n | r (raw kappa) | r (kappa_norm) | delta |r| |
+|----------|---|---------------|----------------|----------|
+| Fixed-V Pile | 10 | -0.924 | -0.919 | -0.005 |
+| Fixed-V WikiText | 6 | -0.732 | -0.700 | -0.032 |
+| Cross-V WikiText | 16 | -0.492 | -0.451 | -0.041 |
+
+**Interpretation:** Normalization reduces correlation because:
+1. Within fixed-V: all models share the same kappa_random, so normalization is a constant scale (doesn't change r)
+2. Cross-V: the V-dependent variation in kappa_random is partially informative — larger V models tend to have better training (a confound), so removing V-variation removes signal
+3. The kappa_norm range [0.55-0.70] for well-trained models is extremely compressed, reducing statistical power
+
+**Conclusion:** The dimensional scaling is NOT the primary confound in the cross-V generation law. The true confound is model quality/size, which correlates with both kappa and PPL through the causal chain:
+    more params -> larger d -> higher kappa + better h(x) -> lower PPL
+The raw kappa captures both geometric structure AND dimensional effects, and removing the latter doesn't help because both contribute to PPL prediction.
+
+### 3.17 Architecture Independence: Mamba vs Pythia on the Pile (Session 88)
+
+**Test:** F-test for coincidence of regression lines (ANCOVA) on the
+fixed-V Pile PPL data (5 Pythia + 5 Mamba, all V ~ 50280, all trained
+on 300B Pile tokens).
+
+**Result: F=6.515, p=0.031 — architectures have DIFFERENT lines.**
+
+Per-architecture fits:
+- Transformer (Pythia): alpha_gen = 2.068, r = -0.979
+- SSM (Mamba): alpha_gen = 1.994, r = -0.927
+
+Slopes are within 4% of each other (2.07 vs 1.99), but intercepts differ:
+C_Transformer = 3.95, C_SSM = 3.68, delta_C = 0.27.
+
+At the SAME kappa, Mamba achieves exp(0.27) = 1.31x (24%) lower PPL. This is
+consistent with Gu & Dao (2024): Mamba matches Transformer PPL at ~2x fewer
+parameters. The SSM's selective scan produces better hidden states h(x) for
+the same W_U geometry.
+
+**Critical diagnostic: Mamba has LOWER kappa but LOWER PPL than Pythia at
+matched model sizes:**
+
+| Pair (matched training) | delta_kappa | Mamba PPL advantage |
+|-------------------------|-------------|---------------------|
+| Pythia-160M vs Mamba-130M | -0.397 | -64.4% |
+| Pythia-410M vs Mamba-370M | +0.135 | -16.8% |
+| Pythia-1B vs Mamba-790M | +0.165 | -6.3% |
+| Pythia-1.4B vs Mamba-1.4B | +0.020 | -9.5% |
+| Pythia-2.8B vs Mamba-2.8B | +0.033 | -7.6% |
+
+In 4/5 pairs, Pythia has HIGHER kappa but HIGHER PPL. This confirms that
+kappa (W_U geometry) is necessary but not sufficient — h(x) quality matters
+independently.
+
+**Implication for the generation law:** The law requires an architecture-
+dependent constant C_arch. The universal component is the slope alpha_gen,
+which is remarkably similar across architectures (~2.0). The intercept
+absorbs all non-geometric factors (hidden state quality, training efficiency,
+contextual processing).
+
+### 3.18 Kappa Dynamic Range Problem in NTP (Session 88)
+
+**The fundamental issue:** In classification (K = 4-77), kappa_nearest varies
+over a wide range (0.3-2.5+) across models, giving strong discriminative
+power. In generation (K = V ~ 50K), kappa saturates for all well-trained
+models:
+
+- Pythia 410M-2.8B: kappa in [0.89, 0.93] — range 0.04
+- Mamba 370M-2.8B: kappa in [0.76, 0.90] — range 0.14
+- PPL range for these models: [6.22, 10.56] — 1.7x variation
+
+60% of the total kappa range comes from ONE model (Pythia-160M = 0.273).
+Without it, Pearson r drops from -0.924 to -0.536 (not significant).
+Spearman rho with all 10 models is only -0.515 (p=0.13).
+
+**Within-family diagnostic:**
+
+| Family | n | Pearson r | Spearman rho | Kappa range | Note |
+|--------|---|-----------|--------------|-------------|------|
+| Pythia (all) | 5 | -0.979 | -0.600 | 0.27-0.93 | Driven by 160M |
+| Pythia (no 160M) | 4 | -0.710 | -0.200 | 0.89-0.93 | Saturated |
+| Mamba | 5 | -0.927 | -0.900* | 0.67-0.90 | Genuine signal |
+
+*p=0.037 (significant at 5%)
+
+**The Mamba result is the cleanest positive evidence:** Mamba models have wider
+kappa variation (0.67-0.90) and show both strong Pearson AND Spearman correlation.
+This may be because Mamba's SSM layers interact with W_U differently, preventing
+the kappa saturation seen in Transformers at >=410M parameters.
+
+**Theoretical explanation (V/d ratio):** Kappa saturates when d >> log(V), i.e.,
+when the embedding space has abundant "room" for all V tokens. For V=50K:
+- d=768 (160M): V/d = 65 — moderately crowded, kappa has room to vary
+- d=1024 (410M): V/d = 49 — spacious, kappa already near ceiling
+- d=2560 (2.8B): V/d = 20 — very spacious, kappa fully saturated
+
+The saturation threshold is approximately V/d < 50, or equivalently d > 2*log(V).
+For d > 2*log(V) = 21.6 (always satisfied for LLMs), the sphere S^{d-1} has
+exponentially more volume than needed for V points, and clustering structure
+(not packing constraints) determines kappa.
+
+**What alternative W_U metrics predict PPL (n=10):**
+
+| Metric | R^2 (all) | R^2 (no 160M) | Note |
+|--------|-----------|---------------|------|
+| kappa | 0.853 | 0.288 | Saturates |
+| d_model | 0.558 | 0.804 | Proxy for model size |
+| eff_rank | 0.548 | 0.774 | Also scales with d |
+| mean_cossim | 0.826 | 0.359 | Wider range but still saturates |
+| eff_rank/d | 0.835 | 0.132 | Normalized, loses signal |
+| kappa + arch | 0.954 | — | Best 2-param model |
+
+Without the outlier, d_model is the BEST predictor (R^2=0.804). This confirms
+that the generation law in the well-trained regime is primarily a model-size
+effect, not a geometric effect.
+
+**Bottom line for the generation law:**
+1. The kappa-PPL relationship is REAL for under-capacity models (Mamba series, Pythia-160M)
+2. It SATURATES for well-trained models where d >> log(V)
+3. The classification law avoids this because K is small enough for meaningful kappa variation
+4. The generation law is best interpreted as a NECESSARY CONDITION (low kappa => high PPL) rather than a predictive equation
+5. The architecture-split model (kappa + C_arch) achieves R^2=0.954, which is strong — the law works IF you allow per-architecture constants
 
 ---
 

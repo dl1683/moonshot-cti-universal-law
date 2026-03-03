@@ -1,0 +1,501 @@
+{
+  "fixed_v_pile": {
+    "name": "fixed_v_pile",
+    "n": 10,
+    "models": [
+      "Pythia-160M",
+      "Pythia-410M",
+      "Pythia-1B",
+      "Pythia-1.4B",
+      "Pythia-2.8B",
+      "Mamba-130M",
+      "Mamba-370M",
+      "Mamba-790M",
+      "Mamba-1.4B",
+      "Mamba-2.8B"
+    ],
+    "raw_kappa": {
+      "r": -0.9235812449629138,
+      "p": 0.00013595171942507015,
+      "slope": -2.0769215605555047,
+      "intercept": 3.8299150915050575,
+      "alpha_gen": 2.0769215605555047,
+      "loao_mae": 0.2208890469037789
+    },
+    "normalized_kappa": {
+      "r": -0.9192089864601651,
+      "p": 0.00016892390133436497,
+      "slope": -2.8366824725424262,
+      "intercept": 3.866947655840792,
+      "alpha_gen": 2.8366824725424262,
+      "loao_mae": 0.22616499477573462
+    },
+    "per_model": [
+      {
+        "key": "pythia-160m",
+        "model": "Pythia-160M",
+        "kappa": 0.2727297842502594,
+        "kappa_norm": 0.20941235890156565,
+        "log_ppl": 3.389124800427886,
+        "params_M": 160,
+        "d_model": 768
+      },
+      {
+        "key": "pythia-410m",
+        "model": "Pythia-410M",
+        "kappa": 0.8938711881637573,
+        "kappa_norm": 0.6783426514081872,
+        "log_ppl": 2.2975725511705014,
+        "params_M": 410,
+        "d_model": 1024
+      },
+      {
+        "key": "pythia-1b",
+        "model": "Pythia-1B",
+        "kappa": 0.9310029149055481,
+        "kappa_norm": 0.6913796877546996,
+        "log_ppl": 2.05668455455722,
+        "params_M": 1000,
+        "d_model": 2048
+      },
+      {
+        "key": "pythia-1.4b",
+        "model": "Pythia-1.4B",
+        "kappa": 0.9179051518440247,
+        "kappa_norm": 0.681617469428285,
+        "log_ppl": 2.0162354657760435,
+        "params_M": 1400,
+        "d_model": 2048
+      },
+      {
+        "key": "pythia-2.8b",
+        "model": "Pythia-2.8B",
+        "kappa": 0.9164343476295471,
+        "kappa_norm": 0.6769075624263594,
+        "log_ppl": 1.9065751436566365,
+        "params_M": 2800,
+        "d_model": 2560
+      },
+      {
+        "key": "mamba-130m",
+        "model": "Mamba-130M",
+        "kappa": 0.669427216053009,
+        "kappa_norm": 0.5139770203131317,
+        "log_ppl": 2.3570732782781154,
+        "params_M": 130,
+        "d_model": 768
+      },
+      {
+        "key": "mamba-370m",
+        "model": "Mamba-370M",
+        "kappa": 0.7592675685882568,
+        "kappa_norm": 0.5761816845476356,
+        "log_ppl": 2.1138429683971682,
+        "params_M": 370,
+        "d_model": 1024
+      },
+      {
+        "key": "mamba-790m",
+        "model": "Mamba-790M",
+        "kappa": 0.7661019563674927,
+        "kappa_norm": 0.573446985742815,
+        "log_ppl": 1.9919755158985601,
+        "params_M": 790,
+        "d_model": 1536
+      },
+      {
+        "key": "mamba-1.4b",
+        "model": "Mamba-1.4B",
+        "kappa": 0.8983392715454102,
+        "kappa_norm": 0.6670952767981855,
+        "log_ppl": 1.916922612182061,
+        "params_M": 1400,
+        "d_model": 2048
+      },
+      {
+        "key": "mamba-2.8b",
+        "model": "Mamba-2.8B",
+        "kappa": 0.883439838886261,
+        "kappa_norm": 0.652534546995713,
+        "log_ppl": 1.827769906751088,
+        "params_M": 2800,
+        "d_model": 2560
+      }
+    ],
+    "partial_corr_controlling_params": {
+      "raw": {
+        "r": -0.8313672490654336,
+        "p": 0.002871066177271816
+      },
+      "norm": {
+        "r": -0.8344416284209463,
+        "p": 0.002677848555282405
+      }
+    },
+    "partial_corr_controlling_d_model": {
+      "raw": {
+        "r": -0.832406295165284,
+        "p": 0.002804678502196244
+      },
+      "norm": {
+        "r": -0.8357714424874654,
+        "p": 0.0025972479368965144
+      }
+    }
+  },
+  "architecture_independence": {
+    "pooled": {
+      "slope": -2.0769215605555047,
+      "intercept": 3.8299150915050575,
+      "ssr": 0.27288784051251846,
+      "alpha_gen": 2.0769215605555047
+    },
+    "per_architecture": {
+      "ssm": {
+        "n": 5,
+        "slope": -1.99439756448371,
+        "intercept": 3.6276914949209043,
+        "r": -0.9267902992377092,
+        "p": 0.02351577310914096,
+        "alpha_gen": 1.99439756448371
+      },
+      "transformer": {
+        "n": 5,
+        "slope": -2.0675601640889183,
+        "intercept": 3.959144405914928,
+        "r": -0.9786647269387818,
+        "p": 0.0037289486349336917,
+        "alpha_gen": 2.0675601640889183
+      }
+    },
+    "f_test": {
+      "f_stat": 6.514909514305845,
+      "p_value": 0.031343664967621865,
+      "df_numerator": 2,
+      "df_denominator": 6,
+      "interpretation": "p > 0.05 means architectures share the same line (GOOD)"
+    }
+  },
+  "fixed_v_wikitext": {
+    "name": "fixed_v_wikitext",
+    "n": 6,
+    "models": [
+      "Pythia-160M",
+      "Pythia-410M",
+      "Pythia-1B",
+      "Pythia-1.4B",
+      "Pythia-2.8B",
+      "GPT-2"
+    ],
+    "raw_kappa": {
+      "r": -0.7315852538475932,
+      "p": 0.09840054565116757,
+      "slope": -1.194702060543601,
+      "intercept": 3.984429403849622,
+      "alpha_gen": 1.194702060543601,
+      "loao_mae": 0.801237664734372
+    },
+    "normalized_kappa": {
+      "r": -0.6994729047765658,
+      "p": 0.12190351949354923,
+      "slope": -1.550804352697294,
+      "intercept": 3.9602809084900894,
+      "alpha_gen": 1.550804352697294,
+      "loao_mae": 0.939732848810119
+    },
+    "per_model": [
+      {
+        "key": "pythia-160m",
+        "model": "Pythia-160M",
+        "kappa": 0.2727297842502594,
+        "kappa_norm": 0.20941235890156565,
+        "log_ppl": 3.5598219505632422,
+        "params_M": 160,
+        "d_model": 768
+      },
+      {
+        "key": "pythia-410m",
+        "model": "Pythia-410M",
+        "kappa": 0.8938711881637573,
+        "kappa_norm": 0.6783426514081872,
+        "log_ppl": 3.038818698790139,
+        "params_M": 410,
+        "d_model": 1024
+      },
+      {
+        "key": "pythia-1b",
+        "model": "Pythia-1B",
+        "kappa": 0.9310029149055481,
+        "kappa_norm": 0.6913796877546996,
+        "log_ppl": 2.828306910261965,
+        "params_M": 1000,
+        "d_model": 2048
+      },
+      {
+        "key": "pythia-1.4b",
+        "model": "Pythia-1.4B",
+        "kappa": 0.9179051518440247,
+        "kappa_norm": 0.681617469428285,
+        "log_ppl": 2.712947684942584,
+        "params_M": 1400,
+        "d_model": 2048
+      },
+      {
+        "key": "pythia-2.8b",
+        "model": "Pythia-2.8B",
+        "kappa": 0.9164343476295471,
+        "kappa_norm": 0.6769075624263594,
+        "log_ppl": 2.5787760080588775,
+        "params_M": 2800,
+        "d_model": 2560
+      },
+      {
+        "key": "gpt2",
+        "model": "GPT-2",
+        "kappa": 0.7979947328567505,
+        "kappa_norm": 0.6127403163896404,
+        "log_ppl": 3.537038352691474,
+        "params_M": 124,
+        "d_model": 768
+      }
+    ],
+    "partial_corr_controlling_params": {
+      "raw": {
+        "r": -0.8048356817958499,
+        "p": 0.05341684895071054
+      },
+      "norm": {
+        "r": -0.806321403337847,
+        "p": 0.05263452066783602
+      }
+    },
+    "partial_corr_controlling_d_model": {
+      "raw": {
+        "r": -0.5148032807379107,
+        "p": 0.2960122839844626
+      },
+      "norm": {
+        "r": -0.5132288906031585,
+        "p": 0.29774990828277587
+      }
+    }
+  },
+  "cross_v_wikitext": {
+    "name": "cross_v_wikitext",
+    "n": 16,
+    "models": [
+      "Pythia-160M",
+      "Pythia-410M",
+      "Pythia-1B",
+      "Pythia-1.4B",
+      "Pythia-2.8B",
+      "GPT-2",
+      "Qwen3-0.6B",
+      "Qwen3-1.7B",
+      "Qwen3-4B",
+      "Falcon-H1-0.5B",
+      "Falcon-H1-1.5B",
+      "SmolLM2-360M",
+      "Mistral-7B",
+      "Qwen2-0.5B",
+      "Falcon-H1-3B",
+      "Granite-4.0-Micro"
+    ],
+    "raw_kappa": {
+      "r": -0.4914928304186365,
+      "p": 0.053173636455896636,
+      "slope": -1.4997416197067512,
+      "intercept": 4.015602593029786,
+      "alpha_gen": 1.4997416197067512,
+      "loao_mae": 0.3756217364075577
+    },
+    "normalized_kappa": {
+      "r": -0.45143645392519155,
+      "p": 0.07921724317137493,
+      "slope": -1.8897228810915816,
+      "intercept": 3.9445913197820444,
+      "alpha_gen": 1.8897228810915816,
+      "loao_mae": 0.3613211298765683
+    },
+    "per_model": [
+      {
+        "key": "pythia-160m",
+        "model": "Pythia-160M",
+        "kappa": 0.2727297842502594,
+        "kappa_norm": 0.20941235890156565,
+        "log_ppl": 3.5598219505632422,
+        "params_M": 160,
+        "d_model": 768
+      },
+      {
+        "key": "pythia-410m",
+        "model": "Pythia-410M",
+        "kappa": 0.8938711881637573,
+        "kappa_norm": 0.6783426514081872,
+        "log_ppl": 3.038818698790139,
+        "params_M": 410,
+        "d_model": 1024
+      },
+      {
+        "key": "pythia-1b",
+        "model": "Pythia-1B",
+        "kappa": 0.9310029149055481,
+        "kappa_norm": 0.6913796877546996,
+        "log_ppl": 2.828306910261965,
+        "params_M": 1000,
+        "d_model": 2048
+      },
+      {
+        "key": "pythia-1.4b",
+        "model": "Pythia-1.4B",
+        "kappa": 0.9179051518440247,
+        "kappa_norm": 0.681617469428285,
+        "log_ppl": 2.712947684942584,
+        "params_M": 1400,
+        "d_model": 2048
+      },
+      {
+        "key": "pythia-2.8b",
+        "model": "Pythia-2.8B",
+        "kappa": 0.9164343476295471,
+        "kappa_norm": 0.6769075624263594,
+        "log_ppl": 2.5787760080588775,
+        "params_M": 2800,
+        "d_model": 2560
+      },
+      {
+        "key": "gpt2",
+        "model": "GPT-2",
+        "kappa": 0.7979947328567505,
+        "kappa_norm": 0.6127403163896404,
+        "log_ppl": 3.537038352691474,
+        "params_M": 124,
+        "d_model": 768
+      },
+      {
+        "key": "qwen3-0.6b",
+        "model": "Qwen3-0.6B",
+        "kappa": 0.8594045639038086,
+        "kappa_norm": 0.6550329761895856,
+        "log_ppl": 3.31431268826787,
+        "params_M": 600,
+        "d_model": 1024
+      },
+      {
+        "key": "qwen3-1.7b",
+        "model": "Qwen3-1.7B",
+        "kappa": 0.9090321063995361,
+        "kappa_norm": 0.6770526898237509,
+        "log_ppl": 3.048438081263177,
+        "params_M": 1700,
+        "d_model": 2048
+      },
+      {
+        "key": "qwen3-4b",
+        "model": "Qwen3-4B",
+        "kappa": 0.8964400291442871,
+        "kappa_norm": 0.6638615923748671,
+        "log_ppl": 2.8854542767890234,
+        "params_M": 4000,
+        "d_model": 2560
+      },
+      {
+        "key": "falcon-h1-0.5b",
+        "model": "Falcon-H1-0.5B",
+        "kappa": 0.8196319937705994,
+        "kappa_norm": 0.6209388929512059,
+        "log_ppl": 2.3955156340072934,
+        "params_M": 500,
+        "d_model": 1024
+      },
+      {
+        "key": "falcon-h1-1.5b",
+        "model": "Falcon-H1-1.5B",
+        "kappa": 0.9387184977531433,
+        "kappa_norm": 0.6975939771381968,
+        "log_ppl": 2.1843858606891495,
+        "params_M": 1500,
+        "d_model": 2048
+      },
+      {
+        "key": "smollm2-360m",
+        "model": "SmolLM2-360M",
+        "kappa": 0.7605428695678711,
+        "kappa_norm": 0.5785497986695496,
+        "log_ppl": 2.679823571497546,
+        "params_M": 360,
+        "d_model": 960
+      },
+      {
+        "key": "mistral-7b",
+        "model": "Mistral-7B",
+        "kappa": 0.8727245330810547,
+        "kappa_norm": 0.638026847880111,
+        "log_ppl": 1.9044658567144714,
+        "params_M": 7000,
+        "d_model": 4096
+      },
+      {
+        "key": "qwen2-0.5b",
+        "model": "Qwen2-0.5B",
+        "kappa": 0.8362720608711243,
+        "kappa_norm": 0.6409534998057083,
+        "log_ppl": 2.7893947694713543,
+        "params_M": 500,
+        "d_model": 896
+      },
+      {
+        "key": "falcon-h1-3b",
+        "model": "Falcon-H1-3B",
+        "kappa": 0.903071939945221,
+        "kappa_norm": 0.6674447411054845,
+        "log_ppl": 1.9863711697587718,
+        "params_M": 3000,
+        "d_model": 2560
+      },
+      {
+        "key": "granite-micro",
+        "model": "Granite-4.0-Micro",
+        "kappa": 0.9342869520187378,
+        "kappa_norm": 0.6912195241982975,
+        "log_ppl": 2.619152290748884,
+        "params_M": 350,
+        "d_model": 2560
+      }
+    ],
+    "partial_corr_controlling_params": {
+      "raw": {
+        "r": -0.21504185573517878,
+        "p": 0.4238172676777839
+      },
+      "norm": {
+        "r": -0.20123478267521805,
+        "p": 0.45485780589425
+      }
+    },
+    "partial_corr_controlling_d_model": {
+      "raw": {
+        "r": -0.18367851473705676,
+        "p": 0.4959061345286525
+      },
+      "norm": {
+        "r": -0.1827048327009258,
+        "p": 0.49823274650828653
+      }
+    }
+  },
+  "cross_v_2param_normalized": {
+    "n": 16,
+    "alpha_gen": 2.2532293673631614,
+    "beta": 0.3710608568576185,
+    "C": 0.04618918617311465,
+    "R2": 0.36722266496986566,
+    "residual_std": 0.37671373533913216
+  },
+  "cai_jiang_validation": {
+    "A_fit": 0.660872888071569,
+    "A_std": 0.0045888153787922645,
+    "n_models": 28,
+    "interpretation": "kappa_random = sqrt(2) * (1 - A * sqrt(log(V)/d)), A calibrated from data"
+  }
+}
