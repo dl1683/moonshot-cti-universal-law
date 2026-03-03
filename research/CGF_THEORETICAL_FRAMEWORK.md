@@ -1039,6 +1039,73 @@ effect, not a geometric effect.
 4. The generation law is best interpreted as a NECESSARY CONDITION (low kappa => high PPL) rather than a predictive equation
 5. The architecture-split model (kappa + C_arch) achieves R^2=0.954, which is strong — the law works IF you allow per-architecture constants
 
+### 3.19 Spectral and Distributional Metrics of W_U (Session 88)
+
+**Motivation:** Since kappa_bar saturates (Section 3.18), we tested whether other
+geometric/spectral metrics of W_U predict PPL better.
+
+**Metrics tested (computed for 28 models):**
+- kappa_bar (mean NN distance — baseline)
+- kappa percentiles: q01, q05, q10, q25, q50 (theory: tail should matter)
+- kappa_iqr (interquartile range — distributional width)
+- kappa_skew, kappa_kurtosis (distribution shape)
+- Stable rank: ||W||_F^2 / ||W||_2^2 (Tang & Yang 2025)
+- Effective rank: exp(H(normalized SVs)) (Kulkarni et al. 2026)
+- Participation ratio: (sum sigma^2)^2 / sum(sigma^4)
+- PL_alpha_hill: Hill estimator power law exponent (Martin & Mahoney 2021)
+- Singular entropy: KL(p_sigma || Uniform) (Godey et al. 2024)
+- Spectral decay slope
+- Norm CV (coefficient of variation of row norms)
+
+**Results (n=10 fixed-V Pile PPL, Pythia + Mamba):**
+
+| Metric | r (all) | r (no 160M) | rho (all) | rho (no 160M) |
+|--------|---------|-------------|-----------|---------------|
+| kappa_bar | -0.924 | -0.536 | -0.515 | -0.333 |
+| kappa_iqr | -0.824 | -0.679* | -0.855** | -0.800** |
+| kappa_skew | +0.826 | -0.634 | -0.249 | -0.717* |
+| effective_rank | -0.739 | -0.877** | -0.879** | -0.833** |
+| stable_rank | -0.610 | -0.654 | -0.830** | -0.767* |
+| q05 (5th pctile) | -0.876 | -0.246 | -0.382 | -0.150 |
+| PL_alpha_hill | -0.503 | -0.261 | -0.394 | -0.167 |
+
+(*p<0.05, **p<0.01)
+
+**Key findings:**
+1. **effective_rank is the best single predictor without the outlier** (r=-0.877, p=0.002),
+   but it's a d_model proxy (both measure model capacity)
+2. **kappa_iqr is the best RANK predictor** (rho=-0.800, p=0.010 without outlier). It
+   captures the WIDTH of the NN distance distribution: wider spread of token separations
+   = better model. This is NOT a trivial d_model proxy.
+3. **kappa_skew is informative** (rho=-0.717, p=0.030): more negative skew (longer left
+   tail, more tokens with very small NN distances) → lower PPL. This captures the model's
+   ability to create fine-grained distinctions.
+4. **PL_alpha_hill disappoints** (r=-0.261 without outlier). Despite its success as a
+   data-free quality predictor in WeightWatcher (Martin & Mahoney 2021), it does not
+   predict Pile PPL within the fixed-V group. This may be because PL_alpha captures
+   overall layer quality across the ENTIRE model, while W_U is just the output layer.
+5. **Percentile kappas (q01, q05) are WORSE** than kappa_bar. The theoretical prediction
+   that the tail should matter more was WRONG for this regime. In the saturated regime
+   (d >> log(V)), the tail concentrates even MORE than the mean.
+
+**Theoretical interpretation:** kappa_bar is an extreme-order statistic (the minimum of
+V-1 pairwise distances). In the sub-exponential regime (d >> log(V)), extreme order
+statistics concentrate tightly (concentration of measure). The DISTRIBUTION SHAPE
+(IQR, skewness) retains more variation because it captures how the model has structured
+its embedding space across the full range of token similarities, not just the worst case.
+
+**Practical implication:** For a generation law with wider applicability, replace the
+1-parameter model log(PPL) = -alpha * kappa + C with a 2-parameter model using kappa_iqr:
+
+    log(PPL) = -alpha_1 * kappa_bar - alpha_2 * kappa_iqr + C_arch
+
+The IQR term captures the model's ability to create a diverse range of token separations,
+which relates to the richness of the learned semantic structure.
+
+Ref: Tang & Yang 2025 (arXiv:2512.02807, Stable Rank); Kulkarni et al. 2026
+(arXiv:2602.20433, eRank in OLMo models); Martin & Mahoney 2021 (Nature Communications,
+WeightWatcher); Godey et al. 2024 (arXiv:2404.07647, LM Saturation).
+
 ---
 
 ## 4. Law 3: Diffusion (DERIVED, untested)

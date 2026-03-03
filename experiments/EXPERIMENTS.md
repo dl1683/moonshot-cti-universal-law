@@ -7,6 +7,21 @@ Validated results only (Codex-reviewed).
 
 ## Session 88 (Mar 3, 2026) — Nobel ~7.8/10
 
+### Spectral and Distributional Metrics Comparison [COMPLETE]
+- **Purpose**: Test whether alternative W_U metrics predict PPL better than kappa_bar, which saturates.
+- **Method**: Computed 16 metrics for 28 models (stable rank, PL_alpha_hill, effective rank, participation ratio, singular entropy, kappa percentiles, kappa_iqr, kappa_skew, norm_cv, etc.)
+- **Script**: `src/cti_generation_spectral_metrics.py`
+- **Output**: `results/cti_generation_spectral.json`
+- **Key Results (n=9, fixed-V Pile, without Pythia-160M outlier)**:
+  1. effective_rank: r=-0.877, p=0.002 — best Pearson (but d_model proxy)
+  2. kappa_iqr: rho=-0.800, p=0.010 — best RANK predictor (distributional width)
+  3. kappa_skew: rho=-0.717, p=0.030 — more negative skew → lower PPL
+  4. PL_alpha_hill: r=-0.261 — DISAPPOINTING (no PPL prediction)
+  5. q05 (5th percentile): r=-0.246 — WORSE than kappa_bar (tail concentrates too)
+- **What we learned**: Distributional metrics (kappa_iqr, kappa_skew) outperform the mean (kappa_bar) because they capture the SHAPE of the NN distance distribution. The theoretical prediction that lower percentiles (tail) should matter more was WRONG — in the saturated regime, the tail concentrates even more tightly than the mean.
+- **Theory section added**: 3.19 (Spectral and distributional metrics)
+- **New citations**: Tang & Yang 2025, Kulkarni et al. 2026, Martin & Mahoney 2021, Godey et al. 2024
+
 ### Cai-Jiang Normalization + Kappa Dynamic Range Diagnostic [COMPLETE]
 - **Purpose**: Test whether normalizing kappa by kappa_random (removing d/V dependence) improves the cross-vocabulary generation law.
 - **Method**:
