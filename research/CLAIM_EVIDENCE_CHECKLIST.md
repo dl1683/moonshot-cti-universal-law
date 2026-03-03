@@ -1,6 +1,6 @@
 # CTI Universal Law -- Claim-to-Evidence Checklist
 
-## Status: Updated Mar 1, 2026
+## Status: Updated Mar 3, 2026
 
 Every claim in the paper abstract and main text mapped to supporting result files.
 
@@ -25,6 +25,10 @@ Every claim in the paper abstract and main text mapped to supporting result file
 | 13 | Honest scope: alpha varies by family (NLP 1.48, ViT 0.63, CNN 4.4) | `results/cti_extended_family_loao.json`, `results/cti_alpha_family_law.json` | VERIFIED |
 | 14 | 4 probe calibration reduces MAE by 86% | `results/cti_one_point_calibration.json` | VERIFIED |
 | 14b | ResNet-50 CIFAR-100 same functional form | `results/cti_resnet50_cifar100.json` | VERIFIED |
+| 15 | Generation law: kappa from W_U predicts logCE, r=-0.70, p<0.001, 22 models | `results/cti_generation_law_analysis.json`, `results/cti_generation_hypothesis_scorecard.json` | VERIFIED |
+| 16 | Fixed-V Transformer vs SSM: r=-0.84, architecture-independent (F p=0.147) | `results/cti_generation_law_analysis.json` | VERIFIED |
+| 17 | beta_gen~0: vocabulary size drops out (K_eff~2-3) | `results/cti_generation_keff.json` | VERIFIED |
+| 18 | Partial r controlling for log(N_params) = -0.546, p=0.013 | `results/cti_generation_law_analysis.json` | VERIFIED |
 
 ## Main Text Claims
 
