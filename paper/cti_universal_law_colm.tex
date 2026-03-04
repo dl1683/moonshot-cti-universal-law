@@ -220,6 +220,9 @@ mean signed error$=+0.041$ (H8e),
 outlier rate$=3.9\%$ (H8f: $\leq10\%$).
 CTI's contribution is \emph{within-dataset architecture ranking} ($\bar\rho=0.642$ on 4 high-variation datasets vs.\ $\rho=0$ for dataset-mean baseline). See Figure~\ref{fig:h8plus} and Appendix~\ref{subsec:h8plus-detail}.
 
+\paragraph{Cross-family transfer (LOMFO).}
+Leave-one-model-family-out removes \emph{all} models from a family, refits from remaining families, and predicts the excluded family. All four families achieve $r\geq0.84$ (encoder: $0.943$; decoder: $0.846$; SSM: $0.984$; hybrid: $0.959$), confirming logit-linear structure transfers across families even with a misspecified slope. LODO (leave-one-dataset-out) mean $r=0.125$ confirms that $C_d$ requires per-dataset calibration.
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.75\columnwidth]{../results/figures/fig_cti_h8plus_holdout.png}
@@ -293,6 +296,9 @@ The law exhibits a three-level universality hierarchy:
 \textbf{(1) Form}: logit-linear in $\kappa_\mathrm{nearest}$, confirmed across NLP, ViT, CNN, and biological systems.
 \textbf{(2) Constant within family}: $\alpha$ is stable within families (NLP decoders: CV$=0.023$; 19 architectures: CV$=1.75\%$); across families, $\alpha$ varies ($\alpha_\mathrm{NLP}\approx1.48$, $\alpha_\mathrm{ViT}\approx0.63$, $\alpha_\mathrm{CNN}\approx4.4$).
 \textbf{(3) Intercept is task-specific}: $C_d$ requires per-dataset calibration (LODO mean $r=0.125$).
+
+\paragraph{Practical architecture ranking (H3, pre-registered).}
+A pre-registered test evaluates whether $\kappa_\mathrm{nearest}$ alone can rank 9 architectures by MAP@10 retrieval quality on Banking77 ($K=77$): Spearman $\rho=0.833$, $p=0.005$ (\textbf{PASS}). $\kappa_\mathrm{nearest}$ is computed from geometric structure alone---no downstream labels, no probing, no retrieval run.
 
 \paragraph{Zero-parameter alpha prediction.}
 Pooling $\rho$ across 11 architectures and 3 datasets ($K=4,14,77$; 200 bootstrap resamples each): $\hat\alpha_\mathrm{pred}=\sqrt{4/\pi}\sqrt{1/(1-\rho)}=1.540$ vs.\ observed $1.477$ ($+4.3\%$ error, zero free parameters). Per-model $\rho$ does not monotonically predict per-model $\alpha$ ($r=-0.55$), but the observed $\alpha$ CV ($2.28\%$) is fully consistent with LOAO estimation noise (expected $\approx2.8\%$). The formula captures the \emph{true} $\alpha$ to $4.3\%$; the per-model ``variation'' is noise, not structure.
