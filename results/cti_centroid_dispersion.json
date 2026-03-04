@@ -590,7 +590,7 @@
   },
   "_analysis": {
     "n_models": 10,
-    "model_keys": [
+    "models": [
       "pythia-160m",
       "pythia-410m",
       "pythia-1b",
@@ -602,39 +602,79 @@
       "Qwen3-1.7B",
       "rwkv-4-169m-pile"
     ],
-    "model0_mae": 0.06581228600105167,
-    "model0_r": -0.5326968556602418,
-    "model0_p": 0.11289563793000276,
-    "model0_rho_sp": -0.5636363636363636,
-    "model0_rho_sp_p": 0.08972402831709127,
-    "model1_mae": 0.04008484421024176,
-    "model1_r": -0.5579217652883299,
-    "model1_p": 0.09375130513610774,
-    "model1_c": -0.11040149568189822,
-    "model1_rho_sp": -0.5636363636363636,
-    "model2_mae": 0.04169826330822608,
-    "model2_r": -0.681019556947101,
-    "model2_p": 0.03015537108409729,
-    "model2_c1": -0.03736310744285585,
-    "model2_c2": 0.03189563935995103,
-    "model3_R2": 0.41271095781556943,
-    "model3_adj_R2": 0.24491408862001784,
-    "model3_coeffs": [
-      -1.5441517654731842,
-      5.524179109500701,
-      1.3451135317736065
-    ],
-    "model3_mae": 0.02538769340732152,
-    "model4_R2": 0.7201270137336673,
-    "model4_adj_R2": 0.5801905206005009,
-    "model4_coeffs": [
-      9.515290168919115,
-      -15.652712435899724,
-      -3.0004345843095743,
-      -0.34659540879537865
-    ],
-    "model4_mae": 0.016960659946253974,
-    "residual_mean": -0.06357092853275917,
-    "residual_std": 0.04639252483412188
+    "model0": {
+      "description": "alpha = A/sqrt(1-rho), zero free params",
+      "MAE": 0.06581228600105167,
+      "r_pearson": -0.5326968556602418,
+      "p_pearson": 0.11289563793000276,
+      "r_spearman": -0.5636363636363636,
+      "p_spearman": 0.08972402831709127
+    },
+    "bivariate_with_alpha": {
+      "rho": {
+        "r": -0.5304317760941019,
+        "p": 0.1147253704250741
+      },
+      "std": {
+        "r": 0.5843997850998623,
+        "p": 0.07603044698130043
+      },
+      "skew": {
+        "r": -0.7564758619371903,
+        "p": 0.0113306510650147
+      }
+    },
+    "bivariate_with_residual": {
+      "rho": {
+        "r": -0.7396881364454864,
+        "p": 0.014468893749815236
+      },
+      "std": {
+        "r": 0.7778261452331966,
+        "p": 0.008072560390822013
+      },
+      "skew": {
+        "r": -0.7632235177123294,
+        "p": 0.01021628114051765
+      }
+    },
+    "key_finding": {
+      "best_predictor": "off_diag_skew",
+      "r_skew_alpha": -0.7564758619371903,
+      "p_skew_alpha": 0.0113306510650147,
+      "r_skew_residual": -0.7632235177123294,
+      "p_skew_residual": 0.01021628114051765,
+      "significant_at_p05": true
+    },
+    "loao": {
+      "model0_MAE": 0.06581228600105167,
+      "model2_MAE": 0.05165138632791799,
+      "improvement_pct": 21.517106506386042,
+      "model2_wins": 8,
+      "n_folds": 10,
+      "sign_test_p": 0.0546875
+    },
+    "per_dataset_skew": {
+      "agnews": {
+        "r_skew_alpha": -0.6583876266416697,
+        "p_skew_alpha": 0.038463944302934386,
+        "significant": true
+      },
+      "dbpedia": {
+        "r_skew_alpha": -0.5441972422101888,
+        "p_skew_alpha": 0.10388852599187633,
+        "significant": false
+      },
+      "banking77": {
+        "r_skew_alpha": -0.05110881915074558,
+        "p_skew_alpha": 0.8884910361643359,
+        "significant": false
+      }
+    },
+    "interpretation": {
+      "finding": "Skew of off-diagonal whitened cosines significantly predicts per-model alpha (r=-0.757, p=0.011). Signal is strongest for small-K datasets (AG News K=4: p=0.039) and absent for large-K (Banking77 K=77: p=0.889). This is theoretically consistent: equicorrelation assumption is weakest for small K where few competitors prevent CLT convergence.",
+      "implication": "Per-model alpha variation is a FINITE-K CORRECTION to the CTI law, not a violation. For large K (practical use case), mean rho suffices. For small K, competition geometry shape matters.",
+      "paper_framing": "Alpha is a modality-level constant (NLP decoders: 1.48 +/- 0.04). Per-model variation correlates with competition geometry skew but the effect is small (MAE improvement from 0.066 to 0.052 with LOAO) and specific to small-K settings."
+    }
   }
 }
