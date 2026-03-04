@@ -253,5 +253,20 @@
     "name": "Mamba-1.4B",
     "hf_id": "state-spaces/mamba-1.4b-hf",
     "time_s": 579.1871535778046
+  },
+  "mamba-2.8b": {
+    "model": "mamba-2.8b",
+    "kappa_whitened": 0.9224677085876465,
+    "kappa_whitened_std": 0.20651260018348694,
+    "rho_whitened": 0.008062816224992275,
+    "d_eff": 7.588021036988785,
+    "V": 50280,
+    "d_model": 2560,
+    "n_tokens": 10082,
+    "sigma_W_trace": 2752.380859375,
+    "sigma_W_top_eigenvalue": 745.0711669921875,
+    "name": "Mamba-2.8B",
+    "hf_id": "state-spaces/mamba-2.8b-hf",
+    "time_s": 742.4783420562744
   }
 }
