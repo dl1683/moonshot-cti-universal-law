@@ -58,7 +58,7 @@ Near-simplex competition geometry ($\rho\approx0.46$, CV$=1.0\%$ across 6 modali
 Per-model $\rho$ does not monotonically predict per-model $\alpha$ ($r=-0.55$, $n=11$); however, the observed $\alpha$ CV ($2.3\%$) is fully consistent with LOAO regression estimation noise (expected $\approx2.8\%$ from 176 training points per fold), so there is no residual per-model signal for $\rho$ to explain --- $\alpha$ is a true constant within NLP decoders. Encoder $\alpha$ is $4$--$5\times$ higher for the same $\rho$, indicating a second renormalization factor beyond $\rho$.
 The Gumbel-race mechanism extends beyond classification: across 22 generation models (Transformers, SSMs, Hybrids, novel architectures), $\kappa$ from the unembedding matrix $W_U$ alone (zero forward passes) predicts $\log\mathrm{CE}$ ($r{=}{-}0.70$, $p{<}0.001$; fixed-vocabulary Transformer vs.\ SSM: $r{=}{-}0.84$, architecture-independent).
 
-\textbf{Honest scope:} $\alpha$ varies by architecture family (NLP decoders: 1.48, ViT: 0.63, CNN: 4.4); universality is of the \emph{functional form} only.
+\textbf{Honest scope:} $\alpha$ varies by signal type (NLP decoders: 1.48; continuous-signal modalities: ViT 4.5, CNN 4.0, audio 4.7); universality is of the \emph{functional form} only.
 Absolute prediction requires per-family intercept calibration (4 probe measurements reduce MAE by 86\%).
 \end{abstract}
 
@@ -205,7 +205,7 @@ This provides a geometric explanation for $\alpha$ \emph{mean-level} universalit
 However, per-model $\rho$ does not monotonically predict per-model $\alpha$ ($r=-0.55$, $p=0.08$, $n=11$). This is expected: the observed $\alpha$ CV ($2.28\%$) is fully consistent with LOAO regression estimation noise (expected SE$/\bar\alpha \approx 2.8\%$ from 176 training points per fold), so there is no residual per-model signal for $\rho$ to explain. The formula captures the \emph{true} $\alpha$ to $+4.3\%$; the per-model ``variation'' is estimation noise, not architecture-specific structure.
 Remarkably, the same $\rho\approx0.46$ appears across \emph{all tested modalities}: mouse visual cortex ($\rho=0.466$, Allen Neuropixels $K=118$; \S\ref{subsec:comprehensive-universality}), audio speech models (WavLM-Base+ $\rho=0.455$, HuBERT-Base $\rho=0.464$; Speech Commands $K=36$), vision (ViT-Base $\rho=0.458$ on CIFAR-10; ResNet50 $\rho=0.467$ on CIFAR-100), and NLP encoders (BERT-base, ELECTRA-small: $\rho=0.446$--$0.456$).
 Pooling all 6 modalities gives $\bar\rho=0.462$, CV$=1.0\%$ (range $[0.455, 0.467]$; \texttt{results/cti\_cross\_modal\_rho.json}; Figure~\ref{fig:cross-modal-rho}) --- the tightest invariant in this work.
-This decouples two distinct universality phenomena: (1) near-simplex geometry ($\rho\approx0.46$) is \emph{substrate-independent} across all modalities tested; (2) the cross-family shift in $\alpha$ ($\alpha_\mathrm{decoder}\approx1.5$, $\alpha_\mathrm{audio}\approx4.7$, $\alpha_\mathrm{encoder}\approx7$, $\alpha_\mathrm{ViT}\approx0.6$) is not explained by $\rho$ and requires a second renormalization factor (likely effective dimensionality or $\kappa$ normalization conventions).
+This decouples two distinct universality phenomena: (1) near-simplex geometry ($\rho\approx0.46$) is \emph{substrate-independent} across all modalities tested; (2) the cross-family shift in $\alpha$ (NLP decoders $\approx1.5$ vs.\ continuous-signal modalities $\approx3.3$--$5.0$: ViT $4.5$, CNN $4.0$, audio $4.7$) is not explained by $\rho$ and requires a second renormalization factor.
 
 \begin{figure}[t]
 \centering
@@ -379,10 +379,10 @@ Qwen3-1.7B    & 0.258 & 9 & 0.583 & 8 \\
 \small
 \begin{tabular}{lcccccc}
 \toprule
-Model & Family & Dataset & $K$ & $\alpha$ & $R^2$/Pearson $r$ \\
+Model & Family & Dataset & $K$ & $\alpha$ ($A$) & $R^2$/Pearson $r$ \\
 \midrule
-ViT-Base-16-224     & ViT  & CIFAR-10  & 10  & 0.592 & $R^2=0.811$, $r=0.901$ \\
-ViT-Large-16-224    & ViT  & CIFAR-10  & 10  & 0.630 & $R^2=0.964$, $r=0.982$ \\
+ViT-Base-16-224     & ViT  & CIFAR-10  & 10  & $A{=}0.592$$^\ddagger$ & $R^2=0.811$, $r=0.901$ \\
+ViT-Large-16-224    & ViT  & CIFAR-10  & 10  & $A{=}0.630$$^\ddagger$ & $R^2=0.964$, $r=0.982$ \\
 ViT-Base-16-224$^\dagger$  & ViT  & CIFAR-100 & 100 & 3.899 & $r=0.773$ \\
 ResNet50$^\dagger$           & CNN  & CIFAR-100 & 100 & 4.418 & $r=0.749$ \\
 Audio (7 models)    & Wav2Vec2/HuBERT/WavLM/Whisper & Speech Cmds & 36 & 4.669 & $r=0.898$ \\
@@ -393,7 +393,7 @@ Noise floor (sim)   & -- & -- & 100 & -- & $E[r]=0.875$ \\
 \end{tabular}
 \end{table}
 
-ViT-Large at $K=10$ reaches $R^2=0.964$, matching the NLP fit in explained variance. The slope $\alpha_{\mathrm{ViT}}\approx0.63$ differs from $\alpha_{\mathrm{NLP}}=1.477$ (per-dataset intercept version), reflecting different effective dimensionality $d_\mathrm{eff}$ across modalities.\footnote{The ViT cross-modality experiment fits $\logit(q)=A\cdot\kappa\cdot\sqrt{d_\mathrm{eff}}+C$, while the NLP law uses $\logit(q)=\alpha\cdot\kappa-\beta\log(K-1)+C_0$ with $\alpha$ absorbing $\sqrt{d_\mathrm{eff}}$. The reported $A_{\mathrm{ViT}}=0.63$ and $\alpha_{\mathrm{NLP}}=1.477$ are thus not directly commensurable as coefficients; what is universal is the \emph{functional form} (logit-linear in $\kappa$), not the numerical constant.}
+ViT-Large at $K=10$ reaches $R^2=0.964$, matching the NLP fit in explained variance. The ViT CIFAR-10 entries report $A$ (not $\alpha$): they fit $\logit(q)=A\cdot\kappa\cdot\sqrt{d_\mathrm{eff}}+C$, factoring out the effective dimensionality explicitly.\footnote{$^\ddagger$The CIFAR-10 ViT entries report $A$ from $\logit(q)=A\cdot\kappa\cdot\sqrt{d_\mathrm{eff}}+C$, not $\alpha$ from $\logit(q)=\alpha\cdot\kappa+C$; $A{=}0.63$ and $\alpha{=}1.477$ are not directly commensurable. When ViT is fitted with the standard parameterization ($\logit(q)=\alpha\cdot\kappa+C$), the combined ViT-Base/Large cross-layer $\alpha{=}4.49$ (\texttt{results/cti\_alpha\_family\_law.json}), consistent with CNN ($4.0$--$4.4$) and audio ($4.67$). This confirms a two-regime structure: discrete-token NLP ($\alpha{\approx}1.5$) vs continuous-signal modalities ($\alpha{\approx}3.3$--$5.0$).}
 
 \paragraph{Audio modality.}
 Seven frozen speech models from 4 architectures (Wav2Vec2, HuBERT, WavLM, Whisper; 39M--316M parameters) on Speech Commands v0.02 ($K=36$ spoken keywords, 4890 test samples; features at $\frac{2}{3}$-depth layer, PCA to 256 dimensions) yield $r=0.898$ ($p=0.006$), $\alpha_\mathrm{audio}=4.669$ ($R^2=0.807$; \texttt{results/cti\_audio\_speech.json}).
@@ -679,7 +679,7 @@ LODO; the unconstrained global estimate ($\hat\beta=0.478$) is within $0.6\%$ of
 \paragraph{Three-level universality structure and honest scope.}
 The CTI law exhibits a three-level universality hierarchy, analogous to renormalization group hierarchies in physics:
 \textbf{(1) Form universality} (strongest claim): the logit-linear structure $\logit(q)\propto\kappa_{\mathrm{nearest}}$ is EVT-derived and confirmed across NLP, ViT, ResNet, and biological neural systems.
-\textbf{(2) Constant universality within family}: $\alpha$ is stable within architecture families (NLP decoders: CV$=0.019$/$0.023$; 19 architectures); across families, $\alpha$ varies ($\alpha_\mathrm{NLP}\approx1.48$, $\alpha_\mathrm{ViT}\approx0.63$, $\alpha_\mathrm{CNN}\approx4.4$, $\alpha_\mathrm{audio}\approx4.7$), with signal modality the leading predictor (continuous-signal $\alpha\approx4$--$5$ vs.\ discrete-token $\alpha\approx1.5$).
+\textbf{(2) Constant universality within signal type}: $\alpha$ is stable within architecture families (NLP decoders: CV$=0.019$/$0.023$; 19 architectures); across families, $\alpha$ varies by signal type: discrete-token NLP decoders give $\alpha\approx1.48$, while all continuous-signal modalities converge at $\alpha\approx3.3$--$5.0$ (ViT: $4.5$, CNN: $4.0$, audio: $4.7$).
 \textbf{(3) Intercept is task-specific}: $C_d$ encodes dataset difficulty not predictable from other datasets (LODO mean $r=0.125$); one calibration measurement per dataset is required.
 This mirrors how equations of state have universal \emph{form} (e.g., van der Waals) but substance-specific \emph{constants} and application-specific \emph{offsets}. The LODO failure is therefore \emph{expected} behavior under this three-level picture, not a pathology.
 We explicitly caution against the reading that a single constant governs all modalities; current evidence supports level (1) universally, level (2) within families, and level (3) requires per-dataset calibration.
@@ -687,7 +687,7 @@ We explicitly caution against the reading that a single constant governs all mod
 Encoders with CLS pooling (BERT: $r=0.16$) and GPT-2 (final-layer degenerate: $r=-0.07$) do not follow the law; with mean-pool, DeBERTa/BGE yield $r\in[0.91,0.98]$ and $\alpha_\mathrm{encoder}\approx7.1$.
 A pre-registered blind test on RoBERTa-base (4th encoder, not in calibration; banking77, $K=77$) yields $\hat\alpha_\mathrm{RoBERTa}=8.082\in[5.0,10.0]$ (\textbf{PASS}) and $r=0.949\geq0.90$ (\textbf{PASS}).
 A dedicated pre-registered encoder LOAO (H\_encoder: CV$_\alpha < 0.20$; 5 architectures, 4 datasets; \texttt{results/cti\_encoder\_loao.json}) finds $\mathrm{CV}_{\alpha,\mathrm{encoder}}=0.42$ (FAIL), confirming that encoder $\alpha$ is not family-invariant. Per-model $\alpha$ values span 4.2 (ELECTRA-small, $R^2=0.17$) to 16.9 (BERT-base, $R^2=0.63$), consistent with pooling protocol and pre-training objective jointly determining encoder $\alpha$ (pre-registered LOAO, commit \texttt{9e151d5}).
-Per-family values: $\alpha_\mathrm{decoder}\approx1.48$, $\alpha_\mathrm{encoder}\approx7.7$, $\alpha_\mathrm{ViT}\approx0.63$, $\alpha_\mathrm{CNN}\approx4.4$, $\alpha_\mathrm{audio}\approx4.7$; the law applies to any architecture when appropriate pooling is used.
+Per-family values (standard $\alpha=$ slope of $\logit(q)$ vs $\kappa$): $\alpha_\mathrm{decoder}\approx1.48$, $\alpha_\mathrm{ViT}\approx4.5$, $\alpha_\mathrm{CNN}\approx4.0$, $\alpha_\mathrm{audio}\approx4.7$, $\alpha_\mathrm{encoder}\approx7.7$; the law applies to any architecture when appropriate pooling is used.
 
 \paragraph{Interpretation of $\beta$.}
 Asymptotically, Gumbel race predicts unit coefficient on $\log(K-1)$ (dense ETF limit, $\beta=1.0$).
@@ -768,7 +768,7 @@ The law is validated across 12 NLP architectures spanning transformers, SSM hybr
 Cross-modal tests confirm the same functional form in ViT ($R^2=0.964$), ResNet50 CNN ($r=0.749$), and 7 speech models from 4 architectures on Speech Commands ($r=0.898$, $\alpha_\mathrm{audio}=4.67$, $K=36$); the law extends to biological visual cortex (Allen Neuropixels: 30/32 sessions H1 PASS, all 32 showing positive $r$).
 The Gumbel-race mechanism further extends to next-token prediction: $\kappa$ from the unembedding matrix alone predicts $\log\mathrm{CE}$ across 22 models and 4 architecture types ($r=-0.70$), with vocabulary size dropping out ($\beta_\mathrm{gen}\approx0$) because softmax competition spontaneously reduces to $K_\mathrm{eff}\approx 2$--$3$.
 The slope $A(K)=1.164/\log(K)+1.301$ enables practical prediction: MAE$\leq$0.08 on all six prospective datasets; 4 probe measurements per new architecture reduce MAE by 86\% (uncalibrated 0.806$\to$calibrated 0.111, $r=0.932$).
-Universality is of the \emph{functional form}: the constant $\alpha$ is modality-specific ($\alpha_\mathrm{NLP}\approx1.48$, $\alpha_\mathrm{ViT}\approx0.63$, $\alpha_\mathrm{CNN}\approx4.4$, $\alpha_\mathrm{audio}\approx4.7$), with continuous-signal modalities (vision, audio) converging at $\alpha\approx4$--$5$ and discrete-token NLP at $\alpha\approx1.5$; cross-task drift and honest-scope limitations (including protein LM failure and human fMRI null) are enumerated in \S\ref{sec:limitations}.
+Universality is of the \emph{functional form}: the constant $\alpha$ is signal-type-specific ($\alpha_\mathrm{NLP}\approx1.48$ for discrete tokens; $\alpha_\mathrm{ViT}\approx4.5$, $\alpha_\mathrm{CNN}\approx4.0$, $\alpha_\mathrm{audio}\approx4.7$ for continuous signals), with all continuous-signal modalities converging at $\alpha\approx3.3$--$5.0$ and discrete-token NLP at $\alpha\approx1.5$; cross-task drift and honest-scope limitations (including protein LM failure and human fMRI null) are enumerated in \S\ref{sec:limitations}.
 Open directions include a renormalization theory for how constants transform across tasks and modalities.
 The near-simplex equicorrelation $\rho\approx0.46$ is now confirmed across all six modalities tested: NLP decoders ($0.463$), audio speech models ($0.455$--$0.464$), vision ($0.458$--$0.467$), mouse cortex ($0.466$), and NLP encoders ($0.446$--$0.456$); pooled CV$=1.0\%$ (\texttt{cti\_cross\_modal\_rho.json}).
 This is the tightest invariant in the paper, tighter than $\alpha$'s within-decoder CV of $2.3\%$, and establishes near-simplex centroid geometry as a universal structural property of categorical representation regardless of substrate, signal type, or training.

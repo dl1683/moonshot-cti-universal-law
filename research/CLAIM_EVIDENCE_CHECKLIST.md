@@ -22,7 +22,7 @@ Every claim in the paper abstract and main text mapped to supporting result file
 | 10 | Alpha-rho prediction: 1.540 vs 1.477 (+4.3%, zero params) | `results/cti_alpha_rho_multidataset.json` | VERIFIED |
 | 11 | Per-model alpha CV (2.3%) consistent with estimation noise (expected 2.8%) | `results/cti_alpha_noise_analysis.json` | VERIFIED |
 | 12 | Encoder alpha 4-5x higher for same rho | `results/cti_cross_family_equicorr.json`, `results/cti_encoder_loao.json` | VERIFIED |
-| 13 | Honest scope: alpha varies by family (NLP 1.48, ViT 0.63, CNN 4.4) | `results/cti_extended_family_loao.json`, `results/cti_alpha_family_law.json` | VERIFIED |
+| 13 | Honest scope: alpha varies by signal type (NLP 1.48, ViT 4.5, CNN 4.0, audio 4.7) | `results/cti_extended_family_loao.json`, `results/cti_alpha_family_law.json` | VERIFIED |
 | 14 | 4 probe calibration reduces MAE by 86% | `results/cti_one_point_calibration.json` | VERIFIED |
 | 14b | ResNet-50 CIFAR-100 same functional form | `results/cti_resnet50_cifar100.json` | VERIFIED |
 | 15 | Generation law: kappa from W_U predicts logCE, r=-0.70, p<0.001, 22 models | `results/cti_generation_law_analysis.json`, `results/cti_generation_hypothesis_scorecard.json` | VERIFIED |
