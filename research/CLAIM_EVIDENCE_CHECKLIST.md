@@ -67,6 +67,8 @@ Every claim in the paper abstract and main text mapped to supporting result file
 | 33 | Gumbel-race competition gives logit-linear form | `research/OBSERVABLE_ORDER_PARAMETER_THEOREM.md` (Theorem 1) | DERIVED |
 | 34 | d_eff_comp = 1/(1-rho) from whitened cosine structure | `research/OBSERVABLE_ORDER_PARAMETER_THEOREM.md` | DERIVED |
 | 35 | KS test: Gumbel fit fails at d=200, but logit-linear margin passes (p=0.265) | `results/cti_gumbel_theory.json` | VERIFIED |
+| 35b | Synthetic Gumbel validation: logit-linear form R^2=0.982 under controlled Gaussian data | `results/cti_synthetic_gumbel_validation.json` | VERIFIED |
+| 35c | Synthetic: alpha(rho) scaling requires anisotropic noise (not derivable from isotropic Gaussians) | `results/cti_synthetic_gumbel_validation.json` | VERIFIED |
 
 ## Scope Limits (Honest Negatives)
 
@@ -89,6 +91,8 @@ Every claim in the paper abstract and main text mapped to supporting result file
 - [x] H3 ranking rho/p verified against `cti_downstream_h3_n9.json`
 - [x] Audio speech results verified against `cti_audio_speech.json` (r=0.898, alpha=4.669)
 - [x] Protein negative verified against `cti_protein_esm2.json` (alpha=-1.17, r=-0.15)
-- [x] NSD fMRI null verified against `cti_nsd_human_fmri.json` (r=0.33, p=0.32)
-- [x] arXiv PDF compiles clean (32 pages)
-- [x] COLM PDF compiles clean (12 pages, ~8 pages main text)
+- [x] NSD fMRI null verified against `cti_nsd_human_fmri.json` (pooled r=0.12, p=0.18)
+- [x] Generation law verified: r=-0.55 (n=22) / r=-0.70 (n=21 excl. LFM)
+- [x] Synthetic Gumbel validation: R^2=0.982 logit-linear form confirmed
+- [x] arXiv PDF compiles clean (33 pages, 0 overfull boxes)
+- [x] COLM PDF compiles clean (14 pages, 0 overfull boxes)
