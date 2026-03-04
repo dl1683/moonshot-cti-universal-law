@@ -5,6 +5,21 @@ Validated results only (Codex-reviewed).
 
 ---
 
+## Session 99 (Mar 3, 2026) — Nobel ~8.0/10
+
+### ViT Alpha Parameterization Fix [COMPLETE — CRITICAL CORRECTION]
+- **Purpose**: The paper was comparing A_ViT=0.63 (from logit(q)=A*kappa*sqrt(d_eff)+C) with alpha_NLP=1.48 (from logit(q)=alpha*kappa+C). These are different parameterizations. Standard ViT alpha is 3.28 (Base) / 5.00 (Large) / 4.49 (combined).
+- **Changes**: Updated all references in both papers (main + COLM), figure generation code, Figure 2 Panel B, figure caption, CLAIM_EVIDENCE_CHECKLIST.md. Archived stale anonymous paper to research/archive/. Added data/ to .gitignore.
+- **KEY RESULT**: The "two-regime" structure is now CLEANER with correct values:
+  - Discrete-token NLP: alpha ~ 1.5
+  - ALL continuous-signal modalities: alpha ~ 3.3-5.0 (ViT 4.5, CNN 4.0, audio 4.7)
+  - ViT now clusters WITH CNN and audio, not as an outlier below NLP
+- **Investigated but falsified**: Universal-A hypothesis (A=alpha/sqrt(d_eff_geometric)~0.6 for all modalities). Existing data from cti_deff_alpha_prediction.json shows A_NLP~0.30 vs A_ViT~0.63 — not universal. Furthermore, d_eff_geometric varies 3x across NLP architectures while alpha stays constant, which means the relationship alpha=A*sqrt(d_eff) cannot hold.
+- **Files modified**: paper/cti_universal_law.tex, paper/cti_universal_law_colm.tex, src/cti_generate_figures.py, results/figures/fig_cti_multimodal_summary.png, research/CLAIM_EVIDENCE_CHECKLIST.md
+- **What we learned**: The cross-modal alpha variation is NOT about d_eff. The true structure is a signal-type dichotomy: discrete tokens ~1.5 vs continuous signals ~4-5. This is a cleaner finding than previously thought.
+
+---
+
 ## Session 98 (Mar 3, 2026) — Nobel ~8.0/10
 
 ### Cross-Modal Rho Universality [COMPLETE — MAJOR FINDING]
