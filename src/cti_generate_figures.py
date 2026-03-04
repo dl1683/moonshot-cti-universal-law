@@ -625,6 +625,60 @@ def make_figure5():
     print(f"Saved: {out}")
 
 
+def make_figure6():
+    """Cross-modal rho universality: rho~0.46 across 6 modalities."""
+    data = load("cti_cross_modal_rho.json")
+
+    modalities = [
+        ("NLP Decoders\n(11 archs, K=4-77)", data["per_model_results"]["NLP_decoders"]["rho_mean"], "steelblue"),
+        ("Audio WavLM-Base+\n(Speech Commands K=36)", data["per_model_results"]["Audio_WavLM-Base+"]["rho_mean"], "crimson"),
+        ("Audio HuBERT-Base\n(Speech Commands K=36)", data["per_model_results"]["Audio_HuBERT-Base"]["rho_mean"], "indianred"),
+        ("Vision ViT-Base\n(CIFAR-10 K=10)", data["per_model_results"]["Vision_ViT-Base-16-224"]["rho_mean"], "darkorange"),
+        ("Vision ResNet50\n(CIFAR-100 K=100)", data["per_model_results"]["Vision_ResNet50-CIFAR100"]["rho_mean"], "goldenrod"),
+        ("Mouse V1 Cortex\n(Neuropixels K=118)", data["per_model_results"]["Mouse_V1"]["rho_mean"], "forestgreen"),
+    ]
+
+    labels = [m[0] for m in modalities]
+    rhos = [m[1] for m in modalities]
+    colors = [m[2] for m in modalities]
+    rho_mean = float(np.mean(rhos))
+    rho_std = float(np.std(rhos))
+
+    fig, ax = plt.subplots(figsize=(7, 4))
+    y_pos = np.arange(len(labels))
+
+    # Shaded band for pooled mean +/- 1 std
+    ax.axvspan(rho_mean - rho_std, rho_mean + rho_std, color="lightblue", alpha=0.3,
+               label=f"Pooled $\\bar{{\\rho}}\\pm 1\\sigma$ = {rho_mean:.3f} $\\pm$ {rho_std:.3f}")
+
+    # Reference lines
+    ax.axvline(0.5, color="gray", ls="--", lw=1.5, alpha=0.7, label="Simplex ETF ($\\rho=0.5$)")
+    ax.axvline(rho_mean, color="navy", ls="-", lw=2, alpha=0.8,
+               label=f"Pooled mean $\\rho={rho_mean:.3f}$, CV={rho_std/rho_mean*100:.1f}%")
+
+    # Dots
+    for i, (lbl, rho, clr) in enumerate(zip(labels, rhos, colors)):
+        ax.scatter(rho, i, c=clr, s=160, zorder=5, edgecolors="black", linewidths=0.8)
+        ax.annotate(f"{rho:.3f}", (rho, i), textcoords="offset points",
+                    xytext=(12, 0), fontsize=9, va="center")
+
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels(labels, fontsize=9)
+    ax.set_xlabel("Equicorrelation $\\rho$ ($\\Sigma_W$-whitened centroid-difference cosine)", fontsize=10)
+    ax.set_title("Cross-Modal $\\rho$ Universality: CV = 1.0% Across 6 Modalities\n"
+                 "(tightest invariant; tighter than $\\alpha$'s 2.3% within NLP decoders)", fontsize=10)
+    ax.set_xlim(0.42, 0.52)
+    ax.legend(fontsize=8, loc="upper right")
+    ax.grid(True, axis="x", alpha=0.3)
+    ax.invert_yaxis()
+
+    fig.tight_layout()
+    out = os.path.join(FIGURES, "fig_cti_cross_modal_rho.png")
+    fig.savefig(out, dpi=180, bbox_inches="tight")
+    plt.close(fig)
+    print(f"Saved: {out}")
+
+
 if __name__ == "__main__":
     import scipy  # noqa – verify dependency present
     print("Generating Figure 1 (NLP law + LOAO alpha)...")
@@ -637,4 +691,6 @@ if __name__ == "__main__":
     make_figure4()
     print("Generating Figure 5 (H8+ expanded holdout)...")
     make_figure5()
+    print("Generating Figure 6 (cross-modal rho universality)...")
+    make_figure6()
     print("Done.")
