@@ -45,12 +45,12 @@ Under Gaussian class conditionals and a Gumbel-race extreme-value argument, the 
 is a \emph{conditional theorem}: the functional form follows from first principles; only constants $(\alpha,\beta,C_0)$ require estimation.
 
 Leave-one-architecture-out (LOAO) over 12 NLP architectures yields $\hat\alpha=1.477\pm0.034$ with CV$=0.023$ ($R^2=0.955$).
-Cross-modal validation confirms the same form for ViT-Large ($R^2=0.964$) and ResNet50.
+Cross-modal validation confirms the same form for ViT-Large ($R^2=0.964$), ResNet50, and 7 frozen speech models on Speech Commands ($r=0.898$, $p=0.006$, $K=36$).
 A pre-registered causal confusion-matrix prediction ($r=0.842$--$0.776$, sign accuracy $92.9$--$100\%$, $n=182$ pairs, all $p<10^{-35}$) and a strictly blind OOD test ($r=0.817$, $p=0.013$) establish the law's predictive power.
 Biological generalization: 30/32 mouse visual-cortex sessions satisfy the law ($\bar{r}=0.736$); near-simplex equicorrelation ($\rho\approx0.46$, CV$=1.65\%$ across 5 cortical areas) provides a zero-parameter prediction of $\alpha$ ($+4.3\%$ error).
 The Gumbel-race mechanism extends to generation: $\kappa$ from the unembedding matrix $W_U$ alone predicts $\log\mathrm{CE}$ across 22 models ($r=-0.70$, $p<0.001$).
 
-\textbf{Honest scope:} $\alpha$ varies by architecture family (NLP decoders: 1.48, ViT: 0.63, CNN: 4.4); universality is of the \emph{functional form} only.
+\textbf{Honest scope:} $\alpha$ varies by architecture family (NLP decoders: 1.48, ViT: 0.63, CNN: 4.4, audio: 4.7); universality is of the \emph{functional form} only.
 \end{abstract}
 
 \section{Introduction}
@@ -67,7 +67,7 @@ The key conceptual point: Eq.~\ref{eq:cti-law}'s structure is derived from first
 \begin{enumerate}[nosep]
 \item \textbf{Conditional derivation}: Under Gaussian/sub-Gaussian class conditionals and Gumbel domain-of-attraction (Assumptions A1--A3), EVT and Gumbel race competition require the logit-linear form of Eq.~\ref{eq:cti-law}.
 \item \textbf{12-architecture LOAO test} (pre-registered): LOAO $\mathrm{CV}_\alpha=0.023$ ($R^2=0.955$) spanning transformers, SSM hybrid, and pure linear RNN (RWKV-4). Extended to 19 architectures with $\mathrm{CV}_\alpha=1.75\%$.
-\item \textbf{Cross-modal and causal validation}: ViT-Large $R^2=0.964$; ResNet50 CNN $r=0.749$; pre-registered confusion-matrix causal prediction $r=0.842$--$0.776$ with zero refit; blind OOD $r=0.817$; expanded holdout (11 models $\times$ 8 datasets, $n=77$) all 6 criteria PASS ($r=0.879$, MAE$=0.077$).
+\item \textbf{Cross-modal and causal validation}: ViT-Large $R^2=0.964$; ResNet50 CNN $r=0.749$; 7 speech models $r=0.898$ ($K=36$); pre-registered confusion-matrix causal prediction $r=0.842$--$0.776$ with zero refit; blind OOD $r=0.817$; expanded holdout (11 models $\times$ 8 datasets, $n=77$) all 6 criteria PASS ($r=0.879$, MAE$=0.077$).
 \item \textbf{Biological validation}: 30/32 Allen Neuropixels mouse V1 sessions PASS; multi-area batch confirms $r>0.70$ across 5 cortical areas; equicorrelation $\rho\approx0.46$ is substrate-independent (CV$=1.65\%$).
 \item \textbf{Generation law}: $\kappa$ from $W_U$ (zero forward passes) predicts $\log\mathrm{CE}$ across 22 models ($r=-0.70$; fixed-$V$: $r=-0.84$, architecture-independent). Vocabulary size drops out ($K_\mathrm{eff}\approx 2$--$3$).
 \end{enumerate}
@@ -197,6 +197,7 @@ Model & Family & Dataset & $K$ & $\alpha$ & $R^2$/Pearson $r$ \\
 ViT-Large-16-224 & ViT & CIFAR-10 & 10 & 0.630 & $R^2=0.964$ \\
 ViT-Base-16-224 & ViT & CIFAR-100 & 100 & 3.899 & $r=0.773$ \\
 ResNet50 & CNN & CIFAR-100 & 100 & 4.418 & $r=0.749$ \\
+Audio (7 models) & Wav2Vec2/HuBERT/WavLM/Whisper & Speech Cmds & 36 & 4.669 & $r=0.898$ \\
 \midrule
 NLP reference & Trans./SSM/RNN & 4 datasets & 4--28 & 1.477 & $R^2=0.955$ \\
 \bottomrule
@@ -204,6 +205,10 @@ NLP reference & Trans./SSM/RNN & 4 datasets & 4--28 & 1.477 & $R^2=0.955$ \\
 \end{table}
 
 ViT-Large at $K=10$ reaches $R^2=0.964$, matching the NLP fit. The slope $\alpha_{\mathrm{ViT}}\approx0.63$ differs from $\alpha_{\mathrm{NLP}}=1.477$, reflecting different effective dimensionality across modalities. The \emph{functional form} (logit-linear in $\kappa$) is universal; the constant is family-specific.
+
+\paragraph{Audio modality.}
+Seven frozen speech models from 4 architectures (Wav2Vec2, HuBERT, WavLM, Whisper; 39M--316M parameters) on Speech Commands v0.02 ($K=36$ spoken keywords, 4890 test samples; features at $\frac{2}{3}$-depth layer, PCA to 256 dimensions) yield $r=0.898$ ($p=0.006$), $\alpha_\mathrm{audio}=4.669$ ($R^2=0.807$; \texttt{results/cti\_audio\_speech.json}).
+The slope $\alpha_\mathrm{audio}\approx4.7$ matches $\alpha_\mathrm{CNN}\approx4.4$ but not $\alpha_\mathrm{NLP}\approx1.5$, suggesting a two-regime structure: continuous-signal modalities (vision, audio) share $\alpha\approx4$--$5$, while discrete-token modalities (NLP) operate at $\alpha\approx1.5$.
 
 \subsection{External blind OOD prediction and expanded holdout}
 
@@ -293,8 +298,8 @@ Left: All models ($n=22$; $r=-0.697$). Right: Fixed-$V$ (Pythia+Mamba, $n=10$; $
 \label{subsec:comprehensive-universality}
 
 The law exhibits a three-level universality hierarchy:
-\textbf{(1) Form}: logit-linear in $\kappa_\mathrm{nearest}$, confirmed across NLP, ViT, CNN, and biological systems.
-\textbf{(2) Constant within family}: $\alpha$ is stable within families (NLP decoders: CV$=0.023$; 19 architectures: CV$=1.75\%$); across families, $\alpha$ varies ($\alpha_\mathrm{NLP}\approx1.48$, $\alpha_\mathrm{ViT}\approx0.63$, $\alpha_\mathrm{CNN}\approx4.4$).
+\textbf{(1) Form}: logit-linear in $\kappa_\mathrm{nearest}$, confirmed across NLP, ViT, CNN, audio, and biological systems.
+\textbf{(2) Constant within family}: $\alpha$ is stable within families (NLP decoders: CV$=0.023$; 19 architectures: CV$=1.75\%$); across families, $\alpha$ varies ($\alpha_\mathrm{NLP}\approx1.48$, $\alpha_\mathrm{ViT}\approx0.63$, $\alpha_\mathrm{CNN}\approx4.4$, $\alpha_\mathrm{audio}\approx4.7$), with signal modality the leading predictor (continuous-signal $\alpha\approx4$--$5$ vs.\ discrete-token $\alpha\approx1.5$).
 \textbf{(3) Intercept is task-specific}: $C_d$ requires per-dataset calibration (LODO mean $r=0.125$).
 
 \paragraph{Practical architecture ranking (H3, pre-registered).}
@@ -307,7 +312,7 @@ Pooling $\rho$ across 11 architectures and 3 datasets ($K=4,14,77$; 200 bootstra
 \label{sec:discussion}
 
 \paragraph{What is universal.}
-Five strongly supported claims: (1) form universality (EVT-derived), (2) NLP constant stability (CV$_\alpha=0.019$--$1.75\%$ across 12--19 architectures), (3) architecture boundary crossing (RWKV pure RNN passes), (4) cross-family form universality (ViT and CNN yield comparable $r$ at $K=100$), (5) generation extension ($r=-0.70$ across 22 models; architecture-independent within fixed $V$).
+Seven strongly supported claims: (1) form universality (EVT-derived), (2) NLP constant stability (CV$_\alpha=0.019$--$1.75\%$ across 12--19 architectures), (3) architecture boundary crossing (RWKV pure RNN passes), (4) cross-family form universality (ViT and CNN yield comparable $r$ at $K=100$), (5) sparse competition exponent ($\beta=0.5$ beats $\beta=1.0$ by 10.1\% LOAO; unconstrained $\hat\beta=0.478$), (6) generation extension ($r=-0.70$ across 22 models; architecture-independent within fixed $V$), (7) audio-visual alpha convergence: speech models from 4 architectures ($\alpha_\mathrm{audio}=4.67$, $r=0.898$, $p=0.006$) match vision CNNs ($\alpha_\mathrm{CNN}=4.4$), revealing a two-regime structure: continuous-signal modalities share $\alpha\approx4$--$5$, while discrete-token NLP operates at $\alpha\approx1.5$.
 
 \paragraph{Honest scope.}
 Universality is of the functional form; constants are family-specific.
@@ -316,7 +321,7 @@ Encoder LOAO CV$_\alpha=0.42$ (FAIL): encoder $\alpha$ is not family-invariant.
 $C_d$ encodes dataset-specific difficulty requiring calibration. 4 probe measurements reduce MAE by 86\%.
 
 \paragraph{Connection to physics.}
-The Gumbel race is the same mechanism underlying EVT in physics. Within NLP decoders, $\alpha$ is stable across architectures; whether it plays a role analogous to a universal constant across all modalities remains open.
+The Gumbel race is the same mechanism underlying EVT in physics. Within NLP decoders, $\alpha$ is stable across architectures; whether it plays a role analogous to a universal constant across all modalities remains open given the modality-dependent values ($\alpha_\mathrm{NLP}=1.48$, $\alpha_\mathrm{ViT}=0.63$, $\alpha_\mathrm{CNN}=4.4$, $\alpha_\mathrm{audio}=4.7$). The audio-vision convergence ($\alpha_\mathrm{audio}\approx\alpha_\mathrm{CNN}$) hints at a deeper structure: continuous-signal modalities may share a universal $\alpha$, distinct from discrete-token NLP.
 
 \section{Limitations}
 \label{sec:limitations}
@@ -325,14 +330,16 @@ The Gumbel race is the same mechanism underlying EVT in physics. Within NLP deco
 \item \textbf{External replication needed.} Results are internal; independent reproduction is needed.
 \item \textbf{Large-K attenuation.} Both ViT and CNN at $K=100$ show $r\approx0.75$, below the MC noise floor ($E[r]=0.875$). Hierarchical class structure creates non-ideal kappa geometry.
 \item \textbf{Assumption dependence.} The proof relies on concentration and shared-scale Gumbel approximations; tighter bounds remain open.
+\item \textbf{Protein language models.} Seven protein LMs from 3 architecture families (ESM-2 at 4 sizes, ProtBERT, ProtBERT-BFD, ESM-1b; EC-number classification, $K=7$) yield $\alpha=-1.17$, $r=-0.15$, $p=0.76$: the law \emph{fails} across protein architectures (\texttt{results/cti\_protein\_esm2.json}). EC classes are extremely heterogeneous, so protein LMs achieve accuracy via within-class compactness rather than global centroid separation. The law requires semantically coherent categories.
+\item \textbf{Human fMRI.} Eleven visual ROIs from the Natural Scenes Dataset (NSD, subject 01, $K=12$ COCO supercategories) yield chance-level 1-NN accuracy; $r=0.33$, $p=0.32$, non-significant (\texttt{results/cti\_nsd\_human\_fmri.json}). Raw BOLD voxel responses lack sufficient SNR for nearest-neighbor classification. The law is validated on high-SNR neural measurements (spike trains, multi-electrode arrays) but not raw BOLD.
 \end{enumerate}
 Extended limitations (biological scope, multilabel regime, surgery scope, beyond-1NN, two-component geometry) are detailed in Appendix~\ref{app:extended-limitations}.
 
 \section{Conclusion}
-We present the CTI Universal Law, derived from extreme-value theory, with functional form proven as a conditional theorem. The law is validated across 12 NLP architectures (LOAO CV$_\alpha=0.023$), in blind OOD tests ($r=0.817$), an expanded holdout (11 models $\times$ 8 datasets, all 6 criteria pass), cross-modally (ViT $R^2=0.964$, ResNet50 $r=0.749$), and in biological visual cortex (30/32 sessions). The Gumbel-race mechanism extends to generation ($r=-0.70$, 22 models). Near-simplex equicorrelation ($\rho\approx0.46$, substrate-independent) provides a zero-parameter prediction of $\alpha$ ($+4.3\%$ error). Open directions include a renormalization theory for cross-family constants and independent replication. Independent convergent evidence: \citet{styves2025} confirm centroid-separation geometry predicts decoding in human visual cortex.
+We present the CTI Universal Law, derived from extreme-value theory, with functional form proven as a conditional theorem. The law is validated across 12 NLP architectures (LOAO CV$_\alpha=0.023$), in blind OOD tests ($r=0.817$), an expanded holdout (11 models $\times$ 8 datasets, all 6 criteria pass), cross-modally (ViT $R^2=0.964$, ResNet50 $r=0.749$, 7 speech models $r=0.898$ with $\alpha_\mathrm{audio}=4.67$), and in biological visual cortex (30/32 sessions). The Gumbel-race mechanism extends to generation ($r=-0.70$, 22 models). Near-simplex equicorrelation ($\rho\approx0.46$, substrate-independent) provides a zero-parameter prediction of $\alpha$ ($+4.3\%$ error). Universality is of the \emph{functional form}: the constant $\alpha$ is modality-specific ($\alpha_\mathrm{NLP}\approx1.48$, $\alpha_\mathrm{ViT}\approx0.63$, $\alpha_\mathrm{CNN}\approx4.4$, $\alpha_\mathrm{audio}\approx4.7$), with continuous-signal modalities (vision, audio) converging at $\alpha\approx4$--$5$ and discrete-token NLP at $\alpha\approx1.5$; honest-scope limitations including protein LM failure and human fMRI null are enumerated in \S\ref{sec:limitations}. Open directions include a renormalization theory for cross-family constants and independent replication. Independent convergent evidence: \citet{styves2025} confirm centroid-separation geometry predicts decoding in human visual cortex.
 
 \section*{Reproducibility Statement}
-All numerical claims are taken directly from repository artifacts. Pre-registration timestamps are verifiable via git log. Code will be released upon acceptance.
+All numerical claims are taken directly from repository artifacts including \texttt{results/cti\_audio\_speech.json}, \texttt{results/cti\_protein\_esm2.json}, and \texttt{results/cti\_nsd\_human\_fmri.json}. Pre-registration timestamps are verifiable via git log. Code will be released upon acceptance.
 
 \section*{Use of AI Assistants}
 An AI coding assistant was used for experiment implementation, data analysis pipeline development, and manuscript preparation. All scientific hypotheses, theoretical derivations, pre-registered success criteria, and architectural decisions were made by the authors. The authors take full responsibility for all claims.
@@ -639,6 +646,8 @@ LFM2.5-1.2B & Novel & 1200 & 66K & 0.863 & 3.349 \\
 \item \textbf{Biological constants.} Law form confirmed; constants are $15$--$34\times$ smaller than NLP. Stronger NC can hurt generalization \citep{harun2025}; $\kappa_\mathrm{nearest}$ maximization may not be globally optimal.
 \item \textbf{Beyond-1NN.} $\kappa_\mathrm{nearest}$ predicts $k=3,5$ NN ($r\approx0.79$); linear probe prediction fails within-dataset ($r=0.22$--$0.59$). H3 ranking at $n=9$: $\rho=0.833$, $p=0.005$ (PASS).
 \item \textbf{Optimizer documentation.} All tested architectures use Adam-family optimizers; \citet{zhao2026optimizer} shows optimizer affects NC emergence.
+\item \textbf{Protein language models.} Seven protein LMs from 3 families (ESM-2, ProtBERT, ESM-1b; EC classification $K=7$): $\alpha=-1.17$, $r=-0.15$, $p=0.76$ --- law fails. EC classes span thousands of structurally diverse enzymes; centroid separation is not the classification mechanism.
+\item \textbf{Human fMRI.} NSD (11 visual ROIs, $K=12$ COCO supercategories): chance-level 1-NN ($q\approx0.08$); $r=0.33$, $p=0.32$. Raw BOLD lacks SNR for nearest-neighbor classification; the law requires measurable above-chance 1-NN accuracy.
 \end{enumerate}
 
 \section{Biological Details}

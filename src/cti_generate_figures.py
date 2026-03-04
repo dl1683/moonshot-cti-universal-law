@@ -220,6 +220,9 @@ def make_figure2():
     cnn_best = cnn_alphas[2]  # layer3 ≈ 4.42
     # Encoder: from paper text α_encoder≈7.1 for mean-pool BERT/DeBERTa/BGE
     encoder_alphas = [7.1]  # approximate value from paper
+    # Audio: from cti_audio_speech.json
+    audio_alpha = 4.669  # 7 speech models, Speech Commands K=36
+    audio_r = 0.898
 
     # ── Panel C: r vs K ─────────────────────────────────────────────────────
     # NLP K=4 (agnews) and K=14 (dbpedia) from overall R2
@@ -281,6 +284,7 @@ def make_figure2():
         ("NLP Decoders", nlp_alphas, "steelblue"),
         ("ViT",  [vit_alpha, vit_large_alpha], "darkorange"),
         ("CNN",  cnn_alphas, "green"),
+        ("Audio", [audio_alpha], "crimson"),
         ("NLP Encoders", encoder_alphas, "purple"),
     ]
     all_labels, all_vals, all_colors = [], [], []
@@ -291,7 +295,7 @@ def make_figure2():
             all_colors.append(fc)
 
     # jitter per family
-    family_x = {"NLP Decoders": 0, "ViT": 1, "CNN": 2, "NLP Encoders": 3}
+    family_x = {"NLP Decoders": 0, "ViT": 1, "CNN": 2, "Audio": 3, "NLP Encoders": 4}
     rng = np.random.default_rng(42)
     for fname, vals, fc in families:
         xs = [family_x[fname]] + rng.uniform(-0.15, 0.15, size=len(vals)).tolist()
@@ -303,8 +307,8 @@ def make_figure2():
                       colors=fc, lw=2.5, alpha=0.8)
 
     ax.set_yscale("log")
-    ax.set_xticks([0, 1, 2, 3])
-    ax.set_xticklabels(["NLP\nDecoders", "ViT", "CNN\n(ResNet50)", "NLP\nEncoders"], fontsize=9)
+    ax.set_xticks([0, 1, 2, 3, 4])
+    ax.set_xticklabels(["NLP\nDecoders", "ViT", "CNN", "Audio", "NLP\nEncoders"], fontsize=8)
     ax.set_ylabel(r"$\hat\alpha$  (log scale)", fontsize=10)
     ax.set_title("(B) Alpha by architecture family\n(form universal; constant varies)", fontsize=10)
     ax.grid(True, axis="y", alpha=0.3)
@@ -327,6 +331,10 @@ def make_figure2():
     ax.scatter([100], [cnn_k100_r], marker="s", s=100, color="green",
                edgecolors="black", linewidths=1, zorder=5,
                label=f"ResNet50 K=100  ($r={cnn_k100_r:.3f}$)")
+    # Audio K=36
+    ax.scatter([36], [audio_r], marker="^", s=120, color="crimson",
+               edgecolors="black", linewidths=1, zorder=5,
+               label=f"Audio K=36  ($r={audio_r:.3f}$)")
     # Noise floor at K=100
     ax.axhline(nf_mean, color="gray", linestyle="--", lw=1.5, alpha=0.7,
                label=f"MC noise floor K=100  ($E[r]={nf_mean:.3f}$)")

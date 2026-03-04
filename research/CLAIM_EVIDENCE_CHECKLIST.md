@@ -29,6 +29,8 @@ Every claim in the paper abstract and main text mapped to supporting result file
 | 16 | Fixed-V Transformer vs SSM: r=-0.84, architecture-independent (F p=0.147) | `results/cti_generation_law_analysis.json` | VERIFIED |
 | 17 | beta_gen~0: vocabulary size drops out (K_eff~2-3) | `results/cti_generation_keff.json` | VERIFIED |
 | 18 | Partial r controlling for log(N_params) = -0.546, p=0.013 | `results/cti_generation_law_analysis.json` | VERIFIED |
+| 19 | Audio: 7 speech models, r=0.898, p=0.006, alpha_audio=4.669 | `results/cti_audio_speech.json` | VERIFIED |
+| 20 | Audio-vision alpha convergence: alpha_audio (4.67) ~ alpha_CNN (4.4) | `results/cti_audio_speech.json` | VERIFIED |
 
 ## Main Text Claims
 
@@ -66,6 +68,15 @@ Every claim in the paper abstract and main text mapped to supporting result file
 | 34 | d_eff_comp = 1/(1-rho) from whitened cosine structure | `research/OBSERVABLE_ORDER_PARAMETER_THEOREM.md` | DERIVED |
 | 35 | KS test: Gumbel fit fails at d=200, but logit-linear margin passes (p=0.265) | `results/cti_gumbel_theory.json` | VERIFIED |
 
+## Scope Limits (Honest Negatives)
+
+| # | Claim | Evidence File | Status |
+|---|-------|---------------|--------|
+| 36 | Protein LMs: law FAILS (alpha=-1.17, r=-0.15, p=0.76, 7 models, 3 families) | `results/cti_protein_esm2.json` | VERIFIED |
+| 37 | Human fMRI (NSD): null result (chance-level 1-NN, r=0.33, p=0.32) | `results/cti_nsd_human_fmri.json` | VERIFIED |
+| 38 | Encoder LOAO: CV_alpha=0.42 (decoders universal, encoders NOT) | `results/cti_encoder_loao.json` | VERIFIED |
+| 39 | LODO cross-dataset: mean r=0.125 (intercept is task-specific) | `results/cti_lomfo_lodo_stress_test.json` | VERIFIED |
+
 ---
 
 ## Pre-Submission Checks
@@ -76,5 +87,8 @@ Every claim in the paper abstract and main text mapped to supporting result file
 - [x] H8+ holdout all 6 criteria verified against `cti_utility_revised.json`
 - [x] Alpha-rho numbers verified against `cti_alpha_rho_multidataset.json`
 - [x] H3 ranking rho/p verified against `cti_downstream_h3_n9.json`
-- [x] arXiv PDF compiles clean (31 pages)
+- [x] Audio speech results verified against `cti_audio_speech.json` (r=0.898, alpha=4.669)
+- [x] Protein negative verified against `cti_protein_esm2.json` (alpha=-1.17, r=-0.15)
+- [x] NSD fMRI null verified against `cti_nsd_human_fmri.json` (r=0.33, p=0.32)
+- [x] arXiv PDF compiles clean (32 pages)
 - [x] COLM PDF compiles clean (12 pages, ~8 pages main text)
