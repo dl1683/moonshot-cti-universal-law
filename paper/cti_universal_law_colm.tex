@@ -78,7 +78,7 @@ The key conceptual point: Eq.~\ref{eq:cti-law}'s structure is derived from first
 Power-law regularities for language-model loss are well-established \citep{kaplan2020,hoffmann2022}. Our aim is analogous but targets geometry-to-accuracy transfer within individual models.
 
 \paragraph{Representation quality and neural collapse.}
-kNN-based quality diagnostics are widely used \citep{wu2018,caron2021}. Neural collapse geometry \citep{papyan2020,han2022,zhu2021,rangamani2023,he2024} and spectral order parameters \citep{garrido2023,liu2025} predict downstream performance. None derive a universal slope connecting $\kappa_\mathrm{nearest}$ to $\logit(q)$ across architectures.
+kNN-based quality diagnostics are widely used \citep{wu2018,caron2021}. Neural collapse geometry \citep{papyan2020,han2022,zhu2021,rangamani2023,wu2024linguistic} and spectral order parameters \citep{garrido2023,liu2025,munn2024} predict downstream performance. None derive a universal slope connecting $\kappa_\mathrm{nearest}$ to $\logit(q)$ across architectures.
 
 \paragraph{EVT and Gumbel races.}
 Classical EVT describes minima/maxima asymptotics \citep{fisher1928,gnedenko1943,gumbel1958}. Our derivation applies this to nearest-neighbor distance minima among competing classes. For generation, \citet{wu2024linguistic} find NC properties correlate with generalization in LLMs; \citet{kulkarni2026disentangling} show effective rank alone does not predict loss; our $\kappa$ outperforms by capturing competition-relevant geometry.
@@ -426,11 +426,6 @@ A.~Rangamani, M.~Lindegaard, T.~Galanti, and T.~Poggio.
 \newblock Feature learning in deep classifiers through intermediate neural collapse.
 \newblock \emph{ICML}, 2023.
 
-\bibitem[He et~al.(2024)]{he2024}
-X.~He, X.~Han, and C.~Donoho.
-\newblock Linguistic collapse: Neural collapse in (large) language models.
-\newblock \emph{arXiv:2405.17767}, 2024.
-
 \bibitem[Liu et~al.(2025)]{liu2025}
 J.~Liu, A.~Koppara, and S.~Levine.
 \newblock Tracing the representation geometry of language models from pretraining to post-training.
@@ -638,7 +633,7 @@ LFM2.5-1.2B & Novel & 1200 & 66K & 0.863 & 3.349 \\
 \item \textbf{Ceiling effects.} High-accuracy regimes flatten logits and attenuate slopes.
 \item \textbf{Small-K regime ($K\leq3$).} Functional form holds ($r=0.42$--$0.52$) but magnitude deviates $\sim70\%$.
 \item \textbf{Multilabel.} go\_emotions ($K=28$, multilabel) fails; the law applies to single-label only.
-\item \textbf{Biological constants.} Law form confirmed; constants are $15$--$34\times$ smaller than NLP.
+\item \textbf{Biological constants.} Law form confirmed; constants are $15$--$34\times$ smaller than NLP. Stronger NC can hurt generalization \citep{harun2025}; $\kappa_\mathrm{nearest}$ maximization may not be globally optimal.
 \item \textbf{Beyond-1NN.} $\kappa_\mathrm{nearest}$ predicts $k=3,5$ NN ($r\approx0.79$); linear probe prediction fails within-dataset ($r=0.22$--$0.59$). H3 ranking at $n=9$: $\rho=0.833$, $p=0.005$ (PASS).
 \item \textbf{Optimizer documentation.} All tested architectures use Adam-family optimizers; \citet{zhao2026optimizer} shows optimizer affects NC emergence.
 \end{enumerate}

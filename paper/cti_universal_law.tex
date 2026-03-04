@@ -97,7 +97,7 @@ kNN-based quality diagnostics are widely used in vision and self-supervised lear
 Classical EVT describes minima/maxima asymptotics \citep{fisher1928,gnedenko1943,gumbel1958}. The CTI derivation applies this to nearest-neighbor distance minima among competing classes.
 
 \paragraph{Neural-collapse geometry and nearest-class dominance.}
-Late-training geometry and nearest-class structure are central in neural collapse \citep{papyan2020,han2022,zhu2021,garrido2023,rangamani2023,he2024}. Geometry-based transferability metrics (RankMe \citep{garrido2023}, spectral order parameters \citep{liu2025}) predict downstream performance via effective rank and inter/intra-class geometry; multiplicative logit adjustment \citep{ye2024} uses NC geometry for boundary correction.
+Late-training geometry and nearest-class structure are central in neural collapse \citep{papyan2020,han2022,zhu2021,garrido2023,rangamani2023,wu2024linguistic}. Geometry-based transferability metrics (RankMe \citep{garrido2023}, spectral order parameters \citep{liu2025}) predict downstream performance via effective rank and inter/intra-class geometry; multiplicative logit adjustment \citep{ye2024} uses NC geometry for boundary correction.
 For generation, \citet{wu2024linguistic} find that neural-collapse properties in LLMs develop with scale and correlate with generalization, establishing the premise that NC geometry matters for token prediction; \citet{kulkarni2026disentangling} show that effective rank of the unembedding matrix correlates with but does not reliably predict language model loss; our $\kappa_\mathrm{top1K}$ (nearest-neighbor distance) outperforms effective rank by capturing competition-relevant geometry.
 The softmax bottleneck \citep{yang2018softmax} shows that low-rank output layers limit expressiveness; our $K_\mathrm{eff}$ decomposition reveals that competition is spontaneously sparse ($K_\mathrm{eff}\approx 2$--$3$) regardless of $V$.
 None derive or measure a universal slope connecting $\kappa_\mathrm{nearest}$ to $\logit(q)$ across architectures. Our contribution is distinct: the Gumbel race yields the functional form; LOAO over 12 architectures quantifies cross-architecture slope stability (CV$<5\%$).
@@ -853,11 +853,6 @@ Z.~Zhu, T.~Ding, J.~Zhou, X.~Li, C.~You, J.~Sulam, and Q.~Qu.
 A.~Rangamani, M.~Lindegaard, T.~Galanti, and T.~Poggio.
 \newblock Feature learning in deep classifiers through intermediate neural collapse.
 \newblock \emph{ICML}, 2023.
-
-\bibitem[He et~al.(2024)]{he2024}
-X.~He, X.~Han, and C.~Donoho.
-\newblock Linguistic collapse: Neural collapse in (large) language models.
-\newblock \emph{arXiv:2405.17767}, 2024.
 
 \bibitem[Ye et~al.(2024)]{ye2024}
 J.~Ye, J.~Hong, and M.~Song.
