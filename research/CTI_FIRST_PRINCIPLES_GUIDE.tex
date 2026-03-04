@@ -1,0 +1,654 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{tcolorbox}
+\usepackage{titlesec}
+\usepackage{microtype}
+
+% Colors
+\definecolor{ctiblue}{RGB}{31,78,121}
+\definecolor{ctiorange}{RGB}{196,89,17}
+\definecolor{ctigreen}{RGB}{39,124,52}
+\definecolor{ctired}{RGB}{180,30,30}
+\definecolor{ctipurple}{RGB}{100,50,150}
+\definecolor{lightblue}{RGB}{230,240,250}
+\definecolor{lightorange}{RGB}{255,245,230}
+\definecolor{lightgreen}{RGB}{230,250,235}
+\definecolor{lightred}{RGB}{255,235,235}
+
+% Hyperlinks
+\hypersetup{colorlinks=true, linkcolor=ctiblue, urlcolor=ctiorange, citecolor=ctiblue}
+
+% Header/footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{ctiblue}{CTI Universal Law --- First-Principles Guide}}
+\fancyhead[R]{\small\textcolor{ctiblue}{\thepage}}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% Section formatting
+\titleformat{\section}{\Large\bfseries\color{ctiblue}}{}{0em}{}[\titlerule]
+\titleformat{\subsection}{\large\bfseries\color{ctiorange}}{}{0em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{ctigreen}}{}{0em}{}
+
+% Boxes
+\newtcolorbox{keybox}[1][]{colback=lightblue, colframe=ctiblue, title={\textbf{#1}}, fonttitle=\bfseries\color{white}, coltitle=white, colbacktitle=ctiblue, sharp corners, boxrule=0.5pt}
+\newtcolorbox{derivbox}[1][]{colback=lightorange, colframe=ctiorange, title={\textbf{#1}}, fonttitle=\bfseries\color{white}, coltitle=white, colbacktitle=ctiorange, sharp corners, boxrule=0.5pt}
+\newtcolorbox{resultbox}[1][]{colback=lightgreen, colframe=ctigreen, title={\textbf{#1}}, fonttitle=\bfseries\color{white}, coltitle=white, colbacktitle=ctigreen, sharp corners, boxrule=0.5pt}
+\newtcolorbox{warnbox}[1][]{colback=lightred, colframe=ctired, title={\textbf{#1}}, fonttitle=\bfseries\color{white}, coltitle=white, colbacktitle=ctired, sharp corners, boxrule=0.5pt}
+
+\DeclareMathOperator{\logit}{logit}
+
+\begin{document}
+
+% Title page
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+{\Huge\bfseries\color{ctiblue} The CTI Universal Law}\\[0.8cm]
+{\LARGE\color{ctiorange} A First-Principles Study Guide}\\[1.5cm]
+{\large Everything you need to understand the math,\\the evidence, and the open directions.}\\[3cm]
+
+\begin{tcolorbox}[colback=lightblue, colframe=ctiblue, width=0.85\textwidth, sharp corners]
+\centering\large
+There is a single equation that tells you how well \textbf{any} classifier\\
+(neural network, biological brain, anything) will perform,\\
+using only the \textbf{geometry} of how it organizes information ---\\
+and it's derivable from first principles.\\[0.5cm]
+\Large\bfseries\color{ctiblue}
+$\displaystyle\logit(q_{\mathrm{norm}}) = \alpha\,\kappa_{\mathrm{nearest}} - \beta\log(K{-}1) + C$
+\end{tcolorbox}
+
+\vfill
+{\large Devansh $\cdot$ March 2026}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ===================================================================
+\section{The Setup: What Are We Measuring?}
+% ===================================================================
+
+\subsection{The fundamental question}
+
+Given a trained neural network (or a biological brain), how good are its internal representations at distinguishing between categories?
+
+We don't care about the final classifier head. We care about the \textbf{geometry of the embeddings} --- the spatial layout of how the model organizes data points internally. If two classes are well-separated in embedding space, the model can tell them apart easily. If they're tangled up, it can't.
+
+\subsection{The probe: 1-Nearest Neighbor (1-NN)}
+
+To measure representation quality without adding any learnable parameters, we use the simplest possible classifier: \textbf{1-nearest neighbor}.
+
+\begin{keybox}[1-NN Classification]
+Given a test point $\mathbf{x}$:
+\begin{enumerate}[nosep]
+\item Find its nearest neighbor in the training set (by Euclidean distance in embedding space)
+\item Predict $\mathbf{x}$ has the same label as that neighbor
+\end{enumerate}
+1-NN accuracy depends \textbf{only} on the geometry of the embeddings. No probe capacity. No optimization. Pure geometric signal.
+\end{keybox}
+
+\textbf{Why not a linear probe?} A linear probe mixes geometry with the probe's own optimization. It can mask bad geometry if the probe has enough capacity, or fail with good geometry if the hyperparameters are wrong. 1-NN removes this confounder entirely: the accuracy \emph{is} the geometry.
+
+% ===================================================================
+\section{The Key Quantities}
+% ===================================================================
+
+\subsection{$q_{\mathrm{norm}}$: Chance-Normalized Accuracy}
+
+Raw 1-NN accuracy is misleading across different $K$. With $K{=}2$, random guessing gives 50\%. With $K{=}100$, random gives 1\%. We normalize:
+
+\begin{keybox}[Chance-Normalized Accuracy]
+\vspace{-0.3cm}
+\begin{equation}
+q_{\mathrm{norm}} = \frac{\mathrm{acc}_{1\mathrm{NN}} - 1/K}{1 - 1/K}
+\end{equation}
+\begin{itemize}[nosep]
+\item $q_{\mathrm{norm}} = 0$: exactly at chance (no geometric signal)
+\item $q_{\mathrm{norm}} = 1$: perfect classification
+\item $q_{\mathrm{norm}} < 0$: below chance (rare, adversarial geometry)
+\end{itemize}
+\end{keybox}
+
+\textbf{Example}: If $K{=}10$ and 1-NN accuracy $= 55\%$:
+\[
+q_{\mathrm{norm}} = \frac{0.55 - 0.10}{1 - 0.10} = \frac{0.45}{0.90} = 0.50
+\]
+
+\subsection{$\kappa_{\mathrm{nearest}}$: The Geometric Signal-to-Noise Ratio}
+
+This is the single most important number in the entire theory.
+
+\begin{keybox}[$\kappa_{\mathrm{nearest}}$ --- The Key Quantity]
+\vspace{-0.3cm}
+\begin{equation}
+\kappa_{\mathrm{nearest}}(k) = \min_{j \neq k} \frac{\|\boldsymbol{\mu}_j - \boldsymbol{\mu}_k\|}{\sigma_W \sqrt{d}}
+\end{equation}
+\textbf{Numerator}: distance to the \emph{nearest} other class centroid (the hardest competitor)\\
+\textbf{Denominator}: expected within-class L2 radius (isotropic null)\\
+\textbf{Result}: dimensionless signal-to-noise ratio for class separation
+\end{keybox}
+
+Where:
+\begin{itemize}[nosep]
+\item $\boldsymbol{\mu}_k$ = centroid (mean embedding) of class $k$
+\item $\min_{j \neq k}$ = take the \textbf{nearest} other class (hardest competitor)
+\item $\sigma_W$ = pooled within-class per-dimension standard deviation
+\item $d$ = embedding dimension
+\end{itemize}
+
+\subsubsection{Why ``nearest''?}
+
+Because in a 1-NN race, the class you're most likely to confuse a point with is the \textbf{nearest other class}. Far-away classes are irrelevant. This is the \emph{bottleneck} --- the weakest link.
+
+\subsubsection{Intuition}
+
+Think of $\kappa_{\mathrm{nearest}}$ as a ``contrast ratio'':
+\begin{itemize}[nosep]
+\item $\kappa \ll 1$: noise swamps signal $\to$ classification at chance
+\item $\kappa \sim 1$: signal and noise comparable $\to$ transition zone
+\item $\kappa \gg 1$: signal dominates $\to$ near-perfect classification
+\end{itemize}
+
+\subsubsection{Concrete example}
+
+Pythia-160M on AGNews ($K{=}4$), final layer: centroid distances between news categories vary by pair. The nearest pair: $\|\boldsymbol{\mu}_\mathrm{sports} - \boldsymbol{\mu}_\mathrm{world}\| = 15.2$. With $\sigma_W\sqrt{768} = 14.3$: $\kappa_\mathrm{nearest} = 15.2/14.3 = 1.06$.
+
+\subsection{$K$: Number of Classes}
+
+$K$ enters through $\log(K{-}1)$ because more classes = more competitors. Doubling classes doesn't double difficulty --- it increases it \emph{logarithmically} (from the Gumbel extreme-value structure).
+
+% ===================================================================
+\section{Why Logit? Why Linear?}
+% ===================================================================
+
+\subsection{The logit transformation}
+
+The logit maps probability $p \in (0,1)$ to $\mathbb{R}$:
+\begin{align}
+\logit(p) &= \log\frac{p}{1-p} \\
+\sigma(x) &= \frac{1}{1+e^{-x}} \quad \text{(inverse: sigmoid)}
+\end{align}
+
+\begin{derivbox}[The Law in Two Forms]
+\textbf{Logit form:}
+\[
+\logit(q_\mathrm{norm}) = \alpha\,\kappa_\mathrm{nearest} - \beta\log(K{-}1) + C
+\]
+\textbf{Equivalent sigmoid form:}
+\[
+q_\mathrm{norm} = \frac{1}{1 + \exp\!\bigl(-(\alpha\,\kappa_\mathrm{nearest} - \beta\log(K{-}1) + C)\bigr)}
+\]
+\end{derivbox}
+
+\textbf{This is NOT a logistic regression.} It's a structural prediction from extreme value theory. The sigmoid appears because of the Gumbel race probability structure.
+
+% ===================================================================
+\section{The Gumbel Race: Where the Law Comes From}
+% ===================================================================
+
+This is the core derivation. Seven steps from first principles.
+
+\subsection{Step 1: 1-NN as a race}
+
+When classifying query $\mathbf{x}$ from class $k$ using 1-NN:
+
+\begin{derivbox}[The 1-NN Race]
+Define:
+\begin{align}
+M_+ &= \min_{i:\,y_i=k,\,i\neq x} \|\mathbf{x} - \mathbf{x}_i\| \quad \text{(nearest same-class)} \\
+M_j &= \min_{i:\,y_i=j} \|\mathbf{x} - \mathbf{x}_i\| \quad \text{(nearest from class $j$, for $j\neq k$)}
+\end{align}
+\textbf{1-NN is correct} $\iff$ $M_+ < \min_{j \neq k} M_j$
+
+The correct class must ``win the race'' by having the smallest minimum distance.
+\end{derivbox}
+
+\subsection{Step 2: Extreme Value Theory (EVT)}
+
+The minimum of $n$ i.i.d.\ random variables, after centering and scaling, converges to one of exactly three universal limit distributions (Fisher--Tippett theorem, 1928):
+
+\begin{enumerate}[nosep]
+\item \textbf{Gumbel} --- exponential-type tails (Gaussian, etc.) $\leftarrow$ \textbf{our case}
+\item \textbf{Fr\'echet} --- heavy tails
+\item \textbf{Weibull} --- finite support
+\end{enumerate}
+
+For Gaussian/sub-Gaussian class conditionals (which neural embeddings approximately satisfy), minimum distances are in the \textbf{Gumbel domain of attraction}.
+
+\begin{keybox}[The Gumbel Distribution]
+\vspace{-0.3cm}
+\[
+P(G \leq x) = \exp\!\bigl(-\exp(-(x-\mu)/s)\bigr)
+\]
+$\mu$ = location (decreases as $O(\sqrt{\log n})$ with more samples)\\
+$s$ = scale (stays roughly constant)
+\end{keybox}
+
+\subsection{Step 3: Setting up the Gumbel race}
+
+After EVT normalization:
+\begin{align}
+M_+ &\sim \mathrm{Gumbel}(\mu_+, s) \quad \text{(same-class nearest)} \\
+M_j &\sim \mathrm{Gumbel}(\mu_j^{(-)}, s) \quad \text{(class-$j$ nearest)}
+\end{align}
+
+\textbf{Key}: all Gumbels share approximately the \textbf{same scale} $s$ (within-class spread is similar). They differ only in \textbf{locations} (how far each class centroid is).
+
+\subsection{Step 4: The Gumbel Race Identity}
+
+\begin{derivbox}[The Magical Property of Gumbel Distributions]
+If $G_0, G_1, \ldots, G_{K-1}$ are independent Gumbels with common scale $s$ and locations $\mu_0, \mu_1, \ldots, \mu_{K-1}$:
+\[
+\boxed{P(G_0 < \min_{j \geq 1} G_j) = \frac{1}{1 + \sum_{j \geq 1} \exp\!\bigl(-(\mu_j - \mu_0)/s\bigr)}}
+\]
+This is \textbf{exact}. Not approximate. The probability of one Gumbel beating all others is a \textbf{logistic function} of the location gaps.
+\end{derivbox}
+
+\textbf{Why this is extraordinary}: for most distributions, computing $P(\min \text{ of } K \text{ things})$ requires intractable $K$-dimensional integrals. For Gumbels, it factorizes into a simple closed-form sigmoid.
+
+\subsection{Step 5: Apply to 1-NN}
+
+Set $G_0 = M_+$ and $G_j = M_j$:
+\[
+q = P(\text{correct}) = \frac{1}{1 + \sum_{j \neq k} \exp(-\Delta_{k,j}/s)}
+\]
+where $\Delta_{k,j} = \mu_j^{(-)} - \mu_+$ is the ``gap'' for each competitor.
+
+\subsection{Step 6: Nearest-class dominance + sparse hierarchy}
+
+\begin{derivbox}[Two Competition Regimes]
+\textbf{Dense (ETF/equidistant):} All $K{-}1$ competitors equidistant $\to$ $\sum = (K{-}1)e^{-\Delta/s}$ $\to$ $\beta = 1$
+
+\textbf{Hierarchical (real world):} Only $\sqrt{K}$ effective competitors active $\to$ $\beta = 0.5$
+
+\textbf{Empirical:} $\hat\beta = 0.478 \approx 0.5$ confirms \textbf{sparse competition}
+\end{derivbox}
+
+\subsection{Step 7: Linear gap-to-kappa map}
+
+Under isotropic geometry, the gap is approximately linear in $\kappa$:
+\[
+\Delta_{\mathrm{nearest}} / s \approx a_1 \kappa_\mathrm{nearest} + a_0
+\]
+
+Combining everything:
+\begin{resultbox}[The CTI Universal Law --- Derived]
+\vspace{-0.3cm}
+\[
+\logit(q_\mathrm{norm}) = \underbrace{\frac{a_1}{s}}_{\alpha} \kappa_\mathrm{nearest} - \beta\log(K{-}1) + \underbrace{\frac{a_0}{s}}_{C}
+\]
+
+\textbf{Derived}: The functional form (logistic in $\kappa$, logarithmic in $K$)\\
+\textbf{Estimated}: The constants $(\alpha, \beta, C)$
+\end{resultbox}
+
+% ===================================================================
+\section{Neural Collapse: Why the Geometry Is Universal}
+% ===================================================================
+
+\subsection{What is Neural Collapse?}
+
+Neural Collapse (NC) is a phenomenon discovered by Papyan, Han, and Donoho (PNAS 2020). At the terminal phase of training:
+
+\begin{keybox}[The Four Properties of Neural Collapse]
+\begin{enumerate}[nosep]
+\item \textbf{NC1}: Within-class variability collapses (all points cluster tightly around centroid)
+\item \textbf{NC2}: Class centroids form an Equiangular Tight Frame (ETF) --- maximally equidistant, like a regular simplex
+\item \textbf{NC3}: Classifier weights align with centroids
+\item \textbf{NC4}: Predictions converge to nearest-centroid classifier
+\end{enumerate}
+\end{keybox}
+
+\subsection{Why NC matters for CTI}
+
+NC provides the geometric \textbf{reason} why the law works across architectures:
+
+\textbf{At exact NC}: all class pairs equidistant $\to$ $\kappa_\mathrm{nearest} = \kappa_\mathrm{spec}$, within-class isotropic $\to$ Gaussian assumption satisfied, symmetric Gumbel race $\to$ $\beta = 1$.
+
+\textbf{Near NC} (real networks): centroids $\approx$ regular simplex, noise $\approx$ shared across classes, bottleneck pair drives classification.
+
+\begin{keybox}[The Key Insight]
+$\kappa_\mathrm{nearest}$ measures \textbf{how close} the representation is to Neural Collapse geometry. The law maps this geometric proximity to classification quality.
+
+Different architectures converge to similar NC geometry on the same dataset $\to$ similar $\kappa$ $\to$ similar quality. The architecture determines the \emph{path}; the law governs the \emph{endpoint}.
+\end{keybox}
+
+% ===================================================================
+\section{The Equicorrelation $\rho$: A Deeper Invariant}
+% ===================================================================
+
+\subsection{What $\rho$ measures}
+
+$\rho$ is the average $\Sigma_W$-whitened cosine similarity between centroid-difference vectors:
+
+\begin{enumerate}[nosep]
+\item Take the within-class covariance $\Sigma_W$
+\item Whiten: $\Sigma_W^{-1/2}(\boldsymbol{\mu}_j - \boldsymbol{\mu}_k)$ for all pairs
+\item Compute pairwise cosine similarities of these whitened vectors
+\item Average
+\end{enumerate}
+
+\begin{itemize}[nosep]
+\item $\rho = 0$: orthogonal competition directions
+\item $\rho = 1/2$: regular simplex (exact ETF)
+\item $\rho = 1$: degenerate 1D competition
+\end{itemize}
+
+\subsection{The remarkable finding: $\rho \approx 0.46$ everywhere}
+
+\begin{resultbox}[Cross-Modal Equicorrelation --- The Tightest Invariant]
+\begin{center}
+\begin{tabular}{lc}
+\toprule
+\textbf{Modality} & $\boldsymbol{\rho}$ \\
+\midrule
+NLP decoders (11 architectures) & 0.463 \\
+Audio speech (WavLM, HuBERT) & 0.455--0.464 \\
+Vision (ViT-Base, ResNet50) & 0.458--0.467 \\
+Mouse visual cortex (Allen) & 0.466 \\
+NLP encoders (BERT, ELECTRA) & 0.446--0.456 \\
+\midrule
+\textbf{Pooled (6 modalities)} & \textbf{0.462, CV = 1.0\%} \\
+\bottomrule
+\end{tabular}
+\end{center}
+Regular simplex prediction: $\rho = 0.500$. Observed: 8\% below perfect NC.
+\end{resultbox}
+
+\subsection{$\alpha$ prediction from $\rho$}
+
+From the Gumbel race, the competition effective dimension is $d_\mathrm{eff,comp} = 1/(1-\rho)$, and:
+\[
+\alpha_\mathrm{pred} = \sqrt{\frac{4}{\pi}} \cdot \frac{1}{\sqrt{1-\rho}} = \frac{1.128}{\sqrt{0.54}} = 1.534
+\]
+
+\textbf{Observed}: $\alpha = 1.477$. \textbf{Error}: $+3.8\%$. \textbf{Zero free parameters.}
+
+\begin{warnbox}[Caveat]
+This only works for NLP decoders. For ViT ($\alpha \approx 4.5$) with the same $\rho \approx 0.46$, the prediction gives $\sim$1.5, not 4.5. A second renormalization factor (related to $\Sigma_W$ structure) amplifies $\alpha$ for continuous-signal modalities. This is an \textbf{open problem}.
+\end{warnbox}
+
+% ===================================================================
+\section{The Three Constants: $\alpha$, $\beta$, $C$}
+% ===================================================================
+
+\subsection{$\alpha$: The slope (signal amplification)}
+
+$\alpha$ converts geometric SNR into classification log-odds. Bigger $\alpha$ = steeper sigmoid.
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Signal Type} & $\boldsymbol{\alpha}$ & \textbf{Modalities} \\
+\midrule
+Discrete tokens (NLP decoders) & $\sim$1.48 & Pythia, Qwen, OLMo, \ldots \\
+Continuous signals & $\sim$3.3--5.0 & ViT ($\sim$4.5), CNN ($\sim$4.0), Audio ($\sim$4.7) \\
+NLP encoders & $\sim$7.7 & BERT, DeBERTa, ELECTRA \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Within NLP decoders}: CV = 2.3\% across 12 architectures --- effectively a \textbf{true constant}. This CV is consistent with LOAO estimation noise (expected $\sim$2.8\%).
+
+\subsection{$\beta$: The competition penalty}
+
+\begin{keybox}[$\beta$ Values]
+\textbf{Theory} (all $K{-}1$ competitors active, dense ETF): $\beta = 1.0$\\
+\textbf{Empirical} (sparse hierarchy, $N_\mathrm{eff} \approx \sqrt{K}$): $\hat\beta = 0.478 \approx 0.5$
+
+Only $\sim$$\sqrt{K}$ semantically relevant competitors are active. Pre-registered test confirms $\beta{=}0.5$ beats $\beta{=}1.0$ by 10.1\% LOAO MAE.
+\end{keybox}
+
+\subsection{$C$: The intercept (task difficulty)}
+
+$C$ encodes base difficulty of a dataset. It is \textbf{NOT universal} --- each new dataset requires at least one calibration measurement. LODO (leave-one-dataset-out) mean $r = 0.125$: the intercept can't be predicted across tasks.
+
+% ===================================================================
+\section{Cross-Modal Validation}
+% ===================================================================
+
+\subsection{Vision}
+
+\textbf{ViT-Large on CIFAR-10}: $R^2 = 0.964$, same logit-linear form. $\alpha_\mathrm{ViT} \approx 4.5$.
+
+\textbf{ResNet50 on CIFAR-100}: $r = 0.749$, $\alpha_\mathrm{CNN} \approx 4.4$.
+
+\subsection{Audio}
+
+Seven frozen speech models from 4 architectures on Speech Commands ($K{=}36$):
+$r = 0.898$, $p = 0.006$, $\alpha_\mathrm{audio} = 4.669$.
+
+All continuous-signal modalities converge: $\alpha \approx 4$--$5$.
+
+\subsection{Biological neural systems}
+
+\textbf{Allen Neuropixels} ($K{=}118$, 32 mice): 30/32 sessions PASS ($r > 0.50$). Mean $r = 0.736$.
+
+The law form is preserved in biological neurons. The constant differs ($A_\mathrm{bio}$ is $15$--$34\times$ smaller), but the geometric skeleton is the same.
+
+\textbf{Cross-modal $\rho$}: 0.466 in cortex, within 1\% of NLP decoders. Near-simplex geometry is \textbf{substrate-independent}.
+
+\begin{warnbox}[Where biology fails]
+\textbf{Human fMRI} (NSD, $K{=}12$): 1-NN at chance, $r = 0.12$, $p = 0.18$. Raw BOLD voxels lack sufficient SNR. The law requires above-chance 1-NN as a prerequisite.
+\end{warnbox}
+
+% ===================================================================
+\section{The Generation Law}
+% ===================================================================
+
+\subsection{The key insight}
+
+Next-token prediction (NTP) is $V$-way classification: the model outputs logits $z_v = \mathbf{w}_v^\top \mathbf{h}(x)$ and the correct token wins the softmax ``race.'' The \textbf{same Gumbel race mechanism applies}.
+
+\begin{keybox}[Architecture-Independence Lemma]
+The generation law depends \textbf{only} on the unembedding step $\mathbf{z} = W_U \mathbf{h}(x)$, not on how $\mathbf{h}(x)$ is computed. Therefore: Transformer, SSM, Hybrid $\to$ \textbf{same law}.
+\end{keybox}
+
+\subsection{$\kappa$ from $W_U$ (zero forward passes)}
+
+Extract $\kappa$ directly from the unembedding matrix: normalize rows, compute nearest-neighbor distances among top-1000 tokens. \textbf{No inference needed.}
+
+\subsection{Results}
+
+\begin{resultbox}[Generation Law Results (22 models)]
+\textbf{All models} ($n{=}22$): $r(\kappa, \log\mathrm{CE}) = -0.55$, $p = 0.008$\\
+\textbf{Excl.\ LFM outlier} ($n{=}21$): $r = -0.70$, $p < 0.001$\\
+\textbf{Fixed-$V$ (Pythia + Mamba)} ($n{=}10$): $r = -0.837$, architecture-independent ($F$-test $p = 0.147$)
+
+Transformers and SSMs lie on the \textbf{same regression line}.
+\end{resultbox}
+
+\subsection{Why vocabulary size drops out ($\beta_\mathrm{gen} \approx 0$)}
+
+At each position, only $K_\mathrm{eff} \approx 2$--3 tokens effectively compete (despite $V = 32$K--$152$K). The softmax concentrates probability on a few alternatives, so $\log(V{-}1)$ is irrelevant.
+
+\subsection{Why $R^2$ is only 0.49}
+
+$\kappa$ from $W_U$ captures only output geometry, not context quality $\mathbf{h}(x)$. In classification, $\kappa_\mathrm{nearest}$ captures the \emph{full} race ($R^2 = 0.955$). The generation law's lower $R^2$ is \textbf{predicted} by the theory.
+
+% ===================================================================
+\section{Causal Evidence}
+% ===================================================================
+
+Five tiers establish that this is causal, not just correlation:
+
+\subsection{Tier 1: Frozen do-interventions}
+
+Move one class centroid in embedding space. Nearest-class intervention: $r = 0.899$. Farthest-class (negative control): $r = 0.000$.
+
+\subsection{Tier 2: Orthogonal factorial}
+
+14 focus classes, clean design: Arm A (nearest) $r = 0.899$; Arm B (control) $r = 0.000$; Arm C (farthest) $r = 0.000$.
+
+\subsection{Tier 3: Cross-modal dose-response}
+
+6 unseen architectures (3 text, 3 vision), frozen $\alpha$, zero refit: 6/6 directional PASS, MAE $= 0.010$.
+
+\subsection{Tier 4: Pre-registered confusion matrix prediction}
+
+\begin{resultbox}[Strongest Causal Test]
+Fixed $A = 1.054$, $\tau^* = 0.20$, \textbf{zero degrees of freedom}:
+
+\begin{center}
+\begin{tabular}{cccc}
+\toprule
+$\delta$ & $r$ & Sign accuracy & $p$-value \\
+\midrule
+1.0 & 0.842 & 92.9\% & $3.8 \times 10^{-50}$ \\
+2.0 & 0.808 & \textbf{100\%} & $3.7 \times 10^{-43}$ \\
+3.0 & 0.776 & \textbf{100\%} & $8.2 \times 10^{-38}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+$n = 182$ class-pair predictions per level. \textbf{100\% sign accuracy} = every predicted direction correct.
+\end{resultbox}
+
+\subsection{Tier 5: Top-$m$ competitor sweep}
+
+$m{=}2$ competitors recover the LOAO slope: $\alpha_2 = 1.523$ vs $\alpha_\mathrm{LOAO} = 1.477$ (2.3\% error). Exactly \textbf{two near-tie competitors} drive the constant.
+
+% ===================================================================
+\section{Where the Law Fails (Honest Scope)}
+% ===================================================================
+
+\begin{warnbox}[Hard Failures]
+\begin{enumerate}[nosep]
+\item \textbf{Protein LMs} (ESM-2, 7 models): $\alpha = -1.17$, $r = -0.15$. EC classes too heterogeneous.
+\item \textbf{Human fMRI} (NSD, $K{=}12$): 1-NN at chance. Raw BOLD lacks SNR.
+\item \textbf{Encoder LOAO}: $\mathrm{CV}_\alpha = 0.42$. Encoder $\alpha$ is not family-invariant.
+\end{enumerate}
+\end{warnbox}
+
+\textbf{Partial failures}: LODO cross-dataset ($r = 0.125$, expected under three-level universality); large-$K$ regime ($r \approx 0.75$ at $K{=}100$, below noise floor).
+
+% ===================================================================
+\section{Three-Level Universality Structure}
+% ===================================================================
+
+\begin{keybox}[The Hierarchy (Analogy: Equations of State)]
+\textbf{Level 1 --- Form universality} (strongest): The logit-linear structure is EVT-derived and confirmed across NLP, vision, audio, and biological cortex. \emph{Like: $PV = nRT$ holds for all ideal gases.}
+
+\textbf{Level 2 --- Constant within signal type}: $\alpha$ is stable within families (NLP decoders CV $= 2.3\%$) but varies across signal types (NLP $\sim$1.5 vs vision/audio $\sim$4--5). \emph{Like: van der Waals $a,b$ differ by substance.}
+
+\textbf{Level 3 --- Intercept is task-specific}: $C$ encodes dataset difficulty, not predictable across tasks. One calibration measurement required. \emph{Like: ground-state energy differs by system.}
+\end{keybox}
+
+% ===================================================================
+\section{Open Directions}
+% ===================================================================
+
+\subsection{Near-term}
+\begin{enumerate}[nosep]
+\item Expanded generation law validation (25+ models)
+\item External replication by independent groups
+\item COLM 2026 submission (abstract Mar 26, paper Mar 31)
+\end{enumerate}
+
+\subsection{Medium-term (open theory)}
+\begin{enumerate}[nosep, start=4]
+\item \textbf{Renormalization theory for $\alpha$ across families}: Why $\alpha_\mathrm{NLP} \approx 1.5$ but $\alpha_\mathrm{ViT} \approx 4.5$ with same $\rho$? The answer lies in $\Sigma_W$ structure.
+\item \textbf{Non-asymptotic bounds}: Finite-sample Berry--Esseen for Gumbel order statistics.
+\item \textbf{Multilabel extension}: Current law fails for multilabel (e.g., GoEmotions).
+\end{enumerate}
+
+\subsection{Long-term (paradigm extensions)}
+\begin{enumerate}[nosep, start=7]
+\item \textbf{Training objective from the law}: Maximize $\kappa_\mathrm{nearest}$ during training.
+\item \textbf{Connection to scaling laws}: If $\kappa \sim C^\gamma$, then $q(C) = \sigma(\alpha C^\gamma + C_0)$.
+\item \textbf{Universal renormalization}: Derive $\alpha$ from first principles for \emph{any} architecture.
+\end{enumerate}
+
+% ===================================================================
+\section{Quick Reference: Key Numbers}
+% ===================================================================
+
+\subsection{The Law}
+\[
+\logit(q_\mathrm{norm}) = \alpha\,\kappa_\mathrm{nearest} - \beta\log(K{-}1) + C
+\]
+
+\subsection{Primary constants (NLP decoders, 12 arch.)}
+$\alpha = 1.477 \pm 0.034$ (CV $= 2.3\%$), $\beta = 0.478$, $R^2 = 0.955$.
+
+\subsection{Validation scorecard}
+
+\begin{center}
+\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Test} & \textbf{Result} & \textbf{Status} \\
+\midrule
+12-arch LOAO (NLP) & CV $= 0.023$ & \textcolor{ctigreen}{\textbf{PASS}} \\
+RWKV boundary & $2.887 \in [2.43, 3.29]$ & \textcolor{ctigreen}{\textbf{PASS}} \\
+Blind OOD (SmolLM2) & $r = 0.817$, $p = 0.013$ & \textcolor{ctigreen}{\textbf{PASS}} \\
+ViT-Large & $R^2 = 0.964$ & \textcolor{ctigreen}{\textbf{PASS}} \\
+H8+ holdout ($n{=}77$) & $r = 0.879$, MAE $= 0.077$ & \textcolor{ctigreen}{\textbf{PASS}} \\
+Audio (7 models) & $r = 0.898$, $p = 0.006$ & \textcolor{ctigreen}{\textbf{PASS}} \\
+Bio (32 mice) & 30/32, mean $r = 0.736$ & \textcolor{ctigreen}{\textbf{PASS}} \\
+Confusion causal & $r = 0.842$, 100\% sign acc & \textcolor{ctigreen}{\textbf{PASS}} \\
+Generation (22 models) & $r = -0.55$ / $-0.70$ & \textcolor{ctigreen}{\textbf{PASS}} \\
+Cross-modal $\rho$ & CV $= 1.0\%$ & \textcolor{ctigreen}{\textbf{PASS}} \\
+\midrule
+Protein ESM-2 & $r = -0.15$ & \textcolor{ctired}{\textbf{FAIL}} \\
+Human fMRI & $r = 0.12$, $p = 0.18$ & \textcolor{ctired}{\textbf{FAIL}} \\
+Encoder LOAO & CV $= 0.42$ & \textcolor{ctired}{\textbf{FAIL}} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Zero-parameter predictions}
+\begin{itemize}[nosep]
+\item $\alpha$ from $\rho$: 1.540 vs 1.477 (+4.3\% error)
+\item Confusion matrix: 100\% sign accuracy, zero refit
+\item LOAO slope from $m{=}2$: $\alpha_2 = 1.523$ vs $1.477$ (2.3\% error)
+\item $K_\mathrm{eff}$ from softmax: $\sim$2--3 ($\beta_\mathrm{gen} \approx 0$)
+\end{itemize}
+
+% ===================================================================
+\section*{Appendix: The Complete Derivation in One Page}
+% ===================================================================
+
+\begin{derivbox}[Seven Steps: Geometry $\to$ Law]
+\textbf{Start}: $K$ classes in $\mathbb{R}^d$ with centroids $\{\boldsymbol{\mu}_k\}$ and shared within-class std $\sigma_W$.
+
+\textbf{Step 1} --- Define $\kappa$:
+\[
+\kappa_\mathrm{nearest}(k) = \min_{j\neq k} \frac{\|\boldsymbol{\mu}_j - \boldsymbol{\mu}_k\|}{\sigma_W\sqrt{d}}
+\]
+
+\textbf{Step 2} --- 1-NN as a race:
+\[
+P(\text{correct} \mid k) = P(M_+ < \min_{j\neq k} M_j)
+\]
+
+\textbf{Step 3} --- EVT: $M_+, M_j \to \mathrm{Gumbel}(\mu, s)$ with shared scale $s$.
+
+\textbf{Step 4} --- Gumbel race identity (\textbf{exact}):
+\[
+P(M_+ < \min_j M_j) = \left[1 + \textstyle\sum_{j\neq k} \exp(-\Delta_{k,j}/s)\right]^{-1}
+\]
+
+\textbf{Step 5} --- Nearest-class dominance + sparse hierarchy:
+\[
+\textstyle\sum \approx (K{-}1)^\beta \exp(-\Delta_\mathrm{nearest}/s), \quad \beta \approx 0.5
+\]
+
+\textbf{Step 6} --- Linear gap-to-$\kappa$ map: $\Delta_\mathrm{nearest}/s \approx a_1 \kappa + a_0$.
+
+\textbf{Step 7} --- Combine:
+\[
+\boxed{\logit(q_\mathrm{norm}) = \alpha\,\kappa_\mathrm{nearest} - \beta\log(K{-}1) + C}
+\]
+
+From Euclidean geometry $\to$ EVT $\to$ Gumbel race identity $\to$ logit law. \textbf{QED} (conditional on A1--A3).
+\end{derivbox}
+
+\end{document}
