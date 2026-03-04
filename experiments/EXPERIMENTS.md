@@ -18,9 +18,10 @@ Validated results only (Codex-reviewed).
   - **With random baseline (n=5)**: r=0.962, p=0.009, R^2=0.926 — dominated by random-to-trained gap
 - **Layer Effect**: Intermediate layers (~2/3 depth) consistently beat last layer for kappa. Peak at ~70% depth. Last-layer alpha=1.531 (close to NLP's 1.477).
 - **650M Anomaly**: Highest accuracy (0.859) but lower kappa (0.326) than 150M (0.355). Suggests large protein LMs achieve accuracy through mechanisms beyond simple centroid separation.
-- **Interpretation**: The CTI law's DIRECTION holds for proteins (training -> higher kappa -> better classification). But n=4 trained model sizes from ONE family is insufficient for robust alpha estimation. The narrow kappa range (0.03 span vs NLP's 0.9 span) prevents meaningful correlation. Need diverse protein LM families (ProtTrans, Ankh, ProGen2) for definitive test.
-- **Files**: `src/cti_protein_esm2.py`, `results/cti_protein_esm2.json`, `results/cti_protein_sequences_cache.json`
-- **What we learned**: CTI law direction extends to molecular biology (4th domain after NLP, vision, neuroscience). But scaling series of one architecture doesn't provide enough kappa diversity. Cross-architecture comparison is the right test (same insight as NLP where fixed-V families are strongest).
+- **Cross-Architecture Extension (n=7, 3 families)**: Added ProtBERT (2 variants) and ESM-1b to the 4 ESM-2 sizes. Result: **alpha = -1.165 (NEGATIVE), r = -0.145, p = 0.757**. ESM-1b has lowest kappa (0.292) but highest accuracy (0.859). **The law FAILS across protein LM architectures.**
+- **Diagnosis**: Protein models achieve EC classification accuracy through within-class compactness and local neighborhood structure, not through global centroid separation. EC classes are extremely heterogeneous (each covers thousands of different enzymes), making centroid geometry less informative than in NLP/vision where classes are more coherent.
+- **Files**: `src/cti_protein_esm2.py`, `results/cti_protein_esm2.json`, `results/cti_protein_cross_arch.json`
+- **What we learned**: CTI law validated for NLP decoders (19 archs), vision (ViT/CNN), mouse V1 (32 sessions). FAILS for: protein LMs (3 families on EC classification), human fMRI (null). The law requires representational spaces where centroid separation drives classification. Pre-trained protein LMs on coarse functional annotation violate this assumption. This honestly delineates the law's scope: trained discriminative/generative models on semantically coherent categories.
 
 ---
 

@@ -270,12 +270,31 @@
     "peak_kappa": 0.3562,
     "note": "Peak at 70% depth; last layer (30) drops to 0.285"
   },
+  "cross_architecture": {
+    "n_models": 7,
+    "n_architectures": 3,
+    "architectures": ["ESM2 (4 sizes)", "ProtBERT (2 variants)", "ESM-1b"],
+    "alpha": -1.165,
+    "r_pearson": -0.145,
+    "p_pearson": 0.757,
+    "R_squared": 0.021,
+    "note": "LAW FAILS across protein architectures. ESM-1b has lowest kappa (0.292) but highest accuracy (0.859). Alpha is NEGATIVE.",
+    "models": [
+      {"name": "ESM2-8M", "arch": "ESM2", "kappa": 0.3318, "acc": 0.787, "logit_q": 1.108},
+      {"name": "ESM2-35M", "arch": "ESM2", "kappa": 0.3498, "acc": 0.841, "logit_q": 1.477},
+      {"name": "ESM2-150M", "arch": "ESM2", "kappa": 0.3531, "acc": 0.854, "logit_q": 1.586},
+      {"name": "ESM2-650M", "arch": "ESM2", "kappa": 0.3231, "acc": 0.856, "logit_q": 1.603},
+      {"name": "ProtBERT", "arch": "BERT", "kappa": 0.3060, "acc": 0.834, "logit_q": 1.423},
+      {"name": "ProtBERT-BFD", "arch": "BERT", "kappa": 0.3186, "acc": 0.837, "logit_q": 1.450},
+      {"name": "ESM-1b", "arch": "ESM1", "kappa": 0.2924, "acc": 0.859, "logit_q": 1.628}
+    ]
+  },
   "interpretation": {
-    "direction": "CONFIRMED - training increases kappa, kappa predicts accuracy (r=0.96 with random baseline)",
-    "alpha_estimate": "UNRELIABLE - narrow kappa range (0.32-0.35) among 4 trained models prevents robust estimation",
-    "650M_anomaly": "Highest accuracy (0.859) but lower kappa than 150M (0.326 vs 0.355) - suggests representation quality beyond centroid separation",
-    "layer_effect": "Intermediate layers (~2/3 depth) consistently beat last layer; last-layer alpha (1.531) resembles NLP (1.477)",
-    "scope_limit": "n=4 trained model sizes from ONE family is insufficient for alpha estimation; need ProtTrans, Ankh, or other protein LM families"
+    "within_family": "WEAK POSITIVE - within ESM-2 scaling series, direction is correct (alpha>0) but kappa range too narrow (0.32-0.35) for robust fit",
+    "cross_architecture": "NEGATIVE - across 3 protein LM families (n=7), alpha is NEGATIVE (-1.165). ESM-1b has lowest kappa but highest accuracy. The law FAILS for proteins.",
+    "random_vs_trained": "Training increases kappa and accuracy (r=0.96 with random baseline), but across trained models the kappa-accuracy relationship breaks",
+    "diagnosis": "Protein models achieve EC classification accuracy through within-class compactness and local neighborhood structure, not through global centroid separation. EC classes are extremely heterogeneous (each covers thousands of different enzymes), making centroid geometry less informative than in NLP/vision where classes are more coherent.",
+    "scope_finding": "CTI law validated for: NLP decoders (19 archs), vision (ViT, CNN), mouse V1 (32 sessions). FAILS for: proteins (3 families), human fMRI (null). The law requires representational spaces where centroid separation drives classification - this holds for trained discriminative/generative models on semantically coherent categories, but not for pre-trained protein LMs on coarse functional annotation."
   },
   "elapsed_seconds": 161.62030863761902
 }

@@ -1,0 +1,64 @@
+{
+  "cross_architecture_protein": {
+    "n_models": 7,
+    "n_architectures": 3,
+    "alpha": -1.1648770570287277,
+    "C": 1.8463684062293109,
+    "r_pearson": -0.1445609526022421,
+    "p_pearson": 0.7571419641574898,
+    "r_spearman": -0.14285714285714288,
+    "p_spearman": 0.7599453002180929,
+    "R_squared": 0.02089786901726809,
+    "models": [
+      {
+        "name": "ESM2-8M",
+        "arch": "ESM2",
+        "kappa": 0.3318,
+        "acc": 0.787,
+        "logit_q": 1.108
+      },
+      {
+        "name": "ESM2-35M",
+        "arch": "ESM2",
+        "kappa": 0.3498,
+        "acc": 0.841,
+        "logit_q": 1.477
+      },
+      {
+        "name": "ESM2-150M",
+        "arch": "ESM2",
+        "kappa": 0.3531,
+        "acc": 0.854,
+        "logit_q": 1.586
+      },
+      {
+        "name": "ESM2-650M",
+        "arch": "ESM2",
+        "kappa": 0.3231,
+        "acc": 0.856,
+        "logit_q": 1.603
+      },
+      {
+        "name": "ProtBERT",
+        "arch": "BERT",
+        "kappa": 0.3059868641108955,
+        "acc": 0.8335714285714285,
+        "logit_q": 1.4231600418875927
+      },
+      {
+        "name": "ProtBERT-BFD",
+        "arch": "BERT",
+        "kappa": 0.3186263010543931,
+        "acc": 0.8371428571428572,
+        "logit_q": 1.4500101755059986
+      },
+      {
+        "name": "ESM-1b",
+        "arch": "ESM1",
+        "kappa": 0.2923861803954249,
+        "acc": 0.8592857142857143,
+        "logit_q": 1.627547059223946
+      }
+    ]
+  }
+}
