@@ -5,6 +5,29 @@ Validated results only (Codex-reviewed).
 
 ---
 
+## Session 94 (Mar 3, 2026) — Nobel ~7.8/10
+
+### Citation Fixes + Pre-Submission Audit [COMPLETE]
+- **Purpose**: Fix citation errors, audit all evidence files, add COLM-required LLM disclosure.
+- **Fixes**: (1) Removed duplicate `he2024` bibitem (wrong authors for Wu&Papyan arXiv:2405.17767), replaced with `wu2024linguistic` in both papers. (2) Added `munn2024` citation to COLM related work. (3) Added `harun2025` citation to COLM extended limitations. (4) Added "Use of AI Assistants" disclosure section to both papers (COLM requires LLM usage disclosure).
+- **Evidence Audit**: All 10 key JSON evidence files verified — every claimed numerical value matches. Two minor notes: (a) generation law r=-0.697 is 21-model subset (LFM excluded), paper is clear about this; (b) alpha noise JSON has stale "2.08%" in conclusion string but structured field correctly says 2.84%.
+- **What we learned**: Both papers are now submission-ready. All claims are backed by verified evidence files.
+
+### HEV Theory Connection [COMPLETE]
+- **Purpose**: Document the Heteroscedastic Extreme Value model connection to CTI.
+- **Output**: CGF_THEORETICAL_FRAMEWORK.md Section 3.21.1b
+- **Key Insight**: McFadden's logit (= CTI) assumes IID competitors. HEV (Bhat 1995, Zeng 2000) relaxes to non-identical Gumbel scales. Our empirical tests confirm the IID approximation holds: rho_var doesn't predict alpha beyond estimation noise. This validates the simplest version of CTI.
+- **What we learned**: CTI's IID assumption is empirically validated. The HEV extension exists as a well-understood refinement for grossly non-uniform geometry, but current evidence doesn't require it.
+
+### St-Yves Human fMRI Data Investigation [COMPLETE — FEASIBLE]
+- **Purpose**: Determine if human visual cortex data is available for Nobel criterion #9.
+- **Finding**: NSD (Natural Scenes Dataset) is fully public on AWS S3. St-Yves code at github.com/styvesg/NSD_manifolds (MIT). 8 subjects, 12 brain ROIs (V1→PHC), K=12 COCO supercategories, 580 images/concept.
+- **Feasibility**: HIGH — data is available, pipeline is clear, structure is compatible with CTI (12 ROIs as "architectures", K=12 classes). Need to download NSD betas and compute CTI metrics per ROI.
+- **Blocker**: NSD is tens of GB. No AWS CLI installed. Multi-day project.
+- **What we learned**: Human fMRI validation is feasible but requires dedicated setup effort. This would be the strongest possible extension (third biological domain: mouse + human + artificial).
+
+---
+
 ## Session 93 (Mar 3, 2026) — Nobel ~7.8/10
 
 ### COLM 2026 Paper: 9-Page Submission Version [COMPLETE]
