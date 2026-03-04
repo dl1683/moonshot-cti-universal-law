@@ -1,0 +1,125 @@
+{
+  "experiment": "synthetic_gumbel_validation_v2",
+  "d": 50,
+  "m_per_class": 200,
+  "n_trials": 5,
+  "rho_values": [
+    0.0,
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8
+  ],
+  "K_values": [
+    4,
+    10,
+    20
+  ],
+  "per_rho": [
+    {
+      "rho": 0.0,
+      "alpha_observed": 10.7382,
+      "beta_observed": 0.5266,
+      "C_observed": -5.5978,
+      "R_sq": 0.967009,
+      "r_kappa_logit": 0.9737,
+      "p_kappa_logit": 2.032385121849197e-06,
+      "n_valid_points": 10
+    },
+    {
+      "rho": 0.1,
+      "alpha_observed": 9.7052,
+      "beta_observed": 0.5265,
+      "C_observed": -4.7534,
+      "R_sq": 0.983641,
+      "r_kappa_logit": 0.9816,
+      "p_kappa_logit": 8.870119948501881e-08,
+      "n_valid_points": 11
+    },
+    {
+      "rho": 0.2,
+      "alpha_observed": 9.1872,
+      "beta_observed": 0.7618,
+      "C_observed": -3.8196,
+      "R_sq": 0.992504,
+      "r_kappa_logit": 0.9691,
+      "p_kappa_logit": 8.953335774447732e-07,
+      "n_valid_points": 11
+    },
+    {
+      "rho": 0.3,
+      "alpha_observed": 9.9374,
+      "beta_observed": 0.5083,
+      "C_observed": -4.9334,
+      "R_sq": 0.981419,
+      "r_kappa_logit": 0.9833,
+      "p_kappa_logit": 3.02067362585382e-10,
+      "n_valid_points": 14
+    },
+    {
+      "rho": 0.4,
+      "alpha_observed": 8.9849,
+      "beta_observed": 0.6518,
+      "C_observed": -3.8741,
+      "R_sq": 0.988271,
+      "r_kappa_logit": 0.9777,
+      "p_kappa_logit": 3.4293507785270014e-10,
+      "n_valid_points": 15
+    },
+    {
+      "rho": 0.5,
+      "alpha_observed": 9.7667,
+      "beta_observed": 0.6528,
+      "C_observed": -4.3826,
+      "R_sq": 0.969175,
+      "r_kappa_logit": 0.97,
+      "p_kappa_logit": 5.35730247860864e-10,
+      "n_valid_points": 16
+    },
+    {
+      "rho": 0.6,
+      "alpha_observed": 9.0457,
+      "beta_observed": 0.6478,
+      "C_observed": -3.8745,
+      "R_sq": 0.981146,
+      "r_kappa_logit": 0.9778,
+      "p_kappa_logit": 1.1387791189510133e-13,
+      "n_valid_points": 20
+    },
+    {
+      "rho": 0.7,
+      "alpha_observed": 8.6099,
+      "beta_observed": 0.5618,
+      "C_observed": -3.792,
+      "R_sq": 0.990851,
+      "r_kappa_logit": 0.9854,
+      "p_kappa_logit": 1.2516361743349878e-17,
+      "n_valid_points": 23
+    },
+    {
+      "rho": 0.8,
+      "alpha_observed": 9.0604,
+      "beta_observed": 0.5586,
+      "C_observed": -4.0411,
+      "R_sq": 0.98053,
+      "r_kappa_logit": 0.9819,
+      "p_kappa_logit": 9.065067079182302e-22,
+      "n_valid_points": 30
+    }
+  ],
+  "summary": {
+    "mean_R2": 0.981616,
+    "min_R2": 0.967009,
+    "mean_beta": 0.5996,
+    "beta_std": 0.0791,
+    "alpha_rescaled_mean": 7.2035,
+    "alpha_rescaled_CV": 0.2824,
+    "r_alpha_vs_inv_sqrt_1_rho": -0.6298,
+    "p_alpha_vs_inv_sqrt_1_rho": 0.06909709463888779
+  },
+  "elapsed_seconds": 34.8
+}

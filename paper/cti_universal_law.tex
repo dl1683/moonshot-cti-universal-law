@@ -88,16 +88,16 @@ The key conceptual point: Eq.~\ref{eq:cti-law}'s structure is derived from first
 \section{Related Work}
 
 \paragraph{Neural scaling laws and universality.}
-Power-law regularities for language-model loss are well-established \citep{kaplan2020,hoffmann2022}. Our aim is analogous but targets geometry-to-accuracy transfer within individual models.
+Power-law regularities for language-model loss are well-established \citep{kaplan2020,hoffmann2022}, though these scaling laws are unreliable for downstream task performance \citep{lourie2025scaling}. Our aim is analogous but targets geometry-to-accuracy transfer within individual models.
 
 \paragraph{Representation quality via non-parametric probes.}
 kNN-based quality diagnostics are widely used in vision and self-supervised learning \citep{wu2018,caron2021}. We use chance-normalized 1-NN accuracy to avoid probe-capacity confounds.
 
 \paragraph{Extreme value theory and Gumbel races.}
-Classical EVT describes minima/maxima asymptotics \citep{fisher1928,gnedenko1943,gumbel1958}. The CTI derivation applies this to nearest-neighbor distance minima among competing classes.
+Classical EVT describes minima/maxima asymptotics \citep{fisher1928,gnedenko1943,gumbel1958}. The CTI derivation applies this to nearest-neighbor distance minima among competing classes. Independent convergent evidence: \citet{zhang2025gps} use Gumbel priors for set-to-set matching in few-shot classification, confirming that nearest-neighbor distance extrema follow Gumbel distributions.
 
 \paragraph{Neural-collapse geometry and nearest-class dominance.}
-Late-training geometry and nearest-class structure are central in neural collapse \citep{papyan2020,han2022,zhu2021,garrido2023,rangamani2023,wu2024linguistic}. Geometry-based transferability metrics (RankMe \citep{garrido2023}, spectral order parameters \citep{liu2025}) predict downstream performance via effective rank and inter/intra-class geometry; multiplicative logit adjustment \citep{ye2024} uses NC geometry for boundary correction.
+Late-training geometry and nearest-class structure are central in neural collapse \citep{papyan2020,han2022,zhu2021,garrido2023,rangamani2023,wu2024linguistic,sukenik2025nc}. Geometry-based transferability metrics (RankMe \citep{garrido2023}, spectral order parameters \citep{liu2025}) predict downstream performance via effective rank and inter/intra-class geometry; multiplicative logit adjustment \citep{ye2024} uses NC geometry for boundary correction.
 For generation, \citet{wu2024linguistic} find that neural-collapse properties in LLMs develop with scale and correlate with generalization, establishing the premise that NC geometry matters for token prediction; \citet{kulkarni2026disentangling} show that effective rank of the unembedding matrix correlates with but does not reliably predict language model loss; our $\kappa_\mathrm{top1K}$ (nearest-neighbor distance) outperforms effective rank by capturing competition-relevant geometry.
 The softmax bottleneck \citep{yang2018softmax} shows that low-rank output layers limit expressiveness; our $K_\mathrm{eff}$ decomposition reveals that competition is spontaneously sparse ($K_\mathrm{eff}\approx 2$--$3$) regardless of $V$.
 None derive or measure a universal slope connecting $\kappa_\mathrm{nearest}$ to $\logit(q)$ across architectures. Our contribution is distinct: the Gumbel race yields the functional form; LOAO over 12 architectures quantifies cross-architecture slope stability (CV$<5\%$).
@@ -770,7 +770,7 @@ The Gumbel-race mechanism further extends to next-token prediction: $\kappa$ fro
 The slope $A(K)=1.164/\log(K)+1.301$ enables practical prediction: MAE$\leq$0.08 on all six prospective datasets; 4 probe measurements per new architecture reduce MAE by 86\% (uncalibrated 0.806$\to$calibrated 0.111, $r=0.932$).
 Universality is of the \emph{functional form}: the constant $\alpha$ is signal-type-specific ($\alpha_\mathrm{NLP}\approx1.48$ for discrete tokens; $\alpha_\mathrm{ViT}\approx4.5$, $\alpha_\mathrm{CNN}\approx4.0$, $\alpha_\mathrm{audio}\approx4.7$ for continuous signals), with all continuous-signal modalities converging at $\alpha\approx3.3$--$5.0$ and discrete-token NLP at $\alpha\approx1.5$; cross-task drift and honest-scope limitations (including protein LM failure and human fMRI null) are enumerated in \S\ref{sec:limitations}.
 Open directions include a renormalization theory for how constants transform across tasks and modalities.
-The near-simplex equicorrelation $\rho\approx0.46$ is now confirmed across all six modalities tested: NLP decoders ($0.463$), audio speech models ($0.455$--$0.464$), vision ($0.458$--$0.467$), mouse cortex ($0.466$), and NLP encoders ($0.446$--$0.456$); pooled CV$=1.0\%$ (\texttt{cti\_cross\_modal\_rho.json}).
+The near-simplex equicorrelation $\rho\approx0.46$ is now confirmed across all six modalities tested: NLP decoders ($0.463$), audio speech models ($0.455$--$0.464$), vision ($0.458$--$0.467$), mouse cortex ($0.466$), and NLP encoders ($0.446$--$0.456$); pooled CV$=1.0\%$ (\texttt{cti\_cross\_modal\_rho.json}). This substrate-independent constant is consistent with the finding that diverse embedding models share a universal geometric structure \citep{jha2025geometry}.
 This is the tightest invariant in the paper, tighter than $\alpha$'s within-decoder CV of $2.3\%$, and establishes near-simplex centroid geometry as a universal structural property of categorical representation regardless of substrate, signal type, or training.
 This decouples two distinct universality questions: (1) near-simplex geometry is substrate-independent; (2) the cross-family shift in $\alpha$ ($\alpha_\mathrm{decoder}\approx1.48$ vs $\alpha_\mathrm{audio}\approx4.7$ vs $\alpha_\mathrm{encoder}\approx7$) is not explained by $\rho$. Recent work \citep{chen2025universal} independently shows that diverse networks converge on fewer than 10 universal latent dimensions aligned with the human brain, consistent with CTI's $d_\mathrm{eff,comp}\approx2$ regime. Identical mean pooling is used throughout, ruling out pooling protocol. ELECTRA-small (discriminative RTD pre-training, bidirectional attention) matches BERT-base (MLM, bidirectional) in $\alpha_\mathrm{emp}$ ($3.84$ vs $4.37$), ruling out pre-training objective; bidirectionality of the attention pattern is the leading candidate for the renormalization mechanism.
 Other open directions include a multilabel extension and independent replication.
@@ -943,6 +943,26 @@ A.~Kulkarni, J.~Springer, A.~Subramonian, and S.~Swayamdipta.
 Z.~Yang, Z.~Dai, R.~Salakhutdinov, and W.~W.~Cohen.
 \newblock Breaking the softmax bottleneck: A high-rank {RNN} language model.
 \newblock \emph{ICLR}, 2018.
+
+\bibitem[Zhang et~al.(2025)]{zhang2025gps}
+Z.~Zhang, F.~Lin, H.~Liu, J.~Morales, H.~Zhang, K.~Yamada, V.~B.~Kolachalama, and V.~Saligrama.
+\newblock {GPS}: A probabilistic distributional similarity with {G}umbel priors for set-to-set matching.
+\newblock \emph{ICLR}, 2025.
+
+\bibitem[Lourie et~al.(2025)]{lourie2025scaling}
+N.~Lourie, M.~Y.~Hu, and K.~Cho.
+\newblock Scaling laws are unreliable for downstream tasks: A reality check.
+\newblock \emph{Findings of EMNLP}, 2025.
+
+\bibitem[Jha et~al.(2025)]{jha2025geometry}
+R.~Jha, C.~Zhang, V.~Shmatikov, and J.~X.~Morris.
+\newblock Harnessing the universal geometry of embeddings.
+\newblock \emph{arXiv:2505.12540}, 2025.
+
+\bibitem[S\'{u}ken\'{i}k et~al.(2025)]{sukenik2025nc}
+P.~S\'{u}ken\'{i}k, C.~H.~Lampert, and M.~Mondelli.
+\newblock Neural collapse is globally optimal in deep regularized {ResNets} and {Transformers}.
+\newblock \emph{arXiv:2505.15239}, 2025.
 
 \end{thebibliography}
 

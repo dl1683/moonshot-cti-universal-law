@@ -54,7 +54,7 @@ The Gumbel-race mechanism extends to generation: $\kappa$ from the unembedding m
 \end{abstract}
 
 \section{Introduction}
-Neural scaling laws established simple macroscopic regularities for loss as a function of compute and model size \citep{kaplan2020,hoffmann2022}. A parallel question for representation learning is whether there is an equally simple \emph{microscopic} law for class separability and nearest-neighbor classification quality across architectures.
+Neural scaling laws established simple macroscopic regularities for loss as a function of compute and model size \citep{kaplan2020,hoffmann2022}, though unreliable for downstream tasks \citep{lourie2025scaling}. A parallel question for representation learning is whether there is an equally simple \emph{microscopic} law for class separability and nearest-neighbor classification quality across architectures.
 
 This paper presents the CTI Universal Law:
 \begin{equation}
@@ -81,7 +81,7 @@ Power-law regularities for language-model loss are well-established \citep{kapla
 kNN-based quality diagnostics are widely used \citep{wu2018,caron2021}. Neural collapse geometry \citep{papyan2020,han2022,zhu2021,rangamani2023,wu2024linguistic} and spectral order parameters \citep{garrido2023,liu2025,munn2024} predict downstream performance. None derive a universal slope connecting $\kappa_\mathrm{nearest}$ to $\logit(q)$ across architectures.
 
 \paragraph{EVT and Gumbel races.}
-Classical EVT describes minima/maxima asymptotics \citep{fisher1928,gnedenko1943,gumbel1958}. Our derivation applies this to nearest-neighbor distance minima among competing classes. For generation, \citet{wu2024linguistic} find NC properties correlate with generalization in LLMs; \citet{kulkarni2026disentangling} show effective rank alone does not predict loss; our $\kappa$ outperforms by capturing competition-relevant geometry.
+Classical EVT describes minima/maxima asymptotics \citep{fisher1928,gnedenko1943,gumbel1958}; \citet{zhang2025gps} independently confirm Gumbel priors for nearest-neighbor matching. Our derivation applies this to distance minima among competing classes. For generation, \citet{wu2024linguistic} find NC properties correlate with generalization in LLMs; \citet{kulkarni2026disentangling} show effective rank alone does not predict loss; our $\kappa$ outperforms by capturing competition-relevant geometry.
 
 \section{Theory: Derivation of the CTI Universal Law}
 \subsection{Definitions}
@@ -505,6 +505,26 @@ C.~F.~Cadieu, H.~Hong, D.~L.~K.~Yamins, N.~Pinto, D.~Ardila, E.~A.~Solomon, N.~J
 C.~Stringer, M.~Pachitariu, N.~Steinmetz, C.~B.~Reddy, M.~Carandini, and K.~D.~Harris.
 \newblock Spontaneous behaviors drive multidimensional, brainwide activity.
 \newblock \emph{Science}, 364(6437):255, 2019.
+
+\bibitem[Zhang et~al.(2025)]{zhang2025gps}
+Z.~Zhang, F.~Lin, H.~Liu, J.~Morales, H.~Zhang, K.~Yamada, V.~B.~Kolachalama, and V.~Saligrama.
+\newblock {GPS}: A probabilistic distributional similarity with {G}umbel priors for set-to-set matching.
+\newblock \emph{ICLR}, 2025.
+
+\bibitem[Lourie et~al.(2025)]{lourie2025scaling}
+N.~Lourie, M.~Y.~Hu, and K.~Cho.
+\newblock Scaling laws are unreliable for downstream tasks: A reality check.
+\newblock \emph{Findings of EMNLP}, 2025.
+
+\bibitem[Jha et~al.(2025)]{jha2025geometry}
+R.~Jha, C.~Zhang, V.~Shmatikov, and J.~X.~Morris.
+\newblock Harnessing the universal geometry of embeddings.
+\newblock \emph{arXiv:2505.12540}, 2025.
+
+\bibitem[S\'{u}ken\'{i}k et~al.(2025)]{sukenik2025nc}
+P.~S\'{u}ken\'{i}k, C.~H.~Lampert, and M.~Mondelli.
+\newblock Neural collapse is globally optimal in deep regularized {ResNets} and {Transformers}.
+\newblock \emph{arXiv:2505.15239}, 2025.
 
 \end{thebibliography}
 
