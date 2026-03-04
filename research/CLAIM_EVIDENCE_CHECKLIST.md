@@ -25,7 +25,7 @@ Every claim in the paper abstract and main text mapped to supporting result file
 | 13 | Honest scope: alpha varies by signal type (NLP 1.48, ViT 4.5, CNN 4.0, audio 4.7) | `results/cti_extended_family_loao.json`, `results/cti_alpha_family_law.json` | VERIFIED |
 | 14 | 4 probe calibration reduces MAE by 86% | `results/cti_one_point_calibration.json` | VERIFIED |
 | 14b | ResNet-50 CIFAR-100 same functional form | `results/cti_resnet50_cifar100.json` | VERIFIED |
-| 15 | Generation law: kappa from W_U predicts logCE, r=-0.70, p<0.001, 22 models | `results/cti_generation_law_analysis.json`, `results/cti_generation_hypothesis_scorecard.json` | VERIFIED |
+| 15 | Generation law: kappa from W_U predicts logCE, r=-0.55 (n=22), r=-0.70 (n=21 excl. LFM outlier) | `results/cti_generation_law_analysis.json`, `results/cti_generation_hypothesis_scorecard.json` | VERIFIED |
 | 16 | Fixed-V Transformer vs SSM: r=-0.84, architecture-independent (F p=0.147) | `results/cti_generation_law_analysis.json` | VERIFIED |
 | 17 | beta_gen~0: vocabulary size drops out (K_eff~2-3) | `results/cti_generation_keff.json` | VERIFIED |
 | 18 | Partial r controlling for log(N_params) = -0.546, p=0.013 | `results/cti_generation_law_analysis.json` | VERIFIED |
@@ -73,7 +73,7 @@ Every claim in the paper abstract and main text mapped to supporting result file
 | # | Claim | Evidence File | Status |
 |---|-------|---------------|--------|
 | 36 | Protein LMs: law FAILS (alpha=-1.17, r=-0.15, p=0.76, 7 models, 3 families) | `results/cti_protein_esm2.json` | VERIFIED |
-| 37 | Human fMRI (NSD): null result (chance-level 1-NN, r=0.33, p=0.32) | `results/cti_nsd_human_fmri.json` | VERIFIED |
+| 37 | Human fMRI (NSD): null result (chance-level 1-NN, pooled r=0.12, p=0.18) | `results/cti_nsd_human_fmri.json` | VERIFIED |
 | 38 | Encoder LOAO: CV_alpha=0.42 (decoders universal, encoders NOT) | `results/cti_encoder_loao.json` | VERIFIED |
 | 39 | LODO cross-dataset: mean r=0.125 (intercept is task-specific) | `results/cti_lomfo_lodo_stress_test.json` | VERIFIED |
 
