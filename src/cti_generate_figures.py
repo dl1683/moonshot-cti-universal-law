@@ -211,10 +211,11 @@ def make_figure2():
     # ── Panel B: alpha by family (uses per-dataset fit for NLP decoders) ─────
     # NLP decoder alphas (per-dataset LOAO)
     nlp_alphas = [v["alpha"] for v in loao_pd["loao_results"].values()]
-    # ViT from cross-modality: A_ViT (different formula but best we have)
-    vit_alpha = vit_cm["models"]["ViT-Base-16-224"]["A_fit"]  # 0.59 per-dset
-    # ViT-Large from ViT LOAO if available; else use known value
-    vit_large_alpha = 0.63  # from paper
+    # ViT standard alpha from alpha_family_law (logit(q) = alpha*kappa + C)
+    # NOT the A_fit from cross-modality (which uses logit(q) = A*kappa*sqrt(d_eff)+C)
+    alpha_family = load("cti_alpha_family_law.json")
+    vit_alpha = alpha_family["vit_results"]["per_model"]["vit-base-patch16-224"]["alpha"]  # 3.28
+    vit_large_alpha = alpha_family["vit_results"]["per_model"]["vit-large-patch16-224"]["alpha"]  # 5.00
     # CNN: ResNet50 layer3 alpha
     cnn_alphas = [lay["alpha"] for lay in cnn100["layers"]]
     cnn_best = cnn_alphas[2]  # layer3 ≈ 4.42
