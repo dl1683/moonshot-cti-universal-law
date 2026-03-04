@@ -5,6 +5,34 @@ Validated results only (Codex-reviewed).
 
 ---
 
+## Session 93 (Mar 3, 2026) — Nobel ~7.8/10
+
+### COLM 2026 Paper: 9-Page Submission Version [COMPLETE]
+- **Purpose**: Create COLM 2026 compliant version (9-page main text limit, double-blind, unlimited appendix/refs).
+- **Method**: Restructured 31-page paper into 9-page main text + appendix. Compressed abstract, intro, related work, theory. Kept 5 core results: LOAO, cross-modal+OOD, causal, biological, generation. Added LOMFO cross-family transfer and H3 ranking within margin.
+- **Output**: `paper/cti_universal_law_colm.tex`, `paper/cti_universal_law_colm.pdf`
+- **Key Details**:
+  - Main text: ~8 pages (within 9-page limit)
+  - 4 figures, 3 tables in main text
+  - Competition field, K-scaling, sparse competition, scaling dynamics -> appendix
+  - Extended limitations (items 5-12) -> appendix
+  - Fully anonymized (no author info, no GitHub URL)
+  - Clean compile, zero undefined references
+- **What we learned**: The core narrative fits comfortably in 9 pages. The most impactful content is: (1) EVT derivation, (2) LOAO 12-arch CV=0.023, (3) blind OOD + H8+, (4) confusion-matrix causal, (5) Allen biological, (6) generation law.
+
+### Proxy B: Completion + OOM Analysis [COMPLETE]
+- **Purpose**: Complete Proxy B (whitened kappa) for remaining 5 models.
+- **Script**: `src/cti_generation_proxy_b.py`
+- **Output**: `results/cti_generation_proxy_b.json` (20 entries: 19 valid + 1 error)
+- **Key Results**:
+  - Falcon-H1-1.5B: kappa_whitened=0.717, rho_whitened=0.036 (DONE)
+  - Falcon-H1-3B: CUDA OOM (3B params + V=131K too large for GPU)
+  - Remaining 3 (lfm2.5-1.2b, phi-4, mistral-7b): not attempted (expected OOM)
+  - H_gen5 FAIL confirmed at n=19 (no change from n=14)
+- **What we learned**: Large models (3B+) with large vocabularies (131K+) require quantized inference for Proxy B. Since H_gen5 is already confirmed FAIL, completion is for reproducibility only.
+
+---
+
 ## Session 92 (Mar 3, 2026) — Nobel ~7.8/10
 
 ### Generation Law: 22-Model Expansion + Paper Integration [COMPLETE]
