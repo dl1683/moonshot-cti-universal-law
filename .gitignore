@@ -50,6 +50,9 @@ Thumbs.db
 .ipynb_checkpoints/
 *.ipynb
 
+# Cached datasets — never commit
+data/
+
 # Large result caches — keep only canonical JSON summaries
 results/kappa_near_cache_*.json
 results/embedding_cache_*.npy
