@@ -1,0 +1,1971 @@
+{
+  "experiment": "CTI Human fMRI (NSD) V2 \u2014 Per-Class Analysis",
+  "version": "v2_zscore_ncsnr_perclass",
+  "subject": 1,
+  "n_sessions": 10,
+  "n_pca": 50,
+  "ncsnr_threshold": 0.3,
+  "preprocessing": "z-score per voxel per session, ncsnr filter",
+  "per_roi": [
+    {
+      "roi": "V1",
+      "global_q_1nn": 0.079,
+      "global_q_norm": 1e-06,
+      "global_logit": -13.815509557963773,
+      "rho_equicorr": -0.048372848571847295,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 1131,
+      "n_pca": 50,
+      "sigma_W_global": 3.441300546867153,
+      "kappa_mean": 0.06593772532618632,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": -1.3066762434708528,
+        "r": -0.007108338313044986,
+        "p": 0.9825080021671437,
+        "R_sq": 5.0528473572703243e-05
+      }
+    },
+    {
+      "roi": "V2",
+      "global_q_1nn": 0.08833333333333335,
+      "global_q_norm": 0.005454545454545475,
+      "global_logit": -5.205836513753868,
+      "rho_equicorr": -0.05730245983412931,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 849,
+      "n_pca": 50,
+      "sigma_W_global": 3.0104307685846727,
+      "kappa_mean": 0.06804606541019263,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": 25.893756981197207,
+        "r": 0.10036225184685929,
+        "p": 0.7563018832643496,
+        "R_sq": 0.010072581595772411
+      }
+    },
+    {
+      "roi": "V3",
+      "global_q_1nn": 0.08561111111111111,
+      "global_q_norm": 0.002484848484848489,
+      "global_logit": -5.995055652339759,
+      "rho_equicorr": -0.04436212560204529,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 919,
+      "n_pca": 50,
+      "sigma_W_global": 2.9715191916554,
+      "kappa_mean": 0.0618236024834471,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": -64.09039922236153,
+        "r": -0.2812637279706664,
+        "p": 0.37583187347109914,
+        "R_sq": 0.07910928467195703
+      }
+    },
+    {
+      "roi": "hV4",
+      "global_q_1nn": 0.08383333333333333,
+      "global_q_norm": 0.0005454545454545459,
+      "global_logit": -7.51334547919255,
+      "rho_equicorr": -0.0671770411897725,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 304,
+      "n_pca": 50,
+      "sigma_W_global": 1.8442063288367814,
+      "kappa_mean": 0.06234927542332227,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": 97.49550024443259,
+        "r": 0.4197297366693526,
+        "p": 0.1743496967244525,
+        "R_sq": 0.17617305184452406
+      }
+    },
+    {
+      "roi": "VO",
+      "global_q_1nn": 0.07866666666666666,
+      "global_q_norm": 1e-06,
+      "global_logit": -13.815509557963773,
+      "rho_equicorr": -0.0670176759945615,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 380,
+      "n_pca": 50,
+      "sigma_W_global": 1.9449097223511222,
+      "kappa_mean": 0.058669853911992774,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": -60.740369742488895,
+        "r": -0.32080614167783245,
+        "p": 0.30929821577571637,
+        "R_sq": 0.1029165805382175
+      }
+    },
+    {
+      "roi": "PHC",
+      "global_q_1nn": 0.08644444444444445,
+      "global_q_norm": 0.003393939393939404,
+      "global_logit": -5.682364257282617,
+      "rho_equicorr": -0.06679934619928361,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 249,
+      "n_pca": 50,
+      "sigma_W_global": 1.6288346799248963,
+      "kappa_mean": 0.06520218364188839,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": 22.035667481933466,
+        "r": 0.09218340028402103,
+        "p": 0.7756932154383497,
+        "R_sq": 0.008497779287924048
+      }
+    },
+    {
+      "roi": "TO",
+      "global_q_1nn": 0.08005555555555555,
+      "global_q_norm": 1e-06,
+      "global_logit": -13.815509557963773,
+      "rho_equicorr": 0.018898736443619453,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 269,
+      "n_pca": 50,
+      "sigma_W_global": 1.8030194036147402,
+      "kappa_mean": 0.058946480877218654,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": -89.94183871293593,
+        "r": -0.34656838942795004,
+        "p": 0.26976283076313085,
+        "R_sq": 0.12010964855068323
+      }
+    },
+    {
+      "roi": "LO",
+      "global_q_1nn": 0.08022222222222222,
+      "global_q_norm": 1e-06,
+      "global_logit": -13.815509557963773,
+      "rho_equicorr": -0.06557126141108734,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 367,
+      "n_pca": 50,
+      "sigma_W_global": 2.007248778314188,
+      "kappa_mean": 0.059758780539589655,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": 68.60365622590807,
+        "r": 0.33724775498112114,
+        "p": 0.283713031148146,
+        "R_sq": 0.11373604823980632
+      }
+    },
+    {
+      "roi": "V3AB",
+      "global_q_1nn": 0.0801111111111111,
+      "global_q_norm": 1e-06,
+      "global_logit": -13.815509557963773,
+      "rho_equicorr": -0.07586471666052019,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 550,
+      "n_pca": 50,
+      "sigma_W_global": 2.3745268286871206,
+      "kappa_mean": 0.06453633803006488,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": 70.17803710309545,
+        "r": 0.40154852190353535,
+        "p": 0.1957256191928127,
+        "R_sq": 0.161241215442914
+      }
+    },
+    {
+      "roi": "IPS01",
+      "global_q_1nn": 0.08277777777777776,
+      "global_q_norm": 1e-06,
+      "global_logit": -13.815509557963773,
+      "rho_equicorr": -0.0774164090326983,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 650,
+      "n_pca": 50,
+      "sigma_W_global": 2.639748571333135,
+      "kappa_mean": 0.06431705454869141,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": 48.753162412275444,
+        "r": 0.23519934068673995,
+        "p": 0.46181111500405836,
+        "R_sq": 0.05531872985947717
+      }
+    },
+    {
+      "roi": "IPS23",
+      "global_q_1nn": 0.08666666666666667,
+      "global_q_norm": 0.0036363636363636446,
+      "global_logit": -5.613128106388068,
+      "rho_equicorr": -0.07770384859255061,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 293,
+      "n_pca": 50,
+      "sigma_W_global": 1.9020442393596142,
+      "kappa_mean": 0.05949766715915351,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": 71.78141039886343,
+        "r": 0.3635172240108277,
+        "p": 0.24543128809494894,
+        "R_sq": 0.13214477215253828
+      }
+    }
+  ],
+  "per_roi_per_class": [
+    {
+      "roi": "V1",
+      "per_class": [
+        {
+          "class_id": 0,
+          "n_images_total": 1347,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.03575673176082195,
+          "q_1nn_balanced": 0.09466666666666668,
+          "q_norm": 0.01236363636363638,
+          "logit_q_norm": -4.380554964062424
+        },
+        {
+          "class_id": 1,
+          "n_images_total": 700,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.03404804149161386,
+          "q_1nn_balanced": 0.07333333333333333,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 2,
+          "n_images_total": 99,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.0926541762605305,
+          "q_1nn_balanced": 0.07533333333333334,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 3,
+          "n_images_total": 745,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.03404804149161386,
+          "q_1nn_balanced": 0.08066666666666665,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 4,
+          "n_images_total": 195,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06949995363707379,
+          "q_1nn_balanced": 0.08666666666666667,
+          "q_norm": 0.0036363636363636446,
+          "logit_q_norm": -5.613128106388068
+        },
+        {
+          "class_id": 5,
+          "n_images_total": 157,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06949995363707379,
+          "q_1nn_balanced": 0.08333333333333331,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 6,
+          "n_images_total": 177,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07054936230157528,
+          "q_1nn_balanced": 0.08733333333333333,
+          "q_norm": 0.004363636363636367,
+          "logit_q_norm": -5.430076356060393
+        },
+        {
+          "class_id": 7,
+          "n_images_total": 230,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07838279955636504,
+          "q_1nn_balanced": 0.1,
+          "q_norm": 0.018181818181818195,
+          "logit_q_norm": -3.9889840465642736
+        },
+        {
+          "class_id": 8,
+          "n_images_total": 585,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.03575673176082195,
+          "q_1nn_balanced": 0.068,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 9,
+          "n_images_total": 75,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.0924871416591459,
+          "q_1nn_balanced": 0.074,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 10,
+          "n_images_total": 98,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07566246059011149,
+          "q_1nn_balanced": 0.08933333333333333,
+          "q_norm": 0.006545454545454551,
+          "logit_q_norm": -5.0224174627945155
+        },
+        {
+          "class_id": 11,
+          "n_images_total": 81,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.10290730976748844,
+          "q_1nn_balanced": 0.035333333333333335,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        }
+      ],
+      "global_q_1nn": 0.079,
+      "global_q_norm": 1e-06,
+      "global_logit": -13.815509557963773,
+      "rho_equicorr": -0.048372848571847295,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 1131,
+      "n_pca": 50,
+      "sigma_W_global": 3.441300546867153,
+      "kappa_mean": 0.06593772532618632,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": -1.3066762434708528,
+        "r": -0.007108338313044986,
+        "p": 0.9825080021671437,
+        "R_sq": 5.0528473572703243e-05
+      }
+    },
+    {
+      "roi": "V2",
+      "per_class": [
+        {
+          "class_id": 0,
+          "n_images_total": 1347,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.04962805237498719,
+          "q_1nn_balanced": 0.08800000000000001,
+          "q_norm": 0.005090909090909106,
+          "logit_q_norm": -5.2751949491271795
+        },
+        {
+          "class_id": 1,
+          "n_images_total": 700,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.03941972281112102,
+          "q_1nn_balanced": 0.08999999999999998,
+          "q_norm": 0.00727272727272726,
+          "logit_q_norm": -4.916324614625016
+        },
+        {
+          "class_id": 2,
+          "n_images_total": 99,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.09004143773626341,
+          "q_1nn_balanced": 0.10999999999999999,
+          "q_norm": 0.029090909090909084,
+          "logit_q_norm": -3.507807116720414
+        },
+        {
+          "class_id": 3,
+          "n_images_total": 745,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.03941972281112102,
+          "q_1nn_balanced": 0.05933333333333333,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 4,
+          "n_images_total": 195,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07184229040520283,
+          "q_1nn_balanced": 0.07466666666666666,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 5,
+          "n_images_total": 157,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07184229040520283,
+          "q_1nn_balanced": 0.11066666666666665,
+          "q_norm": 0.029818181818181806,
+          "logit_q_norm": -3.4823651597712617
+        },
+        {
+          "class_id": 6,
+          "n_images_total": 177,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.08538508048459421,
+          "q_1nn_balanced": 0.09266666666666665,
+          "q_norm": 0.010181818181818167,
+          "logit_q_norm": -4.576917673036209
+        },
+        {
+          "class_id": 7,
+          "n_images_total": 230,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06833222025562684,
+          "q_1nn_balanced": 0.084,
+          "q_norm": 0.0007272727272727381,
+          "logit_q_norm": -7.22548147278228
+        },
+        {
+          "class_id": 8,
+          "n_images_total": 585,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.04962805237498719,
+          "q_1nn_balanced": 0.07799999999999999,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 9,
+          "n_images_total": 75,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.08497375130730943,
+          "q_1nn_balanced": 0.06933333333333333,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 10,
+          "n_images_total": 98,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07591815472806915,
+          "q_1nn_balanced": 0.13599999999999998,
+          "q_norm": 0.057454545454545446,
+          "logit_q_norm": -2.7975900244451988
+        },
+        {
+          "class_id": 11,
+          "n_images_total": 81,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.09012200922782636,
+          "q_1nn_balanced": 0.06733333333333331,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        }
+      ],
+      "global_q_1nn": 0.08833333333333335,
+      "global_q_norm": 0.005454545454545475,
+      "global_logit": -5.205836513753868,
+      "rho_equicorr": -0.05730245983412931,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 849,
+      "n_pca": 50,
+      "sigma_W_global": 3.0104307685846727,
+      "kappa_mean": 0.06804606541019263,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": 25.893756981197207,
+        "r": 0.10036225184685929,
+        "p": 0.7563018832643496,
+        "R_sq": 0.010072581595772411
+      }
+    },
+    {
+      "roi": "V3",
+      "per_class": [
+        {
+          "class_id": 0,
+          "n_images_total": 1347,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.0415621585228431,
+          "q_1nn_balanced": 0.09066666666666666,
+          "q_norm": 0.007999999999999997,
+          "logit_q_norm": -4.820281565605037
+        },
+        {
+          "class_id": 1,
+          "n_images_total": 700,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.032465314687349485,
+          "q_1nn_balanced": 0.086,
+          "q_norm": 0.0029090909090909067,
+          "logit_q_norm": -5.837001318442424
+        },
+        {
+          "class_id": 2,
+          "n_images_total": 99,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.08044936660723401,
+          "q_1nn_balanced": 0.07400000000000001,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 3,
+          "n_images_total": 745,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.032465314687349485,
+          "q_1nn_balanced": 0.08333333333333331,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 4,
+          "n_images_total": 195,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06257251092910236,
+          "q_1nn_balanced": 0.06799999999999999,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 5,
+          "n_images_total": 157,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06257251092910236,
+          "q_1nn_balanced": 0.09066666666666666,
+          "q_norm": 0.007999999999999997,
+          "logit_q_norm": -4.820281565605037
+        },
+        {
+          "class_id": 6,
+          "n_images_total": 177,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07553310180443826,
+          "q_1nn_balanced": 0.12000000000000002,
+          "q_norm": 0.040000000000000036,
+          "logit_q_norm": -3.178053830347945
+        },
+        {
+          "class_id": 7,
+          "n_images_total": 230,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06659515276590963,
+          "q_1nn_balanced": 0.09533333333333331,
+          "q_norm": 0.013090909090909073,
+          "logit_q_norm": -4.322659901938706
+        },
+        {
+          "class_id": 8,
+          "n_images_total": 585,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.0415621585228431,
+          "q_1nn_balanced": 0.08800000000000001,
+          "q_norm": 0.005090909090909106,
+          "logit_q_norm": -5.2751949491271795
+        },
+        {
+          "class_id": 9,
+          "n_images_total": 75,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06872278507979052,
+          "q_1nn_balanced": 0.11599999999999999,
+          "q_norm": 0.03563636363636363,
+          "logit_q_norm": -3.2981018726351814
+        },
+        {
+          "class_id": 10,
+          "n_images_total": 98,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07483572326893484,
+          "q_1nn_balanced": 0.06999999999999999,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 11,
+          "n_images_total": 81,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.10254713199646816,
+          "q_1nn_balanced": 0.045333333333333344,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        }
+      ],
+      "global_q_1nn": 0.08561111111111111,
+      "global_q_norm": 0.002484848484848489,
+      "global_logit": -5.995055652339759,
+      "rho_equicorr": -0.04436212560204529,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 919,
+      "n_pca": 50,
+      "sigma_W_global": 2.9715191916554,
+      "kappa_mean": 0.0618236024834471,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": -64.09039922236153,
+        "r": -0.2812637279706664,
+        "p": 0.37583187347109914,
+        "R_sq": 0.07910928467195703
+      }
+    },
+    {
+      "roi": "hV4",
+      "per_class": [
+        {
+          "class_id": 0,
+          "n_images_total": 1347,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.04000950391784067,
+          "q_1nn_balanced": 0.08333333333333334,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 1,
+          "n_images_total": 700,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.03138239199481451,
+          "q_1nn_balanced": 0.07933333333333333,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 2,
+          "n_images_total": 99,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.0824294704133332,
+          "q_1nn_balanced": 0.06000000000000001,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 3,
+          "n_images_total": 745,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.03138239199481451,
+          "q_1nn_balanced": 0.08133333333333334,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 4,
+          "n_images_total": 195,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07233612300239471,
+          "q_1nn_balanced": 0.11000000000000001,
+          "q_norm": 0.02909090909090911,
+          "logit_q_norm": -3.507807116720413
+        },
+        {
+          "class_id": 5,
+          "n_images_total": 157,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07233612300239471,
+          "q_1nn_balanced": 0.072,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 6,
+          "n_images_total": 177,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.0672218840785915,
+          "q_1nn_balanced": 0.062,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 7,
+          "n_images_total": 230,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07105123957110197,
+          "q_1nn_balanced": 0.09199999999999998,
+          "q_norm": 0.009454545454545443,
+          "logit_q_norm": -4.651760129247922
+        },
+        {
+          "class_id": 8,
+          "n_images_total": 585,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.04000950391784067,
+          "q_1nn_balanced": 0.092,
+          "q_norm": 0.009454545454545459,
+          "logit_q_norm": -4.65176012924792
+        },
+        {
+          "class_id": 9,
+          "n_images_total": 75,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.08001274107046719,
+          "q_1nn_balanced": 0.09199999999999997,
+          "q_norm": 0.009454545454545427,
+          "logit_q_norm": -4.651760129247924
+        },
+        {
+          "class_id": 10,
+          "n_images_total": 98,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.0638263733510693,
+          "q_1nn_balanced": 0.06666666666666668,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 11,
+          "n_images_total": 81,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.09619355876520422,
+          "q_1nn_balanced": 0.11533333333333336,
+          "q_norm": 0.03490909090909094,
+          "logit_q_norm": -3.319475023424316
+        }
+      ],
+      "global_q_1nn": 0.08383333333333333,
+      "global_q_norm": 0.0005454545454545459,
+      "global_logit": -7.51334547919255,
+      "rho_equicorr": -0.0671770411897725,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 304,
+      "n_pca": 50,
+      "sigma_W_global": 1.8442063288367814,
+      "kappa_mean": 0.06234927542332227,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": 97.49550024443259,
+        "r": 0.4197297366693526,
+        "p": 0.1743496967244525,
+        "R_sq": 0.17617305184452406
+      }
+    },
+    {
+      "roi": "VO",
+      "per_class": [
+        {
+          "class_id": 0,
+          "n_images_total": 1347,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.03690730060520788,
+          "q_1nn_balanced": 0.08466666666666665,
+          "q_norm": 0.0014545454545454458,
+          "logit_q_norm": -6.531606225208032
+        },
+        {
+          "class_id": 1,
+          "n_images_total": 700,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.031015396982882443,
+          "q_1nn_balanced": 0.08199999999999999,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 2,
+          "n_images_total": 99,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.09496345896155639,
+          "q_1nn_balanced": 0.06733333333333333,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 3,
+          "n_images_total": 745,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.031015396982882443,
+          "q_1nn_balanced": 0.07933333333333334,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 4,
+          "n_images_total": 195,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06331036478770874,
+          "q_1nn_balanced": 0.09533333333333333,
+          "q_norm": 0.013090909090909087,
+          "logit_q_norm": -4.322659901938705
+        },
+        {
+          "class_id": 5,
+          "n_images_total": 157,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06331036478770874,
+          "q_1nn_balanced": 0.07466666666666667,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 6,
+          "n_images_total": 177,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06461832140958484,
+          "q_1nn_balanced": 0.06466666666666666,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 7,
+          "n_images_total": 230,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.059225024472583,
+          "q_1nn_balanced": 0.07999999999999999,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 8,
+          "n_images_total": 585,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.03926177750534971,
+          "q_1nn_balanced": 0.09733333333333334,
+          "q_norm": 0.015272727272727287,
+          "logit_q_norm": -4.166296015748796
+        },
+        {
+          "class_id": 9,
+          "n_images_total": 75,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06759609089150903,
+          "q_1nn_balanced": 0.07999999999999999,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 10,
+          "n_images_total": 98,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06086817987659635,
+          "q_1nn_balanced": 0.07199999999999998,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 11,
+          "n_images_total": 81,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.09194656968034376,
+          "q_1nn_balanced": 0.06666666666666668,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        }
+      ],
+      "global_q_1nn": 0.07866666666666666,
+      "global_q_norm": 1e-06,
+      "global_logit": -13.815509557963773,
+      "rho_equicorr": -0.0670176759945615,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 380,
+      "n_pca": 50,
+      "sigma_W_global": 1.9449097223511222,
+      "kappa_mean": 0.058669853911992774,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": -60.740369742488895,
+        "r": -0.32080614167783245,
+        "p": 0.30929821577571637,
+        "R_sq": 0.1029165805382175
+      }
+    },
+    {
+      "roi": "PHC",
+      "per_class": [
+        {
+          "class_id": 0,
+          "n_images_total": 1347,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.047509834431201804,
+          "q_1nn_balanced": 0.07266666666666664,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 1,
+          "n_images_total": 700,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.03892481863739419,
+          "q_1nn_balanced": 0.08,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 2,
+          "n_images_total": 99,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.09627901592555708,
+          "q_1nn_balanced": 0.07733333333333332,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 3,
+          "n_images_total": 745,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.03892481863739419,
+          "q_1nn_balanced": 0.07466666666666669,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 4,
+          "n_images_total": 195,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.04839897439104062,
+          "q_1nn_balanced": 0.10266666666666666,
+          "q_norm": 0.021090909090909084,
+          "logit_q_norm": -3.8375966802181996
+        },
+        {
+          "class_id": 5,
+          "n_images_total": 157,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06807967278177252,
+          "q_1nn_balanced": 0.08466666666666667,
+          "q_norm": 0.001454545454545461,
+          "logit_q_norm": -6.531606225208021
+        },
+        {
+          "class_id": 6,
+          "n_images_total": 177,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.08632639323666728,
+          "q_1nn_balanced": 0.07866666666666666,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 7,
+          "n_images_total": 230,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.047509834431201804,
+          "q_1nn_balanced": 0.06266666666666668,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 8,
+          "n_images_total": 585,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06606133513605543,
+          "q_1nn_balanced": 0.08733333333333332,
+          "q_norm": 0.0043636363636363525,
+          "logit_q_norm": -5.430076356060397
+        },
+        {
+          "class_id": 9,
+          "n_images_total": 75,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.08000023496144905,
+          "q_1nn_balanced": 0.12066666666666666,
+          "q_norm": 0.04072727272727272,
+          "logit_q_norm": -3.1592774619821653
+        },
+        {
+          "class_id": 10,
+          "n_images_total": 98,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07311713155333786,
+          "q_1nn_balanced": 0.12266666666666666,
+          "q_norm": 0.04290909090909091,
+          "logit_q_norm": -3.104814667979543
+        },
+        {
+          "class_id": 11,
+          "n_images_total": 81,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.09129413957958885,
+          "q_1nn_balanced": 0.07333333333333332,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        }
+      ],
+      "global_q_1nn": 0.08644444444444445,
+      "global_q_norm": 0.003393939393939404,
+      "global_logit": -5.682364257282617,
+      "rho_equicorr": -0.06679934619928361,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 249,
+      "n_pca": 50,
+      "sigma_W_global": 1.6288346799248963,
+      "kappa_mean": 0.06520218364188839,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": 22.035667481933466,
+        "r": 0.09218340028402103,
+        "p": 0.7756932154383497,
+        "R_sq": 0.008497779287924048
+      }
+    },
+    {
+      "roi": "TO",
+      "per_class": [
+        {
+          "class_id": 0,
+          "n_images_total": 1347,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.042950117951287343,
+          "q_1nn_balanced": 0.07466666666666665,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 1,
+          "n_images_total": 700,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.04213905169038057,
+          "q_1nn_balanced": 0.092,
+          "q_norm": 0.009454545454545459,
+          "logit_q_norm": -4.65176012924792
+        },
+        {
+          "class_id": 2,
+          "n_images_total": 99,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.08767623911161683,
+          "q_1nn_balanced": 0.08199999999999999,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 3,
+          "n_images_total": 745,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.04213905169038057,
+          "q_1nn_balanced": 0.088,
+          "q_norm": 0.00509090909090909,
+          "logit_q_norm": -5.275194949127183
+        },
+        {
+          "class_id": 4,
+          "n_images_total": 195,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.04355441591642579,
+          "q_1nn_balanced": 0.05866666666666666,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 5,
+          "n_images_total": 157,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.0490362820771447,
+          "q_1nn_balanced": 0.09133333333333334,
+          "q_norm": 0.008727272727272735,
+          "logit_q_norm": -4.732536781908531
+        },
+        {
+          "class_id": 6,
+          "n_images_total": 177,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06254499901150491,
+          "q_1nn_balanced": 0.07533333333333334,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 7,
+          "n_images_total": 230,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.0625709827418124,
+          "q_1nn_balanced": 0.06199999999999998,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 8,
+          "n_images_total": 585,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.042950117951287343,
+          "q_1nn_balanced": 0.088,
+          "q_norm": 0.00509090909090909,
+          "logit_q_norm": -5.275194949127183
+        },
+        {
+          "class_id": 9,
+          "n_images_total": 75,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06697404013114067,
+          "q_1nn_balanced": 0.09666666666666665,
+          "q_norm": 0.014545454545454533,
+          "logit_q_norm": -4.215824459759811
+        },
+        {
+          "class_id": 10,
+          "n_images_total": 98,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07103843479846308,
+          "q_1nn_balanced": 0.096,
+          "q_norm": 0.013818181818181827,
+          "logit_q_norm": -4.2678554893339
+        },
+        {
+          "class_id": 11,
+          "n_images_total": 81,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.09378403745517974,
+          "q_1nn_balanced": 0.055999999999999994,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        }
+      ],
+      "global_q_1nn": 0.08005555555555555,
+      "global_q_norm": 1e-06,
+      "global_logit": -13.815509557963773,
+      "rho_equicorr": 0.018898736443619453,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 269,
+      "n_pca": 50,
+      "sigma_W_global": 1.8030194036147402,
+      "kappa_mean": 0.058946480877218654,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": -89.94183871293593,
+        "r": -0.34656838942795004,
+        "p": 0.26976283076313085,
+        "R_sq": 0.12010964855068323
+      }
+    },
+    {
+      "roi": "LO",
+      "per_class": [
+        {
+          "class_id": 0,
+          "n_images_total": 1347,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.02982626969802813,
+          "q_1nn_balanced": 0.06733333333333333,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 1,
+          "n_images_total": 700,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.02982626969802813,
+          "q_1nn_balanced": 0.07733333333333334,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 2,
+          "n_images_total": 99,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.08105865313529956,
+          "q_1nn_balanced": 0.10733333333333335,
+          "q_norm": 0.026181818181818205,
+          "logit_q_norm": -3.616159407235062
+        },
+        {
+          "class_id": 3,
+          "n_images_total": 745,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.0413411613999111,
+          "q_1nn_balanced": 0.072,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 4,
+          "n_images_total": 195,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06948684071235514,
+          "q_1nn_balanced": 0.06933333333333333,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 5,
+          "n_images_total": 157,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07647829625380283,
+          "q_1nn_balanced": 0.08466666666666667,
+          "q_norm": 0.001454545454545461,
+          "logit_q_norm": -6.531606225208021
+        },
+        {
+          "class_id": 6,
+          "n_images_total": 177,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.05785792007498011,
+          "q_1nn_balanced": 0.07800000000000001,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 7,
+          "n_images_total": 230,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.05645915324130004,
+          "q_1nn_balanced": 0.09466666666666666,
+          "q_norm": 0.012363636363636365,
+          "logit_q_norm": -4.3805549640624255
+        },
+        {
+          "class_id": 8,
+          "n_images_total": 585,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.03883987399554025,
+          "q_1nn_balanced": 0.08066666666666666,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 9,
+          "n_images_total": 75,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07981658166617431,
+          "q_1nn_balanced": 0.08266666666666665,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 10,
+          "n_images_total": 98,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07963605034585339,
+          "q_1nn_balanced": 0.08,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 11,
+          "n_images_total": 81,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07647829625380283,
+          "q_1nn_balanced": 0.06866666666666667,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        }
+      ],
+      "global_q_1nn": 0.08022222222222222,
+      "global_q_norm": 1e-06,
+      "global_logit": -13.815509557963773,
+      "rho_equicorr": -0.06557126141108734,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 367,
+      "n_pca": 50,
+      "sigma_W_global": 2.007248778314188,
+      "kappa_mean": 0.059758780539589655,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": 68.60365622590807,
+        "r": 0.33724775498112114,
+        "p": 0.283713031148146,
+        "R_sq": 0.11373604823980632
+      }
+    },
+    {
+      "roi": "V3AB",
+      "per_class": [
+        {
+          "class_id": 0,
+          "n_images_total": 1347,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.036388421452169806,
+          "q_1nn_balanced": 0.07266666666666667,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 1,
+          "n_images_total": 700,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.03250804502067304,
+          "q_1nn_balanced": 0.05733333333333333,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 2,
+          "n_images_total": 99,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.1189993285976595,
+          "q_1nn_balanced": 0.08733333333333333,
+          "q_norm": 0.004363636363636367,
+          "logit_q_norm": -5.430076356060393
+        },
+        {
+          "class_id": 3,
+          "n_images_total": 745,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.03250804502067304,
+          "q_1nn_balanced": 0.06733333333333333,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 4,
+          "n_images_total": 195,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06337498001375065,
+          "q_1nn_balanced": 0.088,
+          "q_norm": 0.00509090909090909,
+          "logit_q_norm": -5.275194949127183
+        },
+        {
+          "class_id": 5,
+          "n_images_total": 157,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06337498001375065,
+          "q_1nn_balanced": 0.07733333333333334,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 6,
+          "n_images_total": 177,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07276800750358241,
+          "q_1nn_balanced": 0.07333333333333333,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 7,
+          "n_images_total": 230,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06812868433093203,
+          "q_1nn_balanced": 0.10266666666666666,
+          "q_norm": 0.021090909090909084,
+          "logit_q_norm": -3.8375966802181996
+        },
+        {
+          "class_id": 8,
+          "n_images_total": 585,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.0422618005140429,
+          "q_1nn_balanced": 0.09200000000000001,
+          "q_norm": 0.009454545454545474,
+          "logit_q_norm": -4.6517601292479185
+        },
+        {
+          "class_id": 9,
+          "n_images_total": 75,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07811801673544938,
+          "q_1nn_balanced": 0.08333333333333334,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 10,
+          "n_images_total": 98,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07078796610096354,
+          "q_1nn_balanced": 0.07333333333333333,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 11,
+          "n_images_total": 81,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.09521778105713156,
+          "q_1nn_balanced": 0.08666666666666667,
+          "q_norm": 0.0036363636363636446,
+          "logit_q_norm": -5.613128106388068
+        }
+      ],
+      "global_q_1nn": 0.0801111111111111,
+      "global_q_norm": 1e-06,
+      "global_logit": -13.815509557963773,
+      "rho_equicorr": -0.07586471666052019,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 550,
+      "n_pca": 50,
+      "sigma_W_global": 2.3745268286871206,
+      "kappa_mean": 0.06453633803006488,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": 70.17803710309545,
+        "r": 0.40154852190353535,
+        "p": 0.1957256191928127,
+        "R_sq": 0.161241215442914
+      }
+    },
+    {
+      "roi": "IPS01",
+      "per_class": [
+        {
+          "class_id": 0,
+          "n_images_total": 1347,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.03834746376805892,
+          "q_1nn_balanced": 0.06866666666666665,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 1,
+          "n_images_total": 700,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.03821684204266957,
+          "q_1nn_balanced": 0.06466666666666665,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 2,
+          "n_images_total": 99,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.12234982961861994,
+          "q_1nn_balanced": 0.07866666666666668,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 3,
+          "n_images_total": 745,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.03821684204266957,
+          "q_1nn_balanced": 0.06799999999999999,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 4,
+          "n_images_total": 195,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.05885629762408889,
+          "q_1nn_balanced": 0.10333333333333336,
+          "q_norm": 0.021818181818181855,
+          "logit_q_norm": -3.8029519103737823
+        },
+        {
+          "class_id": 5,
+          "n_images_total": 157,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06499609071342312,
+          "q_1nn_balanced": 0.07399999999999998,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 6,
+          "n_images_total": 177,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06879674314026159,
+          "q_1nn_balanced": 0.07399999999999998,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 7,
+          "n_images_total": 230,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.061360011858929524,
+          "q_1nn_balanced": 0.094,
+          "q_norm": 0.011636363636363643,
+          "logit_q_norm": -4.441915691911362
+        },
+        {
+          "class_id": 8,
+          "n_images_total": 585,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.04582033309008149,
+          "q_1nn_balanced": 0.08133333333333334,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 9,
+          "n_images_total": 75,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.06905754066356039,
+          "q_1nn_balanced": 0.029999999999999992,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 10,
+          "n_images_total": 98,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07713019235880783,
+          "q_1nn_balanced": 0.12733333333333333,
+          "q_norm": 0.048,
+          "logit_q_norm": -2.987364023883474
+        },
+        {
+          "class_id": 11,
+          "n_images_total": 81,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.08865646766312608,
+          "q_1nn_balanced": 0.1293333333333333,
+          "q_norm": 0.050181818181818154,
+          "logit_q_norm": -2.9406178052391176
+        }
+      ],
+      "global_q_1nn": 0.08277777777777776,
+      "global_q_norm": 1e-06,
+      "global_logit": -13.815509557963773,
+      "rho_equicorr": -0.0774164090326983,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 650,
+      "n_pca": 50,
+      "sigma_W_global": 2.639748571333135,
+      "kappa_mean": 0.06431705454869141,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": 48.753162412275444,
+        "r": 0.23519934068673995,
+        "p": 0.46181111500405836,
+        "R_sq": 0.05531872985947717
+      }
+    },
+    {
+      "roi": "IPS23",
+      "per_class": [
+        {
+          "class_id": 0,
+          "n_images_total": 1347,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.032984547857842175,
+          "q_1nn_balanced": 0.06799999999999999,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 1,
+          "n_images_total": 700,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.032984547857842175,
+          "q_1nn_balanced": 0.08266666666666665,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 2,
+          "n_images_total": 99,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.11394651529023347,
+          "q_1nn_balanced": 0.11733333333333332,
+          "q_norm": 0.03709090909090908,
+          "logit_q_norm": -3.256587103772628
+        },
+        {
+          "class_id": 3,
+          "n_images_total": 745,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.04405831451686916,
+          "q_1nn_balanced": 0.076,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 4,
+          "n_images_total": 195,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.049085317153606596,
+          "q_1nn_balanced": 0.09,
+          "q_norm": 0.0072727272727272745,
+          "logit_q_norm": -4.916324614625014
+        },
+        {
+          "class_id": 5,
+          "n_images_total": 157,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.05730684376945383,
+          "q_1nn_balanced": 0.09133333333333334,
+          "q_norm": 0.008727272727272735,
+          "logit_q_norm": -4.732536781908531
+        },
+        {
+          "class_id": 6,
+          "n_images_total": 177,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.07477563682237587,
+          "q_1nn_balanced": 0.06533333333333333,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 7,
+          "n_images_total": 230,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.043797852070320796,
+          "q_1nn_balanced": 0.06999999999999998,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        },
+        {
+          "class_id": 8,
+          "n_images_total": 585,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.033835161943696505,
+          "q_1nn_balanced": 0.08866666666666667,
+          "q_norm": 0.005818181818181828,
+          "logit_q_norm": -5.140932295044112
+        },
+        {
+          "class_id": 9,
+          "n_images_total": 75,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.05805005329966509,
+          "q_1nn_balanced": 0.10933333333333332,
+          "q_norm": 0.028363636363636358,
+          "logit_q_norm": -3.533873707966945
+        },
+        {
+          "class_id": 10,
+          "n_images_total": 98,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.08778403268294023,
+          "q_1nn_balanced": 0.12066666666666667,
+          "q_norm": 0.04072727272727274,
+          "logit_q_norm": -3.1592774619821653
+        },
+        {
+          "class_id": 11,
+          "n_images_total": 81,
+          "n_images_balanced": 75,
+          "kappa_nearest": 0.08536318264499623,
+          "q_1nn_balanced": 0.06066666666666667,
+          "q_norm": 1e-06,
+          "logit_q_norm": -13.815509557963773
+        }
+      ],
+      "global_q_1nn": 0.08666666666666667,
+      "global_q_norm": 0.0036363636363636446,
+      "global_logit": -5.613128106388068,
+      "rho_equicorr": -0.07770384859255061,
+      "K": 12,
+      "n_images": 4489,
+      "n_voxels": 293,
+      "n_pca": 50,
+      "sigma_W_global": 1.9020442393596142,
+      "kappa_mean": 0.05949766715915351,
+      "cat_names": [
+        "person",
+        "animal",
+        "electronic",
+        "vehicle",
+        "indoor",
+        "appliance",
+        "outdoor",
+        "food",
+        "furniture",
+        "kitchen",
+        "accessory",
+        "sports"
+      ],
+      "within_roi_fit": {
+        "alpha": 71.78141039886343,
+        "r": 0.3635172240108277,
+        "p": 0.24543128809494894,
+        "R_sq": 0.13214477215253828
+      }
+    }
+  ],
+  "pooled_fit": {
+    "alpha": 25.38524839851721,
+    "alpha_se": 18.76030088090071,
+    "C": -11.455996965413593,
+    "r": 0.1178508937036377,
+    "R_sq": 0.013888833146746113,
+    "p_value": 0.17836043079488473,
+    "spearman_rho": 0.16647063640880916,
+    "spearman_p": 0.05642420678964131,
+    "n_points": 132,
+    "pass_r": "False",
+    "pass_direction": "True"
+  },
+  "roi_level_fit": {
+    "alpha": 327.71435262748867,
+    "r": 0.2533457741244676,
+    "p": 0.45224844716067614,
+    "R_sq": 0.06418408126672577,
+    "rho_equicorr_mean": -0.05715354514953423,
+    "rho_equicorr_cv": 45.89764048058826
+  },
+  "elapsed_seconds": 268.2087571620941
+}
