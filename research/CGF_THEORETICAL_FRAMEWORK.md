@@ -1563,6 +1563,46 @@ Ref: McFadden (1973) "Conditional logit analysis of qualitative choice
 behavior" in Frontiers in Econometrics; McFadden (2000) Nobel Lecture;
 Train (2009) "Discrete Choice Methods with Simulation" Ch. 3.
 
+#### 3.21.1b Heteroscedastic Extreme Value (HEV) Extension (Session 94)
+
+**Theoretical connection:** McFadden's logit (= CTI's Gumbel race) assumes
+IID competitors — all K-1 competing classes have the same noise scale mu.
+The Heteroscedastic Extreme Value model (Bhat 1995; Zeng 2000) relaxes
+this to non-identical scale parameters mu_j for each competitor:
+
+    P(class l | non-IID) = integral_0^inf prod_{j!=l} exp(-exp(-(V_l - V_j - mu_l*ln(t))/mu_j)) * exp(-t) dt
+
+There is NO closed-form solution (requires Gauss-Laguerre quadrature).
+
+**Connection to CTI:** When the off-diagonal whitened cosine similarities
+between centroid-difference vectors are non-uniform (rho_var > 0), the
+Gumbel competitors in the CTI race have non-identical scale parameters.
+The HEV model predicts that rho_var should modify alpha.
+
+**Empirical test (Sections 3.12-3.13):**
+- rho_var does weakly predict alpha at n=10 (skew: r=-0.76, p=0.011)
+- BUT: alpha noise analysis (Session 92) shows observed alpha CV (2.28%)
+  is LESS THAN expected LOAO estimation noise (2.84%), ratio=0.80
+- Therefore: ALL per-model alpha variation is consistent with estimation
+  noise. There is no real per-model signal to predict.
+
+**Verdict: The IID approximation holds empirically.**
+The HEV theory predicts that if rho_var were large enough relative to the
+Gumbel scale, it would modify alpha. The fact that it does not means either:
+(a) rho_var is small relative to Gumbel scale (the IID approximation
+    is valid at the precision achievable with n=192 LOAO points), or
+(b) training dynamics naturally equalize competition strengths
+
+This is a POSITIVE result for CTI: the simplest version of the theory
+(IID competitors, single alpha) is empirically adequate. The HEV extension
+exists as a well-understood refinement for settings with grossly non-uniform
+class structure, but current evidence does not require it.
+
+Ref: Bhat (1995) "A heteroscedastic extreme value model of intercity
+travel mode choice" Transportation Research B; Zeng (2000) "A
+heteroscedastic generalized extreme value model" Social Methods & Research;
+Train (2009) Ch. 4 "Logit models relaxing the IID hypothesis."
+
 #### 3.21.2 Information-Theoretic Canonicality (Johnson 2024)
 
 **Theorem (Johnson 2024):** The Gumbel distribution is the maximum-entropy

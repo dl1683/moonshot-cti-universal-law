@@ -76,4 +76,5 @@ Every claim in the paper abstract and main text mapped to supporting result file
 - [x] H8+ holdout all 6 criteria verified against `cti_utility_revised.json`
 - [x] Alpha-rho numbers verified against `cti_alpha_rho_multidataset.json`
 - [x] H3 ranking rho/p verified against `cti_downstream_h3_n9.json`
-- [x] Paper PDF compiles clean (28 pages)
+- [x] arXiv PDF compiles clean (31 pages)
+- [x] COLM PDF compiles clean (12 pages, ~8 pages main text)
