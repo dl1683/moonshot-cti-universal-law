@@ -71,6 +71,7 @@ The key conceptual point: Eq.~\ref{eq:cti-law}'s structure is derived from first
 \item \textbf{Biological validation}: 30/32 Allen Neuropixels mouse V1 sessions PASS; multi-area batch confirms $r>0.70$ across 5 cortical areas; equicorrelation $\rho\approx0.46$ is substrate-independent (CV$=1.65\%$).
 \item \textbf{Generation law}: $\kappa$ from $W_U$ (zero forward passes) predicts $\log\mathrm{CE}$ across 22 models ($r=-0.55$; $r=-0.70$ excluding one outlier; fixed-$V$: $r=-0.84$, architecture-independent). Vocabulary size drops out ($K_\mathrm{eff}\approx 2$--$3$).
 \end{enumerate}
+The law enables zero-cost diagnostics: $\kappa_\mathrm{nearest}$ from frozen embeddings ranks architectures by retrieval quality ($\rho=0.833$, $p=0.005$; pre-registered) and selects optimal representation layers without downstream labels. Four probe measurements reduce MAE by 86\%.
 
 \section{Related Work}
 
@@ -321,7 +322,9 @@ Encoder LOAO CV$_\alpha=0.42$ (FAIL): encoder $\alpha$ is not family-invariant.
 $C_d$ encodes dataset-specific difficulty requiring calibration. 4 probe measurements reduce MAE by 86\%.
 
 \paragraph{Connection to physics.}
-The Gumbel race is the same mechanism underlying EVT in physics. Within NLP decoders, $\alpha$ is stable across architectures; whether it plays a role analogous to a universal constant across all modalities remains open given the signal-type-dependent values ($\alpha_\mathrm{NLP}\approx1.48$, $\alpha_\mathrm{ViT}\approx4.5$, $\alpha_\mathrm{CNN}\approx4.0$, $\alpha_\mathrm{audio}\approx4.7$). The audio-vision convergence ($\alpha_\mathrm{audio}\approx\alpha_\mathrm{CNN}\approx\alpha_\mathrm{ViT}$) hints at a deeper structure: all continuous-signal modalities share $\alpha\approx3.3$--$5.0$, distinct from discrete-token NLP ($\alpha\approx1.5$).
+The Gumbel race is the same mechanism underlying EVT in physics.
+Synthetic validation with equicorrelated Gaussian data ($K\in\{4,10,20\}$, $d=50$, $\rho\in[0,0.8]$) confirms the logit-linear form (mean $R^2=0.982$), establishing it as a structural prediction, not a curve-fitting artifact. Importantly, $\alpha$ does not depend on $\rho$ under isotropic noise; the $\alpha(\rho)$ relationship in real networks requires structured $\Sigma_W$.
+The two-regime alpha structure ($\alpha\approx1.5$ for discrete tokens vs.\ $\alpha\approx3.3$--$5.0$ for continuous signals) is not explained by $\rho$ (identical at $0.46$), but by modality-specific within-class covariance structure: continuous-signal representations produce higher effective-rank $\Sigma_W$, amplifying the Gumbel race slope.
 
 \section{Limitations}
 \label{sec:limitations}

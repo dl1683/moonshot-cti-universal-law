@@ -85,6 +85,14 @@ The key conceptual point: Eq.~\ref{eq:cti-law}'s structure is derived from first
 \item \textbf{Generation law}: The same Gumbel-race mechanism extends to next-token prediction: $\kappa$ from the unembedding matrix $W_U$ (zero forward passes) predicts $\log\mathrm{CE}$ across 22 models spanning Transformers, SSMs, Hybrids, and novel architectures ($r=-0.55$, $p=0.008$; $r=-0.70$ excluding one novel-architecture outlier). Within a fixed-$V$ group (Pythia + Mamba, $n=10$), $r=-0.84$ with no significant architecture interaction ($F$-test $p=0.147$): Transformers and SSMs lie on the same regression line. The vocabulary-size term vanishes ($\beta_\mathrm{gen}\approx 0$) because softmax competition spontaneously reduces $V$-way to $K_\mathrm{eff}\approx 2$--$3$-way.
 \end{enumerate}
 
+\paragraph{Practical implications.}
+The law enables several zero-cost or low-cost diagnostics.
+\textbf{Architecture ranking}: computing $\kappa_\mathrm{nearest}$ from frozen embeddings (no downstream labels, no probing) correctly ranks 9 architectures by retrieval quality ($\rho=0.833$, $p=0.005$; pre-registered).
+\textbf{Layer selection}: within a model, $\kappa_\mathrm{nearest}$ selects the optimal representation layer for retrieval without any downstream evaluation (mean $\rho=0.640$, 10/10 positive across held-out models and datasets).
+\textbf{Generation diagnostics}: $\kappa$ from the unembedding matrix $W_U$ alone (zero forward passes) predicts perplexity ordering across architectures, enabling model comparison before any text generation.
+\textbf{Calibrated prediction}: 4 probe measurements per new architecture reduce absolute prediction error by 86\%.
+These applications follow directly from the law's structure --- they are not additional hypotheses but consequences of the geometric mechanism.
+
 \section{Related Work}
 
 \paragraph{Neural scaling laws and universality.}
@@ -701,8 +709,16 @@ The sub-unity exponent arises because real classification datasets have hierarch
 structure: only $N_\mathrm{eff}\propto\sqrt{K}$ semantically relevant competitors are active,
 not all $K-1$.
 
-\paragraph{Connection to physics.}
-The Gumbel race mechanism is the same as the mechanism underlying extreme-value statistics in physics (e.g., maxima of random fields). Within the NLP decoder family, $\alpha$ is stable across architectures; whether it plays a role analogous to a universal constant or correlation length across all modalities remains to be shown given the signal-type-dependent values ($\alpha_\mathrm{NLP}\approx1.48$, $\alpha_\mathrm{ViT}\approx4.5$, $\alpha_\mathrm{CNN}\approx4.0$, $\alpha_\mathrm{audio}\approx4.7$). The audio-vision-ViT convergence ($\alpha_\mathrm{audio}\approx\alpha_\mathrm{CNN}\approx\alpha_\mathrm{ViT}\approx4$--$5$) hints at a deeper structure: all continuous-signal modalities share $\alpha\approx3.3$--$5.0$, distinct from discrete-token NLP ($\alpha\approx1.5$).
+\paragraph{Connection to physics and synthetic validation.}
+The Gumbel race mechanism is the same as the mechanism underlying extreme-value statistics in physics (e.g., maxima of random fields).
+A controlled synthetic validation confirms the derivation: generating equicorrelated Gaussian class-conditional data ($K\in\{4,10,20\}$, $d=50$, $\rho\in[0,0.8]$, 12 signal strengths), the logit-linear form achieves mean $R^2=0.982$ (min $0.967$) across all $\rho$ values (\texttt{results/cti\_synthetic\_gumbel\_validation.json}). This confirms the functional form is a genuine structural prediction of the Gumbel race, not a curve-fitting artifact. Interestingly, in the isotropic Gaussian setting $\alpha$ does not depend on $\rho$: the $\alpha(\rho)=\sqrt{4/\pi}/\sqrt{1-\rho}$ relationship requires anisotropic within-class noise (structured $\Sigma_W$), which is absent in idealized data but present in real neural networks. This clarifies that $\alpha$ universality in trained networks is a non-trivial empirical regularity arising from the structured geometry of learned representations, not a trivial consequence of Gaussian statistics.
+
+\paragraph{Why $\alpha$ differs by signal type.}
+Within the NLP decoder family, $\alpha$ is stable across architectures; across modalities, $\alpha$ varies by signal type ($\alpha_\mathrm{NLP}\approx1.48$, $\alpha_\mathrm{ViT}\approx4.5$, $\alpha_\mathrm{CNN}\approx4.0$, $\alpha_\mathrm{audio}\approx4.7$). The audio-vision-ViT convergence ($\alpha\approx3.3$--$5.0$ for all continuous-signal modalities, vs.\ $\alpha\approx1.5$ for discrete-token NLP) suggests a two-regime structure.
+Both regimes share the same equicorrelation ($\rho\approx0.46$, CV$=1.0\%$), so $\rho$ does not explain the difference.
+The leading hypothesis is that continuous-signal representations (images, spectrograms) produce within-class covariance $\Sigma_W$ with higher effective rank than discrete-token representations, amplifying the Gumbel race slope through a modality-specific renormalization factor.
+This is consistent with the synthetic validation: in isotropic noise ($\Sigma_W\propto I$), $\alpha$ is constant regardless of $\rho$; the cross-modality $\alpha$ variation must therefore originate in the \emph{structure} of $\Sigma_W$, not in the competition geometry $\rho$.
+Bidirectionality adds a further factor: encoders with mean-pooled representations yield $\alpha_\mathrm{encoder}\approx7.7$, consistent with bidirectional attention creating denser representations than autoregressive decoders.
 
 \paragraph{Cross-species biological validation.}
 Three independently collected multi-electrode datasets test the law \emph{form} in biological neural systems (pre-registration \texttt{bddec1d}).
