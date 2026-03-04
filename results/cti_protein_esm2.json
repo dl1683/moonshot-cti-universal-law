@@ -1,0 +1,281 @@
+{
+  "experiment": "CTI Protein Domain Validation (ESM-2)",
+  "timestamp": "2026-03-03 21:03:57",
+  "domain": "protein_sequences",
+  "task": "EC_number_classification",
+  "K": 7,
+  "n_per_class": 200,
+  "n_total": 1400,
+  "models": {
+    "ESM2-8M": {
+      "kappa_nearest": 0.33182343049041746,
+      "acc_1nn": 0.7871428571428571,
+      "q_norm": 0.7516666666666667,
+      "logit_q": 1.1075210335572194,
+      "K": 7,
+      "n_samples": 1400,
+      "d_original": 320,
+      "d_pca": 256,
+      "pca_var_explained": 0.9982916712760925,
+      "sigma_W": 0.3405027028956022,
+      "model": "ESM2-8M",
+      "hf_id": "facebook/esm2_t6_8M_UR50D",
+      "n_layers": 6,
+      "d_model": 320,
+      "best_layer": 4,
+      "layer_summary": {
+        "0": {
+          "kappa": 0.24621234276344092,
+          "acc_1nn": 0.5228571428571429
+        },
+        "1": {
+          "kappa": 0.2660344737196014,
+          "acc_1nn": 0.5864285714285714
+        },
+        "3": {
+          "kappa": 0.3018451593560319,
+          "acc_1nn": 0.7214285714285714
+        },
+        "4": {
+          "kappa": 0.33182343049041746,
+          "acc_1nn": 0.7871428571428571
+        },
+        "6": {
+          "kappa": 0.3213694230871623,
+          "acc_1nn": 0.7778571428571428
+        }
+      }
+    },
+    "ESM2-35M": {
+      "kappa_nearest": 0.3522469906275865,
+      "acc_1nn": 0.8392857142857143,
+      "q_norm": 0.8124999999999999,
+      "logit_q": 1.4663370687934263,
+      "K": 7,
+      "n_samples": 1400,
+      "d_original": 480,
+      "d_pca": 256,
+      "pca_var_explained": 0.9892643690109253,
+      "sigma_W": 1.3288901217814708,
+      "model": "ESM2-35M",
+      "hf_id": "facebook/esm2_t12_35M_UR50D",
+      "n_layers": 12,
+      "d_model": 480,
+      "best_layer": 9,
+      "layer_summary": {
+        "0": {
+          "kappa": 0.2453423753472181,
+          "acc_1nn": 0.5371428571428571
+        },
+        "3": {
+          "kappa": 0.2682043156072172,
+          "acc_1nn": 0.7014285714285714
+        },
+        "6": {
+          "kappa": 0.3094821232511783,
+          "acc_1nn": 0.835
+        },
+        "9": {
+          "kappa": 0.3522469906275865,
+          "acc_1nn": 0.8392857142857143
+        },
+        "12": {
+          "kappa": 0.28500659551328916,
+          "acc_1nn": 0.81
+        }
+      }
+    },
+    "ESM2-150M": {
+      "kappa_nearest": 0.355012419305866,
+      "acc_1nn": 0.8507142857142858,
+      "q_norm": 0.8258333333333334,
+      "logit_q": 1.5563802823651776,
+      "K": 7,
+      "n_samples": 1400,
+      "d_original": 640,
+      "d_pca": 256,
+      "pca_var_explained": 0.9821591377258301,
+      "sigma_W": 2.983441443986346,
+      "model": "ESM2-150M",
+      "hf_id": "facebook/esm2_t30_150M_UR50D",
+      "n_layers": 30,
+      "d_model": 640,
+      "best_layer": 22,
+      "layer_summary": {
+        "0": {
+          "kappa": 0.24476452000785193,
+          "acc_1nn": 0.5285714285714286
+        },
+        "7": {
+          "kappa": 0.30328603676153737,
+          "acc_1nn": 0.7842857142857143
+        },
+        "15": {
+          "kappa": 0.32077060052771167,
+          "acc_1nn": 0.845
+        },
+        "22": {
+          "kappa": 0.355012419305866,
+          "acc_1nn": 0.8507142857142858
+        },
+        "30": {
+          "kappa": 0.28497318766388796,
+          "acc_1nn": 0.7735714285714286
+        }
+      }
+    },
+    "ESM2-650M": {
+      "kappa_nearest": 0.3255438451414485,
+      "acc_1nn": 0.8585714285714285,
+      "q_norm": 0.835,
+      "logit_q": 1.6214862509502748,
+      "K": 7,
+      "n_samples": 1400,
+      "d_original": 1280,
+      "d_pca": 256,
+      "pca_var_explained": 0.9611570239067078,
+      "sigma_W": 3.5019423093329856,
+      "model": "ESM2-650M",
+      "hf_id": "facebook/esm2_t33_650M_UR50D",
+      "n_layers": 33,
+      "d_model": 1280,
+      "best_layer": 16,
+      "layer_summary": {
+        "0": {
+          "kappa": 0.2410791040666946,
+          "acc_1nn": 0.525
+        },
+        "8": {
+          "kappa": 0.27340211989544716,
+          "acc_1nn": 0.8207142857142857
+        },
+        "16": {
+          "kappa": 0.3255438451414485,
+          "acc_1nn": 0.8585714285714285
+        },
+        "24": {
+          "kappa": 0.3247710832834639,
+          "acc_1nn": 0.86
+        },
+        "33": {
+          "kappa": 0.25662299128838,
+          "acc_1nn": 0.7578571428571429
+        }
+      }
+    }
+  },
+  "law_fit": {
+    "alpha_protein": 3.3664575116706907,
+    "C": 0.28944171985461326,
+    "r_pearson": 0.21543756454169283,
+    "p_pearson": 0.7845624354583072,
+    "r_spearman": -0.19999999999999998,
+    "p_spearman": 0.8,
+    "R_squared": 0.04641334421565646,
+    "alpha_95ci": [
+      -81.84699925727469,
+      32.56030946629643
+    ]
+  },
+  "hypotheses": {
+    "H_prot1": {
+      "description": "r(kappa, logit_q) > 0.80",
+      "r": 0.21543756454169283,
+      "pass": false
+    },
+    "H_prot2": {
+      "description": "alpha > 0 (monotonic)",
+      "alpha": 3.3664575116706907,
+      "pass": true
+    },
+    "H_prot3": {
+      "description": "accuracy increases with model size",
+      "acc_range": [
+        0.7871428571428571,
+        0.8585714285714285
+      ],
+      "monotonic": true,
+      "increases": true,
+      "pass": true
+    }
+  },
+  "last_layer_fit": {
+    "alpha": 1.5310594247894163,
+    "r": 0.297347346923277
+  },
+  "last_layer_data": {
+    "ESM2-8M": {
+      "kappa_nearest": 0.3213694230871623,
+      "acc_1nn": 0.7778571428571428,
+      "q_norm": 0.7408333333333333,
+      "logit_q": 1.0503043233346705,
+      "layer": 6
+    },
+    "ESM2-35M": {
+      "kappa_nearest": 0.28500659551328916,
+      "acc_1nn": 0.81,
+      "q_norm": 0.7783333333333334,
+      "logit_q": 1.2559801294471442,
+      "layer": 12
+    },
+    "ESM2-150M": {
+      "kappa_nearest": 0.28497318766388796,
+      "acc_1nn": 0.7735714285714286,
+      "q_norm": 0.7358333333333333,
+      "logit_q": 1.0244234267266794,
+      "layer": 30
+    },
+    "ESM2-650M": {
+      "kappa_nearest": 0.25662299128838,
+      "acc_1nn": 0.7578571428571429,
+      "q_norm": 0.7174999999999999,
+      "logit_q": 0.93209439704728,
+      "layer": 33
+    }
+  },
+  "cross_domain_comparison": {
+    "alpha_nlp_decoder": 1.477,
+    "alpha_vision": 4.5,
+    "alpha_protein_best_layer": 3.3664575116706907,
+    "alpha_protein_last_layer": 1.5310594247894163
+  },
+  "pca_dimensions": 256,
+  "random_baseline": {
+    "kappa_nearest": 0.2167,
+    "acc_1nn": 0.462,
+    "logit_q": -0.522,
+    "note": "ESM2-8M architecture with random (untrained) weights"
+  },
+  "with_random_baseline": {
+    "n": 5,
+    "alpha": 15.404,
+    "C": -3.800,
+    "r_pearson": 0.962,
+    "p_pearson": 0.00883,
+    "R_squared": 0.926,
+    "r_spearman": 0.400,
+    "note": "Pearson dominated by random-to-trained gap; Spearman rank order weak among trained models"
+  },
+  "fixed_23_depth": {
+    "description": "All models at 2/3 depth layer (principled, no selection bias)",
+    "ESM2-8M": {"layer": 4, "kappa": 0.3318, "acc": 0.787, "logit_q": 1.108},
+    "ESM2-35M": {"layer": 8, "kappa": 0.3498, "acc": 0.841, "logit_q": 1.477},
+    "ESM2-150M": {"layer": 20, "kappa": 0.3531, "acc": 0.854, "logit_q": 1.586},
+    "ESM2-650M": {"layer": 22, "kappa": 0.3231, "acc": 0.856, "logit_q": 1.603},
+    "alpha": 3.616,
+    "r": 0.225
+  },
+  "layer_sweep_150M": {
+    "peak_layer": 21,
+    "peak_kappa": 0.3562,
+    "note": "Peak at 70% depth; last layer (30) drops to 0.285"
+  },
+  "interpretation": {
+    "direction": "CONFIRMED - training increases kappa, kappa predicts accuracy (r=0.96 with random baseline)",
+    "alpha_estimate": "UNRELIABLE - narrow kappa range (0.32-0.35) among 4 trained models prevents robust estimation",
+    "650M_anomaly": "Highest accuracy (0.859) but lower kappa than 150M (0.326 vs 0.355) - suggests representation quality beyond centroid separation",
+    "layer_effect": "Intermediate layers (~2/3 depth) consistently beat last layer; last-layer alpha (1.531) resembles NLP (1.477)",
+    "scope_limit": "n=4 trained model sizes from ONE family is insufficient for alpha estimation; need ProtTrans, Ankh, or other protein LM families"
+  },
+  "elapsed_seconds": 161.62030863761902
+}

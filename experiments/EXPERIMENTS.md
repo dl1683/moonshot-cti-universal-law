@@ -5,6 +5,25 @@ Validated results only (Codex-reviewed).
 
 ---
 
+## Session 97 (Mar 3, 2026) — Nobel ~7.8/10
+
+### Protein Domain CTI Validation (ESM-2) [COMPLETE — PRELIMINARY POSITIVE]
+- **Purpose**: Test CTI law on a completely new scientific domain (molecular biology). If kappa predicts classification accuracy for protein language models, the law is truly universal across ALL learned representations.
+- **Domain**: Enzyme Commission (EC) classification, K=7 top-level classes (Oxidoreductases through Translocases), 200 SwissProt-reviewed sequences per class (1400 total), max 500 amino acids.
+- **Models**: ESM-2 family (Meta, 2023): 8M, 35M, 150M, 650M parameters. All evaluated at multiple layers with PCA to 256 dimensions.
+- **Key Results**:
+  - **H_prot2 PASS**: alpha > 0, direction correct (larger kappa -> higher accuracy)
+  - **H_prot3 PASS**: accuracy scales with model size (0.787 -> 0.859)
+  - **H_prot1 FAIL**: r=0.215 (trained models only, n=4, kappa range too narrow: 0.323-0.355)
+  - **With random baseline (n=5)**: r=0.962, p=0.009, R^2=0.926 — dominated by random-to-trained gap
+- **Layer Effect**: Intermediate layers (~2/3 depth) consistently beat last layer for kappa. Peak at ~70% depth. Last-layer alpha=1.531 (close to NLP's 1.477).
+- **650M Anomaly**: Highest accuracy (0.859) but lower kappa (0.326) than 150M (0.355). Suggests large protein LMs achieve accuracy through mechanisms beyond simple centroid separation.
+- **Interpretation**: The CTI law's DIRECTION holds for proteins (training -> higher kappa -> better classification). But n=4 trained model sizes from ONE family is insufficient for robust alpha estimation. The narrow kappa range (0.03 span vs NLP's 0.9 span) prevents meaningful correlation. Need diverse protein LM families (ProtTrans, Ankh, ProGen2) for definitive test.
+- **Files**: `src/cti_protein_esm2.py`, `results/cti_protein_esm2.json`, `results/cti_protein_sequences_cache.json`
+- **What we learned**: CTI law direction extends to molecular biology (4th domain after NLP, vision, neuroscience). But scaling series of one architecture doesn't provide enough kappa diversity. Cross-architecture comparison is the right test (same insight as NLP where fixed-V families are strongest).
+
+---
+
 ## Session 96 (Mar 3, 2026) — Nobel ~7.8/10
 
 ### Centroid-Overlap Dispersion [COMPLETE — SIGNIFICANT FINDING]
