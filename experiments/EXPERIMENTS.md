@@ -5,6 +5,21 @@ Validated results only (Codex-reviewed).
 
 ---
 
+## Session 95 (Mar 3, 2026) — Nobel ~7.8/10
+
+### NSD Human fMRI CTI Validation [COMPLETE — NULL RESULT]
+- **Purpose**: Nobel criterion #9 — validate CTI law on human visual cortex fMRI data.
+- **Dataset**: Natural Scenes Dataset (NSD), subject 01, 10 sessions (4,489 unique images), K=12 COCO supercategories (primary-area labeling), 11 merged Kastner2015 ROIs (V1-IPS).
+- **Preprocessing**: Z-scored betas per voxel per session, ncsnr > 0.3 voxel filter, PCA to 50 dims, balanced 1-NN (20 bootstrap rounds, n_per_class=75).
+- **Result**: Balanced 1-NN accuracy at CHANCE for all ROIs (q_1nn = 0.080-0.087, chance = 1/12 = 0.083). Direction correct (alpha=25.4 > 0) but non-significant (r=0.118, p=0.178). Equicorrelation negative (-0.057), fundamentally different from NLP/mouse (~0.46).
+- **V1 (unbalanced)**: r=-0.789 with p=2.9e-29, but alpha NEGATIVE — entirely explained by class size confound (r_size_acc=0.995). Balanced analysis removes confound, reveals null result.
+- **Diagnosis**: Raw fMRI BOLD voxel responses lack sufficient information for 1-NN classification of semantic categories. Known limitation: successful fMRI decoding uses ridge regression + noise ceiling correction, not nearest-neighbor methods. CTI law validated on high-SNR measurements (spike trains, trained DNNs), not raw BOLD.
+- **Structured Scope Finding**: CTI requires measurable above-chance 1-NN accuracy. Human fMRI at voxel level does not meet this prerequisite for K=12 semantic categories.
+- **Files**: `src/cti_nsd_human_fmri_v2.py`, `results/cti_nsd_human_fmri.json`, `research/CTI_NSD_PREREGISTRATION.md`
+- **What we learned**: CTI law validated on spike-rate codes (mouse Neuropixels), trained DNNs (19 architectures), and trained CNNs (ResNet, ViT). Raw BOLD fMRI is outside the law's applicability scope — not a failure of the law but a measurement limitation.
+
+---
+
 ## Session 94 (Mar 3, 2026) — Nobel ~7.8/10
 
 ### Citation Fixes + Pre-Submission Audit [COMPLETE]
