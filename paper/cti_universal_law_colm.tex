@@ -217,7 +217,7 @@ The slope $\alpha_\mathrm{audio}\approx4.7$ matches $\alpha_\mathrm{CNN}\approx4
 SmolLM2-1.7B (absent from training) with all parameters frozen: Pearson $r=0.817$, $p=0.013$ (\textbf{PASS}, threshold $r>0.80$).
 
 \paragraph{H8+ expanded holdout.}
-11 unseen models $\times$ 8 datasets ($n=77$), all parameters frozen (pre-registered commit \texttt{719da25}). All six criteria pass:
+11 unseen models $\times$ 8 datasets ($n=77$), all parameters frozen (pre-registered before data collection). All six criteria pass:
 $r=0.879$ (H8a: $\geq0.85$),
 MAE$=0.077$ (H8b: $\leq0.10$),
 85.7\% within 0.15 (H8c: $\geq80\%$),
@@ -342,7 +342,7 @@ Extended limitations (biological scope, multilabel regime, surgery scope, beyond
 We present the CTI Universal Law, derived from extreme-value theory, with functional form proven as a conditional theorem. The law is validated across 12 NLP architectures (LOAO CV$_\alpha=0.023$), in blind OOD tests ($r=0.817$), an expanded holdout (11 models $\times$ 8 datasets, all 6 criteria pass), cross-modally (ViT $R^2=0.964$, ResNet50 $r=0.749$, 7 speech models $r=0.898$ with $\alpha_\mathrm{audio}=4.67$), and in biological visual cortex (30/32 sessions). The Gumbel-race mechanism extends to generation ($r=-0.55$, 22 models; $r=-0.70$ excluding one outlier). Near-simplex equicorrelation ($\rho\approx0.46$, CV$=1.0\%$ across 6 modalities) provides a zero-parameter prediction of $\alpha$ ($+4.3\%$ error). Universality is of the \emph{functional form}: the constant $\alpha$ is signal-type-specific ($\alpha_\mathrm{NLP}\approx1.48$ for discrete tokens; $\alpha_\mathrm{ViT}\approx4.5$, $\alpha_\mathrm{CNN}\approx4.0$, $\alpha_\mathrm{audio}\approx4.7$ for continuous signals), with all continuous-signal modalities converging at $\alpha\approx3.3$--$5.0$ and discrete-token NLP at $\alpha\approx1.5$; honest-scope limitations including protein LM failure and human fMRI null are enumerated in \S\ref{sec:limitations}. Open directions include a renormalization theory for cross-family constants and independent replication. Independent convergent evidence: \citet{styves2025} confirm centroid-separation geometry predicts decoding in human visual cortex.
 
 \section*{Reproducibility Statement}
-All numerical claims are taken directly from repository artifacts including \texttt{results/cti\_audio\_speech.json}, \texttt{results/cti\_protein\_esm2.json}, \texttt{results/cti\_nsd\_human\_fmri.json}, and \texttt{results/cti\_cross\_modal\_rho.json}. Pre-registration timestamps are verifiable via git log. Code will be released upon acceptance.
+All numerical claims are taken directly from repository JSON artifacts. All pre-registrations were committed before data collection; timestamps are verifiable upon code release. Code and data will be released upon acceptance.
 
 \section*{Use of AI Assistants}
 An AI coding assistant was used for experiment implementation, data analysis pipeline development, and manuscript preparation. All scientific hypotheses, theoretical derivations, pre-registered success criteria, and architectural decisions were made by the authors. The authors take full responsibility for all claims.
