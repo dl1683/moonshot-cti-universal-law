@@ -1,0 +1,154 @@
+{
+  "experiment": "CTI Audio/Speech Domain Validation",
+  "timestamp": "2026-03-03 21:37:30",
+  "dataset": "google/speech_commands v0.02 test split",
+  "K": 36,
+  "n_samples": 4890,
+  "pca_dimensions": 256,
+  "models": {
+    "Wav2Vec2-Base": {
+      "kappa_nearest": 0.5106340867287417,
+      "acc_1nn": 0.821881390593047,
+      "q_norm": 0.8167922874671341,
+      "logit_q": 1.494764274097275,
+      "K": 36,
+      "n_samples": 4890,
+      "d_original": 768,
+      "d_pca": 256,
+      "pca_var_explained": 0.9624663591384888,
+      "model": "Wav2Vec2-Base",
+      "hf_id": "facebook/wav2vec2-base",
+      "architecture": "Wav2Vec2",
+      "n_layers": 12,
+      "hidden_size": 768
+    },
+    "HuBERT-Base": {
+      "kappa_nearest": 0.6754382565893194,
+      "acc_1nn": 0.918200408997955,
+      "q_norm": 0.9158632778264679,
+      "logit_q": 2.387423972931074,
+      "K": 36,
+      "n_samples": 4890,
+      "d_original": 768,
+      "d_pca": 256,
+      "pca_var_explained": 0.9642024040222168,
+      "model": "HuBERT-Base",
+      "hf_id": "facebook/hubert-base-ls960",
+      "architecture": "HuBERT",
+      "n_layers": 12,
+      "hidden_size": 768
+    },
+    "HuBERT-Large": {
+      "kappa_nearest": 0.6225901114434451,
+      "acc_1nn": 0.8188139059304703,
+      "q_norm": 0.8136371603856266,
+      "logit_q": 1.4738189936299584,
+      "K": 36,
+      "n_samples": 4890,
+      "d_original": 1024,
+      "d_pca": 256,
+      "pca_var_explained": 0.9893949627876282,
+      "model": "HuBERT-Large",
+      "hf_id": "facebook/hubert-large-ll60k",
+      "architecture": "HuBERT",
+      "n_layers": 24,
+      "hidden_size": 1024
+    },
+    "WavLM-Base+": {
+      "kappa_nearest": 0.7047836088086196,
+      "acc_1nn": 0.9147239263803681,
+      "q_norm": 0.9122874671340929,
+      "logit_q": 2.3418903503197863,
+      "K": 36,
+      "n_samples": 4890,
+      "d_original": 768,
+      "d_pca": 256,
+      "pca_var_explained": 0.9801838994026184,
+      "model": "WavLM-Base+",
+      "hf_id": "microsoft/wavlm-base-plus",
+      "architecture": "WavLM",
+      "n_layers": 12,
+      "hidden_size": 768
+    },
+    "WavLM-Large": {
+      "kappa_nearest": 0.7137220158447583,
+      "acc_1nn": 0.9173824130879346,
+      "q_norm": 0.9150219106047327,
+      "logit_q": 2.3765545595638558,
+      "K": 36,
+      "n_samples": 4890,
+      "d_original": 1024,
+      "d_pca": 256,
+      "pca_var_explained": 0.9786600470542908,
+      "model": "WavLM-Large",
+      "hf_id": "microsoft/wavlm-large",
+      "architecture": "WavLM",
+      "n_layers": 24,
+      "hidden_size": 1024
+    },
+    "Whisper-tiny": {
+      "kappa_nearest": 0.5494646892972689,
+      "acc_1nn": 0.8030674846625767,
+      "q_norm": 0.7974408413672217,
+      "logit_q": 1.370375666525681,
+      "K": 36,
+      "n_samples": 4890,
+      "d_original": 384,
+      "d_pca": 256,
+      "pca_var_explained": 0.9988417029380798,
+      "model": "Whisper-tiny",
+      "hf_id": "openai/whisper-tiny",
+      "architecture": "Whisper",
+      "n_layers": 4,
+      "hidden_size": 384
+    },
+    "Whisper-small": {
+      "kappa_nearest": 0.45959098320935826,
+      "acc_1nn": 0.7881390593047035,
+      "q_norm": 0.7820858895705521,
+      "logit_q": 1.2778635714251663,
+      "K": 36,
+      "n_samples": 4890,
+      "d_original": 768,
+      "d_pca": 256,
+      "pca_var_explained": 0.9971875548362732,
+      "model": "Whisper-small",
+      "hf_id": "openai/whisper-small",
+      "architecture": "Whisper",
+      "n_layers": 12,
+      "hidden_size": 768
+    }
+  },
+  "law_fit": {
+    "alpha_audio": 4.668602730836899,
+    "C": -1.007793484023443,
+    "r_pearson": 0.8982354219057046,
+    "p_pearson": 0.006002728579466877,
+    "r_spearman": 0.7857142857142859,
+    "p_spearman": 0.03623846267982713,
+    "R_squared": 0.806826873166119
+  },
+  "hypotheses": {
+    "H_audio1": {
+      "description": "r > 0.70",
+      "r": 0.8982354219057046,
+      "pass": true
+    },
+    "H_audio2": {
+      "description": "alpha > 0",
+      "alpha": 4.668602730836899,
+      "pass": true
+    },
+    "H_audio3": {
+      "description": "Spearman rho > 0.50",
+      "rho": 0.7857142857142859,
+      "pass": true
+    }
+  },
+  "cross_domain": {
+    "alpha_nlp": 1.477,
+    "alpha_vision": 4.5,
+    "alpha_audio": 4.668602730836899
+  },
+  "elapsed_seconds": 190.65096378326416
+}
