@@ -1,0 +1,815 @@
+{
+  "experiment": "cti_arch_scope_calibrated_detector_v5_post_phi",
+  "date": "2026-06-08",
+  "status": "post_hoc_detector_candidate_not_prospective",
+  "question": "Can a q-free architecture-scope detector separate clean passes, catastrophic scope breaks, and weak positive transfer before target q?",
+  "source": "results\\cti_field_before_q_audit.json",
+  "completed_targets": [
+    {
+      "slug": "mamba130m",
+      "display": "Mamba-130M",
+      "family": "state_space_mamba",
+      "rows": "results\\cti_field_before_q_mamba130m.json",
+      "n_rows": 36,
+      "rows_are_q_withheld": false,
+      "audit": "results\\cti_field_arch_shift_mamba130m_audit.json",
+      "preregistration": {
+        "path": null,
+        "exists": false,
+        "prospective_detector": null
+      },
+      "failure_mode": "clean_or_partial_pass",
+      "signature": {
+        "feature_means": {
+          "ref_kappa_nearest": 0.5591446086418786,
+          "ref_local_safe_rate": 0.6552222222222223,
+          "ref_local_margin_log_q25": -0.051368227217187104,
+          "ref_local_margin_log_median": 0.13973380973692132,
+          "ref_dist_ratio": 1.1813091601943353,
+          "ref_local_lid_proxy_mean": 62.59725703904154
+        },
+        "feature_mean_z_vs_source": {
+          "ref_kappa_nearest": 1.058684454376462,
+          "ref_local_safe_rate": 0.054907485183880715,
+          "ref_local_margin_log_q25": -0.03982545094658912,
+          "ref_local_margin_log_median": 0.11782150996034797,
+          "ref_dist_ratio": -0.005246694739010358,
+          "ref_local_lid_proxy_mean": -0.08299462689372412
+        },
+        "outside_source_minmax_rates": {
+          "ref_kappa_nearest": 0.0,
+          "ref_local_safe_rate": 0.05555555555555555,
+          "ref_local_margin_log_q25": 0.0,
+          "ref_local_margin_log_median": 0.0,
+          "ref_dist_ratio": 0.08333333333333333,
+          "ref_local_lid_proxy_mean": 0.027777777777777776
+        },
+        "kappa_minus_safe_z": 1.0037769691925813,
+        "kappa_minus_margin_q25_z": 1.0985099053230512,
+        "kappa_minus_dist_ratio_z": 1.0639311491154724,
+        "boundary_weakness_z": 0.03982545094658912,
+        "centroid_over_boundary_score": 1.0985099053230512,
+        "median_margin_z": 0.11782150996034797
+      },
+      "architecture_shift_outcome": {
+        "audit": "results\\cti_field_arch_shift_mamba130m_audit.json",
+        "verdict": "mamba_architecture_shift_survives_with_dataset_fold_warning",
+        "r2": 0.9605740909938307,
+        "mae": 0.17859567068406632,
+        "positive_dataset_folds": 2,
+        "label": "pass_or_partial_pass"
+      },
+      "should_warn": false,
+      "detector_v5": {
+        "gate_name": "calibrated_scope_detector_v5_post_phi",
+        "uses_holdout_q": false,
+        "prospective_status": "not_prospective_derived_after_phi_tiny_moe",
+        "triggered": false,
+        "risk_class": "no_scope_warning",
+        "branches": {
+          "v4_scope_break_risk": {
+            "gate_name": "centroid_or_low_safe_dist_scope_gate_v4_post_elementwise_gated_attention",
+            "uses_holdout_q": false,
+            "prospective_status": "not_prospective_derived_after_elementwise_gated_attention",
+            "triggered": false,
+            "conditions": {
+              "discordance_branch": {
+                "kappa_z_at_least": 0.5,
+                "safe_z_at_most": 0.0,
+                "kappa_minus_margin_q25_z_at_least": 1.25
+              },
+              "low_safe_dist_collapse_branch": {
+                "safe_z_at_most": -1.5,
+                "dist_ratio_z_at_most": -1.25
+              }
+            },
+            "observed": {
+              "kappa_z": 1.058684454376462,
+              "safe_z": 0.054907485183880715,
+              "margin_q25_z": -0.03982545094658912,
+              "dist_ratio_z": -0.005246694739010358,
+              "kappa_minus_margin_q25_z": 1.0985099053230512,
+              "discordance_branch": false,
+              "low_safe_dist_collapse_branch": false
+            }
+          },
+          "weak_positive_transfer_calibration_risk": {
+            "triggered": false,
+            "conditions": {
+              "safe_z_at_most": -0.15,
+              "margin_q25_z_at_most": -0.25,
+              "dist_ratio_z_at_most": -0.35,
+              "kappa_z_below": 0.5
+            },
+            "observed": {
+              "kappa_z": 1.058684454376462,
+              "safe_z": 0.054907485183880715,
+              "margin_q25_z": -0.03982545094658912,
+              "dist_ratio_z": -0.005246694739010358
+            }
+          }
+        }
+      },
+      "detector_v5_correct": true
+    },
+    {
+      "slug": "falconh1_05b",
+      "display": "Falcon-H1-0.5B",
+      "family": "hybrid_mamba2_attention",
+      "rows": "results\\cti_field_before_q_falconh1_05b.json",
+      "n_rows": 36,
+      "rows_are_q_withheld": false,
+      "audit": "results\\cti_field_arch_shift_falconh1_05b_audit.json",
+      "preregistration": {
+        "path": null,
+        "exists": false,
+        "prospective_detector": null
+      },
+      "failure_mode": "centroid_field_discordance",
+      "signature": {
+        "feature_means": {
+          "ref_kappa_nearest": 0.47784754974348714,
+          "ref_local_safe_rate": 0.5523148148148149,
+          "ref_local_margin_log_q25": -0.16597418874635575,
+          "ref_local_margin_log_median": 0.04263173718290522,
+          "ref_dist_ratio": 1.0650832202597986,
+          "ref_local_lid_proxy_mean": 61.97683594542362
+        },
+        "feature_mean_z_vs_source": {
+          "ref_kappa_nearest": 0.7014074122520062,
+          "ref_local_safe_rate": -0.3966101172723588,
+          "ref_local_margin_log_q25": -0.7921759677633858,
+          "ref_local_margin_log_median": -0.43630520119129945,
+          "ref_dist_ratio": -0.5492651605919807,
+          "ref_local_lid_proxy_mean": -0.08408856138285217
+        },
+        "outside_source_minmax_rates": {
+          "ref_kappa_nearest": 0.0,
+          "ref_local_safe_rate": 0.05555555555555555,
+          "ref_local_margin_log_q25": 0.0,
+          "ref_local_margin_log_median": 0.0,
+          "ref_dist_ratio": 0.25,
+          "ref_local_lid_proxy_mean": 0.08333333333333333
+        },
+        "kappa_minus_safe_z": 1.098017529524365,
+        "kappa_minus_margin_q25_z": 1.4935833800153921,
+        "kappa_minus_dist_ratio_z": 1.250672572843987,
+        "boundary_weakness_z": 0.7921759677633858,
+        "centroid_over_boundary_score": 1.4935833800153921,
+        "median_margin_z": -0.43630520119129945
+      },
+      "architecture_shift_outcome": {
+        "audit": "results\\cti_field_arch_shift_falconh1_05b_audit.json",
+        "verdict": "falconh1_architecture_shift_breaks_or_weakens_scope_law",
+        "r2": 0.692996716053951,
+        "mae": 0.5338493929236852,
+        "positive_dataset_folds": 1,
+        "label": "scope_break"
+      },
+      "should_warn": true,
+      "detector_v5": {
+        "gate_name": "calibrated_scope_detector_v5_post_phi",
+        "uses_holdout_q": false,
+        "prospective_status": "not_prospective_derived_after_phi_tiny_moe",
+        "triggered": true,
+        "risk_class": "v4_scope_break_risk",
+        "branches": {
+          "v4_scope_break_risk": {
+            "gate_name": "centroid_or_low_safe_dist_scope_gate_v4_post_elementwise_gated_attention",
+            "uses_holdout_q": false,
+            "prospective_status": "not_prospective_derived_after_elementwise_gated_attention",
+            "triggered": true,
+            "conditions": {
+              "discordance_branch": {
+                "kappa_z_at_least": 0.5,
+                "safe_z_at_most": 0.0,
+                "kappa_minus_margin_q25_z_at_least": 1.25
+              },
+              "low_safe_dist_collapse_branch": {
+                "safe_z_at_most": -1.5,
+                "dist_ratio_z_at_most": -1.25
+              }
+            },
+            "observed": {
+              "kappa_z": 0.7014074122520062,
+              "safe_z": -0.3966101172723588,
+              "margin_q25_z": -0.7921759677633858,
+              "dist_ratio_z": -0.5492651605919807,
+              "kappa_minus_margin_q25_z": 1.4935833800153921,
+              "discordance_branch": true,
+              "low_safe_dist_collapse_branch": false
+            }
+          },
+          "weak_positive_transfer_calibration_risk": {
+            "triggered": false,
+            "conditions": {
+              "safe_z_at_most": -0.15,
+              "margin_q25_z_at_most": -0.25,
+              "dist_ratio_z_at_most": -0.35,
+              "kappa_z_below": 0.5
+            },
+            "observed": {
+              "kappa_z": 0.7014074122520062,
+              "safe_z": -0.3966101172723588,
+              "margin_q25_z": -0.7921759677633858,
+              "dist_ratio_z": -0.5492651605919807
+            }
+          }
+        }
+      },
+      "detector_v5_correct": true
+    },
+    {
+      "slug": "zamba2_12b",
+      "display": "Zamba2-1.2B",
+      "family": "hybrid_mamba2_attention_shared_transformer",
+      "rows": "results\\cti_field_before_q_zamba2_12b.json",
+      "n_rows": 36,
+      "rows_are_q_withheld": false,
+      "audit": "results\\cti_field_arch_shift_zamba2_12b_audit.json",
+      "preregistration": {
+        "path": null,
+        "exists": false,
+        "prospective_detector": null
+      },
+      "failure_mode": "centroid_field_discordance",
+      "signature": {
+        "feature_means": {
+          "ref_kappa_nearest": 0.6616537751532818,
+          "ref_local_safe_rate": 0.6261574074074074,
+          "ref_local_margin_log_q25": -0.0801863547047947,
+          "ref_local_margin_log_median": 0.0970750243229111,
+          "ref_dist_ratio": 1.146999666566394,
+          "ref_local_lid_proxy_mean": 38.62591437057867
+        },
+        "feature_mean_z_vs_source": {
+          "ref_kappa_nearest": 1.5091825695372068,
+          "ref_local_safe_rate": -0.07261759616488095,
+          "ref_local_margin_log_q25": -0.2290069980467872,
+          "ref_local_margin_log_median": -0.1256168826655124,
+          "ref_dist_ratio": -0.1658390556024959,
+          "ref_local_lid_proxy_mean": -0.12526120803593094
+        },
+        "outside_source_minmax_rates": {
+          "ref_kappa_nearest": 0.08333333333333333,
+          "ref_local_safe_rate": 0.0,
+          "ref_local_margin_log_q25": 0.0,
+          "ref_local_margin_log_median": 0.0,
+          "ref_dist_ratio": 0.16666666666666666,
+          "ref_local_lid_proxy_mean": 0.027777777777777776
+        },
+        "kappa_minus_safe_z": 1.5818001657020877,
+        "kappa_minus_margin_q25_z": 1.738189567583994,
+        "kappa_minus_dist_ratio_z": 1.6750216251397028,
+        "boundary_weakness_z": 0.2290069980467872,
+        "centroid_over_boundary_score": 1.738189567583994,
+        "median_margin_z": -0.1256168826655124
+      },
+      "architecture_shift_outcome": {
+        "audit": "results\\cti_field_arch_shift_zamba2_12b_audit.json",
+        "verdict": "zamba2_12b_architecture_shift_breaks_or_weakens_scope_law",
+        "r2": 0.7046499143337062,
+        "mae": 0.521580304342537,
+        "positive_dataset_folds": 0,
+        "label": "scope_break"
+      },
+      "should_warn": true,
+      "detector_v5": {
+        "gate_name": "calibrated_scope_detector_v5_post_phi",
+        "uses_holdout_q": false,
+        "prospective_status": "not_prospective_derived_after_phi_tiny_moe",
+        "triggered": true,
+        "risk_class": "v4_scope_break_risk",
+        "branches": {
+          "v4_scope_break_risk": {
+            "gate_name": "centroid_or_low_safe_dist_scope_gate_v4_post_elementwise_gated_attention",
+            "uses_holdout_q": false,
+            "prospective_status": "not_prospective_derived_after_elementwise_gated_attention",
+            "triggered": true,
+            "conditions": {
+              "discordance_branch": {
+                "kappa_z_at_least": 0.5,
+                "safe_z_at_most": 0.0,
+                "kappa_minus_margin_q25_z_at_least": 1.25
+              },
+              "low_safe_dist_collapse_branch": {
+                "safe_z_at_most": -1.5,
+                "dist_ratio_z_at_most": -1.25
+              }
+            },
+            "observed": {
+              "kappa_z": 1.5091825695372068,
+              "safe_z": -0.07261759616488095,
+              "margin_q25_z": -0.2290069980467872,
+              "dist_ratio_z": -0.1658390556024959,
+              "kappa_minus_margin_q25_z": 1.738189567583994,
+              "discordance_branch": true,
+              "low_safe_dist_collapse_branch": false
+            }
+          },
+          "weak_positive_transfer_calibration_risk": {
+            "triggered": false,
+            "conditions": {
+              "safe_z_at_most": -0.15,
+              "margin_q25_z_at_most": -0.25,
+              "dist_ratio_z_at_most": -0.35,
+              "kappa_z_below": 0.5
+            },
+            "observed": {
+              "kappa_z": 1.5091825695372068,
+              "safe_z": -0.07261759616488095,
+              "margin_q25_z": -0.2290069980467872,
+              "dist_ratio_z": -0.1658390556024959
+            }
+          }
+        }
+      },
+      "detector_v5_correct": true
+    },
+    {
+      "slug": "gated_attention_headwise",
+      "display": "GatedAttention-1B-Headwise",
+      "family": "qwen3_headwise_gated_attention",
+      "rows": "results\\cti_field_before_q_gated_attention_headwise.json",
+      "n_rows": 36,
+      "rows_are_q_withheld": false,
+      "audit": "results\\cti_field_arch_shift_gated_attention_headwise_audit.json",
+      "preregistration": {
+        "path": null,
+        "exists": false,
+        "prospective_detector": null
+      },
+      "failure_mode": "local_field_collapse",
+      "signature": {
+        "feature_means": {
+          "ref_kappa_nearest": 0.20936428666370283,
+          "ref_local_safe_rate": 0.2173888888888889,
+          "ref_local_margin_log_q25": -0.3459662928741004,
+          "ref_local_margin_log_median": -0.12479124641648785,
+          "ref_dist_ratio": 0.8133907381922687,
+          "ref_local_lid_proxy_mean": 88.05279519536421
+        },
+        "feature_mean_z_vs_source": {
+          "ref_kappa_nearest": -0.4784988155114841,
+          "ref_local_safe_rate": -1.866134565360096,
+          "ref_local_margin_log_q25": -1.9737650470451473,
+          "ref_local_margin_log_median": -1.391728137416679,
+          "ref_dist_ratio": -1.727361530801815,
+          "ref_local_lid_proxy_mean": -0.03811109308907611
+        },
+        "outside_source_minmax_rates": {
+          "ref_kappa_nearest": 0.0,
+          "ref_local_safe_rate": 0.3333333333333333,
+          "ref_local_margin_log_q25": 0.1388888888888889,
+          "ref_local_margin_log_median": 0.0,
+          "ref_dist_ratio": 0.5833333333333334,
+          "ref_local_lid_proxy_mean": 0.0
+        },
+        "kappa_minus_safe_z": 1.387635749848612,
+        "kappa_minus_margin_q25_z": 1.4952662315336633,
+        "kappa_minus_dist_ratio_z": 1.2488627152903309,
+        "boundary_weakness_z": 1.9737650470451473,
+        "centroid_over_boundary_score": 1.4952662315336633,
+        "median_margin_z": -1.391728137416679
+      },
+      "architecture_shift_outcome": {
+        "audit": "results\\cti_field_arch_shift_gated_attention_headwise_audit.json",
+        "verdict": "gated_attention_headwise_architecture_shift_breaks_or_weakens_scope_law",
+        "r2": -0.24067794443584156,
+        "mae": 0.7609215080158154,
+        "positive_dataset_folds": 0,
+        "label": "scope_break"
+      },
+      "should_warn": true,
+      "detector_v5": {
+        "gate_name": "calibrated_scope_detector_v5_post_phi",
+        "uses_holdout_q": false,
+        "prospective_status": "not_prospective_derived_after_phi_tiny_moe",
+        "triggered": true,
+        "risk_class": "v4_scope_break_risk",
+        "branches": {
+          "v4_scope_break_risk": {
+            "gate_name": "centroid_or_low_safe_dist_scope_gate_v4_post_elementwise_gated_attention",
+            "uses_holdout_q": false,
+            "prospective_status": "not_prospective_derived_after_elementwise_gated_attention",
+            "triggered": true,
+            "conditions": {
+              "discordance_branch": {
+                "kappa_z_at_least": 0.5,
+                "safe_z_at_most": 0.0,
+                "kappa_minus_margin_q25_z_at_least": 1.25
+              },
+              "low_safe_dist_collapse_branch": {
+                "safe_z_at_most": -1.5,
+                "dist_ratio_z_at_most": -1.25
+              }
+            },
+            "observed": {
+              "kappa_z": -0.4784988155114841,
+              "safe_z": -1.866134565360096,
+              "margin_q25_z": -1.9737650470451473,
+              "dist_ratio_z": -1.727361530801815,
+              "kappa_minus_margin_q25_z": 1.4952662315336633,
+              "discordance_branch": false,
+              "low_safe_dist_collapse_branch": true
+            }
+          },
+          "weak_positive_transfer_calibration_risk": {
+            "triggered": true,
+            "conditions": {
+              "safe_z_at_most": -0.15,
+              "margin_q25_z_at_most": -0.25,
+              "dist_ratio_z_at_most": -0.35,
+              "kappa_z_below": 0.5
+            },
+            "observed": {
+              "kappa_z": -0.4784988155114841,
+              "safe_z": -1.866134565360096,
+              "margin_q25_z": -1.9737650470451473,
+              "dist_ratio_z": -1.727361530801815
+            }
+          }
+        }
+      },
+      "detector_v5_correct": true
+    },
+    {
+      "slug": "gated_attention_elementwise",
+      "display": "GatedAttention-1B-Elementwise",
+      "family": "qwen3_elementwise_gated_attention",
+      "rows": "results\\cti_field_before_q_gated_attention_elementwise.json",
+      "n_rows": 36,
+      "rows_are_q_withheld": false,
+      "audit": "results\\cti_field_arch_shift_gated_attention_elementwise_audit.json",
+      "preregistration": {
+        "path": null,
+        "exists": false,
+        "prospective_detector": null
+      },
+      "failure_mode": "local_safe_dist_collapse",
+      "signature": {
+        "feature_means": {
+          "ref_kappa_nearest": 0.2103105759554987,
+          "ref_local_safe_rate": 0.2146111111111111,
+          "ref_local_margin_log_q25": -0.2305165636931621,
+          "ref_local_margin_log_median": -0.10355044419904896,
+          "ref_dist_ratio": 0.8762696516341393,
+          "ref_local_lid_proxy_mean": 118.6223053590107
+        },
+        "feature_mean_z_vs_source": {
+          "ref_kappa_nearest": -0.4743401479809719,
+          "ref_local_safe_rate": -1.8783223717967412,
+          "ref_local_margin_log_q25": -1.2158754725701624,
+          "ref_local_margin_log_median": -1.2705144952627019,
+          "ref_dist_ratio": -1.433044358194606,
+          "ref_local_lid_proxy_mean": 0.015789462239814554
+        },
+        "outside_source_minmax_rates": {
+          "ref_kappa_nearest": 0.0,
+          "ref_local_safe_rate": 0.3333333333333333,
+          "ref_local_margin_log_q25": 0.0,
+          "ref_local_margin_log_median": 0.0,
+          "ref_dist_ratio": 0.3055555555555556,
+          "ref_local_lid_proxy_mean": 0.0
+        },
+        "kappa_minus_safe_z": 1.4039822238157693,
+        "kappa_minus_margin_q25_z": 0.7415353245891905,
+        "kappa_minus_dist_ratio_z": 0.9587042102136341,
+        "boundary_weakness_z": 1.8783223717967412,
+        "centroid_over_boundary_score": 1.4039822238157693,
+        "median_margin_z": -1.2705144952627019
+      },
+      "architecture_shift_outcome": {
+        "audit": "results\\cti_field_arch_shift_gated_attention_elementwise_audit.json",
+        "verdict": "gated_attention_elementwise_architecture_shift_breaks_or_weakens_scope_law",
+        "r2": -0.8727270867342678,
+        "mae": 0.9184263267273517,
+        "positive_dataset_folds": 0,
+        "label": "scope_break"
+      },
+      "should_warn": true,
+      "detector_v5": {
+        "gate_name": "calibrated_scope_detector_v5_post_phi",
+        "uses_holdout_q": false,
+        "prospective_status": "not_prospective_derived_after_phi_tiny_moe",
+        "triggered": true,
+        "risk_class": "v4_scope_break_risk",
+        "branches": {
+          "v4_scope_break_risk": {
+            "gate_name": "centroid_or_low_safe_dist_scope_gate_v4_post_elementwise_gated_attention",
+            "uses_holdout_q": false,
+            "prospective_status": "not_prospective_derived_after_elementwise_gated_attention",
+            "triggered": true,
+            "conditions": {
+              "discordance_branch": {
+                "kappa_z_at_least": 0.5,
+                "safe_z_at_most": 0.0,
+                "kappa_minus_margin_q25_z_at_least": 1.25
+              },
+              "low_safe_dist_collapse_branch": {
+                "safe_z_at_most": -1.5,
+                "dist_ratio_z_at_most": -1.25
+              }
+            },
+            "observed": {
+              "kappa_z": -0.4743401479809719,
+              "safe_z": -1.8783223717967412,
+              "margin_q25_z": -1.2158754725701624,
+              "dist_ratio_z": -1.433044358194606,
+              "kappa_minus_margin_q25_z": 0.7415353245891905,
+              "discordance_branch": false,
+              "low_safe_dist_collapse_branch": true
+            }
+          },
+          "weak_positive_transfer_calibration_risk": {
+            "triggered": true,
+            "conditions": {
+              "safe_z_at_most": -0.15,
+              "margin_q25_z_at_most": -0.25,
+              "dist_ratio_z_at_most": -0.35,
+              "kappa_z_below": 0.5
+            },
+            "observed": {
+              "kappa_z": -0.4743401479809719,
+              "safe_z": -1.8783223717967412,
+              "margin_q25_z": -1.2158754725701624,
+              "dist_ratio_z": -1.433044358194606
+            }
+          }
+        }
+      },
+      "detector_v5_correct": true
+    },
+    {
+      "slug": "olmoe_1b7b",
+      "display": "OLMoE-1B-7B-0125",
+      "family": "sparse_moe",
+      "rows": "results\\cti_field_before_q_olmoe_1b7b.json",
+      "n_rows": 36,
+      "rows_are_q_withheld": false,
+      "audit": "results\\cti_field_arch_shift_olmoe_1b7b_audit.json",
+      "preregistration": {
+        "path": null,
+        "exists": false,
+        "prospective_detector": null
+      },
+      "failure_mode": "clean_pass",
+      "signature": {
+        "feature_means": {
+          "ref_kappa_nearest": 0.29054189382058326,
+          "ref_local_safe_rate": 0.6726111111111112,
+          "ref_local_margin_log_q25": -0.016939656628462297,
+          "ref_local_margin_log_median": 0.12655791470234304,
+          "ref_dist_ratio": 1.1859795608480588,
+          "ref_local_lid_proxy_mean": 152.98359807609143
+        },
+        "feature_mean_z_vs_source": {
+          "ref_kappa_nearest": -0.12174672921522178,
+          "ref_local_safe_rate": 0.13120315347727812,
+          "ref_local_margin_log_q25": 0.18618681342500035,
+          "ref_local_margin_log_median": 0.042631401346253185,
+          "ref_dist_ratio": 0.0166140378994044,
+          "ref_local_lid_proxy_mean": 0.07637573756298745
+        },
+        "outside_source_minmax_rates": {
+          "ref_kappa_nearest": 0.0,
+          "ref_local_safe_rate": 0.0,
+          "ref_local_margin_log_q25": 0.0,
+          "ref_local_margin_log_median": 0.0,
+          "ref_dist_ratio": 0.0,
+          "ref_local_lid_proxy_mean": 0.0
+        },
+        "kappa_minus_safe_z": -0.2529498826924999,
+        "kappa_minus_margin_q25_z": -0.3079335426402221,
+        "kappa_minus_dist_ratio_z": -0.1383607671146262,
+        "boundary_weakness_z": 0.0,
+        "centroid_over_boundary_score": -0.1383607671146262,
+        "median_margin_z": 0.042631401346253185
+      },
+      "architecture_shift_outcome": {
+        "audit": "results\\cti_field_arch_shift_olmoe_1b7b_audit.json",
+        "verdict": "coupled_reference_field_survives_olmoe_1b7b_architecture_shift",
+        "r2": 0.9427755725592353,
+        "mae": 0.1944900789876465,
+        "positive_dataset_folds": 3,
+        "label": "pass_or_partial_pass"
+      },
+      "should_warn": false,
+      "detector_v5": {
+        "gate_name": "calibrated_scope_detector_v5_post_phi",
+        "uses_holdout_q": false,
+        "prospective_status": "not_prospective_derived_after_phi_tiny_moe",
+        "triggered": false,
+        "risk_class": "no_scope_warning",
+        "branches": {
+          "v4_scope_break_risk": {
+            "gate_name": "centroid_or_low_safe_dist_scope_gate_v4_post_elementwise_gated_attention",
+            "uses_holdout_q": false,
+            "prospective_status": "not_prospective_derived_after_elementwise_gated_attention",
+            "triggered": false,
+            "conditions": {
+              "discordance_branch": {
+                "kappa_z_at_least": 0.5,
+                "safe_z_at_most": 0.0,
+                "kappa_minus_margin_q25_z_at_least": 1.25
+              },
+              "low_safe_dist_collapse_branch": {
+                "safe_z_at_most": -1.5,
+                "dist_ratio_z_at_most": -1.25
+              }
+            },
+            "observed": {
+              "kappa_z": -0.12174672921522178,
+              "safe_z": 0.13120315347727812,
+              "margin_q25_z": 0.18618681342500035,
+              "dist_ratio_z": 0.0166140378994044,
+              "kappa_minus_margin_q25_z": -0.3079335426402221,
+              "discordance_branch": false,
+              "low_safe_dist_collapse_branch": false
+            }
+          },
+          "weak_positive_transfer_calibration_risk": {
+            "triggered": false,
+            "conditions": {
+              "safe_z_at_most": -0.15,
+              "margin_q25_z_at_most": -0.25,
+              "dist_ratio_z_at_most": -0.35,
+              "kappa_z_below": 0.5
+            },
+            "observed": {
+              "kappa_z": -0.12174672921522178,
+              "safe_z": 0.13120315347727812,
+              "margin_q25_z": 0.18618681342500035,
+              "dist_ratio_z": 0.0166140378994044
+            }
+          }
+        }
+      },
+      "detector_v5_correct": true
+    },
+    {
+      "slug": "phi_tiny_moe",
+      "display": "Phi-tiny-MoE-instruct",
+      "family": "slimmoe_phi_tiny_moe",
+      "rows": "results\\cti_field_before_q_phi_tiny_moe.json",
+      "n_rows": 36,
+      "rows_are_q_withheld": false,
+      "audit": "results\\cti_field_arch_shift_phi_tiny_moe_audit.json",
+      "preregistration": {
+        "path": null,
+        "exists": false,
+        "prospective_detector": null
+      },
+      "failure_mode": "positive_but_miscalibrated_transfer",
+      "signature": {
+        "feature_means": {
+          "ref_kappa_nearest": 0.22597694793658452,
+          "ref_local_safe_rate": 0.5922777777777779,
+          "ref_local_margin_log_q25": -0.09599537068780654,
+          "ref_local_margin_log_median": 0.07353019232708162,
+          "ref_dist_ratio": 1.0803530063478606,
+          "ref_local_lid_proxy_mean": 120.88117498389602
+        },
+        "feature_mean_z_vs_source": {
+          "ref_kappa_nearest": -0.40549097781333465,
+          "ref_local_safe_rate": -0.2212682086704934,
+          "ref_local_margin_log_q25": -0.33278799849811896,
+          "ref_local_margin_log_median": -0.2599787966319662,
+          "ref_dist_ratio": -0.4777919111073186,
+          "ref_local_lid_proxy_mean": 0.019772330350723084
+        },
+        "outside_source_minmax_rates": {
+          "ref_kappa_nearest": 0.0,
+          "ref_local_safe_rate": 0.027777777777777776,
+          "ref_local_margin_log_q25": 0.0,
+          "ref_local_margin_log_median": 0.0,
+          "ref_dist_ratio": 0.08333333333333333,
+          "ref_local_lid_proxy_mean": 0.0
+        },
+        "kappa_minus_safe_z": -0.18422276914284125,
+        "kappa_minus_margin_q25_z": -0.07270297931521569,
+        "kappa_minus_dist_ratio_z": 0.07230093329398396,
+        "boundary_weakness_z": 0.4777919111073186,
+        "centroid_over_boundary_score": 0.07230093329398396,
+        "median_margin_z": -0.2599787966319662
+      },
+      "architecture_shift_outcome": {
+        "audit": "results\\cti_field_arch_shift_phi_tiny_moe_audit.json",
+        "verdict": "phi_tiny_moe_architecture_shift_breaks_or_weakens_scope_law",
+        "r2": 0.8456638092183906,
+        "mae": 0.36157266979373104,
+        "positive_dataset_folds": 3,
+        "label": "scope_break"
+      },
+      "should_warn": true,
+      "detector_v5": {
+        "gate_name": "calibrated_scope_detector_v5_post_phi",
+        "uses_holdout_q": false,
+        "prospective_status": "not_prospective_derived_after_phi_tiny_moe",
+        "triggered": true,
+        "risk_class": "weak_positive_transfer_calibration_risk",
+        "branches": {
+          "v4_scope_break_risk": {
+            "gate_name": "centroid_or_low_safe_dist_scope_gate_v4_post_elementwise_gated_attention",
+            "uses_holdout_q": false,
+            "prospective_status": "not_prospective_derived_after_elementwise_gated_attention",
+            "triggered": false,
+            "conditions": {
+              "discordance_branch": {
+                "kappa_z_at_least": 0.5,
+                "safe_z_at_most": 0.0,
+                "kappa_minus_margin_q25_z_at_least": 1.25
+              },
+              "low_safe_dist_collapse_branch": {
+                "safe_z_at_most": -1.5,
+                "dist_ratio_z_at_most": -1.25
+              }
+            },
+            "observed": {
+              "kappa_z": -0.40549097781333465,
+              "safe_z": -0.2212682086704934,
+              "margin_q25_z": -0.33278799849811896,
+              "dist_ratio_z": -0.4777919111073186,
+              "kappa_minus_margin_q25_z": -0.07270297931521569,
+              "discordance_branch": false,
+              "low_safe_dist_collapse_branch": false
+            }
+          },
+          "weak_positive_transfer_calibration_risk": {
+            "triggered": true,
+            "conditions": {
+              "safe_z_at_most": -0.15,
+              "margin_q25_z_at_most": -0.25,
+              "dist_ratio_z_at_most": -0.35,
+              "kappa_z_below": 0.5
+            },
+            "observed": {
+              "kappa_z": -0.40549097781333465,
+              "safe_z": -0.2212682086704934,
+              "margin_q25_z": -0.33278799849811896,
+              "dist_ratio_z": -0.4777919111073186
+            }
+          }
+        }
+      },
+      "detector_v5_correct": true
+    }
+  ],
+  "failure_mode_index": {
+    "clean_or_partial_pass": [
+      "Mamba-130M"
+    ],
+    "centroid_field_discordance": [
+      "Falcon-H1-0.5B",
+      "Zamba2-1.2B"
+    ],
+    "local_field_collapse": [
+      "GatedAttention-1B-Headwise"
+    ],
+    "local_safe_dist_collapse": [
+      "GatedAttention-1B-Elementwise"
+    ],
+    "clean_pass": [
+      "OLMoE-1B-7B-0125"
+    ],
+    "positive_but_miscalibrated_transfer": [
+      "Phi-tiny-MoE-instruct"
+    ]
+  },
+  "detector": {
+    "name": "calibrated_scope_detector_v5_post_phi",
+    "uses_holdout_q": false,
+    "rule": "warn_if(v4_warns or (safe_z <= -0.15 and margin_q25_z <= -0.25 and dist_ratio_z <= -0.35 and kappa_z < 0.50))",
+    "why_v5_exists": "Phi-tiny-MoE was a prospective v4 miss: v4 saw no collapse, but strict architecture transfer failed with positive folds and high MAE. V5 adds a mild multi-feature local-erosion branch for weak positive transfer."
+  },
+  "answer_so_far": {
+    "detector_v5_accuracy_on_completed_targets": 1.0,
+    "detector_v5_correct_targets": [
+      "Mamba-130M",
+      "Falcon-H1-0.5B",
+      "Zamba2-1.2B",
+      "GatedAttention-1B-Headwise",
+      "GatedAttention-1B-Elementwise",
+      "OLMoE-1B-7B-0125",
+      "Phi-tiny-MoE-instruct"
+    ],
+    "detector_v5_incorrect_targets": [],
+    "pending_targets": [],
+    "preregistered_completed_targets": [],
+    "preregistered_pending_targets": [],
+    "preregistered_incorrect_targets": [],
+    "triggered_targets": [
+      "Falcon-H1-0.5B",
+      "Zamba2-1.2B",
+      "GatedAttention-1B-Headwise",
+      "GatedAttention-1B-Elementwise",
+      "Phi-tiny-MoE-instruct"
+    ],
+    "not_triggered_targets": [
+      "Mamba-130M",
+      "OLMoE-1B-7B-0125"
+    ],
+    "why_not_final": "The detector is fit after seeing Phi-tiny-MoE. It must be frozen and tested on a fresh architecture before it can be called a prospective scope detector.",
+    "next_required_test": "Freeze this v5 rule, generate q-withheld rows for a new target, score v5 before q, then run the architecture-shift audit."
+  }
+}
