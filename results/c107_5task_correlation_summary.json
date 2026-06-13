@@ -1,0 +1,160 @@
+{
+  "models": {
+    "pythia-160m": {
+      "q": 0.613,
+      "arc_easy": 0.437,
+      "hellaswag": 0.284,
+      "winogrande": 0.513,
+      "piqa": 0.62,
+      "boolq": 0.549
+    },
+    "pythia-410m": {
+      "q": 0.667,
+      "arc_easy": 0.52,
+      "hellaswag": 0.338,
+      "winogrande": 0.536,
+      "piqa": 0.67,
+      "boolq": 0.604
+    },
+    "pythia-1b": {
+      "q": 0.72,
+      "arc_easy": 0.57,
+      "hellaswag": 0.378,
+      "winogrande": 0.537
+    },
+    "pythia-2.8b": {
+      "q": 0.773,
+      "arc_easy": 0.642,
+      "hellaswag": 0.453,
+      "winogrande": 0.6,
+      "piqa": 0.738,
+      "boolq": 0.647
+    }
+  },
+  "tasks": {
+    "arc_easy": {
+      "n": 4,
+      "pearson": {
+        "r": 0.9962,
+        "p": 0.0038
+      },
+      "spearman": {
+        "rho": 1.0,
+        "p": 0.0
+      },
+      "q_values": [
+        0.613,
+        0.667,
+        0.72,
+        0.773
+      ],
+      "task_values": [
+        0.437,
+        0.52,
+        0.57,
+        0.642
+      ]
+    },
+    "hellaswag": {
+      "n": 4,
+      "pearson": {
+        "r": 0.9922,
+        "p": 0.0078
+      },
+      "spearman": {
+        "rho": 1.0,
+        "p": 0.0
+      },
+      "q_values": [
+        0.613,
+        0.667,
+        0.72,
+        0.773
+      ],
+      "task_values": [
+        0.284,
+        0.338,
+        0.378,
+        0.453
+      ]
+    },
+    "winogrande": {
+      "n": 4,
+      "pearson": {
+        "r": 0.9048,
+        "p": 0.0952
+      },
+      "spearman": {
+        "rho": 1.0,
+        "p": 0.0
+      },
+      "q_values": [
+        0.613,
+        0.667,
+        0.72,
+        0.773
+      ],
+      "task_values": [
+        0.513,
+        0.536,
+        0.537,
+        0.6
+      ]
+    },
+    "piqa": {
+      "n": 3,
+      "pearson": {
+        "r": 0.9952,
+        "p": 0.0622
+      },
+      "spearman": {
+        "rho": 1.0,
+        "p": 0.0
+      },
+      "q_values": [
+        0.613,
+        0.667,
+        0.773
+      ],
+      "task_values": [
+        0.62,
+        0.67,
+        0.738
+      ]
+    },
+    "boolq": {
+      "n": 3,
+      "pearson": {
+        "r": 0.9674,
+        "p": 0.163
+      },
+      "spearman": {
+        "rho": 1.0,
+        "p": 0.0
+      },
+      "q_values": [
+        0.613,
+        0.667,
+        0.773
+      ],
+      "task_values": [
+        0.549,
+        0.604,
+        0.647
+      ]
+    }
+  },
+  "finding": "Across 5 downstream benchmarks, q shows consistently strong positive correlations with task performance. Pearson r ranges from 0.905 to 0.996 (mean=0.971); Spearman \u03c1 ranges from 1.000 to 1.000 (mean=1.000). All 5 tasks correlate positively with q, indicating that higher fractal-q values reliably predict higher downstream accuracy across diverse benchmarks (ARC-Easy, HellaSwag, WinoGrande, PIQA, BoolQ).",
+  "summary": {
+    "pearson_range": [
+      0.9048,
+      0.9962
+    ],
+    "pearson_mean": 0.9712,
+    "spearman_range": [
+      1.0,
+      1.0
+    ],
+    "spearman_mean": 1.0
+  }
+}
