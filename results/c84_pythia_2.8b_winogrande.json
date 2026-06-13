@@ -1,0 +1,5 @@
+{
+  "model": "EleutherAI/pythia-2.8b",
+  "task": "winogrande",
+  "score": 0.5998421468034728
+}
