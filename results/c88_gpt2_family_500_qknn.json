@@ -1,0 +1,31 @@
+{
+  "experiment": "c88_gpt2_family_500_qknn",
+  "config": {
+    "models": [
+      "gpt2",
+      "gpt2-medium"
+    ],
+    "n_ag_news_samples": 500,
+    "random_seed": 42,
+    "batch_size": 8,
+    "max_length": 512,
+    "device": "cuda",
+    "dtype": "torch.float16"
+  },
+  "records": [
+    {
+      "model": "gpt2",
+      "1nn_cv_accuracy": 0.5900000000000001,
+      "q_knn": 0.4533333333333334,
+      "status": "success",
+      "error": null
+    },
+    {
+      "model": "gpt2-medium",
+      "1nn_cv_accuracy": 0.472,
+      "q_knn": 0.296,
+      "status": "success",
+      "error": null
+    }
+  ]
+}
