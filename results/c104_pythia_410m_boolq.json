@@ -1,0 +1,5 @@
+{
+  "model": "EleutherAI/pythia-410m",
+  "task": "boolq",
+  "score": 0.6042813455657492
+}
