@@ -1,0 +1,58 @@
+{
+  "experiment": "c65_multi_model_cti_benchmark",
+  "config": {
+    "models": [
+      "gpt2",
+      "EleutherAI/pythia-160m",
+      "EleutherAI/gpt-neo-125m",
+      "EleutherAI/pythia-410m"
+    ],
+    "task": "arc_easy",
+    "num_fewshot": 0,
+    "lm_eval_batch_size": "auto",
+    "emb_batch_size": 8,
+    "n_ag_news_samples": 100,
+    "device": "cuda",
+    "dtype": "torch.float16"
+  },
+  "records": [
+    {
+      "model": "gpt2",
+      "benchmark_score": 0.43897306397306396,
+      "kappa_nearest": 16.25229061126709,
+      "q_knn": 0.25333333333333335,
+      "status": "success",
+      "error": null
+    },
+    {
+      "model": "EleutherAI/pythia-160m",
+      "benchmark_score": 0.43686868686868685,
+      "kappa_nearest": 16.28200860977173,
+      "q_knn": 0.6133333333333334,
+      "status": "success",
+      "error": null
+    },
+    {
+      "model": "EleutherAI/gpt-neo-125m",
+      "benchmark_score": 0.43813131313131315,
+      "kappa_nearest": 36.461547145843504,
+      "q_knn": 0.6533333333333333,
+      "status": "success",
+      "error": null
+    },
+    {
+      "model": "EleutherAI/pythia-410m",
+      "benchmark_score": 0.5197811447811448,
+      "kappa_nearest": 42.00600004196167,
+      "q_knn": 0.6666666666666666,
+      "status": "success",
+      "error": null
+    }
+  ],
+  "correlation": {
+    "n_models": 4,
+    "r": 0.708049564562941,
+    "p_value": 0.291950435437059,
+    "valid": true
+  }
+}
