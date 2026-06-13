@@ -1,0 +1,58 @@
+{
+  "experiment": "c85_dbpedia_qknn_pythia_panel",
+  "dataset_hf": "fancyzhx/dbpedia_14",
+  "split": "train",
+  "n_sample": 100,
+  "random_seed": 42,
+  "device": "cuda",
+  "panel": [
+    {
+      "model": "pythia-160m",
+      "model_id": "EleutherAI/pythia-160m",
+      "dataset": "dbpedia_14",
+      "n_samples": 100,
+      "K_full": 14,
+      "K_eff": 14,
+      "K_for_q": 14,
+      "acc_1nn": 0.82,
+      "q_knn": 0.806154,
+      "elapsed_seconds": 10.19
+    },
+    {
+      "model": "pythia-410m",
+      "model_id": "EleutherAI/pythia-410m",
+      "dataset": "dbpedia_14",
+      "n_samples": 100,
+      "K_full": 14,
+      "K_eff": 14,
+      "K_for_q": 14,
+      "acc_1nn": 0.81,
+      "q_knn": 0.795385,
+      "elapsed_seconds": 4.89
+    },
+    {
+      "model": "pythia-1b",
+      "model_id": "EleutherAI/pythia-1b",
+      "dataset": "dbpedia_14",
+      "n_samples": 100,
+      "K_full": 14,
+      "K_eff": 14,
+      "K_for_q": 14,
+      "acc_1nn": 0.84,
+      "q_knn": 0.827692,
+      "elapsed_seconds": 8.01
+    },
+    {
+      "model": "pythia-2.8b",
+      "model_id": "EleutherAI/pythia-2.8b",
+      "dataset": "dbpedia_14",
+      "n_samples": 100,
+      "K_full": 14,
+      "K_eff": 14,
+      "K_for_q": 14,
+      "acc_1nn": 0.83,
+      "q_knn": 0.816923,
+      "elapsed_seconds": 11.68
+    }
+  ]
+}
