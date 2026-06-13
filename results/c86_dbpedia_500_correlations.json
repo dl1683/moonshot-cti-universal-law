@@ -1,0 +1,29 @@
+{
+  "experiment": "c86_dbpedia_500_correlations",
+  "dbpedia_500_qknn": [
+    0.7954,
+    0.8062,
+    0.832,
+    0.8191
+  ],
+  "correlations": {
+    "arc_easy": {
+      "pearson_r": 0.7656978340118139,
+      "pearson_p": 0.2343021659881861,
+      "spearman_rho": 0.7999999999999999,
+      "spearman_p": 0.20000000000000007
+    },
+    "hellaswag": {
+      "pearson_r": 0.7073990661511851,
+      "pearson_p": 0.2926009338488149,
+      "spearman_rho": 0.7999999999999999,
+      "spearman_p": 0.20000000000000007
+    },
+    "winogrande": {
+      "pearson_r": 0.4541864789970551,
+      "pearson_p": 0.5458135210029449,
+      "spearman_rho": 0.7999999999999999,
+      "spearman_p": 0.20000000000000007
+    }
+  }
+}
