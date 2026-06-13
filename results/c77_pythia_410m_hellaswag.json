@@ -1,0 +1,5 @@
+{
+  "model": "EleutherAI/pythia-410m",
+  "task": "hellaswag",
+  "score": 0.3375821549492133
+}
