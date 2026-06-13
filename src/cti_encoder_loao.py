@@ -43,7 +43,7 @@ ENCODER_MODELS = [
 ]
 
 DATASETS = [
-    {"name": "clinc",           "hf": "clinc_oos", "hf_cfg": "plus", "split": "train",
+    {"name": "clinc",           "hf": "clinc/clinc_oos", "hf_cfg": "plus", "split": "train",
      "text_col": "text",  "label_col": "intent",  "K_min": 10},
     {"name": "dbpedia_classes", "hf": "fancyzhx/dbpedia_14", "hf_cfg": None, "split": "train",
      "text_col": "content", "label_col": "label", "K_min": 10},
