@@ -32,6 +32,7 @@ MODELS = [
     "EleutherAI/pythia-160m",
     "EleutherAI/gpt-neo-125m",
     "EleutherAI/pythia-410m",
+    "EleutherAI/pythia-1b",
 ]
 
 TASK = "arc_easy"
@@ -328,7 +329,7 @@ def main() -> Dict[str, Any]:
         "correlation": correlation,
     }
 
-    out_path = Path(__file__).resolve().parents[1] / "results" / "c67_4model_arc_easy_cti_benchmark.json"
+    out_path = Path(__file__).resolve().parents[1] / "results" / "c68_5model_arc_easy_cti_benchmark.json"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w") as f:
         json.dump(output, f, indent=2)
