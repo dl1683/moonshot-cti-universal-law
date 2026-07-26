@@ -1,10 +1,12 @@
-"""Geometry Admission Test: Stage B orchestrator.
+"""Geometry Admission Test: Stage B-P orchestrator (CM-CKS paired development screen).
 
-18-run candidate screen: 2 dev keys x 9 arms.
-Selects winner (raw R vs observable R) by withheld accuracy advantage.
+Reuses Stage A teacher as base. Generates 2 transposition partners.
+Trains 2 partner teachers + extracts artifacts. Runs 8 installer runs
+to select raw vs observable by changed-edge crossover + stability.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import time
 from pathlib import Path
@@ -13,75 +15,81 @@ import numpy as np
 import torch
 
 from cti_geometry_admission_automaton import (
+    DEVELOPMENT_KEY_JSON,
+    OP_NAMES,
+    NUM_STATES,
+    NUM_OPS,
     key_from_json,
     generate_all_eval_sets,
     generate_calibration_set,
-    generate_withheld_eval_set,
+    generate_direct_edges,
     generate_anchors,
     partition_anchors_into_banks,
     generate_bank_order_permutation,
-    generate_stage_b_dev_keys,
+    paired_key_from_transposition,
     hash_eval_set,
     collate_fn,
 )
-from cti_geometry_admission_models import create_teacher, count_parameters
+from cti_geometry_admission_models import create_teacher, create_transformer_student, count_parameters
 from cti_geometry_admission_trainer import train_one_run as train_teacher_run
 from cti_geometry_admission_extraction import (
     extract_hidden_states,
     extract_raw_trace,
     extract_observable_connection,
     generate_perturbations,
+    center_and_normalize,
     TEACHER_DEPTH_LAYERS,
-)
-from cti_geometry_admission_geometry import (
-    generate_haar_rotation_raw,
-    generate_haar_rotation_obs,
-    apply_haar_to_raw_targets,
-    apply_haar_to_obs_targets,
 )
 from cti_geometry_admission_installer import (
     calibrate_coefficient,
     train_installer_run,
-    ARMS,
+    evaluate_direct_edge_logits,
 )
-from cti_geometry_admission_statistics import stage_b_selection
+from cti_geometry_admission_statistics import (
+    counterfactual_edge_crossover,
+    unchanged_edge_stability,
+    cm_pair_success,
+)
 
 RESULTS_DIR = Path(__file__).resolve().parent.parent / "results" / "geometry_admission" / "stage_b"
 STAGE_A_DIR = Path(__file__).resolve().parent.parent / "results" / "geometry_admission" / "stage_a"
 
+DEV_PARTNER_SEEDS = [401, 402]
+KEY_SLOT = 0
 
-def train_teacher_for_key(key_json: dict, key_idx: int, device: torch.device) -> dict:
-    """Train a teacher on the given key using Stage A protocol."""
+
+def edge_index(state: int, op_name: str) -> int:
+    """Convert (state, op_name) to 0-47 direct edge index."""
+    return state * NUM_OPS + OP_NAMES.index(op_name)
+
+
+def derive_dev_partners(base_key_json: dict, key_slot: int) -> list[dict]:
+    """Derive 2 deterministic transposition partners from the base key."""
+    calibrated_op = OP_NAMES[key_slot % NUM_OPS]
+    other_ops = [op for op in OP_NAMES if op != calibrated_op]
+
+    partners = []
+    for pidx in range(2):
+        withheld_op = other_ops[pidx % len(other_ops)]
+        h = hashlib.sha256(
+            f"GAT_STAGE_B_DEV_PARTNER_{pidx}_{withheld_op}".encode()
+        ).digest()
+        u = int(h[0]) % NUM_STATES
+        v = (u + 1 + int(h[1]) % (NUM_STATES - 1)) % NUM_STATES
+        partner_key, metadata = paired_key_from_transposition(
+            base_key_json, calibrated_op, withheld_op, u, v,
+        )
+        partners.append({
+            "partner_index": pidx,
+            "partner_key_json": partner_key,
+            "metadata": metadata,
+        })
+    return partners
+
+
+def extract_teacher_artifacts(key_json: dict, teacher_dir: Path, device: torch.device) -> dict:
+    """Extract raw R and observable R artifacts from a trained teacher."""
     key = key_from_json(key_json)
-    eval_sets = generate_all_eval_sets(key, seed=42)
-
-    run_cfg = {
-        "name": f"teacher_key{key_idx}",
-        "arch": "teacher",
-        "seed": 101,
-        "lr": 3e-4,
-    }
-
-    from cti_geometry_admission_trainer import RESULTS_DIR as TRAINER_RESULTS_DIR
-    import cti_geometry_admission_trainer as trainer_mod
-    original_dir = trainer_mod.RESULTS_DIR
-    trainer_mod.RESULTS_DIR = RESULTS_DIR
-
-    summary = train_teacher_run(run_cfg, key, eval_sets, device)
-
-    trainer_mod.RESULTS_DIR = original_dir
-    return summary
-
-
-def extract_teacher_artifacts(
-    key_json: dict,
-    key_idx: int,
-    device: torch.device,
-) -> dict:
-    """Extract raw R, observable R, and static G artifacts from trained teacher."""
-    key = key_from_json(key_json)
-
-    teacher_dir = RESULTS_DIR / f"teacher_key{key_idx}"
     teacher_path = teacher_dir / "model_final.pt"
     teacher = create_teacher().to(device)
     teacher.load_state_dict(torch.load(teacher_path, map_location=device, weights_only=True))
@@ -90,8 +98,7 @@ def extract_teacher_artifacts(
     anchors = generate_anchors()
     banks = partition_anchors_into_banks(anchors)
 
-    artifacts = {"raw": {}, "obs": {}, "static_g": {}}
-
+    artifacts = {"raw": {}, "obs": {}}
     for bank_idx, bank in enumerate(banks):
         ticks = extract_hidden_states(teacher, bank, device, TEACHER_DEPTH_LAYERS)
 
@@ -111,75 +118,23 @@ def extract_teacher_artifacts(
             } for j, t in obs_transitions.items()
         }
 
-        from cti_geometry_admission_extraction import center_and_normalize
-        artifacts["static_g"][bank_idx] = {}
-        for tick_idx in range(len(TEACHER_DEPTH_LAYERS)):
-            X = center_and_normalize(ticks[tick_idx])
-            G = (X @ X.T).astype(np.float32)
-            artifacts["static_g"][bank_idx][tick_idx] = G
-
+    del teacher
+    torch.cuda.empty_cache()
     return artifacts
 
 
-def build_control_artifacts(
-    artifacts_key0: dict,
-    artifacts_key1: dict,
-) -> tuple[dict, dict]:
-    """Build wrong-key and Haar-matched control artifacts for both keys."""
-    anchors = generate_anchors()
-    banks = partition_anchors_into_banks(anchors)
-    n_banks = len(banks)
-    bank_size = len(banks[0])
-
-    key0_controls = {
-        "raw_wrong": artifacts_key1["raw"],
-        "obs_wrong": {},
-        "raw_haar": {},
-        "obs_haar": {},
-    }
-    key1_controls = {
-        "raw_wrong": artifacts_key0["raw"],
-        "obs_wrong": {},
-        "raw_haar": {},
-        "obs_haar": {},
-    }
-
-    for bank_idx in range(n_banks):
-        key0_controls["obs_wrong"][bank_idx] = artifacts_key1["obs"][bank_idx]
-        key1_controls["obs_wrong"][bank_idx] = artifacts_key0["obs"][bank_idx]
-
-        Q_raw = generate_haar_rotation_raw(bank_size, bank_idx)
-        Q_obs = generate_haar_rotation_obs(8, bank_idx)
-
-        raw_0 = {j: artifacts_key0["raw"][bank_idx][j] for j in range(6)}
-        raw_1 = {j: artifacts_key1["raw"][bank_idx][j] for j in range(6)}
-        haar_raw_0 = apply_haar_to_raw_targets(
-            [raw_0[j] for j in range(6)], Q_raw,
-        )
-        haar_raw_1 = apply_haar_to_raw_targets(
-            [raw_1[j] for j in range(6)], Q_raw,
-        )
-        key0_controls["raw_haar"][bank_idx] = {j: haar_raw_0[j] for j in range(6)}
-        key1_controls["raw_haar"][bank_idx] = {j: haar_raw_1[j] for j in range(6)}
-
-        obs_0_list = [artifacts_key0["obs"][bank_idx][j]["R_obs"] for j in range(6)]
-        obs_1_list = [artifacts_key1["obs"][bank_idx][j]["R_obs"] for j in range(6)]
-        haar_obs_0 = apply_haar_to_obs_targets(obs_0_list, Q_obs)
-        haar_obs_1 = apply_haar_to_obs_targets(obs_1_list, Q_obs)
-        key0_controls["obs_haar"][bank_idx] = {
-            j: {
-                "R_obs": haar_obs_0[j],
-                "U_basis": artifacts_key0["obs"][bank_idx][j]["U_basis"],
-            } for j in range(6)
-        }
-        key1_controls["obs_haar"][bank_idx] = {
-            j: {
-                "R_obs": haar_obs_1[j],
-                "U_basis": artifacts_key1["obs"][bank_idx][j]["U_basis"],
-            } for j in range(6)
-        }
-
-    return key0_controls, key1_controls
+def load_student_and_get_logits(
+    run_dir: Path, direct_edges: list[dict], device: torch.device,
+) -> np.ndarray:
+    """Load a trained student and return direct-edge logits (48, 12)."""
+    model = create_transformer_student().to(device)
+    model.load_state_dict(torch.load(
+        run_dir / "model_final.pt", map_location=device, weights_only=True,
+    ))
+    logits = evaluate_direct_edge_logits(model, direct_edges, device)
+    del model
+    torch.cuda.empty_cache()
+    return logits
 
 
 def main():
@@ -187,124 +142,297 @@ def main():
     print(f"Device: {device}")
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
-    dev_keys = generate_stage_b_dev_keys()
-    with open(RESULTS_DIR / "development_keys.json", "w") as f:
-        json.dump([{"slot": k["slot"], "derivation": k["derivation"],
-                     "seed_hash": k["seed_hash"], "key_json": k["key_json"]}
-                    for k in dev_keys], f, indent=2)
+    key_path = STAGE_A_DIR / "development_key.json"
+    if not key_path.exists():
+        print("ERROR: Stage A development key not found. Run Stage A first.")
+        return
+    with open(key_path) as f:
+        base_key_json = json.load(f)
+
+    teacher_dir = STAGE_A_DIR / "teacher"
+    summary_path = teacher_dir / "summary.json"
+    if not summary_path.exists():
+        print("ERROR: Stage A teacher not trained. Run Stage A first.")
+        return
+    with open(summary_path) as f:
+        teacher_summary = json.load(f)
+    if teacher_summary.get("status") != "complete":
+        print("ERROR: Stage A teacher training not complete.")
+        return
+
+    base_key = key_from_json(base_key_json)
+
+    print("\n" + "=" * 60)
+    print("STAGE B-P: GENERATING DEVELOPMENT PARTNERS")
+    print("=" * 60)
+    partners = derive_dev_partners(base_key_json, KEY_SLOT)
+    for p in partners:
+        m = p["metadata"]
+        print(f"  Partner {p['partner_index']}: "
+              f"withheld={m['withheld_op']}, "
+              f"transposition=({m['transposition'][0]},{m['transposition'][1]}), "
+              f"changed edges: {[edge_index(e['state'], e['op']) for e in m['changed_edges']]}")
+
+    with open(RESULTS_DIR / "dev_partners.json", "w") as f:
+        json.dump(partners, f, indent=2)
+
+    print("\n" + "=" * 60)
+    print("STAGE B-P: TRAINING PARTNER + REPLAY TEACHERS")
+    print("=" * 60)
+
+    import cti_geometry_admission_trainer as trainer_mod
+    original_results_dir = trainer_mod.RESULTS_DIR
+    trainer_mod.RESULTS_DIR = RESULTS_DIR
+
+    for p in partners:
+        pidx = p["partner_index"]
+        pkey = key_from_json(p["partner_key_json"])
+        eval_sets = generate_all_eval_sets(pkey, seed=42)
+
+        run_cfg = {
+            "name": f"partner_{pidx}_teacher",
+            "arch": "teacher",
+            "seed": 101,
+            "lr": 3e-4,
+        }
+        print(f"\nTraining partner {pidx} teacher...")
+        summary = train_teacher_run(run_cfg, pkey, eval_sets, device)
+
+        gate_ok = (
+            summary["final_in_range"] >= 0.995
+            and summary["final_extrapolation"] >= 0.990
+            and summary["final_direct_edges"] == 48
+        )
+        if not gate_ok:
+            print(f"  WARNING: Partner {pidx} teacher below capacity!")
+            print(f"    in_range={summary['final_in_range']:.4f} "
+                  f"extrap={summary['final_extrapolation']:.4f} "
+                  f"edges={summary['final_direct_edges']}/48")
+
+    print("\nTraining same-key replay teacher...")
+    replay_eval = generate_all_eval_sets(base_key, seed=42)
+    replay_summary = train_teacher_run(
+        {"name": "replay_teacher", "arch": "teacher", "seed": 101, "lr": 3e-4},
+        base_key, replay_eval, device,
+    )
+    print(f"  Replay teacher: in_range={replay_summary['final_in_range']:.4f} "
+          f"extrap={replay_summary['final_extrapolation']:.4f}")
+
+    trainer_mod.RESULTS_DIR = original_results_dir
+
+    print("\n" + "=" * 60)
+    print("STAGE B-P: EXTRACTING ARTIFACTS")
+    print("=" * 60)
+
+    print("  Extracting base teacher artifacts...")
+    base_artifacts = extract_teacher_artifacts(base_key_json, teacher_dir, device)
+
+    partner_artifacts = []
+    for p in partners:
+        pidx = p["partner_index"]
+        print(f"  Extracting partner {pidx} artifacts...")
+        part_dir = RESULTS_DIR / f"partner_{pidx}_teacher"
+        art = extract_teacher_artifacts(p["partner_key_json"], part_dir, device)
+        partner_artifacts.append(art)
+
+    print("  Extracting replay teacher artifacts...")
+    replay_artifacts = extract_teacher_artifacts(
+        base_key_json, RESULTS_DIR / "replay_teacher", device,
+    )
+
+    print("\n" + "=" * 60)
+    print("STAGE B-P: COEFFICIENT FREEZING")
+    print("=" * 60)
 
     anchors = generate_anchors()
     banks = partition_anchors_into_banks(anchors)
     bank_order = generate_bank_order_permutation()
 
-    print("\n" + "=" * 60)
-    print("STAGE B: TEACHER TRAINING")
-    print("=" * 60)
-    for ki, kd in enumerate(dev_keys):
-        print(f"\nTraining teacher for key {ki}...")
-        train_teacher_for_key(kd["key_json"], ki, device)
+    cal_base = generate_calibration_set(base_key, key_slot=KEY_SLOT)
 
-    print("\n" + "=" * 60)
-    print("STAGE B: ARTIFACT EXTRACTION")
-    print("=" * 60)
-    artifacts = []
-    for ki, kd in enumerate(dev_keys):
-        print(f"\nExtracting artifacts for key {ki}...")
-        art = extract_teacher_artifacts(kd["key_json"], ki, device)
-        artifacts.append(art)
-
-    print("\n" + "=" * 60)
-    print("STAGE B: CONTROL ARTIFACTS")
-    print("=" * 60)
-    key0_controls, key1_controls = build_control_artifacts(artifacts[0], artifacts[1])
-    controls = [key0_controls, key1_controls]
-
-    print("\n" + "=" * 60)
-    print("STAGE B: COEFFICIENT FREEZING (ref = key 0, seed 400)")
-    print("=" * 60)
-
-    key0 = key_from_json(dev_keys[0]["key_json"])
-    cal0 = generate_calibration_set(key0, key_slot=0)
-    combined_ref = {
-        "raw": artifacts[0]["raw"],
-        "obs": artifacts[0]["obs"],
-        "static_g": artifacts[0]["static_g"],
-        "raw_wrong": controls[0]["raw_wrong"],
-        "obs_wrong": controls[0]["obs_wrong"],
-        "raw_haar": controls[0]["raw_haar"],
-        "obs_haar": controls[0]["obs_haar"],
-    }
-
-    from cti_geometry_admission_models import create_transformer_student
     torch.manual_seed(400)
     torch.cuda.manual_seed_all(400)
     ref_model = create_transformer_student().to(device)
     frozen_coefficients = {}
-    for arm in ARMS:
+    for arm in ["raw_correct", "obs_correct"]:
         frozen_coefficients[arm] = calibrate_coefficient(
-            ref_model, cal0, banks, arm, combined_ref, device,
+            ref_model, cal_base, banks, arm,
+            {"raw": base_artifacts["raw"], "obs": base_artifacts["obs"]},
+            device,
         )
         print(f"  Frozen coefficient for {arm}: {frozen_coefficients[arm]:.6f}")
     del ref_model
+    torch.cuda.empty_cache()
 
     with open(RESULTS_DIR / "frozen_coefficients.json", "w") as f:
         json.dump(frozen_coefficients, f, indent=2)
 
     print("\n" + "=" * 60)
-    print("STAGE B: INSTALLER RUNS (18 total)")
+    print("STAGE B-P: INSTALLER RUNS (8 total)")
     print("=" * 60)
 
-    all_results = {0: {}, 1: {}}
+    base_direct = generate_direct_edges(base_key)
+    run_count = 0
+    partner_evaluations = []
 
-    for ki, kd in enumerate(dev_keys):
-        key = key_from_json(kd["key_json"])
-        cal = generate_calibration_set(key, key_slot=ki)
-        withheld, probes = generate_withheld_eval_set(key, key_slot=ki, key_index=ki)
+    for pidx, p in enumerate(partners):
+        pkey = key_from_json(p["partner_key_json"])
+        partner_direct = generate_direct_edges(pkey)
+        changed = p["metadata"]["changed_edges"]
+        changed_indices = [edge_index(e["state"], e["op"]) for e in changed]
+        student_seed = DEV_PARTNER_SEEDS[pidx]
 
-        combined_artifacts = {
-            "raw": artifacts[ki]["raw"],
-            "obs": artifacts[ki]["obs"],
-            "static_g": artifacts[ki]["static_g"],
-            "raw_wrong": controls[ki]["raw_wrong"],
-            "obs_wrong": controls[ki]["obs_wrong"],
-            "raw_haar": controls[ki]["raw_haar"],
-            "obs_haar": controls[ki]["obs_haar"],
-        }
+        cal_partner = generate_calibration_set(pkey, key_slot=KEY_SLOT)
 
-        for arm in ARMS:
-            run_name = f"key{ki}_{arm}_s401"
-            print(f"\nRunning: {run_name}")
+        candidate_results = {}
 
+        for candidate in ["raw", "obs"]:
+            arm = f"{candidate}_correct"
             coeff = frozen_coefficients[arm]
-            print(f"  Coefficient (frozen): {coeff:.6f}")
 
-            run_config = {
-                "name": run_name,
-                "arm": arm,
-                "seed": 401,
-                "lr": 5e-4,
-                "arch": "transformer",
-                "coefficient": coeff,
-            }
+            run_a_name = f"p{pidx}_{candidate}_A_s{student_seed}"
+            run_b_name = f"p{pidx}_{candidate}_B_s{student_seed}"
 
-            summary = train_installer_run(
-                run_config, combined_artifacts, cal, withheld, probes,
-                banks, bank_order, RESULTS_DIR, device,
+            print(f"\n[{run_count+1}/8] {run_a_name}")
+            run_count += 1
+            train_installer_run(
+                {"name": run_a_name, "arm": arm, "seed": student_seed,
+                 "lr": 5e-4, "arch": "transformer", "coefficient": coeff},
+                {"raw": base_artifacts["raw"], "obs": base_artifacts["obs"]},
+                cal_base, [], base_direct, banks, bank_order, RESULTS_DIR, device,
             )
 
-            all_results[ki][arm] = summary["final_withheld_acc"]
-            print(f"  Withheld acc: {summary['final_withheld_acc']:.4f}")
-            print(f"  Probe: {summary['final_probe_correct']}/{summary['final_probe_total']}")
+            print(f"\n[{run_count+1}/8] {run_b_name}")
+            run_count += 1
+            train_installer_run(
+                {"name": run_b_name, "arm": arm, "seed": student_seed,
+                 "lr": 5e-4, "arch": "transformer", "coefficient": coeff},
+                {"raw": partner_artifacts[pidx]["raw"],
+                 "obs": partner_artifacts[pidx]["obs"]},
+                cal_partner, [], partner_direct, banks, bank_order, RESULTS_DIR, device,
+            )
+
+            logits_a = load_student_and_get_logits(
+                RESULTS_DIR / run_a_name, base_direct, device,
+            )
+            logits_b = load_student_and_get_logits(
+                RESULTS_DIR / run_b_name, partner_direct, device,
+            )
+
+            crossover = counterfactual_edge_crossover(logits_a, logits_b, changed)
+            stability = unchanged_edge_stability(logits_a, logits_b, changed_indices)
+            pair = cm_pair_success(crossover, stability)
+
+            candidate_results[candidate] = {
+                "crossover": crossover,
+                "stability": stability,
+                "pair_success": pair,
+            }
+
+            print(f"  {candidate}: crossover={crossover['all_crossover']}, "
+                  f"mean_d={crossover['mean_d']:.4f}, "
+                  f"stable={stability['stable']}, "
+                  f"success={pair['success']}")
+
+        partner_evaluations.append(candidate_results)
 
     print("\n" + "=" * 60)
-    print("STAGE B: SELECTION")
+    print("STAGE B-P: SAME-KEY REPLAY NOISE CEILING")
     print("=" * 60)
 
-    decision = stage_b_selection(all_results)
-    decision["all_results"] = {
-        str(k): {arm: float(acc) for arm, acc in arms.items()}
-        for k, arms in all_results.items()
+    replay_seed = 403
+    replay_drift = {}
+    for candidate in ["raw", "obs"]:
+        arm = f"{candidate}_correct"
+        coeff = frozen_coefficients[arm]
+
+        orig_name = f"replay_{candidate}_orig_s{replay_seed}"
+        repl_name = f"replay_{candidate}_repl_s{replay_seed}"
+
+        print(f"\n  {orig_name}")
+        train_installer_run(
+            {"name": orig_name, "arm": arm, "seed": replay_seed,
+             "lr": 5e-4, "arch": "transformer", "coefficient": coeff},
+            {"raw": base_artifacts["raw"], "obs": base_artifacts["obs"]},
+            cal_base, [], base_direct, banks, bank_order, RESULTS_DIR, device,
+        )
+
+        print(f"  {repl_name}")
+        train_installer_run(
+            {"name": repl_name, "arm": arm, "seed": replay_seed,
+             "lr": 5e-4, "arch": "transformer", "coefficient": coeff},
+            {"raw": replay_artifacts["raw"], "obs": replay_artifacts["obs"]},
+            cal_base, [], base_direct, banks, bank_order, RESULTS_DIR, device,
+        )
+
+        logits_orig = load_student_and_get_logits(
+            RESULTS_DIR / orig_name, base_direct, device,
+        )
+        logits_repl = load_student_and_get_logits(
+            RESULTS_DIR / repl_name, base_direct, device,
+        )
+
+        replay_stability = unchanged_edge_stability(
+            logits_orig, logits_repl, [], drift_ceiling=1.0,
+        )
+        replay_drift[candidate] = {
+            "mean_tv": replay_stability["mean_tv"],
+            "max_tv": replay_stability["max_tv"],
+            "flip_count": replay_stability["flip_count"],
+        }
+        print(f"  {candidate} replay drift: mean_tv={replay_stability['mean_tv']:.4f}, "
+              f"max_tv={replay_stability['max_tv']:.4f}, flips={replay_stability['flip_count']}")
+
+    print("\n" + "=" * 60)
+    print("STAGE B-P: CANDIDATE SELECTION")
+    print("=" * 60)
+
+    raw_score = sum(
+        1 for ev in partner_evaluations if ev["raw"]["pair_success"]["success"]
+    )
+    obs_score = sum(
+        1 for ev in partner_evaluations if ev["obs"]["pair_success"]["success"]
+    )
+    raw_mean_d = np.mean([ev["raw"]["crossover"]["mean_d"] for ev in partner_evaluations])
+    obs_mean_d = np.mean([ev["obs"]["crossover"]["mean_d"] for ev in partner_evaluations])
+
+    print(f"  Raw:  {raw_score}/2 partners pass, mean_d={raw_mean_d:.4f}")
+    print(f"  Obs:  {obs_score}/2 partners pass, mean_d={obs_mean_d:.4f}")
+
+    if raw_score > obs_score:
+        winner = "raw"
+    elif obs_score > raw_score:
+        winner = "obs"
+    elif raw_mean_d >= obs_mean_d:
+        winner = "raw"
+    else:
+        winner = "obs"
+
+    neither_pass = raw_score == 0 and obs_score == 0
+
+    decision = {
+        "winner": winner if not neither_pass else None,
+        "verdict": "FAIL" if neither_pass else "PASS",
+        "raw_score": raw_score,
+        "obs_score": obs_score,
+        "raw_mean_d": float(raw_mean_d),
+        "obs_mean_d": float(obs_mean_d),
+        "frozen_coefficients": frozen_coefficients,
+        "replay_noise_ceiling": replay_drift,
+        "partner_evaluations": [
+            {cand: {
+                "crossover_success": ev[cand]["crossover"]["all_crossover"],
+                "mean_d": ev[cand]["crossover"]["mean_d"],
+                "stable": ev[cand]["stability"]["stable"],
+                "mean_tv": ev[cand]["stability"]["mean_tv"],
+                "pair_success": ev[cand]["pair_success"]["success"],
+            } for cand in ["raw", "obs"]}
+            for ev in partner_evaluations
+        ],
     }
+
+    if neither_pass:
+        decision["reason"] = "Neither candidate produced crossover on development partners"
 
     with open(RESULTS_DIR / "decision.json", "w") as f:
         json.dump(decision, f, indent=2)
@@ -312,10 +440,10 @@ def main():
     print(json.dumps(decision, indent=2))
 
     if decision["verdict"] == "PASS":
-        print(f"\nSTAGE B: PASS — Winner: {decision['winner']}")
-        print("Proceed to Stage C with sealed keys.")
+        print(f"\nSTAGE B-P: PASS -- Winner: {decision['winner']}")
+        print("Proceed to Stage C-I with sealed CM-CKS pairs.")
     else:
-        print(f"\nSTAGE B: FAIL — {decision.get('reason', 'No eligible candidate')}")
+        print("\nSTAGE B-P: FAIL -- No candidate shows crossover effect.")
         print("GAT experiment terminates.")
 
 

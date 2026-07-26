@@ -283,6 +283,20 @@ def centroid_probe(model, calibration_examples, probe_examples, device):
     return correct, len(probe_examples)
 
 
+@torch.no_grad()
+def evaluate_direct_edge_logits(model, direct_edges, device):
+    """Return logits for all 48 direct edges as (48, 12) numpy array."""
+    model.eval()
+    batch = collate_fn(direct_edges)
+    input_ids = batch["input_ids"].to(device)
+    attention_mask = batch["attention_mask"].to(device)
+    with autocast(dtype=torch.bfloat16):
+        out = model(input_ids, attention_mask)
+    logits = out["logits"].float().cpu().numpy()
+    model.train()
+    return logits
+
+
 def train_installer_run(
     run_config: dict,
     teacher_artifacts: dict,
