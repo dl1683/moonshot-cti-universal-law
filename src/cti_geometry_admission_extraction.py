@@ -328,9 +328,13 @@ def check_numerical_gates(raw_transitions: dict, obs_transitions: dict = None) -
 
     for j, t in raw_transitions.items():
         R = t["R"]
+        # Transition 0 (embedding → first block) has intrinsically low rank:
+        # only 4 op tokens × ~17 positions → centered rank ≤ 19.
+        # Rank ≥ 48 only applies to inter-block transitions (j ≥ 1).
+        rank_thresh = 8 if j == 0 else 48
         gate = {
             "finite": bool(np.all(np.isfinite(R))),
-            "numerical_rank_ge_48": t["numerical_rank"] >= 48,
+            f"numerical_rank_ge_{rank_thresh}": t["numerical_rank"] >= rank_thresh,
             "condition_le_1e6": t["condition_number"] <= 1e6,
         }
         gates[f"raw_transition_{j}"] = gate
@@ -418,18 +422,22 @@ def _verify_float32_roundtrip(
     for j_str, stored in loaded["transitions"].items():
         j = int(j_str)
         if trace_type == "raw":
-            orig_arr = original[j]["R"].astype(np.float32)
-            loaded_arr = np.array(stored["R"], dtype=np.float32)
+            pairs = [("R", original[j]["R"], stored["R"])]
         else:
-            orig_arr = original[j]["R_obs"].astype(np.float32)
-            loaded_arr = np.array(stored["R_obs"], dtype=np.float32)
+            pairs = [
+                ("R_obs", original[j]["R_obs"], stored["R_obs"]),
+                ("U_basis", original[j]["U_basis"], stored["U_basis"]),
+            ]
 
-        if not np.array_equal(orig_arr, loaded_arr):
-            max_diff = float(np.max(np.abs(orig_arr - loaded_arr)))
-            raise ValueError(
-                f"Float32 round-trip FAILED for {trace_type} transition {j}: "
-                f"max diff = {max_diff}"
-            )
+        for field, orig, loaded_val in pairs:
+            orig_arr = np.asarray(orig, dtype=np.float32)
+            loaded_arr = np.array(loaded_val, dtype=np.float32)
+            if not np.array_equal(orig_arr, loaded_arr):
+                max_diff = float(np.max(np.abs(orig_arr - loaded_arr)))
+                raise ValueError(
+                    f"Float32 round-trip FAILED for {trace_type}.{field} "
+                    f"transition {j}: max diff = {max_diff}"
+                )
 
 
 if __name__ == "__main__":
