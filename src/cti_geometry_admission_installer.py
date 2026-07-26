@@ -293,6 +293,9 @@ def evaluate_direct_edge_logits(model, direct_edges, device):
     with autocast(dtype=torch.bfloat16):
         out = model(input_ids, attention_mask)
     logits = out["logits"].float().cpu().numpy()
+    if not np.isfinite(logits).all():
+        raise ValueError("Non-finite logits detected in direct edge evaluation")
+    assert logits.shape == (48, 12), f"Expected (48, 12), got {logits.shape}"
     model.train()
     return logits
 

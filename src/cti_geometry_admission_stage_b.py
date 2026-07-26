@@ -54,7 +54,7 @@ from cti_geometry_admission_statistics import (
 RESULTS_DIR = Path(__file__).resolve().parent.parent / "results" / "geometry_admission" / "stage_b"
 STAGE_A_DIR = Path(__file__).resolve().parent.parent / "results" / "geometry_admission" / "stage_a"
 
-DEV_PARTNER_SEEDS = [401, 402]
+DEV_PAIRED_SEED = 401
 KEY_SLOT = 0
 
 
@@ -159,6 +159,17 @@ def main():
     if teacher_summary.get("status") != "complete":
         print("ERROR: Stage A teacher training not complete.")
         return
+    base_gate_ok = (
+        teacher_summary.get("final_in_range", 0) >= 0.995
+        and teacher_summary.get("final_extrapolation", 0) >= 0.990
+        and teacher_summary.get("final_direct_edges", 0) == 48
+    )
+    if not base_gate_ok:
+        print("ERROR: Stage A teacher below capacity gates.")
+        print(f"  in_range={teacher_summary.get('final_in_range')}, "
+              f"extrap={teacher_summary.get('final_extrapolation')}, "
+              f"edges={teacher_summary.get('final_direct_edges')}/48")
+        return
 
     base_key = key_from_json(base_key_json)
 
@@ -204,10 +215,12 @@ def main():
             and summary["final_direct_edges"] == 48
         )
         if not gate_ok:
-            print(f"  WARNING: Partner {pidx} teacher below capacity!")
+            print(f"  ERROR: Partner {pidx} teacher below capacity!")
             print(f"    in_range={summary['final_in_range']:.4f} "
                   f"extrap={summary['final_extrapolation']:.4f} "
                   f"edges={summary['final_direct_edges']}/48")
+            print("Stage B-P: VOID -- Partner teacher capacity failure.")
+            return
 
     print("\nTraining same-key replay teacher...")
     replay_eval = generate_all_eval_sets(base_key, seed=42)
@@ -280,7 +293,7 @@ def main():
         partner_direct = generate_direct_edges(pkey)
         changed = p["metadata"]["changed_edges"]
         changed_indices = [edge_index(e["state"], e["op"]) for e in changed]
-        student_seed = DEV_PARTNER_SEEDS[pidx]
+        student_seed = DEV_PAIRED_SEED
 
         cal_partner = generate_calibration_set(pkey, key_slot=KEY_SLOT)
 
@@ -396,22 +409,42 @@ def main():
     raw_mean_d = np.mean([ev["raw"]["crossover"]["mean_d"] for ev in partner_evaluations])
     obs_mean_d = np.mean([ev["obs"]["crossover"]["mean_d"] for ev in partner_evaluations])
 
+    replay_noise_exceeds = {}
+    for candidate in ["raw", "obs"]:
+        cand_mean_d = float(np.mean([ev[candidate]["crossover"]["mean_d"]
+                                     for ev in partner_evaluations]))
+        noise_tv = replay_drift[candidate]["mean_tv"]
+        exceeds = cand_mean_d > 2.0 * noise_tv if noise_tv > 0 else cand_mean_d > 0
+        replay_noise_exceeds[candidate] = exceeds
+        print(f"  {candidate}: CM mean_d={cand_mean_d:.4f}, replay_noise={noise_tv:.4f}, "
+              f"exceeds_2x={exceeds}")
+
     print(f"  Raw:  {raw_score}/2 partners pass, mean_d={raw_mean_d:.4f}")
     print(f"  Obs:  {obs_score}/2 partners pass, mean_d={obs_mean_d:.4f}")
 
-    if raw_score > obs_score:
-        winner = "raw"
-    elif obs_score > raw_score:
-        winner = "obs"
-    elif raw_mean_d >= obs_mean_d:
-        winner = "raw"
-    else:
-        winner = "obs"
+    raw_viable = raw_score > 0 and replay_noise_exceeds.get("raw", False)
+    obs_viable = obs_score > 0 and replay_noise_exceeds.get("obs", False)
 
-    neither_pass = raw_score == 0 and obs_score == 0
+    if raw_viable and obs_viable:
+        if raw_score > obs_score:
+            winner = "raw"
+        elif obs_score > raw_score:
+            winner = "obs"
+        elif raw_mean_d >= obs_mean_d:
+            winner = "raw"
+        else:
+            winner = "obs"
+    elif raw_viable:
+        winner = "raw"
+    elif obs_viable:
+        winner = "obs"
+    else:
+        winner = None
+
+    neither_pass = winner is None
 
     decision = {
-        "winner": winner if not neither_pass else None,
+        "winner": winner,
         "verdict": "FAIL" if neither_pass else "PASS",
         "raw_score": raw_score,
         "obs_score": obs_score,
@@ -419,6 +452,7 @@ def main():
         "obs_mean_d": float(obs_mean_d),
         "frozen_coefficients": frozen_coefficients,
         "replay_noise_ceiling": replay_drift,
+        "replay_noise_exceeds": replay_noise_exceeds,
         "partner_evaluations": [
             {cand: {
                 "crossover_success": ev[cand]["crossover"]["all_crossover"],
@@ -432,7 +466,14 @@ def main():
     }
 
     if neither_pass:
-        decision["reason"] = "Neither candidate produced crossover on development partners"
+        fail_reasons = []
+        if raw_score == 0 and obs_score == 0:
+            fail_reasons.append("Neither candidate produced crossover on development partners")
+        if not replay_noise_exceeds.get("raw", False) and raw_score > 0:
+            fail_reasons.append("Raw CM effect within replay noise ceiling")
+        if not replay_noise_exceeds.get("obs", False) and obs_score > 0:
+            fail_reasons.append("Obs CM effect within replay noise ceiling")
+        decision["reason"] = "; ".join(fail_reasons) if fail_reasons else "No viable candidate"
 
     with open(RESULTS_DIR / "decision.json", "w") as f:
         json.dump(decision, f, indent=2)

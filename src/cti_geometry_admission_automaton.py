@@ -92,11 +92,14 @@ def paired_key_from_transposition(
         assert len(set(partner[op])) == NUM_STATES, f"Not a permutation: {op}"
     assert partner[calibrated_op] == base_key_json[calibrated_op]
 
+    op_idx = OP_NAMES.index(withheld_op)
     changed_edges = [
         {"op": withheld_op, "state": source_u,
+         "edge_index": source_u * NUM_OPS + op_idx,
          "base_output": base_key_json[withheld_op][source_u],
          "partner_output": partner[withheld_op][source_u]},
         {"op": withheld_op, "state": source_v,
+         "edge_index": source_v * NUM_OPS + op_idx,
          "base_output": base_key_json[withheld_op][source_v],
          "partner_output": partner[withheld_op][source_v]},
     ]

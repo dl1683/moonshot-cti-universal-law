@@ -397,6 +397,8 @@ def cm_cks_verdict(
     """Compute CM-CKS PASS/FAIL/VOID verdict."""
 
     void_reasons = []
+    if len(pair_results) != 8:
+        void_reasons.append(f"Expected 8 pairs, got {len(pair_results)}")
     if not protocol_checks.get("all_teachers_pass", True):
         void_reasons.append("Teacher capacity failure")
     if not protocol_checks.get("all_runs_complete", True):
@@ -405,6 +407,8 @@ def cm_cks_verdict(
         void_reasons.append("Pair construction failure")
     if not protocol_checks.get("calibration_hashes_match", True):
         void_reasons.append("Calibration hash mismatch")
+    if not protocol_checks.get("logits_finite", True):
+        void_reasons.append("Non-finite logits detected")
     if void_reasons:
         return {"verdict": "VOID", "reasons": void_reasons}
 
@@ -419,6 +423,14 @@ def cm_cks_verdict(
         fail_reasons.append(
             f"Sign test: {sign_test['n_success']}/{sign_test['n_pairs']} "
             f"< {sign_test['threshold']}"
+        )
+    if float(np.mean(effects)) < 0.5:
+        fail_reasons.append(
+            f"Aggregate effect floor: mean_d={float(np.mean(effects)):.4f} < 0.5"
+        )
+    if float(np.max(stabilities)) > 0.5:
+        fail_reasons.append(
+            f"Aggregate stability ceiling: max_tv={float(np.max(stabilities)):.4f} > 0.5"
         )
 
     if fail_reasons:

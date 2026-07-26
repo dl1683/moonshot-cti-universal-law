@@ -340,21 +340,21 @@ def main():
                 seal_probes=True,
             )
 
-            logits_a = create_transformer_student().to(device)
-            logits_a.load_state_dict(torch.load(
+            model_a = create_transformer_student().to(device)
+            model_a.load_state_dict(torch.load(
                 RESULTS_DIR / run_a_name / "model_final.pt",
                 map_location=device, weights_only=True,
             ))
-            la = evaluate_direct_edge_logits(logits_a, base_direct, device)
-            del logits_a
+            la = evaluate_direct_edge_logits(model_a, base_direct, device)
+            del model_a
 
-            logits_b = create_transformer_student().to(device)
-            logits_b.load_state_dict(torch.load(
+            model_b = create_transformer_student().to(device)
+            model_b.load_state_dict(torch.load(
                 RESULTS_DIR / run_b_name / "model_final.pt",
                 map_location=device, weights_only=True,
             ))
-            lb = evaluate_direct_edge_logits(logits_b, partner_direct, device)
-            del logits_b
+            lb = evaluate_direct_edge_logits(model_b, partner_direct, device)
+            del model_b
             torch.cuda.empty_cache()
 
             crossover = counterfactual_edge_crossover(la, lb, changed)
@@ -373,15 +373,25 @@ def main():
                   f"stable={stability['stable']}, "
                   f"success={pair_result['success']}")
 
-        mean_d = np.mean([r["crossover"]["mean_d"] for r in seed_pair_results])
-        mean_tv = np.mean([r["stability"]["mean_tv"] for r in seed_pair_results])
-        both_seeds_pass = all(r["pair_result"]["success"] for r in seed_pair_results)
+        agg_crossover_flags = [r["crossover"]["all_crossover"] for r in seed_pair_results]
+        agg_mean_d = float(np.mean([r["crossover"]["mean_d"] for r in seed_pair_results]))
+        agg_mean_tv = float(np.mean([r["stability"]["mean_tv"] for r in seed_pair_results]))
+        agg_max_tv = float(np.max([r["stability"]["max_tv"] for r in seed_pair_results]))
+        agg_flips = sum(r["stability"]["flip_count"] for r in seed_pair_results)
+
+        avg_crossover = {"all_crossover": all(agg_crossover_flags), "mean_d": agg_mean_d}
+        avg_stability = {"stable": agg_max_tv <= 0.5 and agg_flips <= 2,
+                         "mean_tv": agg_mean_tv, "max_tv": agg_max_tv, "flip_count": agg_flips}
+        pair_success = cm_pair_success(avg_crossover, avg_stability)
 
         pair_summary = {
             "pair_index": pi,
-            "success": both_seeds_pass,
-            "mean_d": float(mean_d),
-            "mean_tv": float(mean_tv),
+            "success": pair_success["success"],
+            "mean_d": agg_mean_d,
+            "mean_tv": agg_mean_tv,
+            "pass_crossover": pair_success["pass_crossover"],
+            "pass_effect": pair_success["pass_effect"],
+            "pass_stability": pair_success["pass_stability"],
             "per_seed": [{
                 "seed": r["seed"],
                 "crossover_success": r["crossover"]["all_crossover"],
@@ -391,11 +401,23 @@ def main():
             } for r in seed_pair_results],
         }
         all_pair_results.append(pair_summary)
-        print(f"\n  Pair {pi} aggregate: success={both_seeds_pass}, mean_d={mean_d:.4f}")
+        print(f"\n  Pair {pi} aggregate: success={pair_success['success']}, mean_d={agg_mean_d:.4f}")
 
     print("\n" + "=" * 60)
     print("STAGE C-I: STATISTICAL ANALYSIS")
     print("=" * 60)
+
+    cal_hashes_ok = True
+    for pi, pair in enumerate(pairs):
+        bk = key_from_json(pair["base_key_json"])
+        pk = key_from_json(pair["partner_key_json"])
+        cal_b = generate_calibration_set(bk, key_slot=0)
+        cal_p = generate_calibration_set(pk, key_slot=0)
+        h_b = hash_eval_set(cal_b)
+        h_p = hash_eval_set(cal_p)
+        if h_b != h_p:
+            print(f"  ERROR: Pair {pi} calibration hash mismatch: {h_b[:16]} != {h_p[:16]}")
+            cal_hashes_ok = False
 
     protocol_checks = {
         "all_teachers_pass": teacher_pass,
@@ -405,7 +427,7 @@ def main():
             and p["pair_metadata"]["num_differing_entries"] == 2
             for p in pairs
         ),
-        "calibration_hashes_match": True,
+        "calibration_hashes_match": cal_hashes_ok,
     }
 
     verdict = cm_cks_verdict(all_pair_results, protocol_checks)
