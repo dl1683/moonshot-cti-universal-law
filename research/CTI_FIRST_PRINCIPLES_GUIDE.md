@@ -304,6 +304,8 @@ This is why alpha is constant across 12 NLP architectures (CV = 2.3%): they all 
 
 ## 6. The Equicorrelation rho: A Deeper Invariant
 
+> **RETRACTED (Jul 2026).** The cross-modal rho~0.46 universality claim was killed after adversarial audit revealed it is a geometric null artifact (shared-anchor concentration, effective d~5). The section below is preserved for historical context but its empirical claims are no longer valid. See `research/QUESTION_LOOP_01_SHARED_ANCHOR_NULL_2026_07_25.md`.
+
 ### What rho measures
 
 rho is the average pairwise cosine similarity between centroid-difference vectors, after whitening by the within-class covariance.
