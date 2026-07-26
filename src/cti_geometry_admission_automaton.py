@@ -287,8 +287,8 @@ def collate_fn(batch: list[dict]) -> dict:
 
 
 ANCHOR_COUNT = 2048
-ANCHOR_LENGTH_RANGE = (8, 32)
-ANCHOR_PROTOCOL_ID = "OCF_GAT_ANCHORS_R7_V2"
+ANCHOR_LENGTH_RANGE = (8, 20)
+ANCHOR_PROTOCOL_ID = "OCF_GAT_ANCHORS_R9_V1"
 
 
 def generate_anchors(
