@@ -207,7 +207,7 @@ def main():
             "lr": 3e-4,
         }
         print(f"\nTraining partner {pidx} teacher...")
-        summary = train_teacher_run(run_cfg, pkey, eval_sets, device)
+        summary = train_teacher_run(run_cfg, pkey, eval_sets, device, allow_resume=True)
 
         gate_ok = (
             summary["final_in_range"] >= 0.995
@@ -226,7 +226,7 @@ def main():
     replay_eval = generate_all_eval_sets(base_key, seed=42)
     replay_summary = train_teacher_run(
         {"name": "replay_teacher", "arch": "teacher", "seed": 101, "lr": 3e-4},
-        base_key, replay_eval, device,
+        base_key, replay_eval, device, allow_resume=True,
     )
     print(f"  Replay teacher: in_range={replay_summary['final_in_range']:.4f} "
           f"extrap={replay_summary['final_extrapolation']:.4f}")

@@ -66,7 +66,8 @@ def run_capacity_training(device: torch.device, include_gru: bool = False) -> li
         print(f"Capacity training: {run_cfg['name']}")
         print(f"{'='*60}")
         torch.cuda.reset_peak_memory_stats()
-        summary = train_one_run(run_cfg, key, eval_sets, device)
+        resume = run_cfg["arch"] == "teacher"
+        summary = train_one_run(run_cfg, key, eval_sets, device, allow_resume=resume)
         summaries.append(summary)
 
     gates = check_capacity_gates(summaries)

@@ -251,7 +251,7 @@ def main():
             print(f"\n  Training {name}...")
             summary = train_teacher_run(
                 {"name": name, "arch": "teacher", "seed": 101, "lr": 3e-4},
-                key, eval_sets, device,
+                key, eval_sets, device, allow_resume=True,
             )
 
             gate_ok = (

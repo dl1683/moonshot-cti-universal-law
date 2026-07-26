@@ -45,7 +45,7 @@ RUNS = [
     {"name": "gru_s3",          "arch": "gru",        "seed": 303, "lr": 1e-3},
 ]
 
-MAX_STEPS = 7000
+MAX_STEPS = 15000
 BATCH_SIZE = 512
 WARMUP_STEPS = 250
 EVAL_INTERVAL = 250
@@ -149,7 +149,8 @@ def _write_config_hash(run_dir: Path, run_cfg: dict, key, eval_sets: dict, model
     return config_hash
 
 
-def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device):
+def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device,
+                   allow_resume: bool = False):
     name = run_cfg["name"]
     arch = run_cfg["arch"]
     seed = run_cfg["seed"]
@@ -179,8 +180,16 @@ def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device):
 
     start_step = 0
     if checkpoint_path.exists():
-        print(f"[{name}] Existing checkpoint found — removing (frozen contract: always restart from step 0).")
-        checkpoint_path.unlink()
+        if allow_resume:
+            ckpt = torch.load(checkpoint_path, map_location=device, weights_only=False)
+            model.load_state_dict(ckpt["model"])
+            optimizer.load_state_dict(ckpt["optimizer"])
+            scaler.load_state_dict(ckpt["scaler"])
+            start_step = ckpt["step"]
+            print(f"[{name}] Resuming from checkpoint at step {start_step}.")
+        else:
+            print(f"[{name}] Existing checkpoint found — removing (frozen contract: always restart from step 0).")
+            checkpoint_path.unlink()
 
     config_hash = _write_config_hash(run_dir, run_cfg, key, eval_sets, model)
     print(f"[{name}] Config hash: {config_hash[:16]}...")
