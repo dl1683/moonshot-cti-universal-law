@@ -23,38 +23,56 @@ It has repeatedly mistaken breadth of internal validation for depth of external 
 
 ### Phase 0 — Kill Gates (1-2 weeks)
 
-**Gate A: Corrected Equicorrelation Audit**
-- Fix whitening: Sigma_W^(-1/2) with Ledoit-Wolf shrinkage
-- Run 6 matched null controls
-- Survival requires all 4 modality groups outside 99% null interval after Holm correction
+**Gate A: Equicorrelation Audit — KILLED (WL5)**
+- Whitening bug confirmed: sqrt(Lambda) instead of 1/sqrt(Lambda)
+- Historical rho~0.462 within matched-null 99% CI
+- Claims retracted from both papers
 
-**Gate B: Benchmark Bridge**
-- Run preregistered 6-task Open LLM Leaderboard panel via lm-eval
-- Survival requires rho>=0.60, LOFO>=0.35, partial after log-params>=0.30, beats baselines by 0.10+
+**Gate B: Benchmark Bridge — RUNNING**
+- lm-eval executing: 12 models x 5 tasks (excl GPQA)
+- 2/60 complete (pythia-160m BBH pass, instruction_following fail)
+- Survival requires rho>=0.60, LOFO>=0.35, partial after log-params>=0.30
 
-**Gate C: AMCL Demolition**
-- Paired GSM8K (1000 problems), stop vs revise, Qwen3-0.6B + OLMo-2-1B
-- CTI must beat confidence/entropy/margin by 1+ point with positive 95% LCB in both transfer directions
-- If fails: kill AMCL permanently
+**Gate C: AMCL — PERMANENTLY KILLED (Steering R3)**
+- 504 files deleted. Zero empirical results ever existed.
+- 20 GPU-hours reallocated to Geometry Admission Test reserve.
 
-### Phase 1 — Dynamic Geometry Compiler (primary moonshot)
+### Phase 1 — Open Capability File (primary moonshot, pivoted from DG-0)
 
-**Thesis:** Intelligence is not weights; it is a compact geometric program of representation transformations realizable on different substrates.
+**Thesis:** A teacher's differential competence can be extracted once into a compact,
+causally grounded behavioral artifact that installs into multiple incompatible students
+without teacher access or pair-specific tuning.
 
-**Headline:** "Copy how an AI thinks, not its weights."
+**Headline:** "Download a skill, not a giant AI."
 
-**DG-0 Minimal Experiment:**
-- Teacher: Qwen3-4B -> Student: Qwen3-0.6B (6.7x compression)
-- Task: GSM8K (3000 train, 500 dev, official test frozen)
-- 6 arms: SFT / SFT+KD / +static Gram / +dynamic update-to-state / +permuted control / +compute-matched
-- Direction alive if D beats max(C,F) by 3+ points, 20%+ gap closed, reproduces on second benchmark
+**Geometry Admission Test (concrete spec in research/OPEN_CAPABILITY_FILE_GEOMETRY_ADMISSION_STAGE_A_2026_07_25.md):**
+- 12-state, 4-symbol permutation automaton (115 bits key entropy)
+- Teacher: 12L/384d/19.5M params Transformer
+- Student: 6L/160d/1.9M Transformer (10.15x compression)
+- Conditional: 6L/224d/1.8M GRU (10.55x compression)
+- 2 candidates: raw R trace vs observable connection (VJP-balanced)
+- 5 controls: no auxiliary, static G, wrong-key, Haar-matched, generic smoothness
+- Staged: preflight (A) -> screen (B) -> sealed 8-key confirmation (C) -> conditional GRU
 
-### Pivot Ladder
+**Budget:**
+| GPU-hours | Work |
+|---:|---|
+| 20 | Finish and adjudicate Gate B |
+| 30 | Transformer Geometry Admission Test |
+| 25 | Conditional GRU confirmation |
+| 25 | Extra seeds, causal ablation, accounting, reserve |
 
-1. Bridge fails, equicorrelation survives: reposition CTI as training coordinate
-2. Bridge AND equicorrelation fail: close CTI universal-law project
-3. Dynamic geometry fails to beat KD: kill "Intelligence = Geometry" strong form
-4. Dynamic geometry wins at 10x compression across architectures: manifesto has evidence
+**Honest scores (Steering R2):**
+- Today: Turing 3/10
+- After 100h best case (synthetic automaton passes): 4.5/10
+- 8/10 requires: language competence + cross-substrate + composition + economics + replication
+
+### Pivot Ladder (updated)
+
+1. Bridge fails: close CTI universal-law project or reposition as training coordinate
+2. GAT fails: kill "Intelligence = Geometry" strong form, consider Universal Compute Governor
+3. GAT Transformer passes: earn the right to test cross-substrate (GRU)
+4. GAT cross-substrate passes: earn the right to test language transfer
 
 ---
 
@@ -69,10 +87,10 @@ It has repeatedly mistaken breadth of internal validation for depth of external 
 | 4 | Cross-modal audit | SKIPPED | Same VOID: no cached embeddings |
 | 5 | Claim adjudication | DONE | KILLED: retracted from both papers, success criteria, experiment log |
 | 6 | Benchmark freeze + smoke | DONE | Pipeline works (BBH passed), GPQA gated |
-| 7 | Benchmark panel execution | RUNNING | 12 models x 5 tasks (excl GPQA), lm-eval in progress |
+| 7 | Benchmark panel execution | RUNNING | 12 models x 5 tasks (excl GPQA), lm-eval in progress, 2/60 done |
 | 8 | Bridge adjudication | BLOCKED | Depends on WL7 |
-| 9 | AMCL demolition | PENDING | |
-| 10 | DG-0 pilot | PENDING | |
+| 9 | AMCL demolition | DONE | 504 files deleted, Gate C permanently killed |
+| 10 | Geometry Admission Test | BLOCKED | Awaiting Gate B adjudication + R4 Stage B/C spec |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
@@ -85,3 +103,12 @@ It has repeatedly mistaken breadth of internal validation for depth of external 
 | 6 | Regularization vs transfer | DONE | 4 tests required: teacher identity, causal use, timing, matched regularizers |
 | 7 | Evidence ladder to "portable program" | DONE | 5-rung ladder; Qwen pilot can reach Rung 2 max |
 | 8 | Generative directions for DG-0 | DONE | Lead with observable connection codec; pursue differential skill patches, closed-loop transfer, and gauge-invariant loop structure |
+
+### Steering Dialogue (5-round supervisor check-in)
+| Round | Topic | Status | Outcome |
+|-------|-------|--------|---------|
+| R1 | Pivot from DG-0 to Open Capability File | DONE | Kill DG-0, pivot to capability file thesis |
+| R2 | Corrected plan: budget, scope, honest scores | DONE | 2-candidate GAT over 7-codec tournament, 3/10 today |
+| R3 | Concrete Stage A specification | DONE | Full automaton, architecture, training, extraction spec |
+| R4 | Stage B/C transfer design + implementation | RUNNING | Awaiting Codex response |
+| R5 | Final confirmation | PENDING | |
