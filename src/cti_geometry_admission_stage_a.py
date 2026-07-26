@@ -8,6 +8,7 @@ Runs the full Stage A pipeline:
 """
 from __future__ import annotations
 
+import gc
 import json
 import time
 from pathlib import Path
@@ -32,8 +33,11 @@ from cti_geometry_admission_models import (
 from cti_geometry_admission_trainer import (
     train_one_run,
     check_capacity_gates,
+    get_gpu_temp_c,
     RUNS,
 )
+
+COOLDOWN_BETWEEN_RUNS_S = 60
 from cti_geometry_admission_extraction import (
     extract_hidden_states,
     extract_raw_trace,
@@ -61,7 +65,14 @@ def run_capacity_training(device: torch.device, include_gru: bool = False) -> li
         print("[Stage A-T] GRU runs deferred — Transformer-only capacity training.")
 
     summaries = []
-    for run_cfg in runs_to_execute:
+    for i, run_cfg in enumerate(runs_to_execute):
+        if i > 0:
+            temp = get_gpu_temp_c()
+            print(f"\n[Cooldown] Waiting {COOLDOWN_BETWEEN_RUNS_S}s between runs (GPU: {temp}C)...")
+            time.sleep(COOLDOWN_BETWEEN_RUNS_S)
+            gc.collect()
+            torch.cuda.empty_cache()
+
         print(f"\n{'='*60}")
         print(f"Capacity training: {run_cfg['name']}")
         print(f"{'='*60}")

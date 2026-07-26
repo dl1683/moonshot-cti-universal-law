@@ -5,9 +5,11 @@ All hyperparameters from the Stage A specification.
 """
 from __future__ import annotations
 
+import gc
 import json
 import math
 import os
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -49,15 +51,47 @@ MAX_STEPS = 15000
 BATCH_SIZE = 512
 WARMUP_STEPS = 250
 EVAL_INTERVAL = 250
+CHECKPOINT_INTERVAL = 1000
+STRESS_EVAL_INTERVAL = 2500
 GRAD_CLIP = 1.0
 WEIGHT_DECAY = 0.01
 BETAS = (0.9, 0.95)
 EPS = 1e-8
 COSINE_MIN_RATIO = 0.1
 
+THERMAL_PAUSE_C = 82
+THERMAL_RESUME_C = 75
+THERMAL_CHECK_INTERVAL = 50
+
 import hashlib
 _stream_hash = hashlib.sha256(b"GAT_STAGE_A_TRAIN_STREAM_V1").digest()
 TRAIN_STREAM_SEED = int.from_bytes(_stream_hash[:8], "little")
+
+
+def get_gpu_temp_c() -> int:
+    try:
+        out = subprocess.check_output(
+            ["nvidia-smi", "--query-gpu=temperature.gpu", "--format=csv,noheader,nounits"],
+            timeout=5,
+        )
+        return int(out.decode().strip().split("\n")[0])
+    except Exception:
+        return -1
+
+
+def thermal_throttle(step: int, name: str):
+    temp = get_gpu_temp_c()
+    if temp < 0:
+        return
+    if temp >= THERMAL_PAUSE_C:
+        print(f"[{name}] step {step}: GPU {temp}C >= {THERMAL_PAUSE_C}C, pausing...")
+        while True:
+            time.sleep(15)
+            temp = get_gpu_temp_c()
+            if temp < 0 or temp <= THERMAL_RESUME_C:
+                print(f"[{name}] GPU cooled to {temp}C, resuming.")
+                break
+            print(f"[{name}] GPU still {temp}C, waiting...")
 
 
 def cosine_lr(step: int, warmup: int, total: int, peak_lr: float, min_ratio: float) -> float:
@@ -181,11 +215,14 @@ def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device,
     start_step = 0
     if checkpoint_path.exists():
         if allow_resume:
-            ckpt = torch.load(checkpoint_path, map_location=device, weights_only=False)
+            ckpt = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
             model.load_state_dict(ckpt["model"])
             optimizer.load_state_dict(ckpt["optimizer"])
             scaler.load_state_dict(ckpt["scaler"])
             start_step = ckpt["step"]
+            del ckpt
+            gc.collect()
+            torch.cuda.empty_cache()
             print(f"[{name}] Resuming from checkpoint at step {start_step}.")
         else:
             print(f"[{name}] Existing checkpoint found — removing (frozen contract: always restart from step 0).")
@@ -237,12 +274,17 @@ def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device,
         if step % 50 == 0:
             print(f"[{name}] step {step}/{MAX_STEPS} loss={loss.item():.4f} lr={lr:.6f} dt={step_time:.3f}s")
 
+        if step % THERMAL_CHECK_INTERVAL == 0:
+            thermal_throttle(step, name)
+
         if (step + 1) % EVAL_INTERVAL == 0 or step == MAX_STEPS - 1:
             acc_in = evaluate(model, eval_sets["dev_in_range"], device)
             acc_ext = evaluate(model, eval_sets["dev_extrapolation"], device)
             acc_edges = evaluate(model, eval_sets["direct_edges"], device)
             n_edges = int(acc_edges * len(eval_sets["direct_edges"]))
-            acc_stress = evaluate(model, eval_sets["stress_long"], device)
+
+            run_stress = ((step + 1) % STRESS_EVAL_INTERVAL == 0) or (step == MAX_STEPS - 1)
+            acc_stress = evaluate(model, eval_sets["stress_long"], device) if run_stress else -1.0
 
             eval_result = {
                 "step": step + 1,
@@ -269,12 +311,13 @@ def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device,
             print(f"[{name}] EVAL step={step+1}: in_range={acc_in:.4f} extrap={acc_ext:.4f} "
                   f"edges={n_edges}/48 stress={acc_stress:.4f}")
 
-            torch.save({
-                "model": model.state_dict(),
-                "optimizer": optimizer.state_dict(),
-                "scaler": scaler.state_dict(),
-                "step": step + 1,
-            }, checkpoint_path)
+            if (step + 1) % CHECKPOINT_INTERVAL == 0 or step == MAX_STEPS - 1:
+                torch.save({
+                    "model": model.state_dict(),
+                    "optimizer": optimizer.state_dict(),
+                    "scaler": scaler.state_dict(),
+                    "step": step + 1,
+                }, checkpoint_path)
 
     log_file.close()
     wall_time = time.time() - t0
