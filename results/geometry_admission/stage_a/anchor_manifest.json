@@ -1,0 +1,106 @@
+{
+  "n_anchors": 2048,
+  "n_banks": 32,
+  "bank_size": 64,
+  "edge_coverage": {
+    "edge_counts": [
+      [
+        568,
+        599,
+        585,
+        545
+      ],
+      [
+        553,
+        579,
+        550,
+        611
+      ],
+      [
+        577,
+        610,
+        606,
+        582
+      ],
+      [
+        569,
+        599,
+        560,
+        638
+      ],
+      [
+        590,
+        622,
+        588,
+        635
+      ],
+      [
+        536,
+        573,
+        581,
+        557
+      ],
+      [
+        613,
+        575,
+        573,
+        615
+      ],
+      [
+        578,
+        597,
+        567,
+        628
+      ],
+      [
+        580,
+        611,
+        603,
+        605
+      ],
+      [
+        622,
+        552,
+        593,
+        622
+      ],
+      [
+        653,
+        633,
+        573,
+        588
+      ],
+      [
+        610,
+        611,
+        569,
+        626
+      ]
+    ],
+    "min_count": 536,
+    "max_count": 653,
+    "total_traversals": 28410,
+    "all_covered": true,
+    "min_above_400": true
+  },
+  "anchor_length_range": [
+    8,
+    20
+  ],
+  "anchor_protocol_id": "OCF_GAT_ANCHORS_R9_V1",
+  "teacher_checkpoint_sha256": "7a5290eba0293db999252231ab0c00a9627750ec3967edc5581586311799dbe9",
+  "teacher_config_sha256": "1105f068395a5e9ed56293f174d9580c2c44058b9e75e7dfe55a44cacc2becd9",
+  "development_key_sha256": "19e929b139569f2c7bee4ed6089334a34cd0abf366351b3d98a585f8155244e1",
+  "extraction_dtype": "float32",
+  "depth_layers": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    10,
+    12
+  ],
+  "pre_extraction_anchor_accuracy": 1.0,
+  "pre_extraction_perturbation_accuracy": 1.0
+}

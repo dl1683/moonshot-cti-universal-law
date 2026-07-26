@@ -104,6 +104,7 @@ without teacher access or pair-specific tuning.
 | 20 | Extended training relaunch | DONE | MAX_STEPS 7000->15000. Teacher completed 15000 steps. |
 | 21 | Thermal fixes + training efficiency | DONE | Codex review: thermal throttle (90C/86C), checkpoint every 1000 steps, stress_long every 2500, cooldown 60s between runs, checkpoint object freed after resume. |
 | 22 | Stage A-T results + R9 gate redesign | DONE | Teacher in_range=1.0, extrap=0.618 (diagnostic), target_family=99.99%. R9 steering: replace 99% random-long gate with 95-99.5% target-family gate (p,r in [0,7]). Teacher now PASSES all R9 gates. Student 1 training. |
+| 23 | Stage A capacity gate adjudication | DONE | All 3 students pass R9: S1=95.7%/98.8%, S2=96.5%/99.3%, S3=97.1%/99.4% (in_range/target_family). 3/3 pass, stage_a_pass=true. Anchor range (8,32)->(8,20) per R9. |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |

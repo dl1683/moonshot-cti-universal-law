@@ -1,0 +1,2311 @@
+{
+  "banks": [
+    {
+      "bank": 0,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 1,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 2,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 3,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 4,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 5,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 6,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 7,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 8,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 9,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 10,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 11,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 12,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 13,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 14,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 15,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 16,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 17,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 18,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 19,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 20,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 21,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 22,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 23,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 24,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 25,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 26,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 27,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 28,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 29,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 30,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    },
+    {
+      "bank": 31,
+      "gates": {
+        "raw_transition_0": {
+          "finite": true,
+          "numerical_rank_ge_8": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_1": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_2": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_3": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_4": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "raw_transition_5": {
+          "finite": true,
+          "numerical_rank_ge_48": true,
+          "condition_le_1e6": true
+        },
+        "obs_transition_0": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_1": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_2": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_3": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_4": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "obs_transition_5": {
+          "finite": true,
+          "orthogonality_le_1e_minus_5": true,
+          "W_c_rank_ge_8": true,
+          "W_o_rank_ge_8": true
+        },
+        "all_pass": true
+      }
+    }
+  ],
+  "all_pass": true,
+  "repeat_match_raw": true,
+  "repeat_match_obs": true
+}

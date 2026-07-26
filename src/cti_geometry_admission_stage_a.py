@@ -21,6 +21,7 @@ from cti_geometry_admission_automaton import (
     DEVELOPMENT_KEY_JSON,
     ANCHOR_LENGTH_RANGE,
     key_from_json,
+    simulate_automaton,
     generate_all_eval_sets,
     generate_anchors,
     partition_anchors_into_banks,
@@ -107,6 +108,9 @@ def run_extraction(device: torch.device) -> dict:
     banks = partition_anchors_into_banks(anchors)
 
     print("Pre-extraction competence gate: evaluating teacher on frozen anchors...")
+    for a in anchors:
+        if "label" not in a:
+            a["label"] = int(simulate_automaton(key, a["s0"], np.array(a["ops"])))
     anchor_acc = evaluate(teacher, anchors, device)
     all_perturbations = []
     for anchor in anchors:
