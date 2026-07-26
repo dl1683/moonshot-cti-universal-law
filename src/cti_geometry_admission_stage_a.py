@@ -36,8 +36,6 @@ from cti_geometry_admission_trainer import (
     get_gpu_temp_c,
     RUNS,
 )
-
-COOLDOWN_BETWEEN_RUNS_S = 60
 from cti_geometry_admission_extraction import (
     extract_hidden_states,
     extract_raw_trace,
@@ -49,6 +47,7 @@ from cti_geometry_admission_extraction import (
 )
 
 RESULTS_DIR = Path(__file__).resolve().parent.parent / "results" / "geometry_admission" / "stage_a"
+COOLDOWN_BETWEEN_RUNS_S = 60
 
 
 TRANSFORMER_RUNS = [r for r in RUNS if r["arch"] != "gru"]

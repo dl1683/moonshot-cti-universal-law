@@ -59,8 +59,8 @@ BETAS = (0.9, 0.95)
 EPS = 1e-8
 COSINE_MIN_RATIO = 0.1
 
-THERMAL_PAUSE_C = 82
-THERMAL_RESUME_C = 75
+THERMAL_PAUSE_C = 90
+THERMAL_RESUME_C = 86
 THERMAL_CHECK_INTERVAL = 50
 
 import hashlib
@@ -79,19 +79,22 @@ def get_gpu_temp_c() -> int:
         return -1
 
 
-def thermal_throttle(step: int, name: str):
+def thermal_throttle(step: int, name: str, max_wait_s: int = 300):
     temp = get_gpu_temp_c()
     if temp < 0:
         return
     if temp >= THERMAL_PAUSE_C:
         print(f"[{name}] step {step}: GPU {temp}C >= {THERMAL_PAUSE_C}C, pausing...")
-        while True:
+        waited = 0
+        while waited < max_wait_s:
             time.sleep(15)
+            waited += 15
             temp = get_gpu_temp_c()
             if temp < 0 or temp <= THERMAL_RESUME_C:
-                print(f"[{name}] GPU cooled to {temp}C, resuming.")
-                break
-            print(f"[{name}] GPU still {temp}C, waiting...")
+                print(f"[{name}] GPU cooled to {temp}C after {waited}s, resuming.")
+                return
+            print(f"[{name}] GPU still {temp}C ({waited}s/{max_wait_s}s waited)...")
+        print(f"[{name}] Max wait {max_wait_s}s reached (GPU {temp}C), resuming anyway.")
 
 
 def cosine_lr(step: int, warmup: int, total: int, peak_lr: float, min_ratio: float) -> float:

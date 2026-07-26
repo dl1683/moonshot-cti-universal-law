@@ -98,10 +98,12 @@ without teacher access or pair-specific tuning.
 | 14 | Gate B closure + CLAUDE.md honest score | DONE | Bridge terminated, Nobel 8/10->2/10 in CLAUDE.md+MEMORY.md |
 | 15 | Codex R7 preflight audit + T0 gate fix | DONE | T0 rank gate relaxed (19 < 48, now ≥8), float32 U_basis round-trip added |
 | 16 | Stage A-T execution (train16) | VOID | Spec bug: trained 1-16, gated on 17-32. Teacher quarantined as diagnostic |
-| 17 | R7 spec fix + Stage A-T relaunch | RUNNING | max_length=32, steps=7000->15000, anchors 8-32. Teacher resuming from step 7000 checkpoint (ext=50.4% at 7000, warm restart to 15000). Students restart fresh at MAX_STEPS=15000. |
+| 17 | R7 spec fix + Stage A-T relaunch | DONE | max_length=32, steps=7000->15000, anchors 8-32. Teacher warm restart from step 7000. |
 | 18 | CM-CKS implementation (R8 design) | DONE | 5 files: automaton, statistics, installer, stage_b, stage_c. All import clean |
 | 19 | Codex CM-CKS code review bug fixes | DONE | 8/12 bugs fixed: edge_index crash, replay noise gate, teacher capacity, finiteness, n=8, aggregate floors, cal hashes, seed averaging. 4 deferred (wrapped seqs, empty-list, hash chain, exception cleanup). |
-| 20 | Extended training relaunch | RUNNING | MAX_STEPS 7000->15000. Teacher resumes from checkpoint step 7000 (allow_resume=True). Students restart from 0 (frozen contract). Old process killed (PID 28996, MAX_STEPS=7000). New process PID 30644. |
+| 20 | Extended training relaunch | DONE | MAX_STEPS 7000->15000. Teacher completed 15000 steps. |
+| 21 | Thermal fixes + training efficiency | DONE | Codex review: thermal throttle (90C/86C), checkpoint every 1000 steps, stress_long every 2500, cooldown 60s between runs, checkpoint object freed after resume. |
+| 22 | Stage A-T results + diagnosis | RUNNING | Teacher: in_range=1.0, extrap=0.618, edges=48/48. FAILS extrap gate (needs 99%). Students training (s1 at step 6750, in_range=86%). Both teacher and students need more training. |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
