@@ -74,7 +74,7 @@ It has repeatedly mistaken breadth of internal validation for depth of external 
 | 9 | AMCL demolition | PENDING | |
 | 10 | DG-0 pilot | PENDING | |
 
-### Question Loop (supervisor check-in at iteration 7)
+### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
 |----|----------|--------|---------|
 | 1 | Shared-anchor null | DONE | Kill scalar rho: E[cos]->1/2 |
@@ -84,3 +84,4 @@ It has repeatedly mistaken breadth of internal validation for depth of external 
 | 5 | A_r counterexamples | DONE | 3 families: cosmetic sidecar, different mechanism, teacher-shaped regularizer |
 | 6 | Regularization vs transfer | DONE | 4 tests required: teacher identity, causal use, timing, matched regularizers |
 | 7 | Evidence ladder to "portable program" | DONE | 5-rung ladder; Qwen pilot can reach Rung 2 max |
+| 8 | Generative directions for DG-0 | DONE | Lead with observable connection codec; pursue differential skill patches, closed-loop transfer, and gauge-invariant loop structure |
