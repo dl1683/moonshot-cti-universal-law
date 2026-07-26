@@ -69,7 +69,7 @@ It has repeatedly mistaken breadth of internal validation for depth of external 
 | 4 | Cross-modal audit | SKIPPED | Same VOID: no cached embeddings |
 | 5 | Claim adjudication | RUNNING | Removing equicorrelation from papers |
 | 6 | Benchmark freeze + smoke | DONE | Pipeline works (BBH passed), GPQA gated |
-| 7 | Benchmark panel execution | BLOCKED | Needs GPQA access |
+| 7 | Benchmark panel execution | RUNNING | 12 models x 5 tasks (excl GPQA), lm-eval in progress |
 | 8 | Bridge adjudication | BLOCKED | Depends on WL7 |
 | 9 | AMCL demolition | PENDING | |
 | 10 | DG-0 pilot | PENDING | |
@@ -80,7 +80,7 @@ It has repeatedly mistaken breadth of internal validation for depth of external 
 | 1 | Shared-anchor null | DONE | Kill scalar rho: E[cos]->1/2 |
 | 2 | Geometry identifiability | DONE | Terminal geometry cannot prescribe architecture |
 | 3 | Minimal dynamic object | DONE | skew(A_r) is minimal novel signal |
-| 4 | Strongest distillation baseline | RUNNING | |
-| 5 | A_r counterexamples | RUNNING | |
-| 6 | Regularization vs transfer | PENDING | |
-| 7 | Evidence ladder to "portable program" | PENDING | |
+| 4 | Strongest distillation baseline | DONE | Pareto set: FDD, MTA, TSD-KD, RG-OPD, LoRi, Procrustes/Gram |
+| 5 | A_r counterexamples | DONE | 3 families: cosmetic sidecar, different mechanism, teacher-shaped regularizer |
+| 6 | Regularization vs transfer | DONE | 4 tests required: teacher identity, causal use, timing, matched regularizers |
+| 7 | Evidence ladder to "portable program" | DONE | 5-rung ladder; Qwen pilot can reach Rung 2 max |
