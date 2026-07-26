@@ -169,24 +169,8 @@ def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device):
 
     start_step = 0
     if checkpoint_path.exists():
-        existing_hash_path = run_dir / "config.sha256"
-        if existing_hash_path.exists():
-            with open(existing_hash_path) as f:
-                old_hash = f.read().strip()
-            new_hash = _compute_config_hash(run_cfg, key, eval_sets, model)
-            if old_hash != new_hash:
-                print(f"[{name}] Config hash mismatch — restarting from step 0.")
-                checkpoint_path.unlink()
-            else:
-                ckpt = torch.load(checkpoint_path, map_location=device, weights_only=False)
-                model.load_state_dict(ckpt["model"])
-                optimizer.load_state_dict(ckpt["optimizer"])
-                scaler.load_state_dict(ckpt["scaler"])
-                start_step = ckpt["step"]
-                print(f"[{name}] Resuming from step {start_step}")
-        else:
-            print(f"[{name}] No config hash for existing checkpoint — restarting.")
-            checkpoint_path.unlink()
+        print(f"[{name}] Existing checkpoint found — removing (frozen contract: always restart from step 0).")
+        checkpoint_path.unlink()
 
     config_hash = _write_config_hash(run_dir, run_cfg, key, eval_sets, model)
     print(f"[{name}] Config hash: {config_hash[:16]}...")

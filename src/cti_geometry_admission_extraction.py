@@ -182,7 +182,10 @@ def extract_observable_connection(
 
     Returns: dict with R_obs, U basis, diagnostics per transition.
     """
+    import time as _time
+
     n = len(bank_anchors)
+    timings = {}
 
     model.eval()
     for p in model.parameters():
@@ -193,6 +196,7 @@ def extract_observable_connection(
     attention_mask = batch["attention_mask"].to(device)
     last_idx = attention_mask.sum(dim=1) - 1
 
+    t0 = _time.perf_counter()
     out = model(input_ids, attention_mask, return_hidden_states=True)
     logits = out["logits"]
     hidden_states = out["hidden_states"]
@@ -206,7 +210,9 @@ def extract_observable_connection(
         H = hidden_states[layer_idx]
         final_token = H[torch.arange(n, device=device), last_idx]
         tick_states_np.append(final_token.float().cpu().numpy())
+    timings["forward_and_ticks_s"] = _time.perf_counter() - t0
 
+    t0 = _time.perf_counter()
     for p in model.parameters():
         p.requires_grad_(True)
 
@@ -227,13 +233,17 @@ def extract_observable_connection(
     for p in model.parameters():
         p.requires_grad_(False)
     model.zero_grad()
+    timings["vjp_s"] = _time.perf_counter() - t0
 
+    t0 = _time.perf_counter()
     pert_ticks_by_k = []
     for k in range(NUM_PERTURBATIONS):
         pert_batch_k = [bank_perturbations[i][k] for i in range(n)]
         ticks_k = extract_hidden_states(model, pert_batch_k, device, depth_layers)
         pert_ticks_by_k.append(ticks_k)
+    timings["perturbation_s"] = _time.perf_counter() - t0
 
+    t0 = _time.perf_counter()
     transitions = {}
     for j in range(len(depth_layers) - 1):
         X_j = center_and_normalize(tick_states_np[j])
@@ -262,6 +272,9 @@ def extract_observable_connection(
 
         W_c = D_sum / (np.trace(D_sum) + 1e-12)
 
+        rank_Wc = int(np.sum(np.linalg.eigvalsh(W_c) > 1e-10))
+        rank_Wo = int(np.sum(np.linalg.eigvalsh(W_o) > 1e-10))
+
         C_center = np.eye(n) - np.ones((n, n)) / n
         W_c += (BALANCED_RIDGE / n) * C_center
         W_o += (BALANCED_RIDGE / n) * C_center
@@ -289,8 +302,6 @@ def extract_observable_connection(
         R_obs = U.T @ R_j @ U
 
         orth_error = np.linalg.norm(U.T @ U - np.eye(BALANCED_TOP_K), "fro")
-        rank_Wc = int(np.sum(np.linalg.eigvalsh(W_c) > 1e-10))
-        rank_Wo = int(np.sum(np.linalg.eigvalsh(W_o) > 1e-10))
 
         transitions[j] = {
             "R_obs": R_obs,
@@ -302,6 +313,11 @@ def extract_observable_connection(
             "W_c_trace": float(np.trace(W_c)),
             "W_o_trace": float(np.trace(W_o)),
         }
+
+    timings["eigendecomp_and_basis_s"] = _time.perf_counter() - t0
+
+    for t in transitions.values():
+        t["timings"] = dict(timings)
 
     return transitions
 
@@ -386,7 +402,34 @@ def serialize_traces(
     with open(bank_dir / "observable_trace.json", "w") as f:
         f.write(obs_json)
 
+    _verify_float32_roundtrip(bank_dir / "raw_trace.json", raw_transitions, "raw")
+    _verify_float32_roundtrip(bank_dir / "observable_trace.json", obs_transitions, "obs")
+
     return raw_hash, obs_hash
+
+
+def _verify_float32_roundtrip(
+    json_path: Path, original: dict, trace_type: str,
+) -> None:
+    """Verify that the saved float32 JSON round-trips to the same values."""
+    with open(json_path) as f:
+        loaded = json.load(f)
+
+    for j_str, stored in loaded["transitions"].items():
+        j = int(j_str)
+        if trace_type == "raw":
+            orig_arr = original[j]["R"].astype(np.float32)
+            loaded_arr = np.array(stored["R"], dtype=np.float32)
+        else:
+            orig_arr = original[j]["R_obs"].astype(np.float32)
+            loaded_arr = np.array(stored["R_obs"], dtype=np.float32)
+
+        if not np.array_equal(orig_arr, loaded_arr):
+            max_diff = float(np.max(np.abs(orig_arr - loaded_arr)))
+            raise ValueError(
+                f"Float32 round-trip FAILED for {trace_type} transition {j}: "
+                f"max diff = {max_diff}"
+            )
 
 
 if __name__ == "__main__":

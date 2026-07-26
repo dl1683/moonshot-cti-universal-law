@@ -47,13 +47,21 @@ from cti_geometry_admission_extraction import (
 RESULTS_DIR = Path(__file__).resolve().parent.parent / "results" / "geometry_admission" / "stage_a"
 
 
-def run_capacity_training(device: torch.device) -> list[dict]:
-    """Run all 7 capacity training runs."""
+TRANSFORMER_RUNS = [r for r in RUNS if r["arch"] != "gru"]
+GRU_RUNS = [r for r in RUNS if r["arch"] == "gru"]
+
+
+def run_capacity_training(device: torch.device, include_gru: bool = False) -> list[dict]:
+    """Run capacity training. GRU deferred until Transformer Stage C passes."""
     key = key_from_json(DEVELOPMENT_KEY_JSON)
     eval_sets = generate_all_eval_sets(key, seed=42)
 
+    runs_to_execute = TRANSFORMER_RUNS + (GRU_RUNS if include_gru else [])
+    if not include_gru:
+        print("[Stage A-T] GRU runs deferred — Transformer-only capacity training.")
+
     summaries = []
-    for run_cfg in RUNS:
+    for run_cfg in runs_to_execute:
         print(f"\n{'='*60}")
         print(f"Capacity training: {run_cfg['name']}")
         print(f"{'='*60}")
@@ -98,6 +106,7 @@ def run_extraction(device: torch.device) -> dict:
     all_obs_hashes = []
     all_numerical = []
     extraction_times = []
+    obs_phase_timings = []
 
     for bank_idx, bank in enumerate(banks):
         print(f"\nExtracting bank {bank_idx}/{len(banks)}...")
@@ -114,6 +123,10 @@ def run_extraction(device: torch.device) -> dict:
         obs_transitions = extract_observable_connection(
             teacher, bank, perturbations, device, TEACHER_DEPTH_LAYERS,
         )
+
+        first_key = next(iter(obs_transitions))
+        if "timings" in obs_transitions[first_key]:
+            obs_phase_timings.append(obs_transitions[first_key]["timings"])
 
         numerical = check_numerical_gates(raw_transitions, obs_transitions)
         all_numerical.append({"bank": bank_idx, "gates": numerical})
@@ -180,12 +193,25 @@ def run_extraction(device: torch.device) -> dict:
     with open(RESULTS_DIR / "numerical_audit.json", "w") as f:
         json.dump(numerical_audit, f, indent=2)
 
+    phase_timing_summary = {}
+    if obs_phase_timings:
+        for key in obs_phase_timings[0]:
+            vals = [t[key] for t in obs_phase_timings if key in t]
+            phase_timing_summary[key] = {
+                "mean_s": float(np.mean(vals)),
+                "total_s": float(np.sum(vals)),
+            }
+
+    with open(RESULTS_DIR / "extraction_phase_timings.json", "w") as f:
+        json.dump(phase_timing_summary, f, indent=2)
+
     return {
         "extraction_times": extraction_times,
         "repeat_time": repeat_dt,
         "all_numerical_pass": numerical_audit["all_pass"],
         "repeat_match_raw": repeat_match_raw,
         "repeat_match_obs": repeat_match_obs,
+        "phase_timings": phase_timing_summary,
     }
 
 

@@ -16,10 +16,12 @@ from pathlib import Path
 import numpy as np
 
 from cti_geometry_admission_automaton import (
+    DEVELOPMENT_KEY_JSON,
     generate_key_from_seed,
     key_from_json,
     generate_anchors,
     partition_anchors_into_banks,
+    audit_edge_coverage,
 )
 from cti_geometry_admission_statistics import (
     stage_c_primary_statistic,
@@ -266,11 +268,18 @@ def verify_statistics(winner: str, n_keys: int = 8, n_seeds: int = 3) -> dict:
             "n_seeds": len(probe_accs),
         }
 
+    completeness = verify_run_completeness(winner, n_keys, n_seeds)
+    key_checks = verify_key_commitments()
+    forbidden = verify_forbidden_channels()
+
     protocol_checks = {
-        "all_teachers_pass": True,
-        "all_runs_complete": True,
-        "hashes_verified": True,
-        "no_forbidden_info": True,
+        "all_teachers_pass": all(
+            (STAGE_C_DIR / f"teacher_key{ki:02d}" / "summary.json").exists()
+            for ki in range(n_keys)
+        ),
+        "all_runs_complete": completeness["pass"],
+        "hashes_verified": key_checks["pass"],
+        "no_forbidden_info": forbidden["pass"],
     }
 
     recomputed_verdict = stage_c_verdict(
@@ -305,12 +314,21 @@ def verify_anchor_coverage() -> dict:
     """Verify that the anchor set covers all 48 edges of the development key."""
     anchors = generate_anchors()
     banks = partition_anchors_into_banks(anchors)
+    key = key_from_json(DEVELOPMENT_KEY_JSON)
+    coverage = audit_edge_coverage(key, anchors)
+
+    shape_ok = len(anchors) == 2048 and len(banks) == 32 and all(len(b) == 64 for b in banks)
+    edges_ok = coverage["all_covered"] and coverage["min_above_400"]
 
     return {
         "n_anchors": len(anchors),
         "n_banks": len(banks),
         "bank_size": len(banks[0]) if banks else 0,
-        "pass": len(anchors) == 2048 and len(banks) == 32 and all(len(b) == 64 for b in banks),
+        "edge_min_count": coverage["min_count"],
+        "edge_max_count": coverage["max_count"],
+        "all_edges_covered": coverage["all_covered"],
+        "min_edge_above_400": coverage["min_above_400"],
+        "pass": shape_ok and edges_ok,
     }
 
 

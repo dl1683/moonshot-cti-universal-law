@@ -333,12 +333,8 @@ def train_installer_run(
     start_step = 0
 
     if checkpoint_path.exists():
-        ckpt = torch.load(checkpoint_path, map_location=device, weights_only=False)
-        model.load_state_dict(ckpt["model"])
-        optimizer.load_state_dict(ckpt["optimizer"])
-        scaler.load_state_dict(ckpt["scaler"])
-        start_step = ckpt["step"]
-        print(f"[{name}] Resuming from step {start_step}")
+        print(f"[{name}] Existing checkpoint found — removing (frozen contract: always restart from step 0).")
+        checkpoint_path.unlink()
 
     log_file = open(log_path, "a", encoding="utf-8")
     model.train()

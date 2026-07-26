@@ -28,10 +28,11 @@ It has repeatedly mistaken breadth of internal validation for depth of external 
 - Historical rho~0.462 within matched-null 99% CI
 - Claims retracted from both papers
 
-**Gate B: Benchmark Bridge — RUNNING**
-- lm-eval executing: 12 models x 5 tasks (excl GPQA)
-- 2/60 complete (pythia-160m BBH pass, instruction_following fail)
-- Survival requires rho>=0.60, LOFO>=0.35, partial after log-params>=0.30
+**Gate B: Benchmark Bridge — STRATEGICALLY TERMINATED (R6 Steering)**
+- Bridge v1 completed only pythia-160m (2 pass / 1 fail / 1 timeout / 1 error out of 5 tasks)
+- Leaderboard tasks (BBH, IFEval, MATH Hard, MuSR, MMLU Pro) too hard for 160M-1B models
+- Codex R6 steering: skip Bridge v2 entirely. q_knn and kappa are nearly the same object; bridge pass/fail cannot produce new science. Cross-family contradiction (GPT-2 reversal) already exists.
+- Public-benchmark prediction claim permanently retired. 20 GPU-hours reallocated to GAT reserve.
 
 **Gate C: AMCL — PERMANENTLY KILLED (Steering R3)**
 - 504 files deleted. Zero empirical results ever existed.
@@ -54,13 +55,13 @@ without teacher access or pair-specific tuning.
 - 5 controls: no auxiliary, static G, wrong-key, Haar-matched, generic smoothness
 - Staged: preflight (A) -> screen (B) -> sealed 8-key confirmation (C) -> conditional GRU
 
-**Budget:**
+**Budget (revised after R6 — bridge hours reallocated):**
 | GPU-hours | Work |
 |---:|---|
-| 20 | Finish and adjudicate Gate B |
-| 30 | Transformer Geometry Admission Test |
-| 25 | Conditional GRU confirmation |
-| 25 | Extra seeds, causal ablation, accounting, reserve |
+| ~~20~~ | ~~Gate B~~ — TERMINATED, hours reallocated to reserve |
+| 30 | Stage A-T: teacher + 3 Transformer students + extraction (GRU deferred) |
+| 25 | Conditional GRU confirmation (after Transformer Stage C pass) |
+| 45 | Reserve: Stage B screen, Stage C confirmation, extra seeds, causal ablation |
 
 **Honest scores (Steering R2):**
 - Today: Turing 3/10
@@ -87,10 +88,14 @@ without teacher access or pair-specific tuning.
 | 4 | Cross-modal audit | SKIPPED | Same VOID: no cached embeddings |
 | 5 | Claim adjudication | DONE | KILLED: retracted from both papers, success criteria, experiment log |
 | 6 | Benchmark freeze + smoke | DONE | Pipeline works (BBH passed), GPQA gated |
-| 7 | Benchmark panel execution | RUNNING | 12 models x 5 tasks (excl GPQA), lm-eval in progress, 3/60 done |
-| 8 | Bridge adjudication | BLOCKED | Depends on WL7 |
+| 7 | Benchmark panel execution | TERMINATED | 5/60 done (pythia-160m only). Task mismatch: leaderboard tasks too hard |
+| 8 | Bridge adjudication | TERMINATED | Codex R6: skip Bridge v2, retire public benchmark claim |
 | 9 | AMCL demolition | DONE | 504 files deleted, Gate C permanently killed |
 | 10 | GAT implementation | DONE | 11/11 modules complete, preflight fixes applied |
+| 11 | GAT 9-bug Codex audit fix | DONE | All 9 WL10 bugs fixed, CPU smoke passes |
+| 12 | Truth surface cleanup | DONE | Equicorrelation retracted from README, MANIFEST, CHECKLIST, BRIEF, GUIDE |
+| 13 | R6 Stage A protocol repairs | DONE | Pre-ridge rank, resume->restart, float32 round-trip, timing instrumentation, GRU deferral |
+| 14 | Gate B closure + CLAUDE.md honest score | DONE | Bridge terminated, Nobel 8/10->2/10 in CLAUDE.md+MEMORY.md |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
@@ -112,6 +117,7 @@ without teacher access or pair-specific tuning.
 | R3 | Concrete Stage A specification | DONE | Full automaton, architecture, training, extraction spec |
 | R4 | Stage B/C transfer design + implementation | DONE | Complete spec: 18-run screen + 144-run confirmation |
 | R5 | Final consistency audit | DONE | Convergence confirmed, blockers fixed |
+| R6 | Post-WL10 steering: bridge, GAT blockers, candidates | DONE | Kill bridge v2, fix 4 Stage A blockers, keep both candidates, defer GRU |
 
 ### GAT Implementation Status
 | Module | File | Status |
