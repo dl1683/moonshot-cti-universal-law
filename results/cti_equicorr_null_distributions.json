@@ -1,0 +1,1116 @@
+{
+  "experiment": "CTI equicorrelation Iteration 2 matched-null distributions",
+  "precommit": {
+    "confirm_engine": "All 28 grid cells exist; d=256 means are within 0.01 of 0.5; real spectrum/count and random-label controls are finite; prior artifacts are immutable.",
+    "kill_engine": "Any executable engine check fails.",
+    "kill_claim": "Historical 0.455-0.467 overlaps any central 99% matched-null interval.",
+    "void_claim": "No overlap is found without the unavailable historical source embeddings."
+  },
+  "methods": {
+    "iid_gaussian_centroids_matched_K_N_d": "Balanced class means of N iid isotropic Gaussian rows; N=32K. Scale invariance means balanced N does not shift rho.",
+    "empirical_spectrum_and_class_counts": "Gaussian sample means use the 64-dimensional empirical covariance eigenvalues and exact class counts of real handwritten-digit embeddings.",
+    "random_labels": "Exact label-count-preserving permutations on the real digit embeddings; transform refit for every permutation.",
+    "shared_anchor_monte_carlo": "Each replicate averages ordered off-diagonal competitor-direction cosines across every anchor."
+  },
+  "analytic_shared_anchor_null": {
+    "setup": "mu_c, mu_j, mu_k iid N(0, sigma^2 I_d); Delta_j=mu_j-mu_c",
+    "derivation": [
+      "E[Delta_j dot Delta_k] = E[||mu_c||^2] = d sigma^2",
+      "E[||Delta_j||^2] = E[||Delta_k||^2] = 2 d sigma^2",
+      "population coordinate correlation = d sigma^2 / (2 d sigma^2) = 1/2",
+      "cos(Delta_j,Delta_k) converges almost surely to 1/2 as d tends to infinity"
+    ],
+    "asymptotic_expected_cosine": 0.5,
+    "finite_dimension_correction": "E[cos] is not exactly 1/2 at finite d because expectation does not commute with random norm normalization.",
+    "requested_exact_equality_status": "FALSIFIED_AT_FINITE_d; CONFIRMED_AS_ASYMPTOTIC_NULL"
+  },
+  "iid_gaussian_shared_anchor_grid": {
+    "dimensions": [
+      4,
+      16,
+      64,
+      256
+    ],
+    "class_counts_K": [
+      4,
+      10,
+      14,
+      20,
+      28,
+      36,
+      118
+    ],
+    "trials_per_cell": 512,
+    "cells": [
+      {
+        "n_trials": 512,
+        "mean": 0.4526255981971697,
+        "std": 0.022127101636178464,
+        "quantiles": {
+          "0.005": 0.3901816148938472,
+          "0.025": 0.40670715331528207,
+          "0.25": 0.4366166715024239,
+          "0.5": 0.45439749483404834,
+          "0.75": 0.4689408251699842,
+          "0.975": 0.49155130368857664,
+          "0.995": 0.49564079708432296
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.5078125,
+        "cdf_at_band_high": 0.72265625,
+        "probability_inside_band": 0.21484375,
+        "band_location": "overlaps_central_99pct",
+        "band_overlaps_central_99pct": true,
+        "mean_inside_band": false,
+        "K": 4,
+        "N": 128,
+        "d": 4,
+        "seed": 2026076504
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.45131893986147964,
+        "std": 0.0076703798865619495,
+        "quantiles": {
+          "0.005": 0.42866379689217937,
+          "0.025": 0.4342238105999579,
+          "0.25": 0.4465435900852459,
+          "0.5": 0.45185395787007027,
+          "0.75": 0.45694592443271054,
+          "0.975": 0.4639506425754216,
+          "0.995": 0.4684929981140531
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.6640625,
+        "cdf_at_band_high": 0.9921875,
+        "probability_inside_band": 0.328125,
+        "band_location": "overlaps_central_99pct",
+        "band_overlaps_central_99pct": true,
+        "mean_inside_band": false,
+        "K": 10,
+        "N": 320,
+        "d": 4,
+        "seed": 2026076510
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.4515358576973799,
+        "std": 0.00546761507759425,
+        "quantiles": {
+          "0.005": 0.4356166527741208,
+          "0.025": 0.4403980154354272,
+          "0.25": 0.44831702848276556,
+          "0.5": 0.4515349833001462,
+          "0.75": 0.45544377897114546,
+          "0.975": 0.46118533634870074,
+          "0.995": 0.4637130329549839
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.716796875,
+        "cdf_at_band_high": 1.0,
+        "probability_inside_band": 0.283203125,
+        "band_location": "overlaps_central_99pct",
+        "band_overlaps_central_99pct": true,
+        "mean_inside_band": false,
+        "K": 14,
+        "N": 448,
+        "d": 4,
+        "seed": 2026076514
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.4514101555173161,
+        "std": 0.0038323310774416837,
+        "quantiles": {
+          "0.005": 0.4407412890113706,
+          "0.025": 0.4430771363714834,
+          "0.25": 0.4490702373549902,
+          "0.5": 0.4517991869025736,
+          "0.75": 0.4538171917797915,
+          "0.975": 0.45810309854846376,
+          "0.995": 0.46081926049549055
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.833984375,
+        "cdf_at_band_high": 1.0,
+        "probability_inside_band": 0.166015625,
+        "band_location": "overlaps_central_99pct",
+        "band_overlaps_central_99pct": true,
+        "mean_inside_band": false,
+        "K": 20,
+        "N": 640,
+        "d": 4,
+        "seed": 2026076520
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.45150654252654543,
+        "std": 0.0029117374104634854,
+        "quantiles": {
+          "0.005": 0.44289752195509124,
+          "0.025": 0.44600828134597875,
+          "0.25": 0.4496004575702189,
+          "0.5": 0.4516111121615226,
+          "0.75": 0.4536622081401538,
+          "0.975": 0.4570110377464252,
+          "0.995": 0.45846114477592526
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.91015625,
+        "cdf_at_band_high": 1.0,
+        "probability_inside_band": 0.08984375,
+        "band_location": "overlaps_central_99pct",
+        "band_overlaps_central_99pct": true,
+        "mean_inside_band": false,
+        "K": 28,
+        "N": 896,
+        "d": 4,
+        "seed": 2026076528
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.4518467068990563,
+        "std": 0.00244267612668865,
+        "quantiles": {
+          "0.005": 0.44585906280939047,
+          "0.025": 0.4469324542208108,
+          "0.25": 0.4501296520084893,
+          "0.5": 0.4518809841061271,
+          "0.75": 0.45365968030535303,
+          "0.975": 0.4561496616677774,
+          "0.995": 0.45726170611320494
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.90625,
+        "cdf_at_band_high": 1.0,
+        "probability_inside_band": 0.09375,
+        "band_location": "overlaps_central_99pct",
+        "band_overlaps_central_99pct": true,
+        "mean_inside_band": false,
+        "K": 36,
+        "N": 1152,
+        "d": 4,
+        "seed": 2026076536
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.45163223346387726,
+        "std": 0.0012067648873943745,
+        "quantiles": {
+          "0.005": 0.44830757319351555,
+          "0.025": 0.4492774797674864,
+          "0.25": 0.4508415948249985,
+          "0.5": 0.45165838162612326,
+          "0.75": 0.4524909050916329,
+          "0.975": 0.45382938516098364,
+          "0.995": 0.4544473280632606
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 1.0,
+        "cdf_at_band_high": 1.0,
+        "probability_inside_band": 0.0,
+        "band_location": "above_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 118,
+        "N": 3776,
+        "d": 4,
+        "seed": 2026076618
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.48798740911220206,
+        "std": 0.00717796173268461,
+        "quantiles": {
+          "0.005": 0.46190214042879396,
+          "0.025": 0.46979439648230414,
+          "0.25": 0.48435025896408407,
+          "0.5": 0.48928212559390344,
+          "0.75": 0.4930479667601117,
+          "0.975": 0.49779286678648715,
+          "0.995": 0.49867363404629506
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.013671875,
+        "probability_inside_band": 0.013671875,
+        "band_location": "overlaps_central_99pct",
+        "band_overlaps_central_99pct": true,
+        "mean_inside_band": false,
+        "K": 4,
+        "N": 128,
+        "d": 16,
+        "seed": 2026088504
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.4879969270697948,
+        "std": 0.002662153076740497,
+        "quantiles": {
+          "0.005": 0.48095741357608834,
+          "0.025": 0.4826798035735219,
+          "0.25": 0.4861722166886574,
+          "0.5": 0.48820796776387887,
+          "0.75": 0.48993457744507807,
+          "0.975": 0.49281099609905304,
+          "0.995": 0.49411601121229687
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 10,
+        "N": 320,
+        "d": 16,
+        "seed": 2026088510
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.48785622502933657,
+        "std": 0.001888002437859201,
+        "quantiles": {
+          "0.005": 0.48247000286073366,
+          "0.025": 0.4839959526797972,
+          "0.25": 0.48656547839768727,
+          "0.5": 0.487960911340866,
+          "0.75": 0.48925238259162673,
+          "0.975": 0.4911232650406373,
+          "0.995": 0.4922798065059774
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 14,
+        "N": 448,
+        "d": 16,
+        "seed": 2026088514
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.4879987645219894,
+        "std": 0.001447256427204442,
+        "quantiles": {
+          "0.005": 0.48412519162630724,
+          "0.025": 0.48500998086081165,
+          "0.25": 0.4870458164802805,
+          "0.5": 0.4881076117260561,
+          "0.75": 0.4890307033745903,
+          "0.975": 0.49063923674326504,
+          "0.995": 0.49102516124820517
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 20,
+        "N": 640,
+        "d": 16,
+        "seed": 2026088520
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.48813679831346873,
+        "std": 0.0012059585482554495,
+        "quantiles": {
+          "0.005": 0.48525340635871256,
+          "0.025": 0.4858077596775637,
+          "0.25": 0.4873105433024721,
+          "0.5": 0.48825365659562936,
+          "0.75": 0.4889914791712505,
+          "0.975": 0.49042126427629185,
+          "0.995": 0.49107369803929984
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 28,
+        "N": 896,
+        "d": 16,
+        "seed": 2026088528
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.4880714613577084,
+        "std": 0.0009478316509113505,
+        "quantiles": {
+          "0.005": 0.48562956012736064,
+          "0.025": 0.4860896312307116,
+          "0.25": 0.48748086760305487,
+          "0.5": 0.48808341427667895,
+          "0.75": 0.48869945938414755,
+          "0.975": 0.48988489431486654,
+          "0.995": 0.49021622051020286
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 36,
+        "N": 1152,
+        "d": 16,
+        "seed": 2026088536
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.48811416884138636,
+        "std": 0.0004590848079117936,
+        "quantiles": {
+          "0.005": 0.4870197659587208,
+          "0.025": 0.48726967172855695,
+          "0.25": 0.4877864313633785,
+          "0.5": 0.48811537899443347,
+          "0.75": 0.48840950274362666,
+          "0.975": 0.4890488884921753,
+          "0.995": 0.4892621358230427
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 118,
+        "N": 3776,
+        "d": 16,
+        "seed": 2026088618
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.4971043828603969,
+        "std": 0.001848784012196441,
+        "quantiles": {
+          "0.005": 0.49067582204845245,
+          "0.025": 0.49264325819652544,
+          "0.25": 0.49612989131011115,
+          "0.5": 0.49743604344627496,
+          "0.75": 0.4984576815377635,
+          "0.975": 0.49958616516041293,
+          "0.995": 0.49985440293381506
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 4,
+        "N": 128,
+        "d": 64,
+        "seed": 2026136504
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.4970768489542028,
+        "std": 0.000729200416110842,
+        "quantiles": {
+          "0.005": 0.49482678192924445,
+          "0.025": 0.4954507347189259,
+          "0.25": 0.49662369246873067,
+          "0.5": 0.4971488843634013,
+          "0.75": 0.4975916014805747,
+          "0.975": 0.4982799627463907,
+          "0.995": 0.4984832316523706
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 10,
+        "N": 320,
+        "d": 64,
+        "seed": 2026136510
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.49706747237538573,
+        "std": 0.0005072806408384134,
+        "quantiles": {
+          "0.005": 0.4954376545085358,
+          "0.025": 0.49595531957987493,
+          "0.25": 0.4967817883707125,
+          "0.5": 0.4971073885715457,
+          "0.75": 0.4973989753084433,
+          "0.975": 0.49799389776435293,
+          "0.995": 0.4982112301314332
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 14,
+        "N": 448,
+        "d": 64,
+        "seed": 2026136514
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.4970341676380168,
+        "std": 0.00040564897373438115,
+        "quantiles": {
+          "0.005": 0.4959520756430705,
+          "0.025": 0.49617394848181506,
+          "0.25": 0.4967962692266499,
+          "0.5": 0.4970408020834983,
+          "0.75": 0.49732585438528676,
+          "0.975": 0.49773866563058144,
+          "0.995": 0.49790349007145945
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 20,
+        "N": 640,
+        "d": 64,
+        "seed": 2026136520
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.49705834243086144,
+        "std": 0.0003146270773653455,
+        "quantiles": {
+          "0.005": 0.4962034464007712,
+          "0.025": 0.4963878378944431,
+          "0.25": 0.4968416526006249,
+          "0.5": 0.49707134098534517,
+          "0.75": 0.4972745347598908,
+          "0.975": 0.4976172854094122,
+          "0.995": 0.49769393987642063
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 28,
+        "N": 896,
+        "d": 64,
+        "seed": 2026136528
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.4970400149118598,
+        "std": 0.0002614467970241218,
+        "quantiles": {
+          "0.005": 0.49637351731923296,
+          "0.025": 0.4965155748806714,
+          "0.25": 0.49685569659981677,
+          "0.5": 0.49706518553332557,
+          "0.75": 0.4972255031502706,
+          "0.975": 0.4975014287707144,
+          "0.995": 0.49765343051067995
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 36,
+        "N": 1152,
+        "d": 64,
+        "seed": 2026136536
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.4970593143005583,
+        "std": 0.00012693198805486703,
+        "quantiles": {
+          "0.005": 0.4967074328745643,
+          "0.025": 0.49681437422063757,
+          "0.25": 0.4969781017341391,
+          "0.5": 0.49706121746296994,
+          "0.75": 0.49713904235814743,
+          "0.975": 0.4973025518707755,
+          "0.995": 0.4973887738239975
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 118,
+        "N": 3776,
+        "d": 64,
+        "seed": 2026136618
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.4992897646751015,
+        "std": 0.00047878641745761257,
+        "quantiles": {
+          "0.005": 0.49758055324609923,
+          "0.025": 0.4982170672279053,
+          "0.25": 0.4990632271119173,
+          "0.5": 0.4994037554565167,
+          "0.75": 0.4996304821063425,
+          "0.975": 0.4998907260526839,
+          "0.995": 0.49994620719197114
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 4,
+        "N": 128,
+        "d": 256,
+        "seed": 2026328504
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.4992723110305806,
+        "std": 0.0001685470381910223,
+        "quantiles": {
+          "0.005": 0.49874851595804826,
+          "0.025": 0.49892824516875206,
+          "0.25": 0.4991687630219825,
+          "0.5": 0.49928151298169754,
+          "0.75": 0.49938895143895207,
+          "0.975": 0.4995751097968794,
+          "0.995": 0.4996277817888287
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 10,
+        "N": 320,
+        "d": 256,
+        "seed": 2026328510
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.499263417661783,
+        "std": 0.0001426679077617291,
+        "quantiles": {
+          "0.005": 0.4988438179702968,
+          "0.025": 0.4989501568436606,
+          "0.25": 0.4991806577537223,
+          "0.5": 0.4992808744801598,
+          "0.75": 0.4993580844625629,
+          "0.975": 0.49952627074403133,
+          "0.995": 0.49957093556164617
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 14,
+        "N": 448,
+        "d": 256,
+        "seed": 2026328514
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.4992628319594447,
+        "std": 9.819296460570579e-05,
+        "quantiles": {
+          "0.005": 0.4989715193266957,
+          "0.025": 0.49905243128433585,
+          "0.25": 0.4992036595167964,
+          "0.5": 0.49927730710398527,
+          "0.75": 0.49932739551421035,
+          "0.975": 0.49944291869446444,
+          "0.995": 0.4994818527371531
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 20,
+        "N": 640,
+        "d": 256,
+        "seed": 2026328520
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.4992664755615733,
+        "std": 8.060985188840225e-05,
+        "quantiles": {
+          "0.005": 0.4990352664107311,
+          "0.025": 0.4990897755404684,
+          "0.25": 0.49921569527389775,
+          "0.5": 0.49926937118240255,
+          "0.75": 0.4993237858808322,
+          "0.975": 0.49940752606432687,
+          "0.995": 0.4994556758848287
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 28,
+        "N": 896,
+        "d": 256,
+        "seed": 2026328528
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.4992666561192393,
+        "std": 6.877489258535142e-05,
+        "quantiles": {
+          "0.005": 0.4990511939441488,
+          "0.025": 0.4991215494869674,
+          "0.25": 0.49922715240666804,
+          "0.5": 0.49927405398311475,
+          "0.75": 0.49931450408521494,
+          "0.975": 0.4993809259100054,
+          "0.995": 0.4994039757178604
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 36,
+        "N": 1152,
+        "d": 256,
+        "seed": 2026328536
+      },
+      {
+        "n_trials": 512,
+        "mean": 0.499265623726444,
+        "std": 3.307424018008892e-05,
+        "quantiles": {
+          "0.005": 0.4991685073277567,
+          "0.025": 0.49919378024645916,
+          "0.25": 0.499244512792538,
+          "0.5": 0.4992660680154783,
+          "0.75": 0.4992881688470988,
+          "0.975": 0.4993266803796142,
+          "0.995": 0.4993386615517675
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 118,
+        "N": 3776,
+        "d": 256,
+        "seed": 2026328618
+      }
+    ]
+  },
+  "real_embedding_matched_nulls": {
+    "dataset": "sklearn.datasets.load_digits handwritten-image pixels",
+    "real_embedding_control": true,
+    "model_execution": false,
+    "K": 10,
+    "N": 1797,
+    "d": 64,
+    "class_counts": [
+      178,
+      182,
+      177,
+      183,
+      181,
+      182,
+      181,
+      179,
+      174,
+      180
+    ],
+    "empirical_covariance_effective_dimension": 13.168511170069618,
+    "ledoit_wolf_shrinkage": 0.00892846980882562,
+    "gaussian_centroids_matched_to_empirical_spectrum_and_counts": {
+      "raw": {
+        "n_trials": 512,
+        "mean": 0.48707513240824607,
+        "std": 0.0031363075681285226,
+        "quantiles": {
+          "0.005": 0.47777270387795917,
+          "0.025": 0.48038928678966386,
+          "0.25": 0.4851404354582024,
+          "0.5": 0.4873102399382715,
+          "0.75": 0.48949521287603986,
+          "0.975": 0.4920753620163827,
+          "0.995": 0.4930053297331983
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 10,
+        "N": 1797,
+        "d": 64,
+        "seed": 2026072600,
+        "effective_dimension_after_transform": 13.168511170069618
+      },
+      "legacy": {
+        "n_trials": 512,
+        "mean": 0.4689864168394256,
+        "std": 0.005844810744915234,
+        "quantiles": {
+          "0.005": 0.45269255870828046,
+          "0.025": 0.45795900135256323,
+          "0.25": 0.46497856688365546,
+          "0.5": 0.46942689543387217,
+          "0.75": 0.4729671763015634,
+          "0.975": 0.47949132863448085,
+          "0.995": 0.4815488054505276
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.009765625,
+        "cdf_at_band_high": 0.359375,
+        "probability_inside_band": 0.349609375,
+        "band_location": "overlaps_central_99pct",
+        "band_overlaps_central_99pct": true,
+        "mean_inside_band": false,
+        "K": 10,
+        "N": 1797,
+        "d": 64,
+        "seed": 2026072601,
+        "effective_dimension_after_transform": 5.220561118328486
+      },
+      "corrected": {
+        "n_trials": 512,
+        "mean": 0.49645274908202663,
+        "std": 0.0008228332215199609,
+        "quantiles": {
+          "0.005": 0.49397533839365854,
+          "0.025": 0.4946761267606239,
+          "0.25": 0.4959708747042634,
+          "0.5": 0.4965479296284876,
+          "0.75": 0.49701053658704625,
+          "0.975": 0.4978763833337578,
+          "0.995": 0.4982156047996104
+        },
+        "historical_band": [
+          0.455,
+          0.467
+        ],
+        "cdf_at_band_low": 0.0,
+        "cdf_at_band_high": 0.0,
+        "probability_inside_band": 0.0,
+        "band_location": "below_central_99pct",
+        "band_overlaps_central_99pct": false,
+        "mean_inside_band": false,
+        "K": 10,
+        "N": 1797,
+        "d": 64,
+        "seed": 2026072602,
+        "effective_dimension_after_transform": 53.00241000952252
+      }
+    },
+    "random_label_permutations_on_real_embeddings": {
+      "n_permutations": 128,
+      "seed": 2026072700,
+      "modes": {
+        "raw": {
+          "n_trials": 128,
+          "mean": 0.48721478083279457,
+          "std": 0.0030103313786194624,
+          "quantiles": {
+            "0.005": 0.4783699931887802,
+            "0.025": 0.4810665839950509,
+            "0.25": 0.4852970612515279,
+            "0.5": 0.48743763914964766,
+            "0.75": 0.4894609098290466,
+            "0.975": 0.4920634840663564,
+            "0.995": 0.4926583572952175
+          },
+          "historical_band": [
+            0.455,
+            0.467
+          ],
+          "cdf_at_band_low": 0.0,
+          "cdf_at_band_high": 0.0,
+          "probability_inside_band": 0.0,
+          "band_location": "below_central_99pct",
+          "band_overlaps_central_99pct": false,
+          "mean_inside_band": false
+        },
+        "legacy": {
+          "n_trials": 128,
+          "mean": 0.46886828000663444,
+          "std": 0.005903011289102373,
+          "quantiles": {
+            "0.005": 0.45121437982363016,
+            "0.025": 0.45627141899859297,
+            "0.25": 0.4650221693930131,
+            "0.5": 0.4700049878576795,
+            "0.75": 0.472600336903487,
+            "0.975": 0.4783737099578652,
+            "0.995": 0.4804115905673094
+          },
+          "historical_band": [
+            0.455,
+            0.467
+          ],
+          "cdf_at_band_low": 0.0234375,
+          "cdf_at_band_high": 0.34375,
+          "probability_inside_band": 0.3203125,
+          "band_location": "overlaps_central_99pct",
+          "band_overlaps_central_99pct": true,
+          "mean_inside_band": false
+        },
+        "corrected": {
+          "n_trials": 128,
+          "mean": 0.4962851099882012,
+          "std": 0.0009363812680816748,
+          "quantiles": {
+            "0.005": 0.49364166115567404,
+            "0.025": 0.4940475541569091,
+            "0.25": 0.4958737888504995,
+            "0.5": 0.49641018933443803,
+            "0.75": 0.4968771175130244,
+            "0.975": 0.4978330915526979,
+            "0.995": 0.49827046156596366
+          },
+          "historical_band": [
+            0.455,
+            0.467
+          ],
+          "cdf_at_band_low": 0.0,
+          "cdf_at_band_high": 0.0,
+          "probability_inside_band": 0.0,
+          "band_location": "below_central_99pct",
+          "band_overlaps_central_99pct": false,
+          "mean_inside_band": false
+        }
+      }
+    }
+  },
+  "historical_band_location": {
+    "band": [
+      0.455,
+      0.467
+    ],
+    "grid_cells_overlapping_central_99pct": [
+      {
+        "d": 4,
+        "K": 4,
+        "mean": 0.4526255981971697,
+        "q005": 0.3901816148938472,
+        "q995": 0.49564079708432296
+      },
+      {
+        "d": 4,
+        "K": 10,
+        "mean": 0.45131893986147964,
+        "q005": 0.42866379689217937,
+        "q995": 0.4684929981140531
+      },
+      {
+        "d": 4,
+        "K": 14,
+        "mean": 0.4515358576973799,
+        "q005": 0.4356166527741208,
+        "q995": 0.4637130329549839
+      },
+      {
+        "d": 4,
+        "K": 20,
+        "mean": 0.4514101555173161,
+        "q005": 0.4407412890113706,
+        "q995": 0.46081926049549055
+      },
+      {
+        "d": 4,
+        "K": 28,
+        "mean": 0.45150654252654543,
+        "q005": 0.44289752195509124,
+        "q995": 0.45846114477592526
+      },
+      {
+        "d": 4,
+        "K": 36,
+        "mean": 0.4518467068990563,
+        "q005": 0.44585906280939047,
+        "q995": 0.45726170611320494
+      },
+      {
+        "d": 16,
+        "K": 4,
+        "mean": 0.48798740911220206,
+        "q005": 0.46190214042879396,
+        "q995": 0.49867363404629506
+      }
+    ],
+    "grid_cells_with_mean_inside_band": [],
+    "real_embedding_nulls_overlapping_central_99pct": [
+      {
+        "generator": "spectrum_matched",
+        "mode": "legacy",
+        "mean": 0.4689864168394256,
+        "q005": 0.45269255870828046,
+        "q995": 0.4815488054505276
+      },
+      {
+        "generator": "random_labels",
+        "mode": "legacy",
+        "mean": 0.46886828000663444,
+        "q005": 0.45121437982363016,
+        "q995": 0.4804115905673094
+      }
+    ],
+    "null_compatible": true,
+    "interpretation": "Overlap makes 0.455-0.467 non-diagnostic without a preregistered matched-null comparison; it does not estimate corrected rho on the unavailable historical embeddings."
+  },
+  "immutability": {
+    "historical_result_sha256_before": "1677d93497e0868677464f412725aa1f21cac1bf23cc47249efd7722e3b34252",
+    "historical_result_sha256_after": "1677d93497e0868677464f412725aa1f21cac1bf23cc47249efd7722e3b34252",
+    "verification_sha256_before": "62e9de16d8edd569b80fd832d100af797f47fe7aa0e7d1c120b20df0e6f4b723",
+    "verification_sha256_after": "62e9de16d8edd569b80fd832d100af797f47fe7aa0e7d1c120b20df0e6f4b723"
+  },
+  "checks": {
+    "all_28_dimension_K_cells_present": true,
+    "d256_means_within_0.01_of_asymptotic_half": true,
+    "real_spectrum_counts_and_random_labels_finite": true,
+    "prior_artifacts_immutable": true
+  },
+  "engine_verdict": "CONFIRM",
+  "verdict": "KILL_UNCALIBRATED_UNIVERSAL_0.46_CLAIM",
+  "runtime": {
+    "python": "3.13.7",
+    "numpy": "2.2.6",
+    "scikit_learn": "1.7.2",
+    "model_execution": false
+  }
+}

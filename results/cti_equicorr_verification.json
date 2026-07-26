@@ -1,0 +1,504 @@
+{
+  "experiment": "CTI canonical equicorrelation Iteration 1 verification",
+  "precommit": {
+    "confirm": "All five executable checks pass: immutable history, <=1e-10 legacy parity, corrected whitening thresholds, disjoint finite two-way cross-fit, and finite 1e-6-floor pseudoinverse audit.",
+    "kill": "Any executable check fails.",
+    "void": "Direct replay of historical model rho values is void because the preserved JSON contains summaries but no source embeddings. Live implementation parity is tested instead; no empirical rerun is claimed."
+  },
+  "inventory": {
+    "grep_terms": [
+      "rho",
+      "equicorr",
+      "whitened",
+      "sqrt_Lambda"
+    ],
+    "broad_grep_file_count": 101,
+    "consumer_theory_or_unrelated_rho_file_count": 87,
+    "implementation_files": [
+      {
+        "path": "src/cti_allen_equicorr_multiarea.py",
+        "category": "legacy_shared_anchor_implementation",
+        "match_counts": {
+          "rho": 25,
+          "equicorr": 45,
+          "whitened": 0,
+          "sqrt_Lambda": 0
+        }
+      },
+      {
+        "path": "src/cti_allen_equicorrelation.py",
+        "category": "legacy_shared_anchor_implementation",
+        "match_counts": {
+          "rho": 31,
+          "equicorr": 9,
+          "whitened": 5,
+          "sqrt_Lambda": 0
+        }
+      },
+      {
+        "path": "src/cti_alpha_rho_derivation.py",
+        "category": "legacy_shared_anchor_implementation",
+        "match_counts": {
+          "rho": 33,
+          "equicorr": 3,
+          "whitened": 10,
+          "sqrt_Lambda": 2
+        }
+      },
+      {
+        "path": "src/cti_alpha_rho_multidataset.py",
+        "category": "legacy_shared_anchor_implementation",
+        "match_counts": {
+          "rho": 14,
+          "equicorr": 0,
+          "whitened": 7,
+          "sqrt_Lambda": 9
+        }
+      },
+      {
+        "path": "src/cti_centroid_dispersion.py",
+        "category": "legacy_shared_anchor_implementation",
+        "match_counts": {
+          "rho": 13,
+          "equicorr": 0,
+          "whitened": 4,
+          "sqrt_Lambda": 2
+        }
+      },
+      {
+        "path": "src/cti_cross_modal_rho.py",
+        "category": "legacy_shared_anchor_implementation",
+        "match_counts": {
+          "rho": 59,
+          "equicorr": 5,
+          "whitened": 5,
+          "sqrt_Lambda": 2
+        }
+      },
+      {
+        "path": "src/cti_equicorr_canonical.py",
+        "category": "canonical_shared_anchor_implementation",
+        "match_counts": {
+          "rho": 4,
+          "equicorr": 18,
+          "whitened": 2,
+          "sqrt_Lambda": 2
+        }
+      },
+      {
+        "path": "src/cti_equicorr_K_sweep.py",
+        "category": "legacy_shared_anchor_implementation",
+        "match_counts": {
+          "rho": 29,
+          "equicorr": 5,
+          "whitened": 1,
+          "sqrt_Lambda": 0
+        }
+      },
+      {
+        "path": "src/cti_equicorrelation_deff.py",
+        "category": "legacy_shared_anchor_implementation",
+        "match_counts": {
+          "rho": 33,
+          "equicorr": 13,
+          "whitened": 18,
+          "sqrt_Lambda": 2
+        }
+      },
+      {
+        "path": "src/cti_generation_local_rho.py",
+        "category": "different_statistic_or_transform_implementation",
+        "match_counts": {
+          "rho": 6,
+          "equicorr": 4,
+          "whitened": 0,
+          "sqrt_Lambda": 0
+        }
+      },
+      {
+        "path": "src/cti_generation_proxy_b.py",
+        "category": "different_statistic_or_transform_implementation",
+        "match_counts": {
+          "rho": 2,
+          "equicorr": 0,
+          "whitened": 39,
+          "sqrt_Lambda": 0
+        }
+      },
+      {
+        "path": "src/cti_nsd_human_fmri_v2.py",
+        "category": "different_statistic_or_transform_implementation",
+        "match_counts": {
+          "rho": 5,
+          "equicorr": 6,
+          "whitened": 0,
+          "sqrt_Lambda": 0
+        }
+      },
+      {
+        "path": "src/cti_synthetic_gumbel_validation.py",
+        "category": "different_statistic_or_transform_implementation",
+        "match_counts": {
+          "rho": 41,
+          "equicorr": 5,
+          "whitened": 0,
+          "sqrt_Lambda": 0
+        }
+      },
+      {
+        "path": "src/cti_whitening_intervention.py",
+        "category": "different_statistic_or_transform_implementation",
+        "match_counts": {
+          "rho": 10,
+          "equicorr": 0,
+          "whitened": 11,
+          "sqrt_Lambda": 0
+        }
+      }
+    ],
+    "legacy_shared_anchor_files": [
+      "src/cti_allen_equicorr_multiarea.py",
+      "src/cti_allen_equicorrelation.py",
+      "src/cti_alpha_rho_derivation.py",
+      "src/cti_alpha_rho_multidataset.py",
+      "src/cti_centroid_dispersion.py",
+      "src/cti_cross_modal_rho.py",
+      "src/cti_equicorr_K_sweep.py",
+      "src/cti_equicorrelation_deff.py"
+    ],
+    "scope_note": "Token cosines, raw centroid cosines, synthetic generators, and generic rho consumers are not estimator-equivalent."
+  },
+  "historical_artifact": {
+    "path": "results/cti_cross_modal_rho.json",
+    "sha256_before": "1677d93497e0868677464f412725aa1f21cac1bf23cc47249efd7722e3b34252",
+    "sha256_after": "1677d93497e0868677464f412725aa1f21cac1bf23cc47249efd7722e3b34252",
+    "unchanged": true,
+    "preserved_rho_values": {
+      "NLP_decoders": 0.463,
+      "Audio_WavLM": 0.455,
+      "Audio_HuBERT": 0.464,
+      "Vision_ViT": 0.458,
+      "Vision_ResNet50": 0.467,
+      "Biology_MouseV1": 0.466
+    },
+    "preserved_rho_range": [
+      0.455,
+      0.467
+    ],
+    "direct_empirical_replay": "VOID_NO_SOURCE_EMBEDDINGS"
+  },
+  "legacy_parity_self_test": {
+    "fixture": {
+      "seed": 20260725,
+      "K": 7,
+      "N": 336,
+      "d": 24,
+      "anisotropic_covariance_eigenvalue_range": [
+        0.05,
+        12.0
+      ]
+    },
+    "historical_live_function_rho": 0.47286478291092005,
+    "canonical_legacy_rho": 0.47286478291092005,
+    "absolute_rho_error": 0.0,
+    "historical_live_function_anchor_std": 0.1672609709667446,
+    "canonical_legacy_anchor_std": 0.16726097096674464,
+    "absolute_anchor_std_error": 2.7755575615628914e-17,
+    "tolerance": 1e-10,
+    "pass": true
+  },
+  "corrected_whitening_self_test": {
+    "fixture": {
+      "seed": 20260726,
+      "K": 6,
+      "N": 12000,
+      "d": 16,
+      "anisotropic_covariance_eigenvalue_range": [
+        0.1,
+        10.0
+      ]
+    },
+    "transform": {
+      "formula": "W_corrected = Sigma_LW^(-1/2)",
+      "ledoit_wolf_shrinkage": 0.0010324937957604092,
+      "ledoit_wolf_mu": 2.3596309089672323,
+      "equivalent_ridge_lambda": 0.0024388223427309935,
+      "rank": 16,
+      "eigenvalue_min": 0.10323064126798102,
+      "eigenvalue_max": 10.066199572080352
+    },
+    "post_transform_covariance": {
+      "output_dim": 16,
+      "relative_frobenius_error": 0.008192995492825185,
+      "max_abs_diagonal_error": 0.02259142397407321,
+      "max_abs_off_diagonal": 8.88104404831817e-15,
+      "condition_number": 1.0239231649145966
+    },
+    "thresholds": {
+      "relative_frobenius_error_max": 0.08,
+      "max_abs_diagonal_error_max": 0.08,
+      "max_abs_off_diagonal_max": 0.05
+    },
+    "pass": true
+  },
+  "crossfit_self_test": {
+    "fixture_seed": 20260725,
+    "split_seed": 20260727,
+    "modes": {
+      "raw": {
+        "mode": "raw",
+        "estimation": "two_way_stratified_crossfit",
+        "seed": 20260727,
+        "K": 7,
+        "split_disjoint": true,
+        "split_complete": true,
+        "directions": {
+          "first_to_second": {
+            "rho_mean": 0.48687517786258594,
+            "rho_std_across_anchors": 0.14473643954357548,
+            "K": 7,
+            "mode": "raw",
+            "transform": {
+              "formula": "W_raw = I",
+              "rank": 24
+            },
+            "fit_n": 168,
+            "eval_n": 168,
+            "eval_class_counts": [
+              24,
+              24,
+              24,
+              24,
+              24,
+              24,
+              24
+            ]
+          },
+          "second_to_first": {
+            "rho_mean": 0.49124122655857533,
+            "rho_std_across_anchors": 0.12838394626988045,
+            "K": 7,
+            "mode": "raw",
+            "transform": {
+              "formula": "W_raw = I",
+              "rank": 24
+            },
+            "fit_n": 168,
+            "eval_n": 168,
+            "eval_class_counts": [
+              24,
+              24,
+              24,
+              24,
+              24,
+              24,
+              24
+            ]
+          }
+        },
+        "rho_mean": 0.4890582022105806,
+        "rho_half_range": 0.0021830243479946942
+      },
+      "legacy": {
+        "mode": "legacy",
+        "estimation": "two_way_stratified_crossfit",
+        "seed": 20260727,
+        "K": 7,
+        "split_disjoint": true,
+        "split_complete": true,
+        "directions": {
+          "first_to_second": {
+            "rho_mean": 0.4748689655652238,
+            "rho_std_across_anchors": 0.16261396523762547,
+            "K": 7,
+            "mode": "legacy",
+            "transform": {
+              "formula": "W_legacy = Sigma_W^(1/2)",
+              "rank": 24,
+              "n_components_cap": 256,
+              "covariance_divisor": 168,
+              "eigenvalue_min": 0.04352753871462666,
+              "eigenvalue_max": 13.201020059505392
+            },
+            "fit_n": 168,
+            "eval_n": 168,
+            "eval_class_counts": [
+              24,
+              24,
+              24,
+              24,
+              24,
+              24,
+              24
+            ]
+          },
+          "second_to_first": {
+            "rho_mean": 0.46620738658431815,
+            "rho_std_across_anchors": 0.18935041560950142,
+            "K": 7,
+            "mode": "legacy",
+            "transform": {
+              "formula": "W_legacy = Sigma_W^(1/2)",
+              "rank": 24,
+              "n_components_cap": 256,
+              "covariance_divisor": 168,
+              "eigenvalue_min": 0.042190179505351054,
+              "eigenvalue_max": 11.874335031789343
+            },
+            "fit_n": 168,
+            "eval_n": 168,
+            "eval_class_counts": [
+              24,
+              24,
+              24,
+              24,
+              24,
+              24,
+              24
+            ]
+          }
+        },
+        "rho_mean": 0.470538176074771,
+        "rho_half_range": 0.004330789490452819
+      },
+      "corrected": {
+        "mode": "corrected",
+        "estimation": "two_way_stratified_crossfit",
+        "seed": 20260727,
+        "K": 7,
+        "split_disjoint": true,
+        "split_complete": true,
+        "directions": {
+          "first_to_second": {
+            "rho_mean": 0.48480456394079713,
+            "rho_std_across_anchors": 0.13807014226555475,
+            "K": 7,
+            "mode": "corrected",
+            "transform": {
+              "formula": "W_corrected = Sigma_LW^(-1/2)",
+              "ledoit_wolf_shrinkage": 0.07442057239059297,
+              "ledoit_wolf_mu": 2.275550624719237,
+              "equivalent_ridge_lambda": 0.18296407087695288,
+              "rank": 24,
+              "eigenvalue_min": 0.20963597436410666,
+              "eigenvalue_max": 12.387940370532691
+            },
+            "fit_n": 168,
+            "eval_n": 168,
+            "eval_class_counts": [
+              24,
+              24,
+              24,
+              24,
+              24,
+              24,
+              24
+            ]
+          },
+          "second_to_first": {
+            "rho_mean": 0.48488347610374,
+            "rho_std_across_anchors": 0.15426213885107629,
+            "K": 7,
+            "mode": "corrected",
+            "transform": {
+              "formula": "W_corrected = Sigma_LW^(-1/2)",
+              "ledoit_wolf_shrinkage": 0.07680408037863777,
+              "ledoit_wolf_mu": 2.128852663411474,
+              "equivalent_ridge_lambda": 0.1771071206012169,
+              "rank": 24,
+              "eigenvalue_min": 0.20245437264236463,
+              "eigenvalue_max": 11.125842220639896
+            },
+            "fit_n": 168,
+            "eval_n": 168,
+            "eval_class_counts": [
+              24,
+              24,
+              24,
+              24,
+              24,
+              24,
+              24
+            ]
+          }
+        },
+        "rho_mean": 0.48484402002226856,
+        "rho_half_range": 3.945608147143398e-05
+      }
+    },
+    "pass": true
+  },
+  "pseudoinverse_sensitivity": {
+    "eigenvalue_floor_relative": 1e-06,
+    "pseudoinverse_rho_mean": 0.4757290963795811,
+    "ledoit_wolf_corrected_rho_mean": 0.48484402002226856,
+    "absolute_delta": 0.009114923642687456,
+    "directions": {
+      "first_to_second": {
+        "rho_mean": 0.4757642108299933,
+        "rho_std_across_anchors": 0.1577814406378879,
+        "K": 7,
+        "mode": "corrected_pseudoinverse_sensitivity",
+        "transform": {
+          "formula": "W_pinv = Sigma_W^(-1/2) for lambda_i >= floor",
+          "eigenvalue_floor_relative": 1e-06,
+          "eigenvalue_floor_absolute": 1.3201020059505397e-05,
+          "lambda_max": 13.201020059505398,
+          "rank_retained": 24,
+          "rank_dropped": 0
+        },
+        "fit_n": 168,
+        "eval_n": 168,
+        "eval_class_counts": [
+          24,
+          24,
+          24,
+          24,
+          24,
+          24,
+          24
+        ]
+      },
+      "second_to_first": {
+        "rho_mean": 0.4756939819291689,
+        "rho_std_across_anchors": 0.17143880548625307,
+        "K": 7,
+        "mode": "corrected_pseudoinverse_sensitivity",
+        "transform": {
+          "formula": "W_pinv = Sigma_W^(-1/2) for lambda_i >= floor",
+          "eigenvalue_floor_relative": 1e-06,
+          "eigenvalue_floor_absolute": 1.1874335031789385e-05,
+          "lambda_max": 11.874335031789386,
+          "rank_retained": 24,
+          "rank_dropped": 0
+        },
+        "fit_n": 168,
+        "eval_n": 168,
+        "eval_class_counts": [
+          24,
+          24,
+          24,
+          24,
+          24,
+          24,
+          24
+        ]
+      }
+    },
+    "pass": true
+  },
+  "checks": {
+    "historical_artifact_immutable": true,
+    "legacy_live_source_parity": true,
+    "corrected_anisotropic_whitening": true,
+    "crossfit_integrity": true,
+    "pseudoinverse_sensitivity_finite": true
+  },
+  "verdict": "CONFIRM",
+  "runtime": {
+    "python": "3.13.7",
+    "numpy": "2.2.6",
+    "scikit_learn": "1.7.2",
+    "model_execution": false
+  }
+}
