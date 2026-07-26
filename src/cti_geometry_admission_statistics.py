@@ -274,6 +274,176 @@ def stage_c_verdict(
     }
 
 
+def counterfactual_edge_crossover(
+    logits_a: np.ndarray,
+    logits_b: np.ndarray,
+    changed_edges: list[dict],
+) -> dict:
+    """Compute bidirectional crossover on changed direct edges.
+
+    logits_a: logits from student installed with artifact Z_A, shape (48, 12)
+    logits_b: logits from student installed with artifact Z_B, shape (48, 12)
+    changed_edges: list of 2 dicts with keys 'edge_index', 'base_output', 'partner_output'
+
+    Returns per-edge margins and crossover success.
+    """
+    results = []
+    for edge in changed_edges:
+        idx = edge["edge_index"]
+        y_a = edge["base_output"]
+        y_b = edge["partner_output"]
+
+        m_a = float(logits_a[idx, y_a] - logits_a[idx, y_b])
+        m_b = float(logits_b[idx, y_b] - logits_b[idx, y_a])
+
+        results.append({
+            "edge_index": idx,
+            "m_a": m_a,
+            "m_b": m_b,
+            "d": m_a + m_b,
+            "a_correct": m_a > 0,
+            "b_correct": m_b > 0,
+            "crossover": m_a > 0 and m_b > 0,
+        })
+
+    return {
+        "edges": results,
+        "all_crossover": all(r["crossover"] for r in results),
+        "mean_d": float(np.mean([r["d"] for r in results])),
+    }
+
+
+def unchanged_edge_stability(
+    logits_a: np.ndarray,
+    logits_b: np.ndarray,
+    changed_edge_indices: list[int],
+    drift_ceiling: float = 0.5,
+) -> dict:
+    """Check that unchanged direct edges remain stable between A and B artifacts.
+
+    Uses total variation distance on softmax distributions.
+    """
+    n_edges = logits_a.shape[0]
+    unchanged = [i for i in range(n_edges) if i not in changed_edge_indices]
+
+    def softmax(x):
+        e = np.exp(x - x.max())
+        return e / e.sum()
+
+    drifts = []
+    flips = 0
+    for i in unchanged:
+        p_a = softmax(logits_a[i])
+        p_b = softmax(logits_b[i])
+        tv = 0.5 * np.sum(np.abs(p_a - p_b))
+        drifts.append(float(tv))
+        if np.argmax(logits_a[i]) != np.argmax(logits_b[i]):
+            flips += 1
+
+    return {
+        "mean_tv": float(np.mean(drifts)),
+        "max_tv": float(np.max(drifts)),
+        "flip_count": flips,
+        "flip_rate": flips / len(unchanged) if unchanged else 0.0,
+        "n_unchanged": len(unchanged),
+        "stable": float(np.max(drifts)) <= drift_ceiling and flips <= 2,
+    }
+
+
+def cm_pair_success(
+    crossover: dict,
+    stability: dict,
+    effect_floor: float = 0.5,
+) -> dict:
+    """Determine if a single CM-CKS pair passes all conjunctive criteria."""
+    pass_crossover = crossover["all_crossover"]
+    pass_effect = crossover["mean_d"] >= effect_floor
+    pass_stability = stability["stable"]
+
+    return {
+        "success": pass_crossover and pass_effect and pass_stability,
+        "pass_crossover": pass_crossover,
+        "pass_effect": pass_effect,
+        "pass_stability": pass_stability,
+        "mean_d": crossover["mean_d"],
+        "mean_tv": stability["mean_tv"],
+    }
+
+
+def cm_exact_sign_test(pair_successes: list[bool]) -> dict:
+    """Exact sign test over CM-CKS pairs.
+
+    For 8 pairs: P(X >= 7 | p=0.5) = 9/256 = 0.0352.
+    """
+    n = len(pair_successes)
+    k = sum(pair_successes)
+
+    from math import comb
+    p_value = sum(comb(n, i) for i in range(k, n + 1)) / (2 ** n)
+
+    return {
+        "n_pairs": n,
+        "n_success": k,
+        "p_value": float(p_value),
+        "threshold": 7 if n == 8 else max(1, int(n * 0.875)),
+        "pass": k >= (7 if n == 8 else max(1, int(n * 0.875))),
+    }
+
+
+def cm_cks_verdict(
+    pair_results: list[dict],
+    protocol_checks: dict,
+) -> dict:
+    """Compute CM-CKS PASS/FAIL/VOID verdict."""
+
+    void_reasons = []
+    if not protocol_checks.get("all_teachers_pass", True):
+        void_reasons.append("Teacher capacity failure")
+    if not protocol_checks.get("all_runs_complete", True):
+        void_reasons.append("Incomplete runs")
+    if not protocol_checks.get("pairs_constructed_correctly", True):
+        void_reasons.append("Pair construction failure")
+    if not protocol_checks.get("calibration_hashes_match", True):
+        void_reasons.append("Calibration hash mismatch")
+    if void_reasons:
+        return {"verdict": "VOID", "reasons": void_reasons}
+
+    successes = [p["success"] for p in pair_results]
+    sign_test = cm_exact_sign_test(successes)
+
+    effects = [p["mean_d"] for p in pair_results]
+    stabilities = [p["mean_tv"] for p in pair_results]
+
+    fail_reasons = []
+    if not sign_test["pass"]:
+        fail_reasons.append(
+            f"Sign test: {sign_test['n_success']}/{sign_test['n_pairs']} "
+            f"< {sign_test['threshold']}"
+        )
+
+    if fail_reasons:
+        return {
+            "verdict": "FAIL",
+            "reasons": fail_reasons,
+            "n_success": sign_test["n_success"],
+            "n_pairs": sign_test["n_pairs"],
+            "p_value": sign_test["p_value"],
+            "mean_effect": float(np.mean(effects)),
+            "mean_stability": float(np.mean(stabilities)),
+        }
+
+    return {
+        "verdict": "PASS",
+        "n_success": sign_test["n_success"],
+        "n_pairs": sign_test["n_pairs"],
+        "p_value": sign_test["p_value"],
+        "mean_effect": float(np.mean(effects)),
+        "mean_stability": float(np.mean(stabilities)),
+        "claim": "Calibration-matched counterfactual key swap produced "
+                 "localized, correctly signed behavioral change.",
+    }
+
+
 if __name__ == "__main__":
     print("Statistics module loaded.")
     print("Functions: stage_b_selection, stage_c_primary_statistic,")

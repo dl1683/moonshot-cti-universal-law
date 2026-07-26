@@ -64,6 +64,66 @@ def generate_sealed_key(key_index: int) -> tuple[dict, bytes, str]:
     return key_json, seed_bytes, seed_hash
 
 
+def paired_key_from_transposition(
+    base_key_json: dict,
+    calibrated_op: str,
+    withheld_op: str,
+    source_u: int,
+    source_v: int,
+) -> tuple[dict, dict]:
+    """Construct a CM-CKS partner key by transposing two outputs of one withheld permutation.
+
+    Returns (partner_key_json, pair_metadata).
+    """
+    assert withheld_op in OP_NAMES, f"Unknown op: {withheld_op}"
+    assert calibrated_op in OP_NAMES, f"Unknown op: {calibrated_op}"
+    assert withheld_op != calibrated_op, "Cannot transpose the calibrated operator"
+    assert 0 <= source_u < NUM_STATES and 0 <= source_v < NUM_STATES
+    assert source_u != source_v, "Transposition requires distinct states"
+
+    partner = {}
+    for op in OP_NAMES:
+        partner[op] = list(base_key_json[op])
+
+    perm = partner[withheld_op]
+    perm[source_u], perm[source_v] = perm[source_v], perm[source_u]
+
+    for op in OP_NAMES:
+        assert len(set(partner[op])) == NUM_STATES, f"Not a permutation: {op}"
+    assert partner[calibrated_op] == base_key_json[calibrated_op]
+
+    changed_edges = [
+        {"op": withheld_op, "state": source_u,
+         "base_output": base_key_json[withheld_op][source_u],
+         "partner_output": partner[withheld_op][source_u]},
+        {"op": withheld_op, "state": source_v,
+         "base_output": base_key_json[withheld_op][source_v],
+         "partner_output": partner[withheld_op][source_v]},
+    ]
+
+    base_hash = sha256_hex(json.dumps(base_key_json, sort_keys=True))
+    partner_hash = sha256_hex(json.dumps(partner, sort_keys=True))
+
+    metadata = {
+        "calibrated_op": calibrated_op,
+        "withheld_op": withheld_op,
+        "transposition": [source_u, source_v],
+        "changed_edges": changed_edges,
+        "base_key_hash": base_hash,
+        "partner_key_hash": partner_hash,
+        "calibration_identical": base_key_json[calibrated_op] == partner[calibrated_op],
+        "num_differing_entries": sum(
+            1 for op in OP_NAMES
+            for s in range(NUM_STATES)
+            if base_key_json[op][s] != partner[op][s]
+        ),
+    }
+    assert metadata["calibration_identical"]
+    assert metadata["num_differing_entries"] == 2
+
+    return partner, metadata
+
+
 def simulate_automaton(key: np.ndarray, s0: int, ops: np.ndarray) -> int:
     state = s0
     for op in ops:
