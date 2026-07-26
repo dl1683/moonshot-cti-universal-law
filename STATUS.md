@@ -103,7 +103,7 @@ without teacher access or pair-specific tuning.
 | 19 | Codex CM-CKS code review bug fixes | DONE | 8/12 bugs fixed: edge_index crash, replay noise gate, teacher capacity, finiteness, n=8, aggregate floors, cal hashes, seed averaging. 4 deferred (wrapped seqs, empty-list, hash chain, exception cleanup). |
 | 20 | Extended training relaunch | DONE | MAX_STEPS 7000->15000. Teacher completed 15000 steps. |
 | 21 | Thermal fixes + training efficiency | DONE | Codex review: thermal throttle (90C/86C), checkpoint every 1000 steps, stress_long every 2500, cooldown 60s between runs, checkpoint object freed after resume. |
-| 22 | Stage A-T results + diagnosis | RUNNING | Teacher: in_range=1.0, extrap=0.618, edges=48/48. FAILS extrap gate (needs 99%). Students training (s1 at step 6750, in_range=86%). Both teacher and students need more training. |
+| 22 | Stage A-T results + R9 gate redesign | DONE | Teacher in_range=1.0, extrap=0.618 (diagnostic), target_family=99.99%. R9 steering: replace 99% random-long gate with 95-99.5% target-family gate (p,r in [0,7]). Teacher now PASSES all R9 gates. Student 1 training. |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
@@ -130,6 +130,7 @@ without teacher access or pair-specific tuning.
 | R6 | Post-WL10 steering: bridge, GAT blockers, candidates | DONE | Kill bridge v2, fix 4 Stage A blockers, keep both candidates, defer GRU |
 | R7 | Training length spec bug | DONE | Fix applied: max_length=32, MAX_STEPS=7000, anchors (8,32), config hash fixed, old run quarantined |
 | R8 | CM-CKS design | DONE | 2 rounds converged. 0 new modules, 5 files modified. 8 sealed pairs, 7/8 threshold |
+| R9 | Gate redesign: target-family capacity | DONE | 3 rounds converged. Replace 99% random-long gate with target-family (p,r in [0,7]). Teacher: 99.99% target_family (PASS). Anchors 8-20. |
 
 ### GAT Implementation Status
 | Module | File | Status |
