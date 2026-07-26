@@ -1,0 +1,234 @@
+{
+  "artifact": "cti_benchmark_bridge_execution_receipt",
+  "schema_version": 1,
+  "frozen_at_utc": "2026-07-26T02:22:41.6778704Z",
+  "preregistration": {
+    "path": "results/cti_downstream_benchmark_bridge_preregistration_20260609.json",
+    "sha256": "6e3b627efe18df44c5f67b056f95268b83c66473d6254455367aa480be25aaf5",
+    "binding_status_observed": "preregistered_not_run",
+    "modified": false,
+    "roster_json_path": "model_family_blocks[].candidate_model_ids"
+  },
+  "freeze_status": "complete_with_documented_resolution_fallback",
+  "candidate_count": 13,
+  "revision_resolution": {
+    "prescribed_command_template": "python -c 'from huggingface_hub import model_info; m=model_info(MODEL_ID); print(m.sha)'",
+    "prescribed_command_attempted_for_every_candidate": true,
+    "prescribed_command_result": "failed_for_all_13_candidates",
+    "prescribed_command_error_class": "httpx.ConnectError",
+    "prescribed_command_error_message": "[WinError 10061] No connection could be made because the target machine actively refused it",
+    "fallback_method": "For each candidate, read the current seven-character main-head prefix from its canonical Hugging Face tree page and require it to match the prefix of the local Hugging Face refs/main full 40-character hash. No abbreviated hash was expanded without this exact prefix match.",
+    "fallback_verified_at_utc": "2026-07-26T02:22:41.6778704Z",
+    "all_live_prefixes_matched_local_full_refs": true
+  },
+  "cache_assessment": {
+    "cache_dir": "C:\\Users\\devan\\.cache\\huggingface\\hub",
+    "already_cached_locally_definition": "true only when the model repo has refs/main, that full revision has a local snapshot directory, and the snapshot contains at least one model weight file",
+    "all_candidates_already_cached_locally": true
+  },
+  "models": [
+    {
+      "family": "pythia_dense",
+      "family_role": "source-like dense scaling baseline",
+      "model_id": "EleutherAI/pythia-160m",
+      "latest_revision_hash": "50f5173d932e8e61f858120bcb800b97af589f46",
+      "revision_resolution_status": "live_main_head_prefix_matches_local_full_refs_main",
+      "live_head_prefix": "50f5173",
+      "prescribed_model_info_lookup_status": "failed_environment_connection_refused",
+      "already_cached_locally": true,
+      "cached_revision_hash": "50f5173d932e8e61f858120bcb800b97af589f46",
+      "cache_snapshot_path": "C:\\Users\\devan\\.cache\\huggingface\\hub\\models--EleutherAI--pythia-160m\\snapshots\\50f5173d932e8e61f858120bcb800b97af589f46",
+      "cached_weight_files": [
+        "model.safetensors"
+      ]
+    },
+    {
+      "family": "pythia_dense",
+      "family_role": "source-like dense scaling baseline",
+      "model_id": "EleutherAI/pythia-410m",
+      "latest_revision_hash": "9879c9b5f8bea9051dcb0e68dff21493d67e9d4f",
+      "revision_resolution_status": "live_main_head_prefix_matches_local_full_refs_main",
+      "live_head_prefix": "9879c9b",
+      "prescribed_model_info_lookup_status": "failed_environment_connection_refused",
+      "already_cached_locally": true,
+      "cached_revision_hash": "9879c9b5f8bea9051dcb0e68dff21493d67e9d4f",
+      "cache_snapshot_path": "C:\\Users\\devan\\.cache\\huggingface\\hub\\models--EleutherAI--pythia-410m\\snapshots\\9879c9b5f8bea9051dcb0e68dff21493d67e9d4f",
+      "cached_weight_files": [
+        "model.safetensors"
+      ]
+    },
+    {
+      "family": "pythia_dense",
+      "family_role": "source-like dense scaling baseline",
+      "model_id": "EleutherAI/pythia-1b",
+      "latest_revision_hash": "f73d7dcc545c8bd326d8559c8ef84ffe92fea6b2",
+      "revision_resolution_status": "live_main_head_prefix_matches_local_full_refs_main",
+      "live_head_prefix": "f73d7dc",
+      "prescribed_model_info_lookup_status": "failed_environment_connection_refused",
+      "already_cached_locally": true,
+      "cached_revision_hash": "f73d7dcc545c8bd326d8559c8ef84ffe92fea6b2",
+      "cache_snapshot_path": "C:\\Users\\devan\\.cache\\huggingface\\hub\\models--EleutherAI--pythia-1b\\snapshots\\f73d7dcc545c8bd326d8559c8ef84ffe92fea6b2",
+      "cached_weight_files": [
+        "model.safetensors"
+      ]
+    },
+    {
+      "family": "pythia_dense",
+      "family_role": "source-like dense scaling baseline",
+      "model_id": "EleutherAI/pythia-1.4b",
+      "latest_revision_hash": "fedc38a16eea3bd36a96b906d78d11d2ce18ed79",
+      "revision_resolution_status": "live_main_head_prefix_matches_local_full_refs_main",
+      "live_head_prefix": "fedc38a",
+      "prescribed_model_info_lookup_status": "failed_environment_connection_refused",
+      "already_cached_locally": true,
+      "cached_revision_hash": "fedc38a16eea3bd36a96b906d78d11d2ce18ed79",
+      "cache_snapshot_path": "C:\\Users\\devan\\.cache\\huggingface\\hub\\models--EleutherAI--pythia-1.4b\\snapshots\\fedc38a16eea3bd36a96b906d78d11d2ce18ed79",
+      "cached_weight_files": [
+        "model.safetensors"
+      ]
+    },
+    {
+      "family": "qwen_dense",
+      "family_role": "modern dense decoder family",
+      "model_id": "Qwen/Qwen2.5-0.5B",
+      "latest_revision_hash": "060db6499f32faf8b98477b0a26969ef7d8b9987",
+      "revision_resolution_status": "live_main_head_prefix_matches_local_full_refs_main",
+      "live_head_prefix": "060db64",
+      "prescribed_model_info_lookup_status": "failed_environment_connection_refused",
+      "already_cached_locally": true,
+      "cached_revision_hash": "060db6499f32faf8b98477b0a26969ef7d8b9987",
+      "cache_snapshot_path": "C:\\Users\\devan\\.cache\\huggingface\\hub\\models--Qwen--Qwen2.5-0.5B\\snapshots\\060db6499f32faf8b98477b0a26969ef7d8b9987",
+      "cached_weight_files": [
+        "model.safetensors"
+      ]
+    },
+    {
+      "family": "qwen_dense",
+      "family_role": "modern dense decoder family",
+      "model_id": "Qwen/Qwen3-0.6B-Base",
+      "latest_revision_hash": "da87bfb608c14b7cf20ba1ce41287e8de496c0cd",
+      "revision_resolution_status": "live_main_head_prefix_matches_local_full_refs_main",
+      "live_head_prefix": "da87bfb",
+      "prescribed_model_info_lookup_status": "failed_environment_connection_refused",
+      "already_cached_locally": true,
+      "cached_revision_hash": "da87bfb608c14b7cf20ba1ce41287e8de496c0cd",
+      "cache_snapshot_path": "C:\\Users\\devan\\.cache\\huggingface\\hub\\models--Qwen--Qwen3-0.6B-Base\\snapshots\\da87bfb608c14b7cf20ba1ce41287e8de496c0cd",
+      "cached_weight_files": [
+        "model.safetensors"
+      ]
+    },
+    {
+      "family": "qwen_dense",
+      "family_role": "modern dense decoder family",
+      "model_id": "Qwen/Qwen3-1.7B-Base",
+      "latest_revision_hash": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+      "revision_resolution_status": "live_main_head_prefix_matches_local_full_refs_main",
+      "live_head_prefix": "ea980cb",
+      "prescribed_model_info_lookup_status": "failed_environment_connection_refused",
+      "already_cached_locally": true,
+      "cached_revision_hash": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+      "cache_snapshot_path": "C:\\Users\\devan\\.cache\\huggingface\\hub\\models--Qwen--Qwen3-1.7B-Base\\snapshots\\ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+      "cached_weight_files": [
+        "model.safetensors"
+      ]
+    },
+    {
+      "family": "olmo_tinyllama_dense",
+      "family_role": "non-Pythia dense training mixtures",
+      "model_id": "allenai/OLMo-1B-hf",
+      "latest_revision_hash": "aee7752d9c08ee4775e9b0091426d8410e8f6a89",
+      "revision_resolution_status": "live_main_head_prefix_matches_local_full_refs_main",
+      "live_head_prefix": "aee7752",
+      "prescribed_model_info_lookup_status": "failed_environment_connection_refused",
+      "already_cached_locally": true,
+      "cached_revision_hash": "aee7752d9c08ee4775e9b0091426d8410e8f6a89",
+      "cache_snapshot_path": "C:\\Users\\devan\\.cache\\huggingface\\hub\\models--allenai--OLMo-1B-hf\\snapshots\\aee7752d9c08ee4775e9b0091426d8410e8f6a89",
+      "cached_weight_files": [
+        "model.safetensors"
+      ]
+    },
+    {
+      "family": "olmo_tinyllama_dense",
+      "family_role": "non-Pythia dense training mixtures",
+      "model_id": "TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T",
+      "latest_revision_hash": "59f6f375b26bde864a6ca194a9a3044570490064",
+      "revision_resolution_status": "live_main_head_prefix_matches_local_full_refs_main",
+      "live_head_prefix": "59f6f37",
+      "prescribed_model_info_lookup_status": "failed_environment_connection_refused",
+      "already_cached_locally": true,
+      "cached_revision_hash": "59f6f375b26bde864a6ca194a9a3044570490064",
+      "cache_snapshot_path": "C:\\Users\\devan\\.cache\\huggingface\\hub\\models--TinyLlama--TinyLlama-1.1B-intermediate-step-1431k-3T\\snapshots\\59f6f375b26bde864a6ca194a9a3044570490064",
+      "cached_weight_files": [
+        "model.safetensors"
+      ]
+    },
+    {
+      "family": "state_space_or_liquid_hybrid",
+      "family_role": "architecture-shift pressure block",
+      "model_id": "state-spaces/mamba-130m-hf",
+      "latest_revision_hash": "1e76775f628fbf1350fbe4dbb3d971ba64af25a1",
+      "revision_resolution_status": "live_main_head_prefix_matches_local_full_refs_main",
+      "live_head_prefix": "1e76775",
+      "prescribed_model_info_lookup_status": "failed_environment_connection_refused",
+      "already_cached_locally": true,
+      "cached_revision_hash": "1e76775f628fbf1350fbe4dbb3d971ba64af25a1",
+      "cache_snapshot_path": "C:\\Users\\devan\\.cache\\huggingface\\hub\\models--state-spaces--mamba-130m-hf\\snapshots\\1e76775f628fbf1350fbe4dbb3d971ba64af25a1",
+      "cached_weight_files": [
+        "model.safetensors"
+      ]
+    },
+    {
+      "family": "state_space_or_liquid_hybrid",
+      "family_role": "architecture-shift pressure block",
+      "model_id": "LiquidAI/LFM2-350M",
+      "latest_revision_hash": "b3afba27815ee83a64b76162cef4d8a4780d6ca7",
+      "revision_resolution_status": "live_main_head_prefix_matches_local_full_refs_main",
+      "live_head_prefix": "b3afba2",
+      "prescribed_model_info_lookup_status": "failed_environment_connection_refused",
+      "already_cached_locally": true,
+      "cached_revision_hash": "b3afba27815ee83a64b76162cef4d8a4780d6ca7",
+      "cache_snapshot_path": "C:\\Users\\devan\\.cache\\huggingface\\hub\\models--LiquidAI--LFM2-350M\\snapshots\\b3afba27815ee83a64b76162cef4d8a4780d6ca7",
+      "cached_weight_files": [
+        "model.safetensors"
+      ]
+    },
+    {
+      "family": "moe_or_hybrid_attention",
+      "family_role": "known CTI scope-stress block",
+      "model_id": "Zyphra/Zamba2-1.2B",
+      "latest_revision_hash": "6b05bf29d1bb4ca71a36d12f7da4d3120dcde7fe",
+      "revision_resolution_status": "live_main_head_prefix_matches_local_full_refs_main",
+      "live_head_prefix": "6b05bf2",
+      "prescribed_model_info_lookup_status": "failed_environment_connection_refused",
+      "already_cached_locally": true,
+      "cached_revision_hash": "6b05bf29d1bb4ca71a36d12f7da4d3120dcde7fe",
+      "cache_snapshot_path": "C:\\Users\\devan\\.cache\\huggingface\\hub\\models--Zyphra--Zamba2-1.2B\\snapshots\\6b05bf29d1bb4ca71a36d12f7da4d3120dcde7fe",
+      "cached_weight_files": [
+        "model.safetensors"
+      ]
+    },
+    {
+      "family": "moe_or_hybrid_attention",
+      "family_role": "known CTI scope-stress block",
+      "model_id": "ibm-granite/granite-3.0-1b-a400m-base",
+      "latest_revision_hash": "d91cbed802d85eb1b32374623331f6ab2b37403a",
+      "revision_resolution_status": "live_main_head_prefix_matches_local_full_refs_main",
+      "live_head_prefix": "d91cbed",
+      "prescribed_model_info_lookup_status": "failed_environment_connection_refused",
+      "already_cached_locally": true,
+      "cached_revision_hash": "d91cbed802d85eb1b32374623331f6ab2b37403a",
+      "cache_snapshot_path": "C:\\Users\\devan\\.cache\\huggingface\\hub\\models--ibm-granite--granite-3.0-1b-a400m-base\\snapshots\\d91cbed802d85eb1b32374623331f6ab2b37403a",
+      "cached_weight_files": [
+        "model-00001-of-00002.safetensors",
+        "model-00002-of-00002.safetensors"
+      ]
+    }
+  ],
+  "integrity_checks": {
+    "roster_count_matches_preregistration": true,
+    "roster_order_preserved_from_preregistration": true,
+    "duplicate_model_ids": [],
+    "revision_hash_format_all_40_lower_hex": true,
+    "every_frozen_revision_has_local_weight_snapshot": true
+  }
+}
