@@ -293,8 +293,13 @@ def train_installer_run(
     bank_order: list[int],
     output_dir: Path,
     device: torch.device,
+    seal_probes: bool = False,
 ):
-    """Train one installer run (one arm, one key, one seed)."""
+    """Train one installer run (one arm, one key, one seed).
+
+    seal_probes: if True, probe results go to sealed_probe_log.jsonl only,
+    excluded from training_log.jsonl and summary.json. For CM-CKS sealed runs.
+    """
     name = run_config["name"]
     arm = run_config["arm"]
     seed = run_config["seed"]
@@ -337,6 +342,10 @@ def train_installer_run(
         checkpoint_path.unlink()
 
     log_file = open(log_path, "a", encoding="utf-8")
+    sealed_log_file = None
+    if seal_probes:
+        sealed_log_path = run_dir / "sealed_probe_log.jsonl"
+        sealed_log_file = open(sealed_log_path, "a", encoding="utf-8")
     model.train()
     t0 = time.time()
     eval_history = []
@@ -388,21 +397,42 @@ def train_installer_run(
                 model, calibration_examples, direct_probes, device,
             )
 
-            eval_result = {
-                "step": step + 1,
-                "probe_correct": probe_correct,
-                "probe_total": probe_total,
-                "probe_acc": probe_correct / probe_total if probe_total > 0 else 0,
-                "task_loss": task_loss.item(),
-                "aux_loss": aux_loss.item() if isinstance(aux_loss, torch.Tensor) else aux_loss,
-                "lr": lr,
-                "wall_time": time.time() - t0,
-            }
+            probe_acc = probe_correct / probe_total if probe_total > 0 else 0
+
+            if seal_probes:
+                sealed_entry = {
+                    "step": step + 1,
+                    "probe_correct": probe_correct,
+                    "probe_total": probe_total,
+                    "probe_acc": probe_acc,
+                    "wall_time": time.time() - t0,
+                }
+                sealed_log_file.write(json.dumps(sealed_entry) + "\n")
+                sealed_log_file.flush()
+                eval_result = {
+                    "step": step + 1,
+                    "task_loss": task_loss.item(),
+                    "aux_loss": aux_loss.item() if isinstance(aux_loss, torch.Tensor) else aux_loss,
+                    "lr": lr,
+                    "wall_time": time.time() - t0,
+                }
+                print(f"[{name}] EVAL step={step+1}: [sealed]")
+            else:
+                eval_result = {
+                    "step": step + 1,
+                    "probe_correct": probe_correct,
+                    "probe_total": probe_total,
+                    "probe_acc": probe_acc,
+                    "task_loss": task_loss.item(),
+                    "aux_loss": aux_loss.item() if isinstance(aux_loss, torch.Tensor) else aux_loss,
+                    "lr": lr,
+                    "wall_time": time.time() - t0,
+                }
+                print(f"[{name}] EVAL step={step+1}: probe={probe_correct}/{probe_total}")
+
             eval_history.append(eval_result)
             log_file.write(json.dumps(eval_result) + "\n")
             log_file.flush()
-
-            print(f"[{name}] EVAL step={step+1}: probe={probe_correct}/{probe_total}")
 
             torch.save({
                 "model": model.state_dict(),
@@ -412,27 +442,44 @@ def train_installer_run(
             }, checkpoint_path)
 
     log_file.close()
+    if sealed_log_file is not None:
+        sealed_log_file.close()
     wall_time = time.time() - t0
 
-    withheld_acc = evaluate_withheld(model, withheld_examples, device)
-
-    summary = {
-        "name": name,
-        "arm": arm,
-        "arch": arch,
-        "seed": seed,
-        "lr": peak_lr,
-        "coefficient": coeff,
-        "params": count_parameters(model),
-        "max_steps": MAX_STEPS,
-        "final_withheld_acc": withheld_acc,
-        "final_probe_correct": eval_history[-1]["probe_correct"] if eval_history else 0,
-        "final_probe_total": eval_history[-1]["probe_total"] if eval_history else 0,
-        "final_probe_acc": eval_history[-1]["probe_acc"] if eval_history else 0,
-        "wall_seconds": wall_time,
-        "eval_history": eval_history,
-        "status": "complete",
-    }
+    if seal_probes:
+        summary = {
+            "name": name,
+            "arm": arm,
+            "arch": arch,
+            "seed": seed,
+            "lr": peak_lr,
+            "coefficient": coeff,
+            "params": count_parameters(model),
+            "max_steps": MAX_STEPS,
+            "sealed": True,
+            "wall_seconds": wall_time,
+            "eval_history": eval_history,
+            "status": "complete",
+        }
+    else:
+        withheld_acc = evaluate_withheld(model, withheld_examples, device)
+        summary = {
+            "name": name,
+            "arm": arm,
+            "arch": arch,
+            "seed": seed,
+            "lr": peak_lr,
+            "coefficient": coeff,
+            "params": count_parameters(model),
+            "max_steps": MAX_STEPS,
+            "final_withheld_acc": withheld_acc,
+            "final_probe_correct": eval_history[-1]["probe_correct"] if eval_history else 0,
+            "final_probe_total": eval_history[-1]["probe_total"] if eval_history else 0,
+            "final_probe_acc": eval_history[-1]["probe_acc"] if eval_history else 0,
+            "wall_seconds": wall_time,
+            "eval_history": eval_history,
+            "status": "complete",
+        }
 
     with open(summary_path, "w") as f:
         json.dump(summary, f, indent=2)
