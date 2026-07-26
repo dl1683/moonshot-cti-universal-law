@@ -13,11 +13,13 @@ import json
 import time
 from pathlib import Path
 
+import hashlib
 import numpy as np
 import torch
 
 from cti_geometry_admission_automaton import (
     DEVELOPMENT_KEY_JSON,
+    ANCHOR_LENGTH_RANGE,
     key_from_json,
     generate_all_eval_sets,
     generate_anchors,
@@ -33,6 +35,7 @@ from cti_geometry_admission_models import (
 from cti_geometry_admission_trainer import (
     train_one_run,
     check_capacity_gates,
+    evaluate,
     get_gpu_temp_c,
     RUNS,
 )
@@ -103,12 +106,49 @@ def run_extraction(device: torch.device) -> dict:
     anchors = generate_anchors()
     banks = partition_anchors_into_banks(anchors)
 
+    print("Pre-extraction competence gate: evaluating teacher on frozen anchors...")
+    anchor_acc = evaluate(teacher, anchors, device)
+    all_perturbations = []
+    for anchor in anchors:
+        perts = generate_perturbations(anchor, key)
+        all_perturbations.extend(perts)
+    pert_acc = evaluate(teacher, all_perturbations, device) if all_perturbations else 0.0
+    n_anchor_correct = int(round(anchor_acc * len(anchors)))
+    n_pert_correct = int(round(pert_acc * len(all_perturbations)))
+    print(f"  Anchor accuracy: {n_anchor_correct}/{len(anchors)} ({anchor_acc:.4f})")
+    print(f"  Perturbation accuracy: {n_pert_correct}/{len(all_perturbations)} ({pert_acc:.4f})")
+    if anchor_acc < 0.95 or pert_acc < 0.95:
+        raise RuntimeError(
+            f"Pre-extraction competence FAIL: anchor={anchor_acc:.4f}, pert={pert_acc:.4f}. "
+            "Teacher must achieve >= 95% on both before extraction."
+        )
+    print("  Pre-extraction competence: PASS")
+
+    teacher_ckpt_bytes = teacher_path.read_bytes()
+    teacher_sha256 = hashlib.sha256(teacher_ckpt_bytes).hexdigest()
+    config_path = RESULTS_DIR / "teacher" / "config.json"
+    config_sha256 = ""
+    if config_path.exists():
+        config_sha256 = hashlib.sha256(config_path.read_bytes()).hexdigest()
+    key_hash = hashlib.sha256(json.dumps(DEVELOPMENT_KEY_JSON, sort_keys=True).encode()).hexdigest()
+
+    from cti_geometry_admission_automaton import ANCHOR_PROTOCOL_ID
+
     coverage = audit_edge_coverage(key, anchors)
     anchor_manifest = {
         "n_anchors": len(anchors),
         "n_banks": len(banks),
         "bank_size": len(banks[0]),
         "edge_coverage": coverage,
+        "anchor_length_range": list(ANCHOR_LENGTH_RANGE),
+        "anchor_protocol_id": ANCHOR_PROTOCOL_ID,
+        "teacher_checkpoint_sha256": teacher_sha256,
+        "teacher_config_sha256": config_sha256,
+        "development_key_sha256": key_hash,
+        "extraction_dtype": "float32",
+        "depth_layers": list(TEACHER_DEPTH_LAYERS),
+        "pre_extraction_anchor_accuracy": anchor_acc,
+        "pre_extraction_perturbation_accuracy": pert_acc,
     }
     with open(RESULTS_DIR / "anchor_manifest.json", "w") as f:
         json.dump(anchor_manifest, f, indent=2)

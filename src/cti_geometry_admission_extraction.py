@@ -37,11 +37,12 @@ RESULTS_DIR = Path(__file__).resolve().parent.parent / "results" / "geometry_adm
 
 def center_and_normalize(H: np.ndarray) -> np.ndarray:
     """Center rows and Frobenius-normalize. H: (n_anchors, dim)."""
+    H = H.astype(np.float32, copy=False)
     n = H.shape[0]
-    C = np.eye(n) - np.ones((n, n)) / n
+    C = np.eye(n, dtype=np.float32) - np.ones((n, n), dtype=np.float32) / n
     CH = C @ H
-    norm = np.linalg.norm(CH, "fro") + 1e-12
-    return np.sqrt(n) * CH / norm
+    norm = np.linalg.norm(CH, "fro") + np.float32(1e-12)
+    return np.sqrt(np.float32(n)) * CH / norm
 
 
 def extract_raw_trace(
@@ -65,20 +66,23 @@ def extract_raw_trace(
         G_j = X_j @ X_j.T
         A_j = (X_j1 - X_j) @ X_j.T
 
+        G_j = G_j.astype(np.float32)
         eigvals, eigvecs = np.linalg.eigh(G_j)
+        eigvals = eigvals.astype(np.float32)
+        eigvecs = eigvecs.astype(np.float32)
         n = X_j.shape[0]
         trace_G = np.trace(G_j)
-        ridge = RIDGE_FACTOR * trace_G / (n - 1)
+        ridge = np.float32(RIDGE_FACTOR) * trace_G / np.float32(n - 1)
 
-        ridged_inv_sqrt = np.diag(1.0 / np.sqrt(eigvals + ridge))
+        ridged_inv_sqrt = np.diag((np.float32(1.0) / np.sqrt(eigvals + ridge)).astype(np.float32))
 
-        C = np.eye(n) - np.ones((n, n)) / n
+        C = np.eye(n, dtype=np.float32) - np.ones((n, n), dtype=np.float32) / np.float32(n)
         G_inv_sqrt = C @ eigvecs @ ridged_inv_sqrt @ eigvecs.T @ C
 
         R_j = G_inv_sqrt @ A_j @ G_inv_sqrt
-        Omega_j = 0.5 * (R_j - R_j.T)
+        Omega_j = np.float32(0.5) * (R_j - R_j.T)
 
-        cond = (eigvals[-1] + ridge) / (eigvals[0] + ridge) if eigvals[0] + ridge > 0 else float("inf")
+        cond = float((eigvals[-1] + ridge) / (eigvals[0] + ridge)) if eigvals[0] + ridge > 0 else float("inf")
         rank = int(np.sum(eigvals > 1e-10 * eigvals[-1]))
 
         transitions[j] = {
@@ -249,59 +253,64 @@ def extract_observable_connection(
         X_j = center_and_normalize(tick_states_np[j])
         X_j1 = center_and_normalize(tick_states_np[j + 1])
 
-        G_j = X_j @ X_j.T
-        A_j = (X_j1 - X_j) @ X_j.T
+        G_j = (X_j @ X_j.T).astype(np.float32)
+        A_j = ((X_j1 - X_j) @ X_j.T).astype(np.float32)
         eigvals, eigvecs = np.linalg.eigh(G_j)
+        eigvals = eigvals.astype(np.float32)
+        eigvecs = eigvecs.astype(np.float32)
         trace_G = np.trace(G_j)
-        ridge = RIDGE_FACTOR * trace_G / (n - 1)
-        ridged_inv_sqrt = np.diag(1.0 / np.sqrt(eigvals + ridge))
-        C_mat = np.eye(n) - np.ones((n, n)) / n
+        ridge = np.float32(RIDGE_FACTOR) * trace_G / np.float32(n - 1)
+        ridged_inv_sqrt = np.diag((np.float32(1.0) / np.sqrt(eigvals + ridge)).astype(np.float32))
+        C_mat = np.eye(n, dtype=np.float32) - np.ones((n, n), dtype=np.float32) / np.float32(n)
         G_inv_sqrt = C_mat @ eigvecs @ ridged_inv_sqrt @ eigvecs.T @ C_mat
         R_j = G_inv_sqrt @ A_j @ G_inv_sqrt
 
-        J_j = vjp_grads[j]
+        J_j = vjp_grads[j].astype(np.float32, copy=False)
         S_j = J_j @ X_j.T
         W_o = S_j.T @ S_j
-        W_o = W_o / (np.trace(W_o) + 1e-12)
+        W_o = W_o / (np.trace(W_o) + np.float32(1e-12))
 
-        D_sum = np.zeros((n, n))
+        D_sum = np.zeros((n, n), dtype=np.float32)
         for k in range(NUM_PERTURBATIONS):
             X_j_pert = center_and_normalize(pert_ticks_by_k[k][j])
             D_k = (X_j_pert - X_j) @ X_j.T
             D_sum += D_k.T @ D_k
 
-        W_c = D_sum / (np.trace(D_sum) + 1e-12)
+        W_c = D_sum / (np.trace(D_sum) + np.float32(1e-12))
 
         rank_Wc = int(np.sum(np.linalg.eigvalsh(W_c) > 1e-10))
         rank_Wo = int(np.sum(np.linalg.eigvalsh(W_o) > 1e-10))
 
-        C_center = np.eye(n) - np.ones((n, n)) / n
-        W_c += (BALANCED_RIDGE / n) * C_center
-        W_o += (BALANCED_RIDGE / n) * C_center
+        C_center = np.eye(n, dtype=np.float32) - np.ones((n, n), dtype=np.float32) / np.float32(n)
+        W_c += np.float32(BALANCED_RIDGE / n) * C_center
+        W_o += np.float32(BALANCED_RIDGE / n) * C_center
 
         eigvals_wc, eigvecs_wc = np.linalg.eigh(W_c)
-        eigvals_wc = np.maximum(eigvals_wc, 1e-10)
+        eigvals_wc = np.maximum(eigvals_wc.astype(np.float32), np.float32(1e-10))
+        eigvecs_wc = eigvecs_wc.astype(np.float32)
         W_c_sqrt = eigvecs_wc @ np.diag(np.sqrt(eigvals_wc)) @ eigvecs_wc.T
 
         M_j = W_c_sqrt @ W_o @ W_c_sqrt
-        M_j = 0.5 * (M_j + M_j.T)
+        M_j = np.float32(0.5) * (M_j + M_j.T)
 
         eig_M, vec_M = np.linalg.eigh(M_j)
+        eig_M = eig_M.astype(np.float32)
+        vec_M = vec_M.astype(np.float32)
         top_k_idx = np.argsort(eig_M)[-BALANCED_TOP_K:][::-1]
         V_top = vec_M[:, top_k_idx]
 
         U_raw = W_c_sqrt @ V_top
         U, _ = np.linalg.qr(U_raw)
-        U = U[:, :BALANCED_TOP_K]
+        U = U[:, :BALANCED_TOP_K].astype(np.float32)
 
         for col in range(U.shape[1]):
             max_idx = np.argmax(np.abs(U[:, col]))
             if U[max_idx, col] < 0:
-                U[:, col] *= -1
+                U[:, col] *= np.float32(-1)
 
         R_obs = U.T @ R_j @ U
 
-        orth_error = np.linalg.norm(U.T @ U - np.eye(BALANCED_TOP_K), "fro")
+        orth_error = np.linalg.norm(U.T @ U - np.eye(BALANCED_TOP_K, dtype=np.float32), "fro")
 
         transitions[j] = {
             "R_obs": R_obs,
@@ -343,7 +352,7 @@ def check_numerical_gates(raw_transitions: dict, obs_transitions: dict = None) -
         for j, t in obs_transitions.items():
             gate = {
                 "finite": bool(np.all(np.isfinite(t["R_obs"]))),
-                "orthogonality_le_1e5": t["orthogonality_error"] <= 1e-5,
+                "orthogonality_le_1e_minus_5": t["orthogonality_error"] <= 1e-5,
                 "W_c_rank_ge_8": t["W_c_rank"] >= 8,
                 "W_o_rank_ge_8": t["W_o_rank"] >= 8,
             }
