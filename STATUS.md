@@ -53,7 +53,7 @@ without teacher access or pair-specific tuning.
 - Conditional: 6L/224d/1.8M GRU (10.55x compression)
 - 2 candidates: raw R trace vs observable connection (VJP-balanced)
 - 5 controls: no auxiliary, static G, wrong-key, Haar-matched, generic smoothness
-- Staged: preflight (A) -> screen (B) -> sealed 8-key confirmation (C) -> conditional GRU
+- Staged: preflight (A) -> CM-CKS paired screen (B-P) -> 8-pair sealed confirmation (C-I) -> conditional GRU
 
 **Budget (revised after R6 — bridge hours reallocated):**
 | GPU-hours | Work |
@@ -98,7 +98,8 @@ without teacher access or pair-specific tuning.
 | 14 | Gate B closure + CLAUDE.md honest score | DONE | Bridge terminated, Nobel 8/10->2/10 in CLAUDE.md+MEMORY.md |
 | 15 | Codex R7 preflight audit + T0 gate fix | DONE | T0 rank gate relaxed (19 < 48, now ≥8), float32 U_basis round-trip added |
 | 16 | Stage A-T execution (train16) | VOID | Spec bug: trained 1-16, gated on 17-32. Teacher quarantined as diagnostic |
-| 17 | R7 spec fix + Stage A-T relaunch | RUNNING | max_length=32, steps=7000, anchors 8-32. Teacher ~70-90 min |
+| 17 | R7 spec fix + Stage A-T relaunch | RUNNING | max_length=32, steps=7000, anchors 8-32. Teacher at step 4250/7000, extrap=35.2% |
+| 18 | CM-CKS implementation (R8 design) | DONE | 5 files: automaton, statistics, installer, stage_b, stage_c. All import clean |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
@@ -112,6 +113,7 @@ without teacher access or pair-specific tuning.
 | 7 | Evidence ladder to "portable program" | DONE | 5-rung ladder; Qwen pilot can reach Rung 2 max |
 | 8 | Generative directions for DG-0 | DONE | Lead with observable connection codec; pursue differential skill patches, closed-loop transfer, and gauge-invariant loop structure |
 | 9 | Memorization threat to GAT | DONE | Artifact 290,000x over-budgeted for 86.5 bits. Paired-key signed selectivity is decisive experiment. QL6 tests only partially implemented |
+| 10 | Calibration-matched counterfactual | DONE | Wrong-key control fatally unmatched on calibration edges. CM-CKS design required. |
 
 ### Steering Dialogue (5-round supervisor check-in)
 | Round | Topic | Status | Outcome |
@@ -123,6 +125,7 @@ without teacher access or pair-specific tuning.
 | R5 | Final consistency audit | DONE | Convergence confirmed, blockers fixed |
 | R6 | Post-WL10 steering: bridge, GAT blockers, candidates | DONE | Kill bridge v2, fix 4 Stage A blockers, keep both candidates, defer GRU |
 | R7 | Training length spec bug | DONE | Fix applied: max_length=32, MAX_STEPS=7000, anchors (8,32), config hash fixed, old run quarantined |
+| R8 | CM-CKS design | DONE | 2 rounds converged. 0 new modules, 5 files modified. 8 sealed pairs, 7/8 threshold |
 
 ### GAT Implementation Status
 | Module | File | Status |
