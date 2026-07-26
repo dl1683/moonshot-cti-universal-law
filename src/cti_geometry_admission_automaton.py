@@ -247,6 +247,175 @@ def audit_edge_coverage(
     }
 
 
+def inverse_permutation(perm: np.ndarray) -> np.ndarray:
+    inv = np.empty_like(perm)
+    inv[perm] = np.arange(len(perm))
+    return inv
+
+
+def apply_permutation_power(key: np.ndarray, op: int, state: int, power: int) -> int:
+    """Apply pi_op^power to state. power >= 0."""
+    s = state
+    for _ in range(power):
+        s = int(key[op, s])
+    return s
+
+
+def apply_inverse_permutation_power(key: np.ndarray, op: int, state: int, power: int) -> int:
+    """Apply pi_op^{-power} to state."""
+    inv_perm = inverse_permutation(key[op])
+    s = state
+    for _ in range(power):
+        s = int(inv_perm[s])
+    return s
+
+
+def generate_calibration_set(key: np.ndarray, key_slot: int) -> list[dict]:
+    """Generate the 64 labeled calibration sequences for a key.
+
+    key_slot determines which operation is labeled: q_k = key_slot % 4.
+    All operations in all 64 sequences use only the labeled operation.
+    """
+    q_k = key_slot % NUM_OPS
+    examples = []
+
+    for L in [1, 2, 4, 8, 16]:
+        for s0 in range(NUM_STATES):
+            ops = [q_k] * L
+            label = simulate_automaton(key, s0, np.array(ops))
+            input_ids = [s0] + [op + 12 for op in ops]
+            examples.append({
+                "input_ids": input_ids,
+                "label": label,
+                "s0": s0,
+                "ops": ops,
+                "length": L,
+            })
+
+    extra = [(0, 3), (3, 5), (6, 7), (9, 11)]
+    for s0, L in extra:
+        ops = [q_k] * L
+        label = simulate_automaton(key, s0, np.array(ops))
+        input_ids = [s0] + [op + 12 for op in ops]
+        examples.append({
+            "input_ids": input_ids,
+            "label": label,
+            "s0": s0,
+            "ops": ops,
+            "length": L,
+        })
+
+    assert len(examples) == 64
+    return examples
+
+
+def generate_withheld_eval_set(
+    key: np.ndarray,
+    key_slot: int,
+    key_index: int,
+) -> tuple[list[dict], list[dict]]:
+    """Generate the 4000 withheld evaluation examples and 36 direct withheld probes.
+
+    Returns (withheld_sequences, direct_probes).
+    """
+    q_k = key_slot % NUM_OPS
+
+    withheld_edges = []
+    for s in range(NUM_STATES):
+        for x in range(NUM_OPS):
+            if x != q_k:
+                withheld_edges.append((s, x))
+    assert len(withheld_edges) == 36
+
+    edge_hash = lambda e: sha256_hex(f"GAT_WITHHELD_EXTRA_V1||{key_index}||{e[0]}_{e[1]}")
+    sorted_edges = sorted(withheld_edges, key=edge_hash)
+
+    allocation = {}
+    for e in withheld_edges:
+        allocation[e] = 111
+    for i in range(4):
+        allocation[sorted_edges[i]] += 1
+
+    examples = []
+    for edge in withheld_edges:
+        s_target, x_target = edge
+        n_examples = allocation[edge]
+
+        pair_seed_str = f"GAT_WITHHELD_PAIRS_V1||{key_index}||{s_target}_{x_target}"
+        pair_seed = int(sha256_hex(pair_seed_str)[:16], 16)
+        rng = np.random.default_rng(pair_seed)
+
+        all_pairs = [(p, r) for p in range(16) for r in range(16)]
+        rng.shuffle(all_pairs)
+
+        for idx in range(n_examples):
+            p, r = all_pairs[idx % len(all_pairs)]
+
+            s0 = apply_inverse_permutation_power(key, q_k, s_target, p)
+
+            ops = [q_k] * p + [x_target] + [q_k] * r
+            label = simulate_automaton(key, s0, np.array(ops))
+            input_ids = [s0] + [op + 12 for op in ops]
+
+            examples.append({
+                "input_ids": input_ids,
+                "label": label,
+                "s0": s0,
+                "ops": ops,
+                "length": len(ops),
+                "target_edge": (s_target, x_target),
+                "p": p,
+                "r": r,
+            })
+
+    assert len(examples) == 4000
+
+    direct_probes = []
+    for s, x in withheld_edges:
+        label = int(key[x, s])
+        input_ids = [s, x + 12]
+        direct_probes.append({
+            "input_ids": input_ids,
+            "label": label,
+            "s0": s,
+            "ops": [x],
+            "length": 1,
+            "target_edge": (s, x),
+        })
+    assert len(direct_probes) == 36
+
+    return examples, direct_probes
+
+
+def generate_stage_b_dev_keys() -> list[dict]:
+    """Generate the two Stage B development keys."""
+    keys = []
+    for i in range(2):
+        seed_str = f"GAT_STAGE_B_DEV_KEY_V1|{i}"
+        seed_bytes = hashlib.sha256(seed_str.encode()).digest()
+        key_json = generate_key_from_seed(seed_bytes)
+        keys.append({
+            "key_json": key_json,
+            "seed_hash": hashlib.sha256(seed_bytes).hexdigest(),
+            "derivation": seed_str,
+            "slot": i,
+        })
+    return keys
+
+
+def generate_bank_order_permutation(n_banks: int = 32, n_steps: int = 5000) -> list[int]:
+    """Generate frozen bank order for installer training."""
+    seed_hex = sha256_hex("GAT_INSTALLER_BANK_ORDER_V1")
+    seed_int = int(seed_hex[:16], 16)
+    rng = np.random.default_rng(seed_int)
+
+    perm = rng.permutation(n_banks).tolist()
+    order = []
+    for step in range(n_steps):
+        order.append(perm[step % n_banks])
+    return order
+
+
 if __name__ == "__main__":
     dev_key = key_from_json(DEVELOPMENT_KEY_JSON)
     print(f"Development key loaded: {dev_key.shape}")
