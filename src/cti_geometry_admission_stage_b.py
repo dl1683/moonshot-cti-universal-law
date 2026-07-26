@@ -220,6 +220,37 @@ def main():
     controls = [key0_controls, key1_controls]
 
     print("\n" + "=" * 60)
+    print("STAGE B: COEFFICIENT FREEZING (ref = key 0, seed 400)")
+    print("=" * 60)
+
+    key0 = key_from_json(dev_keys[0]["key_json"])
+    cal0 = generate_calibration_set(key0, key_slot=0)
+    combined_ref = {
+        "raw": artifacts[0]["raw"],
+        "obs": artifacts[0]["obs"],
+        "static_g": artifacts[0]["static_g"],
+        "raw_wrong": controls[0]["raw_wrong"],
+        "obs_wrong": controls[0]["obs_wrong"],
+        "raw_haar": controls[0]["raw_haar"],
+        "obs_haar": controls[0]["obs_haar"],
+    }
+
+    from cti_geometry_admission_models import create_transformer_student
+    torch.manual_seed(400)
+    torch.cuda.manual_seed_all(400)
+    ref_model = create_transformer_student().to(device)
+    frozen_coefficients = {}
+    for arm in ARMS:
+        frozen_coefficients[arm] = calibrate_coefficient(
+            ref_model, cal0, banks, arm, combined_ref, device,
+        )
+        print(f"  Frozen coefficient for {arm}: {frozen_coefficients[arm]:.6f}")
+    del ref_model
+
+    with open(RESULTS_DIR / "frozen_coefficients.json", "w") as f:
+        json.dump(frozen_coefficients, f, indent=2)
+
+    print("\n" + "=" * 60)
     print("STAGE B: INSTALLER RUNS (18 total)")
     print("=" * 60)
 
@@ -244,16 +275,8 @@ def main():
             run_name = f"key{ki}_{arm}_s401"
             print(f"\nRunning: {run_name}")
 
-            from cti_geometry_admission_installer import create_transformer_student
-            torch.manual_seed(400)
-            torch.cuda.manual_seed_all(400)
-            ref_model = create_transformer_student().to(device)
-
-            coeff = calibrate_coefficient(
-                ref_model, cal, banks, arm, combined_artifacts, device,
-            )
-            del ref_model
-            print(f"  Coefficient for {arm}: {coeff:.6f}")
+            coeff = frozen_coefficients[arm]
+            print(f"  Coefficient (frozen): {coeff:.6f}")
 
             run_config = {
                 "name": run_name,

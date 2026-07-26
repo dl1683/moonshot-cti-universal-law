@@ -29,7 +29,7 @@ TEACHER_DEPTH_LAYERS = [0, 2, 4, 6, 8, 10, 12]
 STUDENT_DEPTH_LAYERS = [0, 1, 2, 3, 4, 5, 6]
 BALANCED_TOP_K = 8
 RIDGE_FACTOR = 1e-3
-BALANCED_RIDGE = 1e-6 / 64
+BALANCED_RIDGE = 1e-6
 NUM_PERTURBATIONS = 4
 
 RESULTS_DIR = Path(__file__).resolve().parent.parent / "results" / "geometry_admission" / "stage_a"
@@ -215,15 +215,14 @@ def extract_observable_connection(
     margins_g = logits_g[torch.arange(n, device=device), top_class] - \
                 logits_g[torch.arange(n, device=device), runner_class]
 
-    target_finals = []
-    for layer_idx in depth_layers:
-        target_state = out_g["hidden_states"][layer_idx]
-        target_finals.append(target_state[torch.arange(n, device=device), last_idx])
-
+    targets = [out_g["hidden_states"][j] for j in depth_layers]
     grads = torch.autograd.grad(
-        margins_g.sum(), target_finals, retain_graph=False,
+        margins_g.sum(), targets, retain_graph=False,
     )
-    vjp_grads = [g.float().detach().cpu().numpy() for g in grads]
+    vjp_grads = [
+        g[torch.arange(n, device=device), last_idx].float().detach().cpu().numpy()
+        for g in grads
+    ]
 
     for p in model.parameters():
         p.requires_grad_(False)

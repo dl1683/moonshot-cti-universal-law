@@ -171,18 +171,22 @@ def collate_fn(batch: list[dict]) -> dict:
     max_len = max(len(b["input_ids"]) for b in batch)
     input_ids = []
     attention_mask = []
-    labels = []
+    has_labels = "label" in batch[0]
+    labels = [] if has_labels else None
     for b in batch:
         ids = b["input_ids"]
         pad_len = max_len - len(ids)
         input_ids.append(ids + [PAD_TOKEN] * pad_len)
         attention_mask.append([1] * len(ids) + [0] * pad_len)
-        labels.append(b["label"])
-    return {
+        if has_labels:
+            labels.append(b["label"])
+    result = {
         "input_ids": torch.tensor(input_ids, dtype=torch.long),
         "attention_mask": torch.tensor(attention_mask, dtype=torch.long),
-        "labels": torch.tensor(labels, dtype=torch.long),
     }
+    if has_labels:
+        result["labels"] = torch.tensor(labels, dtype=torch.long)
+    return result
 
 
 def generate_anchors(

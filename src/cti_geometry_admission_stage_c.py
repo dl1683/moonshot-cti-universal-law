@@ -268,16 +268,50 @@ def main():
     total_runs = NUM_SEALED_KEYS * NUM_SEEDS * len(arms)
     print(f"Total runs: {total_runs}")
 
+    frozen_coeff_path = stage_b_dir / "frozen_coefficients.json"
+    if not frozen_coeff_path.exists():
+        print("ERROR: Frozen coefficients from Stage B not found.")
+        return
+    with open(frozen_coeff_path) as f:
+        frozen_coefficients = json.load(f)
+    print(f"Loaded frozen coefficients: {frozen_coefficients}")
+
+    source_files = [
+        "cti_geometry_admission_automaton.py",
+        "cti_geometry_admission_models.py",
+        "cti_geometry_admission_trainer.py",
+        "cti_geometry_admission_extraction.py",
+        "cti_geometry_admission_geometry.py",
+        "cti_geometry_admission_installer.py",
+        "cti_geometry_admission_statistics.py",
+        "cti_geometry_admission_stage_c.py",
+    ]
+    src_dir = Path(__file__).resolve().parent
+    code_hashes = {}
+    for sf in source_files:
+        sf_path = src_dir / sf
+        if sf_path.exists():
+            code_hashes[sf] = hashlib.sha256(sf_path.read_bytes()).hexdigest()
+    code_manifest_hash = hashlib.sha256(
+        json.dumps(code_hashes, sort_keys=True).encode()
+    ).hexdigest()
+
+    stage_c_config = {
+        "winner": winner,
+        "arms": arms,
+        "n_keys": NUM_SEALED_KEYS,
+        "n_seeds": NUM_SEEDS,
+        "seeds": INSTALLER_SEEDS,
+        "total_runs": total_runs,
+        "stage_b_decision_path": str(decision_path),
+        "frozen_coefficients": frozen_coefficients,
+        "code_manifest_hash": code_manifest_hash,
+        "code_hashes": code_hashes,
+    }
+
     with open(RESULTS_DIR / "stage_c_config.json", "w") as f:
-        json.dump({
-            "winner": winner,
-            "arms": arms,
-            "n_keys": NUM_SEALED_KEYS,
-            "n_seeds": NUM_SEEDS,
-            "seeds": INSTALLER_SEEDS,
-            "total_runs": total_runs,
-            "stage_b_decision_path": str(decision_path),
-        }, f, indent=2)
+        json.dump(stage_c_config, f, indent=2)
+    print(f"Stage C precommitment written. Code manifest: {code_manifest_hash[:16]}...")
 
     print("\n" + "=" * 60)
     print("STAGE C: GENERATING SEALED KEYS")
@@ -314,8 +348,18 @@ def main():
 
         print(f"  Training teacher...")
         summary = train_teacher_for_key(key_json, ki, device)
-        if summary["final_in_range"] < 0.995 or summary["final_direct_edges"] < 48:
+        from cti_geometry_admission_trainer import _two_eval_pass
+        teacher_ok = (
+            summary["final_in_range"] >= 0.995
+            and summary["final_extrapolation"] >= 0.990
+            and summary["final_direct_edges"] == 48
+            and _two_eval_pass(summary, 0.995, 0.990, 48)
+        )
+        if not teacher_ok:
             print(f"  WARNING: Teacher for key {ki} below capacity threshold!")
+            print(f"    in_range={summary['final_in_range']:.4f} "
+                  f"extrap={summary['final_extrapolation']:.4f} "
+                  f"edges={summary['final_direct_edges']}/48")
             teacher_pass = False
 
         print(f"  Extracting artifacts...")
@@ -377,15 +421,7 @@ def main():
                 run_count += 1
                 print(f"\n[{run_count}/{total_runs}] {run_name}")
 
-                from cti_geometry_admission_models import create_transformer_student
-                torch.manual_seed(seed)
-                torch.cuda.manual_seed_all(seed)
-                ref_model = create_transformer_student().to(device)
-
-                coeff = calibrate_coefficient(
-                    ref_model, cal, banks, arm, combined_artifacts, device,
-                )
-                del ref_model
+                coeff = frozen_coefficients.get(arm, 1.0)
 
                 run_config = {
                     "name": run_name,
@@ -450,12 +486,19 @@ def main():
             "n_seeds": len(probe_accs),
         }
 
+    from cti_geometry_admission_verify import verify_forbidden_channels
+    forbidden_check = verify_forbidden_channels()
+    if not forbidden_check["pass"]:
+        print(f"  WARNING: Forbidden channel issues detected!")
+        for issue in forbidden_check["issues"][:5]:
+            print(f"    {issue['type']}: {issue.get('file', 'N/A')}")
+
     protocol_checks = {
         "all_teachers_pass": teacher_pass,
         "all_runs_complete": run_count == total_runs,
         "hashes_verified": verify_key_commitment(keys),
-        "no_forbidden_info": True,
-        "key_commitment_mismatch": False,
+        "no_forbidden_info": forbidden_check["pass"],
+        "forbidden_issues": forbidden_check["issues"] if not forbidden_check["pass"] else [],
     }
 
     verdict = stage_c_verdict(primary, bootstrap, sign_flip, probe_results, protocol_checks)

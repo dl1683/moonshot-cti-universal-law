@@ -388,14 +388,12 @@ def train_installer_run(
                   f"aux={aux_loss.item():.4f} lr={lr:.6f}")
 
         if (step + 1) % EVAL_INTERVAL == 0 or step == MAX_STEPS - 1:
-            withheld_acc = evaluate_withheld(model, withheld_examples, device)
             probe_correct, probe_total = centroid_probe(
                 model, calibration_examples, direct_probes, device,
             )
 
             eval_result = {
                 "step": step + 1,
-                "withheld_acc": withheld_acc,
                 "probe_correct": probe_correct,
                 "probe_total": probe_total,
                 "probe_acc": probe_correct / probe_total if probe_total > 0 else 0,
@@ -408,8 +406,7 @@ def train_installer_run(
             log_file.write(json.dumps(eval_result) + "\n")
             log_file.flush()
 
-            print(f"[{name}] EVAL step={step+1}: withheld={withheld_acc:.4f} "
-                  f"probe={probe_correct}/{probe_total}")
+            print(f"[{name}] EVAL step={step+1}: probe={probe_correct}/{probe_total}")
 
             torch.save({
                 "model": model.state_dict(),
@@ -421,6 +418,8 @@ def train_installer_run(
     log_file.close()
     wall_time = time.time() - t0
 
+    withheld_acc = evaluate_withheld(model, withheld_examples, device)
+
     summary = {
         "name": name,
         "arm": arm,
@@ -430,7 +429,7 @@ def train_installer_run(
         "coefficient": coeff,
         "params": count_parameters(model),
         "max_steps": MAX_STEPS,
-        "final_withheld_acc": eval_history[-1]["withheld_acc"] if eval_history else 0,
+        "final_withheld_acc": withheld_acc,
         "final_probe_correct": eval_history[-1]["probe_correct"] if eval_history else 0,
         "final_probe_total": eval_history[-1]["probe_total"] if eval_history else 0,
         "final_probe_acc": eval_history[-1]["probe_acc"] if eval_history else 0,

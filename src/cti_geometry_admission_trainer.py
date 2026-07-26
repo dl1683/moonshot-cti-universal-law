@@ -99,11 +99,10 @@ def evaluate(model, eval_examples, device, batch_size=512):
     return correct / total if total > 0 else 0.0
 
 
-def _write_config_hash(run_dir: Path, run_cfg: dict, key, eval_sets: dict, model):
-    """Write config identity hash before first optimizer step."""
+def _build_config_data(run_cfg: dict, key, eval_sets: dict, model) -> dict:
     import hashlib as _hl
     import platform
-    config_data = {
+    return {
         "run_config": run_cfg,
         "key_hash": _hl.sha256(json.dumps(key if isinstance(key, dict) else {"array": "omitted"}, sort_keys=True).encode()).hexdigest(),
         "eval_set_sizes": {k: len(v) for k, v in eval_sets.items()},
@@ -119,8 +118,18 @@ def _write_config_hash(run_dir: Path, run_cfg: dict, key, eval_sets: dict, model
         "cuda": torch.version.cuda or "none",
         "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "cpu",
     }
-    config_str = json.dumps(config_data, sort_keys=True)
-    config_hash = _hl.sha256(config_str.encode()).hexdigest()
+
+
+def _compute_config_hash(run_cfg: dict, key, eval_sets: dict, model) -> str:
+    import hashlib as _hl
+    config_data = _build_config_data(run_cfg, key, eval_sets, model)
+    return _hl.sha256(json.dumps(config_data, sort_keys=True).encode()).hexdigest()
+
+
+def _write_config_hash(run_dir: Path, run_cfg: dict, key, eval_sets: dict, model):
+    """Write config identity hash before first optimizer step."""
+    config_data = _build_config_data(run_cfg, key, eval_sets, model)
+    config_hash = hashlib.sha256(json.dumps(config_data, sort_keys=True).encode()).hexdigest()
 
     with open(run_dir / "config.json", "w") as f:
         json.dump(config_data, f, indent=2)
@@ -158,22 +167,14 @@ def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device):
     )
     scaler = GradScaler()
 
-    config_hash = _write_config_hash(run_dir, run_cfg, key, eval_sets, model)
-    print(f"[{name}] Config hash: {config_hash[:16]}...")
-
-    dataset = AutomatonTrainDataset(key, seed=TRAIN_STREAM_SEED, max_length=16)
-    loader = DataLoader(
-        dataset, batch_size=BATCH_SIZE, collate_fn=collate_fn,
-        num_workers=0, pin_memory=False,
-    )
-
     start_step = 0
     if checkpoint_path.exists():
         existing_hash_path = run_dir / "config.sha256"
         if existing_hash_path.exists():
             with open(existing_hash_path) as f:
                 old_hash = f.read().strip()
-            if old_hash != config_hash:
+            new_hash = _compute_config_hash(run_cfg, key, eval_sets, model)
+            if old_hash != new_hash:
                 print(f"[{name}] Config hash mismatch — restarting from step 0.")
                 checkpoint_path.unlink()
             else:
@@ -186,6 +187,15 @@ def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device):
         else:
             print(f"[{name}] No config hash for existing checkpoint — restarting.")
             checkpoint_path.unlink()
+
+    config_hash = _write_config_hash(run_dir, run_cfg, key, eval_sets, model)
+    print(f"[{name}] Config hash: {config_hash[:16]}...")
+
+    dataset = AutomatonTrainDataset(key, seed=TRAIN_STREAM_SEED, max_length=16)
+    loader = DataLoader(
+        dataset, batch_size=BATCH_SIZE, collate_fn=collate_fn,
+        num_workers=0, pin_memory=False,
+    )
 
     log_file = open(log_path, "a", encoding="utf-8")
     model.train()

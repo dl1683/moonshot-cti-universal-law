@@ -79,50 +79,88 @@ def verify_forbidden_channels() -> dict:
     """Audit that student training never receives forbidden information.
 
     Checks:
-    - No teacher model weights in student run directories
-    - No withheld evaluation labels accessible during training
-    - No teacher logits or hidden states in student artifacts
+    1. No teacher model weights in student run directories
+    2. No withheld evaluation labels accessible during training
+    3. No teacher logits or hidden states in student artifacts
+    4. Source code scan: installer must not evaluate withheld during training loop
     """
     issues = []
 
-    for run_dir in STAGE_C_DIR.iterdir():
-        if not run_dir.is_dir():
-            continue
-        if run_dir.name.startswith("teacher_"):
-            continue
-        if run_dir.name in ("secrets",):
-            continue
+    if STAGE_C_DIR.exists():
+        for run_dir in STAGE_C_DIR.iterdir():
+            if not run_dir.is_dir():
+                continue
+            if run_dir.name.startswith("teacher_"):
+                continue
+            if run_dir.name in ("secrets",):
+                continue
 
-        forbidden_patterns = [
-            "teacher_weights", "teacher_logits", "teacher_hidden",
-            "withheld_labels", "test_labels",
-        ]
+            forbidden_patterns = [
+                "teacher_weights", "teacher_logits", "teacher_hidden",
+                "withheld_labels", "test_labels",
+            ]
 
-        for f in run_dir.iterdir():
-            name_lower = f.name.lower()
-            for pat in forbidden_patterns:
-                if pat in name_lower:
-                    issues.append({
-                        "file": str(f),
-                        "pattern": pat,
-                        "type": "forbidden_filename",
-                    })
+            for f in run_dir.iterdir():
+                name_lower = f.name.lower()
+                for pat in forbidden_patterns:
+                    if pat in name_lower:
+                        issues.append({
+                            "file": str(f),
+                            "pattern": pat,
+                            "type": "forbidden_filename",
+                        })
 
-            if f.suffix == ".json" and f.stat().st_size < 10_000_000:
-                try:
-                    with open(f) as fh:
-                        data = json.load(fh)
-                    if isinstance(data, dict):
-                        for key in data:
-                            key_lower = key.lower()
-                            if "teacher_weight" in key_lower or "withheld_label" in key_lower:
-                                issues.append({
-                                    "file": str(f),
-                                    "key": key,
-                                    "type": "forbidden_json_key",
-                                })
-                except (json.JSONDecodeError, UnicodeDecodeError):
-                    pass
+                if f.suffix == ".json" and f.stat().st_size < 10_000_000:
+                    try:
+                        with open(f) as fh:
+                            data = json.load(fh)
+                        if isinstance(data, dict):
+                            for key in data:
+                                key_lower = key.lower()
+                                if "teacher_weight" in key_lower or "withheld_label" in key_lower:
+                                    issues.append({
+                                        "file": str(f),
+                                        "key": key,
+                                        "type": "forbidden_json_key",
+                                    })
+                    except (json.JSONDecodeError, UnicodeDecodeError):
+                        pass
+
+            for f in run_dir.iterdir():
+                if f.name == "training_log.jsonl":
+                    try:
+                        with open(f, encoding="utf-8") as fh:
+                            for line_num, line in enumerate(fh, 1):
+                                entry = json.loads(line.strip())
+                                step = entry.get("step", 0)
+                                if "withheld_acc" in entry and step < 5000:
+                                    issues.append({
+                                        "file": str(f),
+                                        "line": line_num,
+                                        "step": step,
+                                        "type": "withheld_eval_during_training",
+                                    })
+                    except (json.JSONDecodeError, UnicodeDecodeError):
+                        pass
+
+    src_dir = Path(__file__).resolve().parent
+    installer_path = src_dir / "cti_geometry_admission_installer.py"
+    if installer_path.exists():
+        source = installer_path.read_text(encoding="utf-8")
+        in_training_loop = False
+        for line_num, line in enumerate(source.split("\n"), 1):
+            stripped = line.strip()
+            if "for step in range(" in stripped:
+                in_training_loop = True
+            if in_training_loop and "log_file.close()" in stripped:
+                in_training_loop = False
+            if in_training_loop and "evaluate_withheld" in stripped:
+                issues.append({
+                    "file": str(installer_path),
+                    "line": line_num,
+                    "type": "withheld_eval_in_training_loop",
+                    "detail": stripped,
+                })
 
     return {"pass": len(issues) == 0, "issues": issues}
 
@@ -243,7 +281,7 @@ def verify_statistics(winner: str, n_keys: int = 8, n_seeds: int = 3) -> dict:
     verdict_match = recomputed_verdict["verdict"] == stored.get("verdict", {}).get("verdict", "")
 
     return {
-        "pass": delta_min_match and p_match and verdict_match,
+        "pass": delta_min_match and lcb_match and p_match and verdict_match,
         "delta_min_match": delta_min_match,
         "lcb_match": lcb_match,
         "p_value_match": p_match,
