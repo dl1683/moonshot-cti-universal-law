@@ -1,6 +1,6 @@
 # CTI Universal Law -- Success Criteria
 
-## Updated Mar 1, 2026 (Codex-reviewed)
+## Updated Jul 25, 2026 (equicorrelation adjudicated)
 
 ### The Law
 
@@ -22,7 +22,21 @@ logit(q_norm) = alpha * kappa_nearest - beta * log(K-1) + C_dataset
 | Biological generalization | >70% sessions with r>0.50 | 30/32 (93.75%), mean r=0.736 | **PASS** |
 | Multi-area biological | r>0.70 in >=2 non-V1 areas | VISl 22/22, VISam 24/25 | **PASS** |
 | Causal confusion prediction | r>0.50, sign acc>80% | r=0.842, sign=93% | **PASS** |
-| Cross-model ranking | rho>0.50, p<0.05 | rho=0.833, p=0.005 | **PASS** |
+| Cross-model ranking (Spearman rho) | rho>0.50, p<0.05 | rho=0.833, p=0.005 | **PASS** |
+
+## Retracted Criteria (Equicorrelation Program)
+
+All criteria below depend on the legacy cross-modal equicorrelation estimator and are retracted, regardless of whether the historical row passed or failed. They are not retained as approximate-universality evidence.
+
+| Criterion | Historical Threshold | Historical Result | Status |
+|-----------|----------------------|-------------------|--------|
+| Cross-modal equicorrelation constancy | Low cross-modal CV | mean rho=0.462, range [0.455, 0.467], CV=1.0% | **RETRACTED** |
+| Alpha-rho per-model | r > 0.70 | r=-0.546 | **RETRACTED** |
+| Alpha-rho disattenuated | r > 0.70 | r=-0.519 | **RETRACTED** |
+| Alpha-rho MAE | < 0.15 | 0.068 | **RETRACTED** |
+| Alpha-rho mean error | < 10% | +4.7% | **RETRACTED** |
+
+**Retraction basis (Jul 25, 2026).** `src/cti_cross_modal_rho.py:89` multiplies projected directions by `sqrt_Lambda`, implementing `Sigma_W^(1/2)` (covariance amplification), not the claimed `Sigma_W^(-1/2)` whitening. WL1 confirmed exact parity between this bug and the legacy measurements. WL2 found the historical [0.455, 0.467] band inside matched-null central 99% intervals (approximately [0.453, 0.482]), and QL1 derived rho tending to 1/2 for isotropic centroids solely from the shared anchor. WL3 could not run a corrected real-data audit because the retained caches contain no aligned embeddings and labels. There is therefore no survival evidence for universal equicorrelation, near-simplex universality, or an alpha(rho) zero-parameter explanation.
 
 ## Honest Failures / Scope Limits
 
@@ -30,15 +44,6 @@ logit(q_norm) = alpha * kappa_nearest - beta * log(K-1) + C_dataset
 |-----------|-----------|--------|--------|
 | LODO cross-dataset | r > 0.50 | mean r=0.125 | **EXPECTED FAIL** |
 | Encoder universality | CV < 0.20 | CV=0.42 | **EXPECTED FAIL** |
-| Alpha-rho per-model | r > 0.70 | r=-0.546 | **FAIL** |
-| Alpha-rho disattenuated | r > 0.70 | r=-0.519 | **FAIL** |
-
-## Zero-Parameter Prediction
-
-| Criterion | Threshold | Result | Status |
-|-----------|-----------|--------|--------|
-| Alpha-rho MAE | < 0.15 | 0.068 | **PASS** |
-| Mean error | < 10% | +4.7% | **PASS** |
 
 ## 9/10 Nobel-Track Requirements (Current: 7.5/10)
 

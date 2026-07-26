@@ -1,7 +1,9 @@
 # CTI Universal Law — Experiments Log
 
+> **Retraction — Jul 25, 2026:** The Session 98 universal-equicorrelation, near-simplex, and alpha(rho) zero-parameter claims are retracted. `src/cti_cross_modal_rho.py:89` applied `Sigma_W^(1/2)` covariance amplification instead of `Sigma_W^(-1/2)` whitening; the historical rho range [0.455, 0.467] lies inside matched-null 99% intervals, and no aligned cached embeddings and labels exist for a corrected real-data audit. The measurements remain below as historical data only, not approximate-universality evidence.
+
 All experiments listed in reverse chronological order.
-Validated results only (Codex-reviewed).
+Results and subsequent adjudications (Codex-reviewed).
 
 ---
 
