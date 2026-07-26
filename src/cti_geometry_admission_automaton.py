@@ -189,10 +189,15 @@ def collate_fn(batch: list[dict]) -> dict:
     return result
 
 
+ANCHOR_COUNT = 2048
+ANCHOR_LENGTH_RANGE = (8, 32)
+ANCHOR_PROTOCOL_ID = "OCF_GAT_ANCHORS_R7_V2"
+
+
 def generate_anchors(
-    n_anchors: int = 2048,
-    length_range: tuple[int, int] = (8, 24),
-    protocol_id: str = "OCF_GAT_ANCHORS_V1",
+    n_anchors: int = ANCHOR_COUNT,
+    length_range: tuple[int, int] = ANCHOR_LENGTH_RANGE,
+    protocol_id: str = ANCHOR_PROTOCOL_ID,
 ) -> list[dict]:
     seed_hex = sha256_hex(protocol_id)
     seed_int = int(seed_hex[:16], 16)

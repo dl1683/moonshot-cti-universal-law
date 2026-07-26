@@ -1,0 +1,2 @@
+{"step": 250, "in_range": 0.28645, "extrapolation": 0.0835, "direct_edges_correct": 48, "direct_edges_total": 48, "stress_long": 0.0883, "loss": 2.002439498901367, "lr": 0.000498, "wall_time": 15.484555721282959}
+{"step": 500, "in_range": 0.42505, "extrapolation": 0.0853, "direct_edges_correct": 48, "direct_edges_total": 48, "stress_long": 0.08645, "loss": 1.5991857051849365, "lr": 0.0004969557384205295, "wall_time": 31.74770712852478}

@@ -96,6 +96,8 @@ without teacher access or pair-specific tuning.
 | 12 | Truth surface cleanup | DONE | Equicorrelation retracted from README, MANIFEST, CHECKLIST, BRIEF, GUIDE |
 | 13 | R6 Stage A protocol repairs | DONE | Pre-ridge rank, resume->restart, float32 round-trip, timing instrumentation, GRU deferral |
 | 14 | Gate B closure + CLAUDE.md honest score | DONE | Bridge terminated, Nobel 8/10->2/10 in CLAUDE.md+MEMORY.md |
+| 15 | Codex R7 preflight audit + T0 gate fix | DONE | T0 rank gate relaxed (19 < 48, now ≥8), float32 U_basis round-trip added |
+| 16 | Stage A-T execution | RUNNING | Teacher + 3 Transformer students + extraction (~0.5-1.0 GPU-hours) |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
@@ -108,6 +110,7 @@ without teacher access or pair-specific tuning.
 | 6 | Regularization vs transfer | DONE | 4 tests required: teacher identity, causal use, timing, matched regularizers |
 | 7 | Evidence ladder to "portable program" | DONE | 5-rung ladder; Qwen pilot can reach Rung 2 max |
 | 8 | Generative directions for DG-0 | DONE | Lead with observable connection codec; pursue differential skill patches, closed-loop transfer, and gauge-invariant loop structure |
+| 9 | Memorization threat to GAT | DONE | Artifact 290,000x over-budgeted for 86.5 bits. Paired-key signed selectivity is decisive experiment. QL6 tests only partially implemented |
 
 ### Steering Dialogue (5-round supervisor check-in)
 | Round | Topic | Status | Outcome |
@@ -118,6 +121,7 @@ without teacher access or pair-specific tuning.
 | R4 | Stage B/C transfer design + implementation | DONE | Complete spec: 18-run screen + 144-run confirmation |
 | R5 | Final consistency audit | DONE | Convergence confirmed, blockers fixed |
 | R6 | Post-WL10 steering: bridge, GAT blockers, candidates | DONE | Kill bridge v2, fix 4 Stage A blockers, keep both candidates, defer GRU |
+| R7 | Training length spec bug | RUNNING | Teacher fails extrapolation (8.7% at chance) — spec trains length 1-16 but gates on 17-32 |
 
 ### GAT Implementation Status
 | Module | File | Status |

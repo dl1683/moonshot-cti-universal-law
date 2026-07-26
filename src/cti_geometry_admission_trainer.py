@@ -45,7 +45,7 @@ RUNS = [
     {"name": "gru_s3",          "arch": "gru",        "seed": 303, "lr": 1e-3},
 ]
 
-MAX_STEPS = 5000
+MAX_STEPS = 7000
 BATCH_SIZE = 512
 WARMUP_STEPS = 250
 EVAL_INTERVAL = 250
@@ -104,8 +104,18 @@ def _build_config_data(run_cfg: dict, key, eval_sets: dict, model) -> dict:
     import platform
     return {
         "run_config": run_cfg,
-        "key_hash": _hl.sha256(json.dumps(key if isinstance(key, dict) else {"array": "omitted"}, sort_keys=True).encode()).hexdigest(),
+        "key_hash": _hl.sha256(
+            json.dumps(key, sort_keys=True).encode() if isinstance(key, dict)
+            else key.tobytes() if hasattr(key, "tobytes")
+            else json.dumps(key, sort_keys=True).encode()
+        ).hexdigest(),
+        "train_max_length": 32,
         "eval_set_sizes": {k: len(v) for k, v in eval_sets.items()},
+        "split_semantics": {
+            "dev_in_range": "covered core gate; lengths 1-16",
+            "dev_extrapolation": "covered long gate; lengths 17-32",
+            "stress_long": "positional-OOD diagnostic; lengths 33-64; not gated",
+        },
         "train_stream_seed": TRAIN_STREAM_SEED,
         "max_steps": MAX_STEPS,
         "batch_size": BATCH_SIZE,
@@ -175,7 +185,7 @@ def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device):
     config_hash = _write_config_hash(run_dir, run_cfg, key, eval_sets, model)
     print(f"[{name}] Config hash: {config_hash[:16]}...")
 
-    dataset = AutomatonTrainDataset(key, seed=TRAIN_STREAM_SEED, max_length=16)
+    dataset = AutomatonTrainDataset(key, seed=TRAIN_STREAM_SEED, max_length=32)
     loader = DataLoader(
         dataset, batch_size=BATCH_SIZE, collate_fn=collate_fn,
         num_workers=0, pin_memory=False,

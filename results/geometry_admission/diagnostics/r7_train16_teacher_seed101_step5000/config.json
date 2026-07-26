@@ -1,0 +1,26 @@
+{
+  "run_config": {
+    "name": "teacher",
+    "arch": "teacher",
+    "seed": 101,
+    "lr": 0.0003
+  },
+  "key_hash": "d8a43870a56835d86934f45cd5ec9be17e3cbeb723e5a23f00c271cbb1f7f090",
+  "eval_set_sizes": {
+    "dev_in_range": 20000,
+    "dev_extrapolation": 20000,
+    "stress_long": 20000,
+    "direct_edges": 48
+  },
+  "train_stream_seed": 13597686135403946059,
+  "max_steps": 5000,
+  "batch_size": 512,
+  "warmup": 250,
+  "grad_clip": 1.0,
+  "weight_decay": 0.01,
+  "param_count": 19509900,
+  "python": "3.13.7",
+  "torch": "2.11.0+cu128",
+  "cuda": "12.8",
+  "gpu": "NVIDIA GeForce RTX 5090 Laptop GPU"
+}
