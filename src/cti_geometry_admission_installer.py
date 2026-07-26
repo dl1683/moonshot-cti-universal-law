@@ -317,12 +317,14 @@ def train_installer_run(
     seal_probes: if True, probe results go to sealed_probe_log.jsonl only,
     excluded from training_log.jsonl and summary.json. For CM-CKS sealed runs.
     """
+    import hashlib as _hashlib
     name = run_config["name"]
     arm = run_config["arm"]
     seed = run_config["seed"]
     peak_lr = run_config.get("lr", 5e-4)
     arch = run_config.get("arch", "transformer")
     coeff = run_config.get("coefficient", 1.0)
+    init_checkpoint = run_config.get("init_checkpoint")
 
     run_dir = output_dir / name
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -335,13 +337,22 @@ def train_installer_run(
             print(f"[{name}] Already complete, skipping.")
             return summary
 
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-
     if arch == "gru":
-        model = create_gru_student().to(device)
+        model = create_gru_student()
     else:
-        model = create_transformer_student().to(device)
+        model = create_transformer_student()
+
+    if init_checkpoint:
+        init_path = Path(init_checkpoint)
+        state_dict = torch.load(init_path, map_location="cpu", weights_only=True)
+        model.load_state_dict(state_dict)
+        init_hash = _hashlib.sha256(init_path.read_bytes()).hexdigest()
+    else:
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+        init_hash = "dynamic"
+
+    model = model.to(device)
 
     optimizer = torch.optim.AdamW(
         model.parameters(), lr=peak_lr, betas=BETAS, eps=EPS, weight_decay=WEIGHT_DECAY,
@@ -352,151 +363,124 @@ def train_installer_run(
 
     checkpoint_path = run_dir / "checkpoint.pt"
     log_path = run_dir / "training_log.jsonl"
-    start_step = 0
 
     if checkpoint_path.exists():
-        print(f"[{name}] Existing checkpoint found — removing (frozen contract: always restart from step 0).")
+        print(f"[{name}] Existing checkpoint found -- removing (frozen contract: always restart from step 0).")
         checkpoint_path.unlink()
 
-    log_file = open(log_path, "a", encoding="utf-8")
+    log_file = None
     sealed_log_file = None
-    if seal_probes:
-        sealed_log_path = run_dir / "sealed_probe_log.jsonl"
-        sealed_log_file = open(sealed_log_path, "a", encoding="utf-8")
-    model.train()
-    t0 = time.time()
-    eval_history = []
+    try:
+        log_file = open(log_path, "w", encoding="utf-8")
+        if seal_probes:
+            sealed_log_path = run_dir / "sealed_probe_log.jsonl"
+            sealed_log_file = open(sealed_log_path, "w", encoding="utf-8")
+        model.train()
+        t0 = time.time()
+        eval_history = []
 
-    cal_ids = cal_batch["input_ids"].to(device)
-    cal_mask = cal_batch["attention_mask"].to(device)
-    cal_labels = cal_batch["labels"].to(device)
+        cal_ids = cal_batch["input_ids"].to(device)
+        cal_mask = cal_batch["attention_mask"].to(device)
+        cal_labels = cal_batch["labels"].to(device)
 
-    for step in range(start_step, MAX_STEPS):
-        lr = cosine_lr(step, WARMUP_STEPS, MAX_STEPS, peak_lr, COSINE_MIN_RATIO)
-        for pg in optimizer.param_groups:
-            pg["lr"] = lr
+        for step in range(MAX_STEPS):
+            lr = cosine_lr(step, WARMUP_STEPS, MAX_STEPS, peak_lr, COSINE_MIN_RATIO)
+            for pg in optimizer.param_groups:
+                pg["lr"] = lr
 
-        optimizer.zero_grad()
+            optimizer.zero_grad()
 
-        with autocast(dtype=torch.bfloat16):
-            out = model(cal_ids, cal_mask)
-        task_loss = F.cross_entropy(out["logits"].float(), cal_labels)
+            with autocast(dtype=torch.bfloat16):
+                out = model(cal_ids, cal_mask)
+            task_loss = F.cross_entropy(out["logits"].float(), cal_labels)
 
-        bank_idx = bank_order[step]
-        bank = anchor_banks[bank_idx]
+            if not torch.isfinite(task_loss):
+                raise RuntimeError(f"[{name}] Non-finite task loss at step {step}")
 
-        if arm != "no_auxiliary":
-            with torch.cuda.amp.autocast(enabled=False):
-                aux_loss = compute_auxiliary_loss(
-                    model, bank, arm, teacher_artifacts, bank_idx, device,
-                )
-            if aux_loss is not None:
+            bank_idx = bank_order[step]
+            bank = anchor_banks[bank_idx]
+
+            if arm != "no_auxiliary":
+                with torch.cuda.amp.autocast(enabled=False):
+                    aux_loss = compute_auxiliary_loss(
+                        model, bank, arm, teacher_artifacts, bank_idx, device,
+                    )
+                if aux_loss is None:
+                    raise RuntimeError(
+                        f"[{name}] Missing auxiliary target for arm={arm}, bank={bank_idx}"
+                    )
+                if not torch.isfinite(aux_loss):
+                    raise RuntimeError(f"[{name}] Non-finite aux loss at step {step}")
                 total_loss = task_loss + coeff * aux_loss
             else:
                 total_loss = task_loss
                 aux_loss = torch.tensor(0.0)
-        else:
-            total_loss = task_loss
-            aux_loss = torch.tensor(0.0)
 
-        scaler.scale(total_loss).backward()
-        scaler.unscale_(optimizer)
-        torch.nn.utils.clip_grad_norm_(model.parameters(), GRAD_CLIP)
-        scaler.step(optimizer)
-        scaler.update()
+            scaler.scale(total_loss).backward()
+            scaler.unscale_(optimizer)
+            grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), GRAD_CLIP)
+            if not torch.isfinite(grad_norm):
+                raise RuntimeError(f"[{name}] Non-finite gradient norm at step {step}")
+            scaler.step(optimizer)
+            scaler.update()
 
-        if step % 100 == 0:
-            print(f"[{name}] step {step}/{MAX_STEPS} task={task_loss.item():.4f} "
-                  f"aux={aux_loss.item():.4f} lr={lr:.6f}")
+            if step % 100 == 0:
+                with torch.no_grad():
+                    preds = out["logits"].argmax(dim=-1)
+                    cal_acc = (preds == cal_labels).float().mean().item()
+                print(f"[{name}] step {step}/{MAX_STEPS} task={task_loss.item():.4f} "
+                      f"aux={aux_loss.item():.4f} cal_acc={cal_acc:.4f} lr={lr:.6f}")
 
-        if (step + 1) % EVAL_INTERVAL == 0 or step == MAX_STEPS - 1:
-            probe_correct, probe_total = centroid_probe(
-                model, calibration_examples, direct_probes, device,
-            )
+            if (step + 1) % EVAL_INTERVAL == 0 or step == MAX_STEPS - 1:
+                with torch.no_grad():
+                    preds = out["logits"].argmax(dim=-1)
+                    cal_acc = (preds == cal_labels).float().mean().item()
 
-            probe_acc = probe_correct / probe_total if probe_total > 0 else 0
-
-            if seal_probes:
-                sealed_entry = {
-                    "step": step + 1,
-                    "probe_correct": probe_correct,
-                    "probe_total": probe_total,
-                    "probe_acc": probe_acc,
-                    "wall_time": time.time() - t0,
-                }
-                sealed_log_file.write(json.dumps(sealed_entry) + "\n")
-                sealed_log_file.flush()
                 eval_result = {
                     "step": step + 1,
                     "task_loss": task_loss.item(),
                     "aux_loss": aux_loss.item() if isinstance(aux_loss, torch.Tensor) else aux_loss,
+                    "cal_accuracy": cal_acc,
                     "lr": lr,
+                    "grad_norm": grad_norm.item() if isinstance(grad_norm, torch.Tensor) else float(grad_norm),
                     "wall_time": time.time() - t0,
                 }
-                print(f"[{name}] EVAL step={step+1}: [sealed]")
-            else:
-                eval_result = {
+                print(f"[{name}] EVAL step={step+1}: cal_acc={cal_acc:.4f}")
+
+                eval_history.append(eval_result)
+                log_file.write(json.dumps(eval_result) + "\n")
+                log_file.flush()
+
+                torch.save({
+                    "model": model.state_dict(),
+                    "optimizer": optimizer.state_dict(),
+                    "scaler": scaler.state_dict(),
                     "step": step + 1,
-                    "probe_correct": probe_correct,
-                    "probe_total": probe_total,
-                    "probe_acc": probe_acc,
-                    "task_loss": task_loss.item(),
-                    "aux_loss": aux_loss.item() if isinstance(aux_loss, torch.Tensor) else aux_loss,
-                    "lr": lr,
-                    "wall_time": time.time() - t0,
-                }
-                print(f"[{name}] EVAL step={step+1}: probe={probe_correct}/{probe_total}")
+                }, checkpoint_path)
 
-            eval_history.append(eval_result)
-            log_file.write(json.dumps(eval_result) + "\n")
-            log_file.flush()
+    finally:
+        if log_file is not None:
+            log_file.close()
+        if sealed_log_file is not None:
+            sealed_log_file.close()
 
-            torch.save({
-                "model": model.state_dict(),
-                "optimizer": optimizer.state_dict(),
-                "scaler": scaler.state_dict(),
-                "step": step + 1,
-            }, checkpoint_path)
-
-    log_file.close()
-    if sealed_log_file is not None:
-        sealed_log_file.close()
     wall_time = time.time() - t0
 
-    if seal_probes:
-        summary = {
-            "name": name,
-            "arm": arm,
-            "arch": arch,
-            "seed": seed,
-            "lr": peak_lr,
-            "coefficient": coeff,
-            "params": count_parameters(model),
-            "max_steps": MAX_STEPS,
-            "sealed": True,
-            "wall_seconds": wall_time,
-            "eval_history": eval_history,
-            "status": "complete",
-        }
-    else:
-        withheld_acc = evaluate_withheld(model, withheld_examples, device)
-        summary = {
-            "name": name,
-            "arm": arm,
-            "arch": arch,
-            "seed": seed,
-            "lr": peak_lr,
-            "coefficient": coeff,
-            "params": count_parameters(model),
-            "max_steps": MAX_STEPS,
-            "final_withheld_acc": withheld_acc,
-            "final_probe_correct": eval_history[-1]["probe_correct"] if eval_history else 0,
-            "final_probe_total": eval_history[-1]["probe_total"] if eval_history else 0,
-            "final_probe_acc": eval_history[-1]["probe_acc"] if eval_history else 0,
-            "wall_seconds": wall_time,
-            "eval_history": eval_history,
-            "status": "complete",
-        }
+    summary = {
+        "name": name,
+        "arm": arm,
+        "arch": arch,
+        "seed": seed,
+        "lr": peak_lr,
+        "coefficient": coeff,
+        "params": count_parameters(model),
+        "max_steps": MAX_STEPS,
+        "init_hash": init_hash,
+        "sealed": seal_probes,
+        "wall_seconds": wall_time,
+        "eval_history": eval_history,
+        "status": "complete",
+    }
 
     with open(summary_path, "w") as f:
         json.dump(summary, f, indent=2)

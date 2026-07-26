@@ -12,41 +12,81 @@ from pathlib import Path
 import numpy as np
 
 
-def stage_b_selection(
-    results: dict,
+STAGE_B_PROTOCOL = "OCF_GAT_STAGE_B_STRUCTURAL_SCREEN_V1"
+STAGE_B_SEEDS = [201, 202, 203]
+STAGE_B_CANDIDATES = ["raw", "obs"]
+STAGE_B_MIN_DELTA = 0.0
+STAGE_B_FLOOR_DELTA = 0.10
+
+
+def stage_b_structural_screen(
+    withheld_accuracies: dict,
+    protocol_checks: dict,
 ) -> dict:
-    """Stage B candidate selection from 18-run screen.
+    """Stage B structural screen: correct vs Haar for each seed x candidate.
 
-    results: dict with structure:
-        results[key_idx][arm_name] = withheld_accuracy (float)
-        key_idx in {0, 1}, arm_name in ARMS
+    withheld_accuracies: {seed: {candidate: {"correct": acc, "haar": acc}}}
+    protocol_checks: must contain all required fields; missing = VOID.
 
-    Returns selection decision with winner, eligibility, margins.
+    Returns dict with verdict (STRUCTURAL_SCREEN_PASS/FAIL/VOID), winner, deltas.
     """
-    candidates = ["raw_correct", "obs_correct"]
-    controls_raw = ["no_auxiliary", "smoothness", "static_g", "raw_wrong", "raw_haar"]
-    controls_obs = ["no_auxiliary", "smoothness", "static_g", "obs_wrong", "obs_haar"]
+    required_checks = [
+        "stage_a_artifacts_valid",
+        "all_runs_complete",
+        "initialization_hashes_paired",
+        "coefficient_frozen",
+        "artifact_hashes_valid",
+        "no_forbidden_info",
+        "all_losses_finite",
+    ]
+    void_reasons = []
+    for check in required_checks:
+        if check not in protocol_checks:
+            void_reasons.append(f"Missing protocol check: {check}")
+        elif not protocol_checks[check]:
+            void_reasons.append(f"Failed protocol check: {check}")
+
+    if void_reasons:
+        return {"verdict": "STRUCTURAL_SCREEN_VOID", "reasons": void_reasons}
 
     selection = {}
-    for cand, controls in [("raw_correct", controls_raw), ("obs_correct", controls_obs)]:
-        cand_label = "raw" if "raw" in cand else "obs"
+    for cand in STAGE_B_CANDIDATES:
+        deltas = []
+        per_seed = {}
+        for seed in STAGE_B_SEEDS:
+            acc_correct = withheld_accuracies[seed][cand]["correct"]
+            acc_haar = withheld_accuracies[seed][cand]["haar"]
+            delta = acc_correct - acc_haar
+            deltas.append(delta)
+            per_seed[seed] = {
+                "correct": float(acc_correct),
+                "haar": float(acc_haar),
+                "delta": float(delta),
+            }
 
-        margins = []
-        for k in range(2):
-            cand_acc = results[k][cand]
-            best_control = max(results[k][c] for c in controls)
-            margin = cand_acc - best_control
-            margins.append(margin)
+        min_delta = min(deltas)
+        median_delta = float(np.median(deltas))
+        mean_delta = float(np.mean(deltas))
 
-        eligible = margins[0] > 0 and margins[1] > 0 and np.mean(margins) >= 0.10
-        mean_acc = np.mean([results[k][cand] for k in range(2)])
+        eligible = (
+            min_delta > STAGE_B_MIN_DELTA
+            and median_delta >= STAGE_B_FLOOR_DELTA
+            and mean_delta >= STAGE_B_FLOOR_DELTA
+        )
 
-        selection[cand_label] = {
-            "withheld_acc": {k: results[k][cand] for k in range(2)},
-            "margins": margins,
-            "mean_margin": float(np.mean(margins)),
-            "mean_acc": float(mean_acc),
+        from math import comb
+        n = len(deltas)
+        k = sum(1 for d in deltas if d > 0)
+        sign_p = sum(comb(n, i) for i in range(k, n + 1)) / (2 ** n)
+
+        selection[cand] = {
+            "per_seed": per_seed,
+            "deltas": [float(d) for d in deltas],
+            "min_delta": float(min_delta),
+            "median_delta": median_delta,
+            "mean_delta": mean_delta,
             "eligible": bool(eligible),
+            "sign_test_p": float(sign_p),
         }
 
     eligible_candidates = [c for c, s in selection.items() if s["eligible"]]
@@ -54,7 +94,7 @@ def stage_b_selection(
     if not eligible_candidates:
         return {
             "winner": None,
-            "verdict": "FAIL",
+            "verdict": "STRUCTURAL_SCREEN_FAIL",
             "reason": "No eligible candidate",
             "selection": selection,
         }
@@ -62,16 +102,16 @@ def stage_b_selection(
     if len(eligible_candidates) == 1:
         winner = eligible_candidates[0]
     else:
-        if selection["raw"]["mean_acc"] > selection["obs"]["mean_acc"]:
+        raw_mean = selection["raw"]["mean_delta"]
+        obs_mean = selection["obs"]["mean_delta"]
+        if raw_mean > obs_mean:
             winner = "raw"
-        elif selection["obs"]["mean_acc"] > selection["raw"]["mean_acc"]:
-            winner = "obs"
         else:
             winner = "obs"
 
     return {
         "winner": winner,
-        "verdict": "PASS",
+        "verdict": "STRUCTURAL_SCREEN_PASS",
         "selection": selection,
     }
 
@@ -221,15 +261,18 @@ def stage_c_verdict(
 ) -> dict:
     """Compute PASS/FAIL/VOID verdict for Stage C."""
 
+    required_checks = [
+        "all_teachers_pass",
+        "all_runs_complete",
+        "hashes_verified",
+        "no_forbidden_info",
+    ]
     void_reasons = []
-    if not protocol_checks.get("all_teachers_pass", True):
-        void_reasons.append("Teacher capacity/extraction failure")
-    if not protocol_checks.get("all_runs_complete", True):
-        void_reasons.append("Incomplete runs")
-    if not protocol_checks.get("hashes_verified", True):
-        void_reasons.append("Hash verification failure")
-    if not protocol_checks.get("no_forbidden_info", True):
-        void_reasons.append("Forbidden information leak")
+    for check in required_checks:
+        if check not in protocol_checks:
+            void_reasons.append(f"Missing protocol check: {check}")
+        elif not protocol_checks[check]:
+            void_reasons.append(f"Failed: {check}")
     if protocol_checks.get("key_commitment_mismatch", False):
         void_reasons.append("Key commitment mismatch")
 
@@ -394,21 +437,23 @@ def cm_cks_verdict(
     pair_results: list[dict],
     protocol_checks: dict,
 ) -> dict:
-    """Compute CM-CKS PASS/FAIL/VOID verdict."""
+    """Compute CM-CKS PASS/FAIL/VOID verdict. Fail-closed: missing checks = VOID."""
 
+    required_checks = [
+        "all_teachers_pass",
+        "all_runs_complete",
+        "pairs_constructed_correctly",
+        "calibration_hashes_match",
+        "logits_finite",
+    ]
     void_reasons = []
     if len(pair_results) != 8:
         void_reasons.append(f"Expected 8 pairs, got {len(pair_results)}")
-    if not protocol_checks.get("all_teachers_pass", True):
-        void_reasons.append("Teacher capacity failure")
-    if not protocol_checks.get("all_runs_complete", True):
-        void_reasons.append("Incomplete runs")
-    if not protocol_checks.get("pairs_constructed_correctly", True):
-        void_reasons.append("Pair construction failure")
-    if not protocol_checks.get("calibration_hashes_match", True):
-        void_reasons.append("Calibration hash mismatch")
-    if not protocol_checks.get("logits_finite", True):
-        void_reasons.append("Non-finite logits detected")
+    for check in required_checks:
+        if check not in protocol_checks:
+            void_reasons.append(f"Missing protocol check: {check}")
+        elif not protocol_checks[check]:
+            void_reasons.append(f"Failed: {check}")
     if void_reasons:
         return {"verdict": "VOID", "reasons": void_reasons}
 

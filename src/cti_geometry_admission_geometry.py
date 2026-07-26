@@ -45,6 +45,13 @@ def compute_R_differentiable(
     trace_G = eigvals.sum()
     ridge = RIDGE_FACTOR * trace_G / (n - 1)
 
+    min_eig = eigvals.min().item()
+    if min_eig < -1e-6:
+        raise ValueError(
+            f"Materially negative Gram eigenvalue: {min_eig:.2e} < -1e-6"
+        )
+    if not torch.isfinite(eigvals).all():
+        raise ValueError("Non-finite Gram eigenvalues")
     eigvals_clamped = eigvals.clamp(min=0)
     ridged_inv_sqrt = 1.0 / torch.sqrt(eigvals_clamped + ridge)
 
@@ -177,6 +184,15 @@ def loss_smoothness(
     return total / n_transitions
 
 
+def _helmert_basis(n: int) -> np.ndarray:
+    """Fixed Helmert basis for the (n-1)-dim centered subspace of R^n."""
+    E = np.zeros((n, n - 1), dtype=np.float64)
+    for k in range(n - 1):
+        E[:k + 1, k] = 1.0 / np.sqrt((k + 1) * (k + 2))
+        E[k + 1, k] = -(k + 1) / np.sqrt((k + 1) * (k + 2))
+    return E
+
+
 def generate_haar_rotation_raw(
     n: int,
     bank_idx: int,
@@ -184,12 +200,14 @@ def generate_haar_rotation_raw(
 ) -> np.ndarray:
     """Generate Haar-random orthogonal rotation in centered subspace.
 
-    Returns Q: (n, n) orthogonal matrix that acts as identity on the mean
-    direction and Haar-random in the (n-1)-dim centered subspace.
+    Uses PCG64DXSM seeded from full SHA-256 digest. Returns Q: (n, n)
+    orthogonal matrix that acts as identity on the mean direction and
+    Haar-random in the (n-1)-dim centered subspace.
     """
     seed_str = f"{seed_prefix}||{bank_idx}"
-    seed_int = int(hashlib.sha256(seed_str.encode()).hexdigest()[:16], 16)
-    rng = np.random.default_rng(seed_int)
+    seed_bytes = hashlib.sha256(seed_str.encode()).digest()
+    seed_int = int.from_bytes(seed_bytes, "big")
+    rng = np.random.Generator(np.random.PCG64DXSM(seed_int))
 
     Z = rng.standard_normal((n - 1, n - 1))
     Q_c, R_qr = np.linalg.qr(Z)
@@ -197,8 +215,8 @@ def generate_haar_rotation_raw(
     diag_sign[diag_sign == 0] = 1.0
     Q_c = Q_c * diag_sign
 
-    e = np.ones((n, 1)) / np.sqrt(n)
-    E = np.linalg.svd(np.eye(n) - e @ e.T, full_matrices=False)[0][:, :n - 1]
+    e = np.ones((n, 1), dtype=np.float64) / np.sqrt(n)
+    E = _helmert_basis(n)
 
     Q = e @ e.T + E @ Q_c @ E.T
     return Q.astype(np.float32)
@@ -209,10 +227,14 @@ def generate_haar_rotation_obs(
     bank_idx: int,
     seed_prefix: str = "GAT_HAAR_OBS_V1",
 ) -> np.ndarray:
-    """Generate Haar-random O(r) rotation for observable candidate."""
+    """Generate Haar-random O(r) rotation for observable candidate.
+
+    Uses PCG64DXSM seeded from full SHA-256 digest.
+    """
     seed_str = f"{seed_prefix}||{bank_idx}"
-    seed_int = int(hashlib.sha256(seed_str.encode()).hexdigest()[:16], 16)
-    rng = np.random.default_rng(seed_int)
+    seed_bytes = hashlib.sha256(seed_str.encode()).digest()
+    seed_int = int.from_bytes(seed_bytes, "big")
+    rng = np.random.Generator(np.random.PCG64DXSM(seed_int))
 
     Z = rng.standard_normal((r, r))
     Q, R_qr = np.linalg.qr(Z)

@@ -522,6 +522,31 @@ def generate_bank_order_permutation(n_banks: int = 32, n_steps: int = 5000) -> l
     return order
 
 
+def materialize_development_key(output_dir: Path) -> str:
+    """Write development_key.json and verify hash against anchor_manifest."""
+    key_path = output_dir / "development_key.json"
+    canonical_json = json.dumps(DEVELOPMENT_KEY_JSON, sort_keys=True)
+    computed_hash = hashlib.sha256(canonical_json.encode()).hexdigest()
+
+    manifest_path = output_dir / "anchor_manifest.json"
+    if manifest_path.exists():
+        with open(manifest_path) as f:
+            manifest = json.load(f)
+        expected_hash = manifest.get("development_key_sha256", "")
+        if computed_hash != expected_hash:
+            raise ValueError(
+                f"Key hash mismatch: computed={computed_hash}, "
+                f"manifest={expected_hash}"
+            )
+
+    tmp_path = key_path.with_suffix(".tmp")
+    with open(tmp_path, "w") as f:
+        json.dump(DEVELOPMENT_KEY_JSON, f, indent=2, sort_keys=True)
+    tmp_path.replace(key_path)
+
+    return computed_hash
+
+
 if __name__ == "__main__":
     dev_key = key_from_json(DEVELOPMENT_KEY_JSON)
     print(f"Development key loaded: {dev_key.shape}")

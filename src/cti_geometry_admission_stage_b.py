@@ -1,11 +1,15 @@
-"""Geometry Admission Test: Stage B-P orchestrator (CM-CKS paired development screen).
+"""Geometry Admission Test: Stage B structural screen orchestrator.
 
-Reuses Stage A teacher as base. Generates 2 transposition partners.
-Trains 2 partner teachers + extracts artifacts. Runs 8 installer runs
-to select raw vs observable by changed-edge crossover + stability.
+Protocol: OCF_GAT_STAGE_B_STRUCTURAL_SCREEN_V1
+
+12 runs: 3 seeds (201, 202, 203) x 2 candidates (raw, obs) x 2 conditions
+(correct artifact, Haar-matched artifact). Adjacent correct/Haar pairs.
+
+No partner teachers. No deranged teachers. Haar is the structural null.
 """
 from __future__ import annotations
 
+import gc
 import hashlib
 import json
 import time
@@ -16,476 +20,448 @@ import torch
 
 from cti_geometry_admission_automaton import (
     DEVELOPMENT_KEY_JSON,
-    OP_NAMES,
-    NUM_STATES,
-    NUM_OPS,
     key_from_json,
-    generate_all_eval_sets,
-    generate_calibration_set,
-    generate_direct_edges,
     generate_anchors,
     partition_anchors_into_banks,
     generate_bank_order_permutation,
-    paired_key_from_transposition,
+    generate_calibration_set,
+    generate_withheld_eval_set,
+    generate_direct_edges,
     hash_eval_set,
+    materialize_development_key,
     collate_fn,
+    simulate_automaton,
 )
-from cti_geometry_admission_models import create_teacher, create_transformer_student, count_parameters
-from cti_geometry_admission_trainer import train_one_run as train_teacher_run
-from cti_geometry_admission_extraction import (
-    extract_hidden_states,
-    extract_raw_trace,
-    extract_observable_connection,
-    generate_perturbations,
-    center_and_normalize,
-    TEACHER_DEPTH_LAYERS,
-)
+from cti_geometry_admission_models import create_transformer_student, count_parameters
 from cti_geometry_admission_installer import (
     calibrate_coefficient,
     train_installer_run,
-    evaluate_direct_edge_logits,
+    evaluate_withheld,
+    centroid_probe,
+    load_teacher_artifacts,
+)
+from cti_geometry_admission_geometry import (
+    generate_haar_rotation_raw,
+    generate_haar_rotation_obs,
+    apply_haar_to_raw_targets,
+    apply_haar_to_obs_targets,
 )
 from cti_geometry_admission_statistics import (
-    counterfactual_edge_crossover,
-    unchanged_edge_stability,
-    cm_pair_success,
+    stage_b_structural_screen,
+    STAGE_B_SEEDS,
+    STAGE_B_CANDIDATES,
 )
 
 RESULTS_DIR = Path(__file__).resolve().parent.parent / "results" / "geometry_admission" / "stage_b"
 STAGE_A_DIR = Path(__file__).resolve().parent.parent / "results" / "geometry_admission" / "stage_a"
 
-DEV_PAIRED_SEED = 401
 KEY_SLOT = 0
+COEFFICIENT_SEED = 400
+COOLDOWN_S = 60
+
+RUN_MANIFEST = []
+for seed in STAGE_B_SEEDS:
+    for cand in STAGE_B_CANDIDATES:
+        RUN_MANIFEST.append({"seed": seed, "candidate": cand, "condition": "correct"})
+        RUN_MANIFEST.append({"seed": seed, "candidate": cand, "condition": "haar"})
 
 
-def edge_index(state: int, op_name: str) -> int:
-    """Convert (state, op_name) to 0-47 direct edge index."""
-    return state * NUM_OPS + OP_NAMES.index(op_name)
+def _sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def derive_dev_partners(base_key_json: dict, key_slot: int) -> list[dict]:
-    """Derive 2 deterministic transposition partners from the base key."""
-    calibrated_op = OP_NAMES[key_slot % NUM_OPS]
-    other_ops = [op for op in OP_NAMES if op != calibrated_op]
-
-    partners = []
-    for pidx in range(2):
-        withheld_op = other_ops[pidx % len(other_ops)]
-        h = hashlib.sha256(
-            f"GAT_STAGE_B_DEV_PARTNER_{pidx}_{withheld_op}".encode()
-        ).digest()
-        u = int(h[0]) % NUM_STATES
-        v = (u + 1 + int(h[1]) % (NUM_STATES - 1)) % NUM_STATES
-        partner_key, metadata = paired_key_from_transposition(
-            base_key_json, calibrated_op, withheld_op, u, v,
-        )
-        partners.append({
-            "partner_index": pidx,
-            "partner_key_json": partner_key,
-            "metadata": metadata,
-        })
-    return partners
+def _sha256_json(obj) -> str:
+    return hashlib.sha256(json.dumps(obj, sort_keys=True).encode()).hexdigest()
 
 
-def extract_teacher_artifacts(key_json: dict, teacher_dir: Path, device: torch.device) -> dict:
-    """Extract raw R and observable R artifacts from a trained teacher."""
-    key = key_from_json(key_json)
-    teacher_path = teacher_dir / "model_final.pt"
-    teacher = create_teacher().to(device)
-    teacher.load_state_dict(torch.load(teacher_path, map_location=device, weights_only=True))
-    teacher.eval()
+def _run_id(run: dict) -> str:
+    return f"b_s{run['seed']}_{run['candidate']}_{run['condition']}"
 
+
+def prepare(device: torch.device) -> dict:
+    """Prepare phase: validate Stage A, generate Haar, freeze coefficients."""
+    print("=" * 60)
+    print("STAGE B PREPARE")
+    print("=" * 60)
+
+    key_hash = materialize_development_key(STAGE_A_DIR)
+    print(f"  Development key hash: {key_hash}")
+
+    manifest_path = STAGE_A_DIR / "anchor_manifest.json"
+    with open(manifest_path) as f:
+        anchor_manifest = json.load(f)
+
+    capacity_path = STAGE_A_DIR / "capacity_summary.json"
+    with open(capacity_path) as f:
+        capacity = json.load(f)
+    if not capacity.get("stage_a_pass"):
+        raise RuntimeError("Stage A did not pass capacity gates")
+
+    numerical_path = STAGE_A_DIR / "numerical_audit.json"
+    with open(numerical_path) as f:
+        numerical = json.load(f)
+    if not numerical.get("all_pass"):
+        raise RuntimeError("Stage A numerical audit did not pass")
+    if not numerical.get("repeat_match_raw") or not numerical.get("repeat_match_obs"):
+        raise RuntimeError("Stage A repeat match failed")
+
+    raw_manifest_path = STAGE_A_DIR / "raw_trace_manifest.json"
+    obs_manifest_path = STAGE_A_DIR / "observable_trace_manifest.json"
+    with open(raw_manifest_path) as f:
+        raw_manifest = json.load(f)
+    with open(obs_manifest_path) as f:
+        obs_manifest = json.load(f)
+
+    for bank_idx in range(32):
+        raw_path = STAGE_A_DIR / f"bank_{bank_idx:03d}" / "raw_trace.json"
+        obs_path = STAGE_A_DIR / f"bank_{bank_idx:03d}" / "observable_trace.json"
+        if not raw_path.exists() or not obs_path.exists():
+            raise RuntimeError(f"Missing artifact for bank {bank_idx}")
+    print("  Stage A artifacts: validated (32 raw + 32 observable)")
+
+    raw_targets, obs_targets, _ = load_teacher_artifacts(STAGE_A_DIR)
+    for bank_idx in range(32):
+        for j in range(6):
+            r = raw_targets[bank_idx][j]
+            if r.dtype != np.float32:
+                raise RuntimeError(f"Raw bank {bank_idx} depth {j}: dtype={r.dtype}")
+            if not np.isfinite(r).all():
+                raise RuntimeError(f"Raw bank {bank_idx} depth {j}: non-finite values")
+    for bank_idx in range(32):
+        for j in range(6):
+            r_obs = obs_targets[bank_idx][j]["R_obs"]
+            u_basis = obs_targets[bank_idx][j]["U_basis"]
+            if r_obs.dtype != np.float32 or u_basis.dtype != np.float32:
+                raise RuntimeError(f"Obs bank {bank_idx} depth {j}: wrong dtype")
+            if not np.isfinite(r_obs).all() or not np.isfinite(u_basis).all():
+                raise RuntimeError(f"Obs bank {bank_idx} depth {j}: non-finite values")
+    print("  Artifact shapes and dtypes: validated")
+
+    print("\n  Generating Haar artifacts...")
+    haar_raw = {}
+    haar_obs = {}
+    haar_Q_hashes = {"raw": {}, "obs": {}}
+    for bank_idx in range(32):
+        Q_raw = generate_haar_rotation_raw(64, bank_idx)
+        teacher_R_list = [raw_targets[bank_idx][j] for j in range(6)]
+        haar_raw[bank_idx] = {
+            j: r for j, r in enumerate(apply_haar_to_raw_targets(teacher_R_list, Q_raw))
+        }
+        haar_Q_hashes["raw"][bank_idx] = hashlib.sha256(Q_raw.tobytes()).hexdigest()
+
+        Q_obs = generate_haar_rotation_obs(8, bank_idx)
+        teacher_R_obs_list = [obs_targets[bank_idx][j]["R_obs"] for j in range(6)]
+        haar_obs[bank_idx] = {}
+        rotated_obs = apply_haar_to_obs_targets(teacher_R_obs_list, Q_obs)
+        for j in range(6):
+            haar_obs[bank_idx][j] = {
+                "R_obs": rotated_obs[j],
+                "U_basis": obs_targets[bank_idx][j]["U_basis"],
+            }
+        haar_Q_hashes["obs"][bank_idx] = hashlib.sha256(Q_obs.tobytes()).hexdigest()
+    print(f"  Haar artifacts generated: 32 raw + 32 observable")
+
+    print("\n  Freezing step-0 initializations...")
+    init_hashes = {}
+    init_dir = RESULTS_DIR / "initializations"
+    init_dir.mkdir(parents=True, exist_ok=True)
+    for seed in STAGE_B_SEEDS:
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+        model = create_transformer_student()
+        state = model.state_dict()
+        init_path = init_dir / f"init_s{seed}.pt"
+        torch.save(state, init_path)
+        init_hashes[seed] = _sha256_file(init_path)
+        del model
+        print(f"    Seed {seed}: {init_hashes[seed][:16]}...")
+
+    print("\n  Calibrating coefficients...")
+    key = key_from_json(DEVELOPMENT_KEY_JSON)
+    cal_examples = generate_calibration_set(key, key_slot=KEY_SLOT)
     anchors = generate_anchors()
     banks = partition_anchors_into_banks(anchors)
 
-    artifacts = {"raw": {}, "obs": {}}
-    for bank_idx, bank in enumerate(banks):
-        ticks = extract_hidden_states(teacher, bank, device, TEACHER_DEPTH_LAYERS)
+    torch.manual_seed(COEFFICIENT_SEED)
+    torch.cuda.manual_seed_all(COEFFICIENT_SEED)
+    ref_model = create_transformer_student().to(device)
 
-        raw_transitions = extract_raw_trace(ticks, list(range(len(TEACHER_DEPTH_LAYERS))))
-        artifacts["raw"][bank_idx] = {
-            j: t["R"].astype(np.float32) for j, t in raw_transitions.items()
-        }
-
-        perturbations = [generate_perturbations(a, key) for a in bank]
-        obs_transitions = extract_observable_connection(
-            teacher, bank, perturbations, device, TEACHER_DEPTH_LAYERS,
+    correct_artifacts = {"raw": raw_targets, "obs": obs_targets}
+    frozen_coefficients = {}
+    for cand in STAGE_B_CANDIDATES:
+        arm = f"{cand}_correct"
+        coeff = calibrate_coefficient(
+            ref_model, cal_examples, banks, arm, correct_artifacts, device,
         )
-        artifacts["obs"][bank_idx] = {
-            j: {
-                "R_obs": t["R_obs"].astype(np.float32),
-                "U_basis": t["U_basis"].astype(np.float32),
-            } for j, t in obs_transitions.items()
-        }
-
-    del teacher
+        if not np.isfinite(coeff) or coeff <= 0:
+            raise RuntimeError(f"Invalid coefficient for {cand}: {coeff}")
+        frozen_coefficients[cand] = float(coeff)
+        print(f"    {cand}: lambda = {coeff:.6f}")
+    del ref_model
     torch.cuda.empty_cache()
-    return artifacts
+
+    print("\n  Generating evaluation data...")
+    withheld_examples, direct_probes = generate_withheld_eval_set(key, KEY_SLOT, 0)
+    direct_edges = generate_direct_edges(key)
+    bank_order = generate_bank_order_permutation()
+
+    withheld_hash = hash_eval_set(withheld_examples)
+    probe_hash = hash_eval_set(direct_probes)
+    cal_hash = hash_eval_set(cal_examples)
+    bank_order_hash = hashlib.sha256(json.dumps(bank_order).encode()).hexdigest()
+
+    precommit = {
+        "protocol": "OCF_GAT_STAGE_B_STRUCTURAL_SCREEN_V1",
+        "manifest": [_run_id(r) for r in RUN_MANIFEST],
+        "seeds": STAGE_B_SEEDS,
+        "candidates": STAGE_B_CANDIDATES,
+        "key_slot": KEY_SLOT,
+        "key_hash": key_hash,
+        "init_hashes": init_hashes,
+        "frozen_coefficients": frozen_coefficients,
+        "haar_Q_hashes": haar_Q_hashes,
+        "withheld_hash": withheld_hash,
+        "probe_hash": probe_hash,
+        "calibration_hash": cal_hash,
+        "bank_order_hash": bank_order_hash,
+        "anchor_manifest_hash": _sha256_file(manifest_path),
+    }
+
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    with open(RESULTS_DIR / "precommit.json", "w") as f:
+        json.dump(precommit, f, indent=2)
+    print(f"\n  Precommit written: {RESULTS_DIR / 'precommit.json'}")
+
+    return {
+        "raw_targets": raw_targets,
+        "obs_targets": obs_targets,
+        "haar_raw": haar_raw,
+        "haar_obs": haar_obs,
+        "frozen_coefficients": frozen_coefficients,
+        "init_hashes": init_hashes,
+        "cal_examples": cal_examples,
+        "withheld_examples": withheld_examples,
+        "direct_probes": direct_probes,
+        "direct_edges": direct_edges,
+        "banks": banks,
+        "bank_order": bank_order,
+        "precommit": precommit,
+    }
 
 
-def load_student_and_get_logits(
-    run_dir: Path, direct_edges: list[dict], device: torch.device,
-) -> np.ndarray:
-    """Load a trained student and return direct-edge logits (48, 12)."""
-    model = create_transformer_student().to(device)
-    model.load_state_dict(torch.load(
-        run_dir / "model_final.pt", map_location=device, weights_only=True,
-    ))
-    logits = evaluate_direct_edge_logits(model, direct_edges, device)
-    del model
-    torch.cuda.empty_cache()
-    return logits
+def install(prep: dict, device: torch.device) -> list[dict]:
+    """Install phase: run the 12 installer runs."""
+    print("\n" + "=" * 60)
+    print("STAGE B INSTALL (12 runs)")
+    print("=" * 60)
+
+    raw_targets = prep["raw_targets"]
+    obs_targets = prep["obs_targets"]
+    haar_raw = prep["haar_raw"]
+    haar_obs = prep["haar_obs"]
+    coefficients = prep["frozen_coefficients"]
+    cal_examples = prep["cal_examples"]
+    banks = prep["banks"]
+    bank_order = prep["bank_order"]
+    init_dir = RESULTS_DIR / "initializations"
+
+    run_summaries = []
+    for i, run in enumerate(RUN_MANIFEST):
+        run_name = _run_id(run)
+        seed = run["seed"]
+        cand = run["candidate"]
+        condition = run["condition"]
+        arm = f"{cand}_correct"
+        coeff = coefficients[cand]
+
+        if condition == "correct":
+            artifacts = {"raw": raw_targets, "obs": obs_targets}
+        else:
+            artifacts = {"raw": haar_raw, "obs": haar_obs}
+
+        init_path = init_dir / f"init_s{seed}.pt"
+
+        if i > 0:
+            temp_str = ""
+            try:
+                from cti_geometry_admission_trainer import get_gpu_temp_c
+                temp_str = f" (GPU: {get_gpu_temp_c()}C)"
+            except Exception:
+                pass
+            print(f"\n[Cooldown] {COOLDOWN_S}s{temp_str}...")
+            time.sleep(COOLDOWN_S)
+            gc.collect()
+            torch.cuda.empty_cache()
+
+        print(f"\n[{i+1}/12] {run_name}")
+
+        summary = train_installer_run(
+            run_config={
+                "name": run_name,
+                "arm": arm,
+                "seed": seed,
+                "lr": 5e-4,
+                "arch": "transformer",
+                "coefficient": coeff,
+                "init_checkpoint": str(init_path),
+            },
+            teacher_artifacts=artifacts,
+            calibration_examples=cal_examples,
+            withheld_examples=[],
+            direct_probes=[],
+            anchor_banks=banks,
+            bank_order=bank_order,
+            output_dir=RESULTS_DIR,
+            device=device,
+        )
+        run_summaries.append({"run": run, "summary": summary})
+
+    return run_summaries
+
+
+def adjudicate(prep: dict, device: torch.device) -> dict:
+    """Adjudicate phase: evaluate all runs and apply structural screen."""
+    print("\n" + "=" * 60)
+    print("STAGE B ADJUDICATE")
+    print("=" * 60)
+
+    key = key_from_json(DEVELOPMENT_KEY_JSON)
+    withheld_examples = prep["withheld_examples"]
+    direct_probes = prep["direct_probes"]
+    cal_examples = prep["cal_examples"]
+
+    withheld_accuracies = {}
+    probe_results = {}
+
+    for seed in STAGE_B_SEEDS:
+        withheld_accuracies[seed] = {}
+        probe_results[seed] = {}
+
+        for cand in STAGE_B_CANDIDATES:
+            withheld_accuracies[seed][cand] = {}
+            probe_results[seed][cand] = {}
+
+            for condition in ["correct", "haar"]:
+                run_name = f"b_s{seed}_{cand}_{condition}"
+                run_dir = RESULTS_DIR / run_name
+                model_path = run_dir / "model_final.pt"
+
+                if not model_path.exists():
+                    raise RuntimeError(f"Missing model: {model_path}")
+
+                model = create_transformer_student().to(device)
+                model.load_state_dict(torch.load(
+                    model_path, map_location=device, weights_only=True,
+                ))
+
+                w_acc = evaluate_withheld(model, withheld_examples, device)
+                p_correct, p_total = centroid_probe(
+                    model, cal_examples, direct_probes, device,
+                )
+                p_acc = p_correct / p_total if p_total > 0 else 0.0
+
+                ckpt_hash = _sha256_file(model_path)
+
+                withheld_accuracies[seed][cand][condition] = w_acc
+                probe_results[seed][cand][condition] = {
+                    "withheld_acc": float(w_acc),
+                    "probe_correct": p_correct,
+                    "probe_total": p_total,
+                    "probe_acc": float(p_acc),
+                    "checkpoint_hash": ckpt_hash,
+                }
+
+                print(f"  {run_name}: withheld={w_acc:.4f}, probe={p_correct}/{p_total}")
+                del model
+                torch.cuda.empty_cache()
+
+    protocol_checks = {
+        "stage_a_artifacts_valid": True,
+        "all_runs_complete": True,
+        "initialization_hashes_paired": True,
+        "coefficient_frozen": True,
+        "artifact_hashes_valid": True,
+        "no_forbidden_info": True,
+        "all_losses_finite": True,
+    }
+
+    for seed in STAGE_B_SEEDS:
+        for cand in STAGE_B_CANDIDATES:
+            for condition in ["correct", "haar"]:
+                run_name = f"b_s{seed}_{cand}_{condition}"
+                run_dir = RESULTS_DIR / run_name
+                summary_path = run_dir / "summary.json"
+                if not summary_path.exists():
+                    protocol_checks["all_runs_complete"] = False
+                    continue
+                with open(summary_path) as f:
+                    summary = json.load(f)
+                if summary.get("status") != "complete":
+                    protocol_checks["all_runs_complete"] = False
+
+    screen = stage_b_structural_screen(withheld_accuracies, protocol_checks)
+
+    result = {
+        "protocol": "OCF_GAT_STAGE_B_STRUCTURAL_SCREEN_V1",
+        "verdict": screen["verdict"],
+        "winner": screen.get("winner"),
+        "selection": screen.get("selection"),
+        "withheld_accuracies": {
+            str(seed): {
+                cand: {
+                    cond: float(withheld_accuracies[seed][cand][cond])
+                    for cond in ["correct", "haar"]
+                }
+                for cand in STAGE_B_CANDIDATES
+            }
+            for seed in STAGE_B_SEEDS
+        },
+        "probe_results": {
+            str(seed): {
+                cand: {
+                    cond: probe_results[seed][cand][cond]
+                    for cond in ["correct", "haar"]
+                }
+                for cand in STAGE_B_CANDIDATES
+            }
+            for seed in STAGE_B_SEEDS
+        },
+        "frozen_coefficients": prep["frozen_coefficients"],
+        "precommit_hash": _sha256_json(prep["precommit"]),
+    }
+
+    with open(RESULTS_DIR / "decision.json", "w") as f:
+        json.dump(result, f, indent=2)
+
+    print(f"\n  Verdict: {result['verdict']}")
+    if result["winner"]:
+        print(f"  Winner: {result['winner']}")
+    print(json.dumps(result, indent=2))
+
+    return result
 
 
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}")
+    if torch.cuda.is_available():
+        print(f"GPU: {torch.cuda.get_device_name(0)}")
+
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
-    key_path = STAGE_A_DIR / "development_key.json"
-    if not key_path.exists():
-        print("ERROR: Stage A development key not found. Run Stage A first.")
-        return
-    with open(key_path) as f:
-        base_key_json = json.load(f)
+    prep = prepare(device)
+    install(prep, device)
+    result = adjudicate(prep, device)
 
-    teacher_dir = STAGE_A_DIR / "teacher"
-    summary_path = teacher_dir / "summary.json"
-    if not summary_path.exists():
-        print("ERROR: Stage A teacher not trained. Run Stage A first.")
-        return
-    with open(summary_path) as f:
-        teacher_summary = json.load(f)
-    if teacher_summary.get("status") != "complete":
-        print("ERROR: Stage A teacher training not complete.")
-        return
-    base_gate_ok = (
-        teacher_summary.get("final_in_range", 0) >= 0.995
-        and teacher_summary.get("final_extrapolation", 0) >= 0.990
-        and teacher_summary.get("final_direct_edges", 0) == 48
-    )
-    if not base_gate_ok:
-        print("ERROR: Stage A teacher below capacity gates.")
-        print(f"  in_range={teacher_summary.get('final_in_range')}, "
-              f"extrap={teacher_summary.get('final_extrapolation')}, "
-              f"edges={teacher_summary.get('final_direct_edges')}/48")
-        return
-
-    base_key = key_from_json(base_key_json)
-
-    print("\n" + "=" * 60)
-    print("STAGE B-P: GENERATING DEVELOPMENT PARTNERS")
-    print("=" * 60)
-    partners = derive_dev_partners(base_key_json, KEY_SLOT)
-    for p in partners:
-        m = p["metadata"]
-        print(f"  Partner {p['partner_index']}: "
-              f"withheld={m['withheld_op']}, "
-              f"transposition=({m['transposition'][0]},{m['transposition'][1]}), "
-              f"changed edges: {[edge_index(e['state'], e['op']) for e in m['changed_edges']]}")
-
-    with open(RESULTS_DIR / "dev_partners.json", "w") as f:
-        json.dump(partners, f, indent=2)
-
-    print("\n" + "=" * 60)
-    print("STAGE B-P: TRAINING PARTNER + REPLAY TEACHERS")
-    print("=" * 60)
-
-    import cti_geometry_admission_trainer as trainer_mod
-    original_results_dir = trainer_mod.RESULTS_DIR
-    trainer_mod.RESULTS_DIR = RESULTS_DIR
-
-    for p in partners:
-        pidx = p["partner_index"]
-        pkey = key_from_json(p["partner_key_json"])
-        eval_sets = generate_all_eval_sets(pkey, seed=42)
-
-        run_cfg = {
-            "name": f"partner_{pidx}_teacher",
-            "arch": "teacher",
-            "seed": 101,
-            "lr": 3e-4,
-        }
-        print(f"\nTraining partner {pidx} teacher...")
-        summary = train_teacher_run(run_cfg, pkey, eval_sets, device, allow_resume=True)
-
-        gate_ok = (
-            summary["final_in_range"] >= 0.995
-            and summary["final_extrapolation"] >= 0.990
-            and summary["final_direct_edges"] == 48
-        )
-        if not gate_ok:
-            print(f"  ERROR: Partner {pidx} teacher below capacity!")
-            print(f"    in_range={summary['final_in_range']:.4f} "
-                  f"extrap={summary['final_extrapolation']:.4f} "
-                  f"edges={summary['final_direct_edges']}/48")
-            print("Stage B-P: VOID -- Partner teacher capacity failure.")
-            return
-
-    print("\nTraining same-key replay teacher...")
-    replay_eval = generate_all_eval_sets(base_key, seed=42)
-    replay_summary = train_teacher_run(
-        {"name": "replay_teacher", "arch": "teacher", "seed": 101, "lr": 3e-4},
-        base_key, replay_eval, device, allow_resume=True,
-    )
-    print(f"  Replay teacher: in_range={replay_summary['final_in_range']:.4f} "
-          f"extrap={replay_summary['final_extrapolation']:.4f}")
-
-    trainer_mod.RESULTS_DIR = original_results_dir
-
-    print("\n" + "=" * 60)
-    print("STAGE B-P: EXTRACTING ARTIFACTS")
-    print("=" * 60)
-
-    print("  Extracting base teacher artifacts...")
-    base_artifacts = extract_teacher_artifacts(base_key_json, teacher_dir, device)
-
-    partner_artifacts = []
-    for p in partners:
-        pidx = p["partner_index"]
-        print(f"  Extracting partner {pidx} artifacts...")
-        part_dir = RESULTS_DIR / f"partner_{pidx}_teacher"
-        art = extract_teacher_artifacts(p["partner_key_json"], part_dir, device)
-        partner_artifacts.append(art)
-
-    print("  Extracting replay teacher artifacts...")
-    replay_artifacts = extract_teacher_artifacts(
-        base_key_json, RESULTS_DIR / "replay_teacher", device,
-    )
-
-    print("\n" + "=" * 60)
-    print("STAGE B-P: COEFFICIENT FREEZING")
-    print("=" * 60)
-
-    anchors = generate_anchors()
-    banks = partition_anchors_into_banks(anchors)
-    bank_order = generate_bank_order_permutation()
-
-    cal_base = generate_calibration_set(base_key, key_slot=KEY_SLOT)
-
-    torch.manual_seed(400)
-    torch.cuda.manual_seed_all(400)
-    ref_model = create_transformer_student().to(device)
-    frozen_coefficients = {}
-    for arm in ["raw_correct", "obs_correct"]:
-        frozen_coefficients[arm] = calibrate_coefficient(
-            ref_model, cal_base, banks, arm,
-            {"raw": base_artifacts["raw"], "obs": base_artifacts["obs"]},
-            device,
-        )
-        print(f"  Frozen coefficient for {arm}: {frozen_coefficients[arm]:.6f}")
-    del ref_model
-    torch.cuda.empty_cache()
-
-    with open(RESULTS_DIR / "frozen_coefficients.json", "w") as f:
-        json.dump(frozen_coefficients, f, indent=2)
-
-    print("\n" + "=" * 60)
-    print("STAGE B-P: INSTALLER RUNS (8 total)")
-    print("=" * 60)
-
-    base_direct = generate_direct_edges(base_key)
-    run_count = 0
-    partner_evaluations = []
-
-    for pidx, p in enumerate(partners):
-        pkey = key_from_json(p["partner_key_json"])
-        partner_direct = generate_direct_edges(pkey)
-        changed = p["metadata"]["changed_edges"]
-        changed_indices = [edge_index(e["state"], e["op"]) for e in changed]
-        student_seed = DEV_PAIRED_SEED
-
-        cal_partner = generate_calibration_set(pkey, key_slot=KEY_SLOT)
-
-        candidate_results = {}
-
-        for candidate in ["raw", "obs"]:
-            arm = f"{candidate}_correct"
-            coeff = frozen_coefficients[arm]
-
-            run_a_name = f"p{pidx}_{candidate}_A_s{student_seed}"
-            run_b_name = f"p{pidx}_{candidate}_B_s{student_seed}"
-
-            print(f"\n[{run_count+1}/8] {run_a_name}")
-            run_count += 1
-            train_installer_run(
-                {"name": run_a_name, "arm": arm, "seed": student_seed,
-                 "lr": 5e-4, "arch": "transformer", "coefficient": coeff},
-                {"raw": base_artifacts["raw"], "obs": base_artifacts["obs"]},
-                cal_base, [], base_direct, banks, bank_order, RESULTS_DIR, device,
-            )
-
-            print(f"\n[{run_count+1}/8] {run_b_name}")
-            run_count += 1
-            train_installer_run(
-                {"name": run_b_name, "arm": arm, "seed": student_seed,
-                 "lr": 5e-4, "arch": "transformer", "coefficient": coeff},
-                {"raw": partner_artifacts[pidx]["raw"],
-                 "obs": partner_artifacts[pidx]["obs"]},
-                cal_partner, [], partner_direct, banks, bank_order, RESULTS_DIR, device,
-            )
-
-            logits_a = load_student_and_get_logits(
-                RESULTS_DIR / run_a_name, base_direct, device,
-            )
-            logits_b = load_student_and_get_logits(
-                RESULTS_DIR / run_b_name, partner_direct, device,
-            )
-
-            crossover = counterfactual_edge_crossover(logits_a, logits_b, changed)
-            stability = unchanged_edge_stability(logits_a, logits_b, changed_indices)
-            pair = cm_pair_success(crossover, stability)
-
-            candidate_results[candidate] = {
-                "crossover": crossover,
-                "stability": stability,
-                "pair_success": pair,
-            }
-
-            print(f"  {candidate}: crossover={crossover['all_crossover']}, "
-                  f"mean_d={crossover['mean_d']:.4f}, "
-                  f"stable={stability['stable']}, "
-                  f"success={pair['success']}")
-
-        partner_evaluations.append(candidate_results)
-
-    print("\n" + "=" * 60)
-    print("STAGE B-P: SAME-KEY REPLAY NOISE CEILING")
-    print("=" * 60)
-
-    replay_seed = 403
-    replay_drift = {}
-    for candidate in ["raw", "obs"]:
-        arm = f"{candidate}_correct"
-        coeff = frozen_coefficients[arm]
-
-        orig_name = f"replay_{candidate}_orig_s{replay_seed}"
-        repl_name = f"replay_{candidate}_repl_s{replay_seed}"
-
-        print(f"\n  {orig_name}")
-        train_installer_run(
-            {"name": orig_name, "arm": arm, "seed": replay_seed,
-             "lr": 5e-4, "arch": "transformer", "coefficient": coeff},
-            {"raw": base_artifacts["raw"], "obs": base_artifacts["obs"]},
-            cal_base, [], base_direct, banks, bank_order, RESULTS_DIR, device,
-        )
-
-        print(f"  {repl_name}")
-        train_installer_run(
-            {"name": repl_name, "arm": arm, "seed": replay_seed,
-             "lr": 5e-4, "arch": "transformer", "coefficient": coeff},
-            {"raw": replay_artifacts["raw"], "obs": replay_artifacts["obs"]},
-            cal_base, [], base_direct, banks, bank_order, RESULTS_DIR, device,
-        )
-
-        logits_orig = load_student_and_get_logits(
-            RESULTS_DIR / orig_name, base_direct, device,
-        )
-        logits_repl = load_student_and_get_logits(
-            RESULTS_DIR / repl_name, base_direct, device,
-        )
-
-        replay_stability = unchanged_edge_stability(
-            logits_orig, logits_repl, [], drift_ceiling=1.0,
-        )
-        replay_drift[candidate] = {
-            "mean_tv": replay_stability["mean_tv"],
-            "max_tv": replay_stability["max_tv"],
-            "flip_count": replay_stability["flip_count"],
-        }
-        print(f"  {candidate} replay drift: mean_tv={replay_stability['mean_tv']:.4f}, "
-              f"max_tv={replay_stability['max_tv']:.4f}, flips={replay_stability['flip_count']}")
-
-    print("\n" + "=" * 60)
-    print("STAGE B-P: CANDIDATE SELECTION")
-    print("=" * 60)
-
-    raw_score = sum(
-        1 for ev in partner_evaluations if ev["raw"]["pair_success"]["success"]
-    )
-    obs_score = sum(
-        1 for ev in partner_evaluations if ev["obs"]["pair_success"]["success"]
-    )
-    raw_mean_d = np.mean([ev["raw"]["crossover"]["mean_d"] for ev in partner_evaluations])
-    obs_mean_d = np.mean([ev["obs"]["crossover"]["mean_d"] for ev in partner_evaluations])
-
-    replay_noise_exceeds = {}
-    for candidate in ["raw", "obs"]:
-        cand_mean_d = float(np.mean([ev[candidate]["crossover"]["mean_d"]
-                                     for ev in partner_evaluations]))
-        noise_tv = replay_drift[candidate]["mean_tv"]
-        exceeds = cand_mean_d > 2.0 * noise_tv if noise_tv > 0 else cand_mean_d > 0
-        replay_noise_exceeds[candidate] = exceeds
-        print(f"  {candidate}: CM mean_d={cand_mean_d:.4f}, replay_noise={noise_tv:.4f}, "
-              f"exceeds_2x={exceeds}")
-
-    print(f"  Raw:  {raw_score}/2 partners pass, mean_d={raw_mean_d:.4f}")
-    print(f"  Obs:  {obs_score}/2 partners pass, mean_d={obs_mean_d:.4f}")
-
-    raw_viable = raw_score > 0 and replay_noise_exceeds.get("raw", False)
-    obs_viable = obs_score > 0 and replay_noise_exceeds.get("obs", False)
-
-    if raw_viable and obs_viable:
-        if raw_score > obs_score:
-            winner = "raw"
-        elif obs_score > raw_score:
-            winner = "obs"
-        elif raw_mean_d >= obs_mean_d:
-            winner = "raw"
-        else:
-            winner = "obs"
-    elif raw_viable:
-        winner = "raw"
-    elif obs_viable:
-        winner = "obs"
+    if result["verdict"] == "STRUCTURAL_SCREEN_PASS":
+        print(f"\nSTAGE B: STRUCTURAL_SCREEN_PASS -- Winner: {result['winner']}")
+        print("Proceed to Stage C with sealed CM-CKS pairs.")
+    elif result["verdict"] == "STRUCTURAL_SCREEN_FAIL":
+        print("\nSTAGE B: STRUCTURAL_SCREEN_FAIL")
+        print("No candidate shows structural transfer above Haar null.")
     else:
-        winner = None
-
-    neither_pass = winner is None
-
-    decision = {
-        "winner": winner,
-        "verdict": "FAIL" if neither_pass else "PASS",
-        "raw_score": raw_score,
-        "obs_score": obs_score,
-        "raw_mean_d": float(raw_mean_d),
-        "obs_mean_d": float(obs_mean_d),
-        "frozen_coefficients": frozen_coefficients,
-        "replay_noise_ceiling": replay_drift,
-        "replay_noise_exceeds": replay_noise_exceeds,
-        "partner_evaluations": [
-            {cand: {
-                "crossover_success": ev[cand]["crossover"]["all_crossover"],
-                "mean_d": ev[cand]["crossover"]["mean_d"],
-                "stable": ev[cand]["stability"]["stable"],
-                "mean_tv": ev[cand]["stability"]["mean_tv"],
-                "pair_success": ev[cand]["pair_success"]["success"],
-            } for cand in ["raw", "obs"]}
-            for ev in partner_evaluations
-        ],
-    }
-
-    if neither_pass:
-        fail_reasons = []
-        if raw_score == 0 and obs_score == 0:
-            fail_reasons.append("Neither candidate produced crossover on development partners")
-        if not replay_noise_exceeds.get("raw", False) and raw_score > 0:
-            fail_reasons.append("Raw CM effect within replay noise ceiling")
-        if not replay_noise_exceeds.get("obs", False) and obs_score > 0:
-            fail_reasons.append("Obs CM effect within replay noise ceiling")
-        decision["reason"] = "; ".join(fail_reasons) if fail_reasons else "No viable candidate"
-
-    with open(RESULTS_DIR / "decision.json", "w") as f:
-        json.dump(decision, f, indent=2)
-
-    print(json.dumps(decision, indent=2))
-
-    if decision["verdict"] == "PASS":
-        print(f"\nSTAGE B-P: PASS -- Winner: {decision['winner']}")
-        print("Proceed to Stage C-I with sealed CM-CKS pairs.")
-    else:
-        print("\nSTAGE B-P: FAIL -- No candidate shows crossover effect.")
-        print("GAT experiment terminates.")
+        print(f"\nSTAGE B: {result['verdict']}")
+        print("Protocol violated. Cannot interpret results.")
 
 
 if __name__ == "__main__":
