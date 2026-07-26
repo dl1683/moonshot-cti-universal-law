@@ -149,8 +149,9 @@ def _build_config_data(run_cfg: dict, key, eval_sets: dict, model) -> dict:
         "train_max_length": 32,
         "eval_set_sizes": {k: len(v) for k, v in eval_sets.items()},
         "split_semantics": {
-            "dev_in_range": "covered core gate; lengths 1-16",
-            "dev_extrapolation": "covered long gate; lengths 17-32",
+            "dev_in_range": "covered core gate (R9: >=99.5% teacher, >=95% student); lengths 1-16",
+            "dev_extrapolation": "covered long diagnostic (NOT gated per R9); lengths 17-32",
+            "target_family": "Stage B/C transfer family gate (R9: >=95%); q^p x q^r, all 48 edges",
             "stress_long": "positional-OOD diagnostic; lengths 33-64; not gated",
         },
         "train_stream_seed": TRAIN_STREAM_SEED,
@@ -285,6 +286,7 @@ def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device,
             acc_ext = evaluate(model, eval_sets["dev_extrapolation"], device)
             acc_edges = evaluate(model, eval_sets["direct_edges"], device)
             n_edges = int(acc_edges * len(eval_sets["direct_edges"]))
+            acc_target = evaluate(model, eval_sets["target_family"], device)
 
             run_stress = ((step + 1) % STRESS_EVAL_INTERVAL == 0) or (step == MAX_STEPS - 1)
             acc_stress = evaluate(model, eval_sets["stress_long"], device) if run_stress else -1.0
@@ -293,6 +295,7 @@ def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device,
                 "step": step + 1,
                 "in_range": acc_in,
                 "extrapolation": acc_ext,
+                "target_family": acc_target,
                 "direct_edges_correct": n_edges,
                 "direct_edges_total": len(eval_sets["direct_edges"]),
                 "stress_long": acc_stress,
@@ -311,8 +314,8 @@ def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device,
             if n_edges > best_eval["direct_edges"]:
                 best_eval["direct_edges"] = n_edges
 
-            print(f"[{name}] EVAL step={step+1}: in_range={acc_in:.4f} extrap={acc_ext:.4f} "
-                  f"edges={n_edges}/48 stress={acc_stress:.4f}")
+            print(f"[{name}] EVAL step={step+1}: in={acc_in:.4f} ext={acc_ext:.4f} "
+                  f"tgt={acc_target:.4f} edges={n_edges}/48 stress={acc_stress:.4f}")
 
             if (step + 1) % CHECKPOINT_INTERVAL == 0 or step == MAX_STEPS - 1:
                 torch.save({
@@ -338,6 +341,7 @@ def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device,
         "best_direct_edges": best_eval["direct_edges"],
         "final_in_range": eval_history[-1]["in_range"] if eval_history else 0,
         "final_extrapolation": eval_history[-1]["extrapolation"] if eval_history else 0,
+        "final_target_family": eval_history[-1].get("target_family", 0) if eval_history else 0,
         "final_direct_edges": eval_history[-1]["direct_edges_correct"] if eval_history else 0,
         "final_stress": eval_history[-1]["stress_long"] if eval_history else 0,
         "wall_seconds": wall_time,
@@ -356,7 +360,7 @@ def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device,
     return summary
 
 
-def _two_eval_pass(summary: dict, in_range_thresh: float, extrap_thresh: float, edges_thresh: int) -> bool:
+def _two_eval_pass(summary: dict, in_range_thresh: float, target_family_thresh: float, edges_thresh: int) -> bool:
     """Both of the final two scheduled evaluations must pass thresholds."""
     history = summary.get("eval_history", [])
     if len(history) < 2:
@@ -364,7 +368,7 @@ def _two_eval_pass(summary: dict, in_range_thresh: float, extrap_thresh: float, 
     for e in history[-2:]:
         if e["in_range"] < in_range_thresh:
             return False
-        if e["extrapolation"] < extrap_thresh:
+        if e.get("target_family", 0) < target_family_thresh:
             return False
         if e["direct_edges_correct"] < edges_thresh:
             return False
@@ -380,19 +384,21 @@ def check_capacity_gates(summaries: list[dict]) -> dict:
 
     if teacher:
         t = teacher[0]
-        two_eval_ok = _two_eval_pass(t, 0.995, 0.990, 48)
+        tf = t.get("final_target_family", 0)
+        two_eval_ok = _two_eval_pass(t, 0.995, 0.995, 48)
         gates["teacher"] = {
             "in_range_pass": t["final_in_range"] >= 0.995,
-            "extrap_pass": t["final_extrapolation"] >= 0.990,
+            "target_family_pass": tf >= 0.995,
             "edges_pass": t["final_direct_edges"] == 48,
             "two_eval_pass": two_eval_ok,
             "in_range": t["final_in_range"],
-            "extrapolation": t["final_extrapolation"],
+            "target_family": tf,
+            "extrapolation_diagnostic": t["final_extrapolation"],
             "direct_edges": t["final_direct_edges"],
         }
         gates["teacher"]["all_pass"] = all([
             gates["teacher"]["in_range_pass"],
-            gates["teacher"]["extrap_pass"],
+            gates["teacher"]["target_family_pass"],
             gates["teacher"]["edges_pass"],
             gates["teacher"]["two_eval_pass"],
         ])
@@ -404,11 +410,11 @@ def check_capacity_gates(summaries: list[dict]) -> dict:
         if not students:
             continue
         passing_seeds = [s for s in students
-                         if s["final_in_range"] >= 0.990
-                         and s["final_extrapolation"] >= 0.990
+                         if s["final_in_range"] >= 0.95
+                         and s.get("final_target_family", 0) >= 0.95
                          and s["final_direct_edges"] == 48
-                         and _two_eval_pass(s, 0.990, 0.990, 48)]
-        floor_ok = all(s["final_in_range"] >= 0.985 for s in students)
+                         and _two_eval_pass(s, 0.95, 0.95, 48)]
+        floor_ok = all(s["final_in_range"] >= 0.90 for s in students)
         gates[arch_name] = {
             "passing_seeds": len(passing_seeds),
             "seeds_required": 2,
@@ -417,7 +423,8 @@ def check_capacity_gates(summaries: list[dict]) -> dict:
             "per_seed": [{
                 "name": s["name"],
                 "in_range": s["final_in_range"],
-                "extrapolation": s["final_extrapolation"],
+                "target_family": s.get("final_target_family", 0),
+                "extrapolation_diagnostic": s["final_extrapolation"],
                 "direct_edges": s["final_direct_edges"],
             } for s in students],
         }

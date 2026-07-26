@@ -189,6 +189,39 @@ def generate_direct_edges(key: np.ndarray) -> list[dict]:
     return examples
 
 
+def generate_target_family_eval(key: np.ndarray, seed: int = 99,
+                                max_pr: int = 7) -> list[dict]:
+    """Generate q^p x q^r sequences for all 48 edges, all 4 calibrator ops.
+
+    For each (state, target_op) edge and each calibrator op q != target_op,
+    use all (p, r) pairs from [0, max_pr] x [0, max_pr].
+    Total: 48 edges * 3 calibrators * (max_pr+1)^2 = 9216 (at max_pr=7).
+    Sequence lengths range from 1 (p=0, r=0) to 2*max_pr+1.
+    R9 decision: max_pr=7 (lengths 1-15) matches Stage B/C primary transfer family.
+    """
+    examples = []
+    all_pairs = [(p, r) for p in range(max_pr + 1) for r in range(max_pr + 1)]
+
+    for s in range(NUM_STATES):
+        for x in range(NUM_OPS):
+            for q in range(NUM_OPS):
+                if q == x:
+                    continue
+                for p, r in all_pairs:
+                    s0 = apply_inverse_permutation_power(key, q, s, p)
+                    ops = [q] * p + [x] + [q] * r
+                    label = simulate_automaton(key, s0, np.array(ops))
+                    input_ids = [s0] + [op + 12 for op in ops]
+                    examples.append({
+                        "input_ids": input_ids,
+                        "label": label,
+                        "s0": s0,
+                        "ops": ops,
+                        "length": len(ops),
+                    })
+    return examples
+
+
 def generate_all_eval_sets(key: np.ndarray, seed: int = 42) -> dict:
     rng = np.random.default_rng(seed)
     return {
@@ -196,6 +229,7 @@ def generate_all_eval_sets(key: np.ndarray, seed: int = 42) -> dict:
         "dev_extrapolation": generate_eval_set(key, 20000, (17, 32), rng),
         "stress_long": generate_eval_set(key, 20000, (33, 64), rng),
         "direct_edges": generate_direct_edges(key),
+        "target_family": generate_target_family_eval(key),
     }
 
 
