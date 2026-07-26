@@ -55,6 +55,10 @@ BETAS = (0.9, 0.95)
 EPS = 1e-8
 COSINE_MIN_RATIO = 0.1
 
+import hashlib
+_stream_hash = hashlib.sha256(b"GAT_STAGE_A_TRAIN_STREAM_V1").digest()
+TRAIN_STREAM_SEED = int.from_bytes(_stream_hash[:8], "little")
+
 
 def cosine_lr(step: int, warmup: int, total: int, peak_lr: float, min_ratio: float) -> float:
     if step < warmup:
@@ -123,7 +127,7 @@ def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device):
     )
     scaler = GradScaler()
 
-    dataset = AutomatonTrainDataset(key, seed=seed * 1000, max_length=16)
+    dataset = AutomatonTrainDataset(key, seed=TRAIN_STREAM_SEED, max_length=16)
     loader = DataLoader(
         dataset, batch_size=BATCH_SIZE, collate_fn=collate_fn,
         num_workers=0, pin_memory=False,
@@ -248,6 +252,21 @@ def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device):
     return summary
 
 
+def _two_eval_pass(summary: dict, in_range_thresh: float, extrap_thresh: float, edges_thresh: int) -> bool:
+    """Both of the final two scheduled evaluations must pass thresholds."""
+    history = summary.get("eval_history", [])
+    if len(history) < 2:
+        return False
+    for e in history[-2:]:
+        if e["in_range"] < in_range_thresh:
+            return False
+        if e["extrapolation"] < extrap_thresh:
+            return False
+        if e["direct_edges_correct"] < edges_thresh:
+            return False
+    return True
+
+
 def check_capacity_gates(summaries: list[dict]) -> dict:
     teacher = [s for s in summaries if s["arch"] == "teacher"]
     t_students = [s for s in summaries if s["arch"] == "t_student"]
@@ -257,10 +276,12 @@ def check_capacity_gates(summaries: list[dict]) -> dict:
 
     if teacher:
         t = teacher[0]
+        two_eval_ok = _two_eval_pass(t, 0.995, 0.990, 48)
         gates["teacher"] = {
             "in_range_pass": t["final_in_range"] >= 0.995,
             "extrap_pass": t["final_extrapolation"] >= 0.990,
             "edges_pass": t["final_direct_edges"] == 48,
+            "two_eval_pass": two_eval_ok,
             "in_range": t["final_in_range"],
             "extrapolation": t["final_extrapolation"],
             "direct_edges": t["final_direct_edges"],
@@ -269,6 +290,7 @@ def check_capacity_gates(summaries: list[dict]) -> dict:
             gates["teacher"]["in_range_pass"],
             gates["teacher"]["extrap_pass"],
             gates["teacher"]["edges_pass"],
+            gates["teacher"]["two_eval_pass"],
         ])
 
     for arch_name, students, label in [
@@ -280,7 +302,8 @@ def check_capacity_gates(summaries: list[dict]) -> dict:
         passing_seeds = [s for s in students
                          if s["final_in_range"] >= 0.990
                          and s["final_extrapolation"] >= 0.990
-                         and s["final_direct_edges"] == 48]
+                         and s["final_direct_edges"] == 48
+                         and _two_eval_pass(s, 0.990, 0.990, 48)]
         floor_ok = all(s["final_in_range"] >= 0.985 for s in students)
         gates[arch_name] = {
             "passing_seeds": len(passing_seeds),

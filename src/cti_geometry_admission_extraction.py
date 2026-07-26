@@ -250,8 +250,7 @@ def extract_observable_connection(
         R_j = G_inv_sqrt @ A_j @ G_inv_sqrt
 
         J_j = vjp_grads[j]
-        J_j_centered = center_and_normalize(J_j)
-        S_j = J_j_centered @ X_j.T
+        S_j = J_j @ X_j.T
         W_o = S_j.T @ S_j
         W_o = W_o / (np.trace(W_o) + 1e-12)
 
@@ -263,8 +262,9 @@ def extract_observable_connection(
 
         W_c = D_sum / (np.trace(D_sum) + 1e-12)
 
-        W_c += BALANCED_RIDGE * np.eye(n)
-        W_o += BALANCED_RIDGE * np.eye(n)
+        C_center = np.eye(n) - np.ones((n, n)) / n
+        W_c += (BALANCED_RIDGE / n) * C_center
+        W_o += (BALANCED_RIDGE / n) * C_center
 
         eigvals_wc, eigvecs_wc = np.linalg.eigh(W_c)
         eigvals_wc = np.maximum(eigvals_wc, 1e-10)

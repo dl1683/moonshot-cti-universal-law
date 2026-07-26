@@ -87,10 +87,10 @@ without teacher access or pair-specific tuning.
 | 4 | Cross-modal audit | SKIPPED | Same VOID: no cached embeddings |
 | 5 | Claim adjudication | DONE | KILLED: retracted from both papers, success criteria, experiment log |
 | 6 | Benchmark freeze + smoke | DONE | Pipeline works (BBH passed), GPQA gated |
-| 7 | Benchmark panel execution | RUNNING | 12 models x 5 tasks (excl GPQA), lm-eval in progress, 2/60 done |
+| 7 | Benchmark panel execution | RUNNING | 12 models x 5 tasks (excl GPQA), lm-eval in progress, 3/60 done |
 | 8 | Bridge adjudication | BLOCKED | Depends on WL7 |
 | 9 | AMCL demolition | DONE | 504 files deleted, Gate C permanently killed |
-| 10 | Geometry Admission Test | BLOCKED | Awaiting Gate B adjudication + R4 Stage B/C spec |
+| 10 | GAT implementation | DONE | 11/11 modules complete, preflight fixes applied |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
@@ -110,5 +110,20 @@ without teacher access or pair-specific tuning.
 | R1 | Pivot from DG-0 to Open Capability File | DONE | Kill DG-0, pivot to capability file thesis |
 | R2 | Corrected plan: budget, scope, honest scores | DONE | 2-candidate GAT over 7-codec tournament, 3/10 today |
 | R3 | Concrete Stage A specification | DONE | Full automaton, architecture, training, extraction spec |
-| R4 | Stage B/C transfer design + implementation | RUNNING | Awaiting Codex response |
-| R5 | Final confirmation | PENDING | |
+| R4 | Stage B/C transfer design + implementation | DONE | Complete spec: 18-run screen + 144-run confirmation |
+| R5 | Final consistency audit | DONE | Convergence confirmed, blockers fixed |
+
+### GAT Implementation Status
+| Module | File | Status |
+|--------|------|--------|
+| Automaton + data gen | `cti_geometry_admission_automaton.py` | DONE |
+| Model architectures | `cti_geometry_admission_models.py` | DONE |
+| Capacity trainer | `cti_geometry_admission_trainer.py` | DONE |
+| Trace extraction | `cti_geometry_admission_extraction.py` | DONE |
+| Geometry + losses | `cti_geometry_admission_geometry.py` | DONE |
+| Installer (student) | `cti_geometry_admission_installer.py` | DONE |
+| Statistics | `cti_geometry_admission_statistics.py` | DONE |
+| Stage A orchestrator | `cti_geometry_admission_stage_a.py` | DONE |
+| Stage B orchestrator | `cti_geometry_admission_stage_b.py` | DONE |
+| Stage C orchestrator | `cti_geometry_admission_stage_c.py` | DONE |
+| Verification | `cti_geometry_admission_verify.py` | DONE |

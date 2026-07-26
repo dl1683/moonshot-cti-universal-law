@@ -23,7 +23,6 @@ from cti_geometry_admission_automaton import (
     partition_anchors_into_banks,
     audit_edge_coverage,
     hash_eval_set,
-    generate_perturbations,
     collate_fn,
 )
 from cti_geometry_admission_models import (
@@ -39,6 +38,7 @@ from cti_geometry_admission_extraction import (
     extract_hidden_states,
     extract_raw_trace,
     extract_observable_connection,
+    generate_perturbations,
     check_numerical_gates,
     serialize_traces,
     TEACHER_DEPTH_LAYERS,

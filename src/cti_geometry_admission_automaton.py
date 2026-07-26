@@ -57,11 +57,11 @@ def generate_key_from_seed(seed_bytes: bytes) -> dict:
     return key_json
 
 
-def generate_sealed_key(key_index: int) -> tuple[dict, str]:
+def generate_sealed_key(key_index: int) -> tuple[dict, bytes, str]:
     seed_bytes = os.urandom(32)
     seed_hash = hashlib.sha256(seed_bytes).hexdigest()
     key_json = generate_key_from_seed(seed_bytes)
-    return key_json, seed_hash
+    return key_json, seed_bytes, seed_hash
 
 
 def simulate_automaton(key: np.ndarray, s0: int, ops: np.ndarray) -> int:
