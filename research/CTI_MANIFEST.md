@@ -15,7 +15,7 @@ This manifest lists only the canonical files that support the paper's claims.
 | `results/cti_utility_revised.json` | H8+ holdout: r=0.879, MAE=0.077 | Holdout validation |
 | `results/cti_allen_all_sessions_complete.json` | 30/32 mouse V1 sessions PASS | Biological |
 | `results/cti_allen_multiarea_batch.json` | 30 mice, 5 cortical areas all PASS | Biological multi-area |
-| `results/cti_allen_equicorr_multiarea.json` | rho=0.43-0.46 across 5 areas | Equicorrelation |
+| `results/cti_allen_equicorr_multiarea.json` | rho~0.46, KILLED (geometric null artifact) | Retracted |
 | `results/cti_confusion_causal_prediction.json` | r=0.842, sign acc 93%, p<10^-35 | Causal evidence |
 | `results/cti_do_intervention_multi_arch.json` | Do-intervention confirms direction | Causal evidence |
 | `results/cti_orthogonal_factorial.json` | Factorial design confirms kappa | Causal evidence |
@@ -28,7 +28,7 @@ This manifest lists only the canonical files that support the paper's claims.
 | `results/cti_extended_family_loao.json` | Alpha-family law (NLP/ViT/CNN) | Family analysis |
 | `results/cti_alpha_rho_multidataset.json` | Zero-param prediction +4.7% error | Theory connection |
 | `results/cti_alpha_rho_derivation.json` | Single-dataset alpha-rho baseline | Theory connection |
-| `results/cti_cross_family_equicorr.json` | Encoder rho same as decoder | Equicorrelation |
+| `results/cti_cross_family_equicorr.json` | Encoder rho same as decoder | Retracted (part of equicorrelation) |
 | `results/cti_encoder_loao.json` | Encoder CV=0.42 (not universal) | Scope limit |
 | `results/cti_scaling_dynamics.json` | kappa not model-size proxy | E1/E2 controls |
 | `results/cti_neuroscience_cadieu2014.json` | Cadieu V4 hierarchy gradient | Biological |

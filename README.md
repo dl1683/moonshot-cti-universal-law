@@ -51,7 +51,7 @@ The **functional form is derived** from extreme value theory (Gumbel race compet
 |------|--------|--------|
 | 32 mouse V1 Neuropixels sessions | 30/32 PASS, mean r=0.736 | **PASS** |
 | Multi-area batch (30 mice, 5 cortical areas) | VISp 30/30, VISl 22/22, all areas >=87% | **PASS** |
-| Equicorrelation across areas | rho=0.43-0.46 (CV=1.65%) | **PASS** |
+| Equicorrelation across areas | rho~0.46, likely geometric null artifact | **KILLED** |
 
 ### Practical Utility
 

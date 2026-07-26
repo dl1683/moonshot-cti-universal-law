@@ -42,7 +42,7 @@ The functional form is **derived** from EVT/Gumbel-race theory (conditional theo
 | Evidence | Key Metric | File |
 |----------|-----------|------|
 | Multi-area biological (5 areas) | VISp 30/30, VISl 22/22, all >=87% | `cti_allen_multiarea_batch.json` |
-| Equicorrelation across cortex | rho=0.43-0.46, CV=1.65% | `cti_allen_equicorr_multiarea.json` |
+| ~~Equicorrelation across cortex~~ | ~~rho=0.43-0.46~~ | **RETRACTED** (geometric null) |
 | ViT-Large cross-modal | R^2=0.964 | `cti_vit_cross_modality.json` |
 | LOMFO all 4 families | r>=0.84 each | `cti_lomfo_lodo_stress_test.json` |
 | H3 ranking (n=9 models) | rho=0.833, p=0.005 | `cti_downstream_h3_n9.json` |
@@ -88,8 +88,8 @@ The functional form is **derived** from EVT/Gumbel-race theory (conditional theo
 2. 1-NN classification = Gumbel race among K-1 competing classes
 3. Margin between nearest correct and nearest incorrect class follows logistic
 4. logit(q_norm) = alpha * kappa_nearest - beta * log(K-1) + C
-5. Near-simplex geometry (rho~0.46) gives d_eff_comp = 1/(1-rho) ~ 1.85
-6. alpha = sqrt(4/pi) * sqrt(d_eff_comp) ~ 1.54 (predicts mean to 4.7%)
+5. ~~Near-simplex geometry (rho~0.46) gives d_eff_comp = 1/(1-rho) ~ 1.85~~ [RETRACTED: rho is a geometric null artifact]
+6. alpha = sqrt(4/pi) * sqrt(d_eff_comp) ~ 1.54 (d_eff requires non-equicorrelation estimator)
 
 Master derivation: `research/OBSERVABLE_ORDER_PARAMETER_THEOREM.md`
 

@@ -18,10 +18,10 @@ Every claim in the paper abstract and main text mapped to supporting result file
 | 6 | Blind OOD: r=0.817, p=0.013 (SmolLM2-1.7B) | `results/cti_smollm2_ood_prediction.json` | VERIFIED |
 | 7 | Biological 30/32 V1 sessions, mean r=0.736 | `results/cti_allen_all_sessions_complete.json` | VERIFIED |
 | 8 | Multi-area batch: VISl 22/22, VISam 24/25 | `results/cti_allen_multiarea_batch.json` | VERIFIED |
-| 9 | Near-simplex rho~0.46, CV=1.0% across 6 modalities (NLP, audio, vision, cortex) | `results/cti_cross_modal_rho.json`, `results/cti_allen_equicorr_multiarea.json`, `results/cti_cross_family_equicorr.json` | VERIFIED |
+| 9 | ~~Near-simplex rho~0.46, CV=1.0% across 6 modalities~~ | ~~`results/cti_cross_modal_rho.json`~~ | **RETRACTED** (geometric null artifact, see QUESTION_LOOP_01) |
 | 10 | Alpha-rho prediction: 1.540 vs 1.477 (+4.3%, zero params) | `results/cti_alpha_rho_multidataset.json` | VERIFIED |
 | 11 | Per-model alpha CV (2.3%) consistent with estimation noise (expected 2.8%) | `results/cti_alpha_noise_analysis.json` | VERIFIED |
-| 12 | Encoder alpha 4-5x higher for same rho | `results/cti_cross_family_equicorr.json`, `results/cti_encoder_loao.json` | VERIFIED |
+| 12 | Encoder alpha 4-5x higher than decoder | `results/cti_encoder_loao.json` | VERIFIED (equicorr part retracted) |
 | 13 | Honest scope: alpha varies by signal type (NLP 1.48, ViT 4.5, CNN 4.0, audio 4.7) | `results/cti_extended_family_loao.json`, `results/cti_alpha_family_law.json` | VERIFIED |
 | 14 | 4 probe calibration reduces MAE by 86% | `results/cti_one_point_calibration.json` | VERIFIED |
 | 14b | ResNet-50 CIFAR-100 same functional form | `results/cti_resnet50_cifar100.json` | VERIFIED |
@@ -43,7 +43,7 @@ Every claim in the paper abstract and main text mapped to supporting result file
 | 19 | Orthogonal factorial: kappa is causal driver | `results/cti_orthogonal_factorial.json` | VERIFIED |
 | 20 | H3 ranking: 9 models, rho=0.833, p=0.005 (kappa ranks by MAP@10) | `results/cti_downstream_h3_n9.json` | VERIFIED |
 | 21 | Multi-area: VISp 30/30, all areas >=87% pass | `results/cti_allen_multiarea_batch.json` | VERIFIED |
-| 22 | Equicorrelation: rho area-invariant (0.43-0.46) | `results/cti_allen_equicorr_multiarea.json` | VERIFIED |
+| 22 | ~~Equicorrelation: rho area-invariant (0.43-0.46)~~ | ~~`results/cti_allen_equicorr_multiarea.json`~~ | **RETRACTED** |
 | 23 | Three-level universality (form/constant/intercept) | `results/cti_lomfo_lodo_stress_test.json`, `results/cti_extended_family_loao.json` | VERIFIED |
 | 24 | Alpha-rho: MAE=0.068 PASS, bootstrap reliability=0.998 | `results/cti_alpha_rho_multidataset.json` | VERIFIED |
 | 25 | Encoder LOAO: CV=0.42 (confirms decoder-only universality) | `results/cti_encoder_loao.json` | VERIFIED |
@@ -57,7 +57,7 @@ Every claim in the paper abstract and main text mapped to supporting result file
 |---|-------|---------------|--------|
 | 29 | Allen Neuropixels: K=118, 32 sessions, 50-250ms window | `results/cti_allen_all_sessions_complete.json` | VERIFIED |
 | 30 | Multi-area: VISp, VISl, VISal, VISam, VISrl all PASS | `results/cti_allen_multiarea_batch.json` | VERIFIED |
-| 31 | Rho~0.466 in 5 cortical areas (CV=1.65%) | `results/cti_allen_equicorr_multiarea.json` | VERIFIED |
+| 31 | ~~Rho~0.466 in 5 cortical areas (CV=1.65%)~~ | ~~`results/cti_allen_equicorr_multiarea.json`~~ | **RETRACTED** |
 | 32 | Cadieu V4 < IT hierarchy gradient | `results/cti_neuroscience_cadieu2014.json` | VERIFIED |
 
 ## Theory Claims
