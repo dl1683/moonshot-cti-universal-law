@@ -130,13 +130,21 @@ def main():
     BRIDGE_DIR.mkdir(parents=True, exist_ok=True)
 
     log_path = BRIDGE_DIR / "execution_log.json"
-    all_results = []
+    if log_path.exists():
+        all_results = json.loads(log_path.read_text(encoding="utf-8"))
+    else:
+        all_results = []
+
+    completed = {(r["model_id"], r["task"]) for r in all_results}
 
     total = len(MODELS) * len(TASKS)
-    done = 0
+    done = len(completed)
 
     for model_id in MODELS:
         for task in TASKS:
+            if (model_id, task) in completed:
+                print(f"SKIP (already done): {model_slug(model_id)} / {task}")
+                continue
             done += 1
             print(f"\n[{done}/{total}] Starting {model_slug(model_id)} / {task}")
 
