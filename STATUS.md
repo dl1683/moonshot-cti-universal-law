@@ -67,7 +67,7 @@ It has repeatedly mistaken breadth of internal validation for depth of external 
 | 2 | Matched-null engine | DONE | KILL: historical 0.455-0.467 within null 99% CI |
 | 3 | Corrected NLP rho audit | DONE | VOID: no cached embeddings, kill from WL2 stands |
 | 4 | Cross-modal audit | SKIPPED | Same VOID: no cached embeddings |
-| 5 | Claim adjudication | RUNNING | Removing equicorrelation from papers |
+| 5 | Claim adjudication | DONE | KILLED: retracted from both papers, success criteria, experiment log |
 | 6 | Benchmark freeze + smoke | DONE | Pipeline works (BBH passed), GPQA gated |
 | 7 | Benchmark panel execution | RUNNING | 12 models x 5 tasks (excl GPQA), lm-eval in progress |
 | 8 | Bridge adjudication | BLOCKED | Depends on WL7 |
