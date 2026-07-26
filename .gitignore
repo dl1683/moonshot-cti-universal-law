@@ -39,8 +39,11 @@ secrets/
 REHYDRATE.md
 STARTUP_PROMPT.md
 
-# Geometry Admission Test sealed keys and model checkpoints
+# Geometry Admission Test sealed keys, model checkpoints, and training logs
 results/geometry_admission/secrets/
+results/geometry_admission/**/training_log.jsonl
+results/geometry_admission/**/repeat_check/
+results/stage_a_*.txt
 
 # OS / editor
 .DS_Store
