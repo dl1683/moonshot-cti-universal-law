@@ -207,26 +207,27 @@ def extract_observable_connection(
         final_token = H[torch.arange(n, device=device), last_idx]
         tick_states_np.append(final_token.float().cpu().numpy())
 
-    vjp_grads = []
+    for p in model.parameters():
+        p.requires_grad_(True)
+
+    out_g = model(input_ids, attention_mask, return_hidden_states=True)
+    logits_g = out_g["logits"]
+    margins_g = logits_g[torch.arange(n, device=device), top_class] - \
+                logits_g[torch.arange(n, device=device), runner_class]
+
+    target_finals = []
     for layer_idx in depth_layers:
-        for p in model.parameters():
-            p.requires_grad_(True)
-
-        out_g = model(input_ids, attention_mask, return_hidden_states=True)
-        logits_g = out_g["logits"]
-        margins_g = logits_g[torch.arange(n, device=device), top_class] - \
-                    logits_g[torch.arange(n, device=device), runner_class]
-
         target_state = out_g["hidden_states"][layer_idx]
-        target_final = target_state[torch.arange(n, device=device), last_idx]
-        target_final.retain_grad()
-        margins_g.sum().backward(retain_graph=False)
-        grad = target_final.grad.float().detach().cpu().numpy()
-        vjp_grads.append(grad)
+        target_finals.append(target_state[torch.arange(n, device=device), last_idx])
 
-        for p in model.parameters():
-            p.requires_grad_(False)
-        model.zero_grad()
+    grads = torch.autograd.grad(
+        margins_g.sum(), target_finals, retain_graph=False,
+    )
+    vjp_grads = [g.float().detach().cpu().numpy() for g in grads]
+
+    for p in model.parameters():
+        p.requires_grad_(False)
+    model.zero_grad()
 
     pert_ticks_by_k = []
     for k in range(NUM_PERTURBATIONS):
