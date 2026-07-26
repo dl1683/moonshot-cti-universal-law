@@ -60,6 +60,27 @@ It has repeatedly mistaken breadth of internal validation for depth of external 
 
 ## Loop State
 
-- Work loop iteration: 0
-- Question loop iteration: 0
-- Next supervisor check-in: WL after iteration 10, QL after iteration 7
+### Work Loop (supervisor check-in at iteration 10)
+| WL | Task | Status | Verdict |
+|----|------|--------|---------|
+| 1 | Canonical whitening repair | DONE | Legacy parity confirmed, corrected mode works |
+| 2 | Matched-null engine | DONE | KILL: historical 0.455-0.467 within null 99% CI |
+| 3 | Corrected NLP rho audit | DONE | VOID: no cached embeddings, kill from WL2 stands |
+| 4 | Cross-modal audit | SKIPPED | Same VOID: no cached embeddings |
+| 5 | Claim adjudication | RUNNING | Removing equicorrelation from papers |
+| 6 | Benchmark freeze + smoke | DONE | Pipeline works (BBH passed), GPQA gated |
+| 7 | Benchmark panel execution | BLOCKED | Needs GPQA access |
+| 8 | Bridge adjudication | BLOCKED | Depends on WL7 |
+| 9 | AMCL demolition | PENDING | |
+| 10 | DG-0 pilot | PENDING | |
+
+### Question Loop (supervisor check-in at iteration 7)
+| QL | Question | Status | Finding |
+|----|----------|--------|---------|
+| 1 | Shared-anchor null | DONE | Kill scalar rho: E[cos]->1/2 |
+| 2 | Geometry identifiability | DONE | Terminal geometry cannot prescribe architecture |
+| 3 | Minimal dynamic object | DONE | skew(A_r) is minimal novel signal |
+| 4 | Strongest distillation baseline | RUNNING | |
+| 5 | A_r counterexamples | RUNNING | |
+| 6 | Regularization vs transfer | PENDING | |
+| 7 | Evidence ladder to "portable program" | PENDING | |
