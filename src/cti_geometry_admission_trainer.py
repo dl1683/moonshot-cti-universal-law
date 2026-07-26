@@ -99,6 +99,37 @@ def evaluate(model, eval_examples, device, batch_size=512):
     return correct / total if total > 0 else 0.0
 
 
+def _write_config_hash(run_dir: Path, run_cfg: dict, key, eval_sets: dict, model):
+    """Write config identity hash before first optimizer step."""
+    import hashlib as _hl
+    import platform
+    config_data = {
+        "run_config": run_cfg,
+        "key_hash": _hl.sha256(json.dumps(key if isinstance(key, dict) else {"array": "omitted"}, sort_keys=True).encode()).hexdigest(),
+        "eval_set_sizes": {k: len(v) for k, v in eval_sets.items()},
+        "train_stream_seed": TRAIN_STREAM_SEED,
+        "max_steps": MAX_STEPS,
+        "batch_size": BATCH_SIZE,
+        "warmup": WARMUP_STEPS,
+        "grad_clip": GRAD_CLIP,
+        "weight_decay": WEIGHT_DECAY,
+        "param_count": count_parameters(model),
+        "python": platform.python_version(),
+        "torch": torch.__version__,
+        "cuda": torch.version.cuda or "none",
+        "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "cpu",
+    }
+    config_str = json.dumps(config_data, sort_keys=True)
+    config_hash = _hl.sha256(config_str.encode()).hexdigest()
+
+    with open(run_dir / "config.json", "w") as f:
+        json.dump(config_data, f, indent=2)
+    with open(run_dir / "config.sha256", "w") as f:
+        f.write(config_hash)
+
+    return config_hash
+
+
 def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device):
     name = run_cfg["name"]
     arch = run_cfg["arch"]
@@ -127,6 +158,9 @@ def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device):
     )
     scaler = GradScaler()
 
+    config_hash = _write_config_hash(run_dir, run_cfg, key, eval_sets, model)
+    print(f"[{name}] Config hash: {config_hash[:16]}...")
+
     dataset = AutomatonTrainDataset(key, seed=TRAIN_STREAM_SEED, max_length=16)
     loader = DataLoader(
         dataset, batch_size=BATCH_SIZE, collate_fn=collate_fn,
@@ -135,12 +169,23 @@ def train_one_run(run_cfg: dict, key, eval_sets: dict, device: torch.device):
 
     start_step = 0
     if checkpoint_path.exists():
-        ckpt = torch.load(checkpoint_path, map_location=device, weights_only=False)
-        model.load_state_dict(ckpt["model"])
-        optimizer.load_state_dict(ckpt["optimizer"])
-        scaler.load_state_dict(ckpt["scaler"])
-        start_step = ckpt["step"]
-        print(f"[{name}] Resuming from step {start_step}")
+        existing_hash_path = run_dir / "config.sha256"
+        if existing_hash_path.exists():
+            with open(existing_hash_path) as f:
+                old_hash = f.read().strip()
+            if old_hash != config_hash:
+                print(f"[{name}] Config hash mismatch — restarting from step 0.")
+                checkpoint_path.unlink()
+            else:
+                ckpt = torch.load(checkpoint_path, map_location=device, weights_only=False)
+                model.load_state_dict(ckpt["model"])
+                optimizer.load_state_dict(ckpt["optimizer"])
+                scaler.load_state_dict(ckpt["scaler"])
+                start_step = ckpt["step"]
+                print(f"[{name}] Resuming from step {start_step}")
+        else:
+            print(f"[{name}] No config hash for existing checkpoint — restarting.")
+            checkpoint_path.unlink()
 
     log_file = open(log_path, "a", encoding="utf-8")
     model.train()
