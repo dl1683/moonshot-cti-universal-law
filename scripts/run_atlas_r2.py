@@ -339,14 +339,19 @@ def run_p1_mkqa(budget, system_filter=None):
         gc.collect()
 
     out_path = RESULTS_DIR / "atlas_r2_p1_mkqa_raw.json"
+    existing = {}
+    if out_path.exists():
+        with open(out_path, encoding="utf-8") as f:
+            existing = json.load(f)
+    existing.update(all_summaries)
     with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(all_summaries, f, indent=2)
+        json.dump(existing, f, indent=2)
     print(f"\nResults written to {out_path}")
 
     print("\n" + "=" * 60)
     print("P1 W-D2 SUMMARY")
     print("=" * 60)
-    for sid, s in sorted(all_summaries.items(),
+    for sid, s in sorted(existing.items(),
                          key=lambda x: x[1]["pass_rate"], reverse=True):
         print(f"  {sid:20s}  pass={s['pass_rate']:.1%}  "
               f"F1={s['mean_f1']:.3f}  "
@@ -479,14 +484,19 @@ def run_p1_policybench(budget, system_filter=None):
         gc.collect()
 
     out_path = RESULTS_DIR / "atlas_r2_p1_policybench_raw.json"
+    existing = {}
+    if out_path.exists():
+        with open(out_path, encoding="utf-8") as f:
+            existing = json.load(f)
+    existing.update(all_summaries)
     with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(all_summaries, f, indent=2)
+        json.dump(existing, f, indent=2)
     print(f"\nResults written to {out_path}")
 
     print("\n" + "=" * 60)
     print("P1 W-D3 SUMMARY")
     print("=" * 60)
-    for sid, s in sorted(all_summaries.items(),
+    for sid, s in sorted(existing.items(),
                          key=lambda x: x[1]["pass_rate"], reverse=True):
         print(f"  {sid:20s}  pass={s['pass_rate']:.1%}  "
               f"bin={s['binary_pass_rate']:.1%}  "

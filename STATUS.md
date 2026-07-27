@@ -218,6 +218,8 @@ Revised ceiling: 3-4/10 (down from 6-7/10). Six antipatterns apply.
 | 34 | Atlas design gate R1 (Codex) | DONE | CONDITIONAL GO through P0 only. 832-line protocol: 4 workloads (SWE-bench-Live, MKQA, PolicyBench, RealClawBench), 9 checkpoints (Qwen3/Gemma3/Falcon-H1), 51 system templates, 167 executed cells, 320 GPU-hours, 15 kill criteria, 6 frozen hypotheses. |
 | 35 | Atlas design gate R2 pushback | DONE | CONVERGED. All 5 objections conceded. Budget 320h->360h (324.2h + 35.8h reserve). 6 API Goliaths added. Dual confirmation (W-C1 + W-C2). Equal-budget ASHA adaptation. RLVR/distillation removed. 32 templates. $1,200 API ceiling. |
 | 36 | P0 preflight + mass cleanup | DONE | P0 preflight PARTIAL PASS (W-C1 at risk). 9 HF revisions pinned. 222 files deleted from 6 killed directions (GAT, CSO, CIF, equicorrelation, bridge, steering/QL). Repo from ~950 to 726 tracked files. Precommit verifier passes. |
+| 37 | P1 W-D2 MKQA raw screen | IN PROGRESS | 3/9 local systems done: qwen3_0.6b=5.5%, qwen3_4b=11.3%, qwen3_14b=partial. 314 dead src scripts deleted (-123,897 lines). Runner fixed: merge-on-write, --system filter, resume, 4-bit NF4 for >7B. |
+| 38 | P1 infrastructure fixes | DONE | PolicyBench W-D3 loader + scorer added. Chat template mode (enable_thinking=False). 4-bit NF4 quantization for >7B models. JSON merge-on-write bug fixed (was overwriting per-system). |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
@@ -264,4 +266,6 @@ Revised ceiling: 3-4/10 (down from 6-7/10). Six antipatterns apply.
 | Dead research docs | CGF (3), COLM (1), CSO admission (1) | Jul 27 | Kill records in STATUS.md |
 | Misc dead | 3 result files, centroid dispersion, misc | Jul 27 | Kill records in STATUS.md |
 | Stale root files | generate_5task_correlation_summary.py, C80_MILESTONE_SYNTHESIS.md | Jul 27 | N/A |
-| **Total cleaned** | **~222 tracked files removed** | Jul 27 | All kills documented here |
+| Dead src scripts (Codex triage) | 314 cti_*.py scripts (-123,897 lines) | Jul 27 | Codex triage: `results/codex_src_triage.md`. 5 LIVE (Atlas R2), 4 PAPER, 314 DEAD |
+| Stale run logs | 5 stage_a_*.txt result logs | Jul 27 | N/A |
+| **Total cleaned** | **~541 tracked files removed** | Jul 27 | All kills documented here |
