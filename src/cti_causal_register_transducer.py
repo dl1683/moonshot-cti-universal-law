@@ -13,7 +13,6 @@ from pathlib import Path
 from typing import Optional
 
 import numpy as np
-import torch
 
 MOD = 16
 NUM_REGS = 4
@@ -36,26 +35,32 @@ TRAIN_FRACTION = 0.75
 TRAIN_LENGTHS = (1, 12)
 EVAL_LENGTHS = (13, 32)
 NUM_EXCLUDED_BIGRAMS = 16
+NUM_WITHHELD_TRIGRAMS = 32
+GROUP_ORDER_MIN = 200_000
 
+
+# ---------------------------------------------------------------------------
+# Scalar operations
+# ---------------------------------------------------------------------------
 
 def apply_op(state: np.ndarray, op: int) -> np.ndarray:
     """Apply operation op to register state. state shape: (4,) dtype int."""
     r = state.copy()
-    if op == 0:    # add_01
+    if op == 0:
         r[0] = (r[0] + r[1]) % MOD
-    elif op == 1:  # add_12
+    elif op == 1:
         r[1] = (r[1] + r[2]) % MOD
-    elif op == 2:  # add_23
+    elif op == 2:
         r[2] = (r[2] + r[3]) % MOD
-    elif op == 3:  # add_30
+    elif op == 3:
         r[3] = (r[3] + r[0]) % MOD
-    elif op == 4:  # swap_02
+    elif op == 4:
         r[0], r[2] = r[2], r[0]
-    elif op == 5:  # swap_13
+    elif op == 5:
         r[1], r[3] = r[3], r[1]
-    elif op == 6:  # rotate_L
+    elif op == 6:
         r[0], r[1], r[2], r[3] = r[1], r[2], r[3], r[0]
-    elif op == 7:  # neg_02
+    elif op == 7:
         r[0] = (-r[0]) % MOD
         r[2] = (-r[2]) % MOD
     else:
@@ -66,21 +71,21 @@ def apply_op(state: np.ndarray, op: int) -> np.ndarray:
 def apply_inverse_op(state: np.ndarray, op: int) -> np.ndarray:
     """Apply the inverse of operation op to register state."""
     r = state.copy()
-    if op == 0:    # inv(add_01): r0 <- r0 - r1 mod 16
+    if op == 0:
         r[0] = (r[0] - r[1]) % MOD
-    elif op == 1:  # inv(add_12): r1 <- r1 - r2 mod 16
+    elif op == 1:
         r[1] = (r[1] - r[2]) % MOD
-    elif op == 2:  # inv(add_23): r2 <- r2 - r3 mod 16
+    elif op == 2:
         r[2] = (r[2] - r[3]) % MOD
-    elif op == 3:  # inv(add_30): r3 <- r3 - r0 mod 16
+    elif op == 3:
         r[3] = (r[3] - r[0]) % MOD
-    elif op == 4:  # inv(swap_02) = swap_02
+    elif op == 4:
         r[0], r[2] = r[2], r[0]
-    elif op == 5:  # inv(swap_13) = swap_13
+    elif op == 5:
         r[1], r[3] = r[3], r[1]
-    elif op == 6:  # inv(rotate_L) = rotate_R
+    elif op == 6:
         r[0], r[1], r[2], r[3] = r[3], r[0], r[1], r[2]
-    elif op == 7:  # inv(neg_02) = neg_02
+    elif op == 7:
         r[0] = (-r[0]) % MOD
         r[2] = (-r[2]) % MOD
     else:
@@ -89,9 +94,7 @@ def apply_inverse_op(state: np.ndarray, op: int) -> np.ndarray:
 
 
 def execute_program(init_state: np.ndarray, ops: np.ndarray) -> np.ndarray:
-    """Execute a sequence of operations starting from init_state.
-    Returns final register state.
-    """
+    """Execute a sequence of operations starting from init_state."""
     state = init_state.copy()
     for op in ops:
         state = apply_op(state, int(op))
@@ -112,8 +115,9 @@ def index_to_state(idx: int) -> np.ndarray:
     return np.array([r0, r1, r2, r3], dtype=np.int64)
 
 
-# --- Partition logic ---
-
+# ---------------------------------------------------------------------------
+# Partition logic
+# ---------------------------------------------------------------------------
 
 def _hash_state(state: np.ndarray, seed: int) -> int:
     """Deterministic hash of a register state for partitioning."""
@@ -124,6 +128,7 @@ def _hash_state(state: np.ndarray, seed: int) -> int:
 def make_initial_state_partition(seed: int = PARTITION_SEED,
                                  train_frac: float = TRAIN_FRACTION):
     """Partition all 65536 initial states into train/eval sets.
+    Uses hash-based assignment (probabilistic, ~74.86% train).
     Returns (train_indices, eval_indices) as sorted numpy arrays.
     """
     train_indices = []
@@ -154,7 +159,7 @@ def make_bigram_partition(seed: int = PARTITION_SEED,
     return sorted(included), sorted(excluded)
 
 
-def make_trigram_withheld(seed: int = PARTITION_SEED, count: int = 32):
+def make_trigram_withheld(seed: int = PARTITION_SEED, count: int = NUM_WITHHELD_TRIGRAMS):
     """Select precommitted withheld trigrams for evaluation.
     Returns list of (op_i, op_j, op_k) tuples.
     """
@@ -165,68 +170,11 @@ def make_trigram_withheld(seed: int = PARTITION_SEED, count: int = 32):
     return sorted([all_trigrams[p] for p in perm[:count]])
 
 
-# --- Data generation ---
-
-
-def generate_training_example(rng: np.random.RandomState,
-                              train_state_indices: np.ndarray,
-                              included_bigrams: list,
-                              min_len: int = TRAIN_LENGTHS[0],
-                              max_len: int = TRAIN_LENGTHS[1]):
-    """Generate one training example.
-    Returns (init_state, ops, final_state) where:
-    - init_state: (4,) array in Z_16
-    - ops: (L,) array of op indices
-    - final_state: (4,) array in Z_16
-    """
-    idx = train_state_indices[rng.randint(len(train_state_indices))]
-    init_state = index_to_state(idx)
-
-    length = rng.randint(min_len, max_len + 1)
-    ops = np.empty(length, dtype=np.int64)
-
-    for i in range(length):
-        if i == 0:
-            ops[i] = rng.randint(NUM_OPS)
-        else:
-            while True:
-                candidate = rng.randint(NUM_OPS)
-                bigram = (int(ops[i - 1]), int(candidate))
-                if bigram in _INCLUDED_BIGRAM_SET:
-                    ops[i] = candidate
-                    break
-
-    final_state = execute_program(init_state, ops)
-    return init_state, ops, final_state
-
-
-def generate_eval_example(rng: np.random.RandomState,
-                          eval_state_indices: np.ndarray,
-                          min_len: int = EVAL_LENGTHS[0],
-                          max_len: int = EVAL_LENGTHS[1]):
-    """Generate one evaluation example (no bigram restriction).
-    Returns (init_state, ops, final_state).
-    """
-    idx = eval_state_indices[rng.randint(len(eval_state_indices))]
-    init_state = index_to_state(idx)
-    length = rng.randint(min_len, max_len + 1)
-    ops = rng.randint(0, NUM_OPS, size=length).astype(np.int64)
-    final_state = execute_program(init_state, ops)
-    return init_state, ops, final_state
-
-
-_INCLUDED_BIGRAM_SET = set()
-
-
 def init_partitions(seed: int = PARTITION_SEED):
-    """Initialize and return all partition data. Must be called before data generation."""
-    global _INCLUDED_BIGRAM_SET
-
+    """Initialize and return all partition data."""
     train_states, eval_states = make_initial_state_partition(seed)
     included_bigrams, excluded_bigrams = make_bigram_partition(seed)
     withheld_trigrams = make_trigram_withheld(seed)
-
-    _INCLUDED_BIGRAM_SET = set(included_bigrams)
 
     return {
         "train_state_indices": train_states,
@@ -234,19 +182,26 @@ def init_partitions(seed: int = PARTITION_SEED):
         "included_bigrams": included_bigrams,
         "excluded_bigrams": excluded_bigrams,
         "withheld_trigrams": withheld_trigrams,
+        "included_bigram_set": frozenset(included_bigrams),
+        "excluded_bigram_set": frozenset(excluded_bigrams),
+        "withheld_trigram_set": frozenset(withheld_trigrams),
     }
 
 
 def partition_hashes(partitions: dict) -> dict:
-    """Compute deterministic hashes of all partition data for precommit."""
+    """Compute deterministic hashes of all partition data for precommit.
+    Uses explicit big-endian encoding for platform independence.
+    """
     hashes = {}
 
     h = hashlib.sha256()
-    h.update(partitions["train_state_indices"].tobytes())
+    for idx in partitions["train_state_indices"]:
+        h.update(struct.pack(">I", int(idx)))
     hashes["train_states_sha256"] = h.hexdigest()
 
     h = hashlib.sha256()
-    h.update(partitions["eval_state_indices"].tobytes())
+    for idx in partitions["eval_state_indices"]:
+        h.update(struct.pack(">I", int(idx)))
     hashes["eval_states_sha256"] = h.hexdigest()
 
     h = hashlib.sha256()
@@ -267,11 +222,279 @@ def partition_hashes(partitions: dict) -> dict:
     return hashes
 
 
-# --- Verification suite ---
+# ---------------------------------------------------------------------------
+# Precommit
+# ---------------------------------------------------------------------------
 
+PRECOMMIT_PATH = Path(__file__).resolve().parent.parent / "results" / "causal_organ" / "precommit.json"
+
+
+def create_precommit(partitions: dict, model_config: Optional[dict] = None) -> dict:
+    """Create and write the immutable precommit artifact."""
+    hashes = partition_hashes(partitions)
+
+    precommit = {
+        "protocol": "CSO_ADMISSION_V1",
+        "partition_seed": PARTITION_SEED,
+        "train_fraction_threshold": TRAIN_FRACTION,
+        "n_train_states": int(len(partitions["train_state_indices"])),
+        "n_eval_states": int(len(partitions["eval_state_indices"])),
+        "n_included_bigrams": len(partitions["included_bigrams"]),
+        "n_excluded_bigrams": len(partitions["excluded_bigrams"]),
+        "n_withheld_trigrams": len(partitions["withheld_trigrams"]),
+        "excluded_bigrams": partitions["excluded_bigrams"],
+        "withheld_trigrams": partitions["withheld_trigrams"],
+        "hashes": hashes,
+    }
+
+    if model_config is not None:
+        precommit["model_config"] = model_config
+
+    h = hashlib.sha256()
+    h.update(json.dumps(hashes, sort_keys=True).encode())
+    precommit["integrity_sha256"] = h.hexdigest()
+
+    PRECOMMIT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(PRECOMMIT_PATH, "w") as f:
+        json.dump(precommit, f, indent=2)
+    print(f"Precommit written to {PRECOMMIT_PATH}")
+    return precommit
+
+
+def verify_precommit(partitions: dict) -> bool:
+    """Verify current partitions match the frozen precommit. Raises on mismatch."""
+    if not PRECOMMIT_PATH.exists():
+        raise FileNotFoundError(f"Precommit not found at {PRECOMMIT_PATH}")
+
+    with open(PRECOMMIT_PATH) as f:
+        precommit = json.load(f)
+
+    current_hashes = partition_hashes(partitions)
+    frozen_hashes = precommit["hashes"]
+
+    for key in frozen_hashes:
+        if current_hashes.get(key) != frozen_hashes[key]:
+            raise ValueError(
+                f"Precommit verification FAILED: {key} mismatch.\n"
+                f"  Frozen: {frozen_hashes[key]}\n"
+                f"  Current: {current_hashes.get(key)}"
+            )
+
+    h = hashlib.sha256()
+    h.update(json.dumps(frozen_hashes, sort_keys=True).encode())
+    if h.hexdigest() != precommit["integrity_sha256"]:
+        raise ValueError("Precommit integrity hash mismatch")
+
+    print("Precommit verification: PASS")
+    return True
+
+
+# ---------------------------------------------------------------------------
+# Data generation
+# ---------------------------------------------------------------------------
+
+def _contains_withheld_trigram(ops: np.ndarray, withheld_set: frozenset) -> bool:
+    """Check if any window of 3 consecutive ops forms a withheld trigram."""
+    for i in range(len(ops) - 2):
+        tri = (int(ops[i]), int(ops[i + 1]), int(ops[i + 2]))
+        if tri in withheld_set:
+            return True
+    return False
+
+
+def generate_training_example(rng: np.random.RandomState,
+                              partitions: dict,
+                              min_len: int = TRAIN_LENGTHS[0],
+                              max_len: int = TRAIN_LENGTHS[1],
+                              max_retries: int = 100):
+    """Generate one training example.
+    Excludes: excluded bigrams AND withheld trigrams.
+    Returns (init_state, ops, final_state).
+    """
+    train_states = partitions["train_state_indices"]
+    included_set = partitions["included_bigram_set"]
+    withheld_set = partitions["withheld_trigram_set"]
+
+    for _ in range(max_retries):
+        idx = train_states[rng.randint(len(train_states))]
+        init_state = index_to_state(idx)
+        length = rng.randint(min_len, max_len + 1)
+        ops = np.empty(length, dtype=np.int64)
+
+        valid = True
+        for i in range(length):
+            if i == 0:
+                ops[i] = rng.randint(NUM_OPS)
+            else:
+                found = False
+                for _ in range(50):
+                    candidate = rng.randint(NUM_OPS)
+                    bigram = (int(ops[i - 1]), int(candidate))
+                    if bigram not in included_set:
+                        continue
+                    ops[i] = candidate
+                    found = True
+                    break
+                if not found:
+                    valid = False
+                    break
+
+        if not valid:
+            continue
+
+        if _contains_withheld_trigram(ops, withheld_set):
+            continue
+
+        final_state = execute_program(init_state, ops)
+        return init_state, ops, final_state
+
+    raise RuntimeError("Failed to generate training example after max_retries")
+
+
+# ---------------------------------------------------------------------------
+# Evaluation strata generators
+# ---------------------------------------------------------------------------
+
+def generate_length_extrapolation(rng: np.random.RandomState,
+                                  partitions: dict,
+                                  min_len: int = EVAL_LENGTHS[0],
+                                  max_len: int = EVAL_LENGTHS[1]):
+    """Eval stratum: lengths 13-32, eval states, unrestricted bigrams."""
+    eval_states = partitions["eval_state_indices"]
+    idx = eval_states[rng.randint(len(eval_states))]
+    init_state = index_to_state(idx)
+    length = rng.randint(min_len, max_len + 1)
+    ops = rng.randint(0, NUM_OPS, size=length).astype(np.int64)
+    final_state = execute_program(init_state, ops)
+    return {"init_state": init_state, "ops": ops, "final_state": final_state,
+            "stratum": "length_extrapolation"}
+
+
+def generate_excluded_bigram(rng: np.random.RandomState,
+                             partitions: dict,
+                             min_len: int = TRAIN_LENGTHS[0],
+                             max_len: int = TRAIN_LENGTHS[1]):
+    """Eval stratum: must contain at least one excluded bigram."""
+    excluded = partitions["excluded_bigrams"]
+    train_states = partitions["train_state_indices"]
+
+    idx = train_states[rng.randint(len(train_states))]
+    init_state = index_to_state(idx)
+    length = max(2, rng.randint(min_len, max_len + 1))
+
+    forced_bigram = excluded[rng.randint(len(excluded))]
+    insert_pos = rng.randint(0, length - 1)
+
+    ops = rng.randint(0, NUM_OPS, size=length).astype(np.int64)
+    ops[insert_pos] = forced_bigram[0]
+    ops[insert_pos + 1] = forced_bigram[1]
+
+    final_state = execute_program(init_state, ops)
+    return {"init_state": init_state, "ops": ops, "final_state": final_state,
+            "stratum": "excluded_bigram"}
+
+
+def generate_withheld_trigram(rng: np.random.RandomState,
+                              partitions: dict,
+                              min_len: int = 3,
+                              max_len: int = EVAL_LENGTHS[1]):
+    """Eval stratum: must contain at least one withheld trigram."""
+    trigrams = partitions["withheld_trigrams"]
+    eval_states = partitions["eval_state_indices"]
+
+    idx = eval_states[rng.randint(len(eval_states))]
+    init_state = index_to_state(idx)
+    length = max(3, rng.randint(min_len, max_len + 1))
+
+    forced_tri = trigrams[rng.randint(len(trigrams))]
+    insert_pos = rng.randint(0, length - 2)
+
+    ops = rng.randint(0, NUM_OPS, size=length).astype(np.int64)
+    ops[insert_pos] = forced_tri[0]
+    ops[insert_pos + 1] = forced_tri[1]
+    ops[insert_pos + 2] = forced_tri[2]
+
+    final_state = execute_program(init_state, ops)
+    return {"init_state": init_state, "ops": ops, "final_state": final_state,
+            "stratum": "withheld_trigram"}
+
+
+def generate_held_out_state(rng: np.random.RandomState,
+                            partitions: dict,
+                            min_len: int = TRAIN_LENGTHS[0],
+                            max_len: int = TRAIN_LENGTHS[1]):
+    """Eval stratum: held-out initial states, train-length, included bigrams."""
+    eval_states = partitions["eval_state_indices"]
+    included_set = partitions["included_bigram_set"]
+
+    idx = eval_states[rng.randint(len(eval_states))]
+    init_state = index_to_state(idx)
+    length = rng.randint(min_len, max_len + 1)
+    ops = np.empty(length, dtype=np.int64)
+
+    for i in range(length):
+        if i == 0:
+            ops[i] = rng.randint(NUM_OPS)
+        else:
+            while True:
+                candidate = rng.randint(NUM_OPS)
+                if (int(ops[i - 1]), int(candidate)) in included_set:
+                    ops[i] = candidate
+                    break
+
+    final_state = execute_program(init_state, ops)
+    return {"init_state": init_state, "ops": ops, "final_state": final_state,
+            "stratum": "held_out_state"}
+
+
+def generate_full_intersection(rng: np.random.RandomState,
+                               partitions: dict):
+    """Eval stratum: eval states + long lengths + excluded bigrams.
+    The hardest split: everything withheld at once.
+    """
+    eval_states = partitions["eval_state_indices"]
+    excluded = partitions["excluded_bigrams"]
+
+    idx = eval_states[rng.randint(len(eval_states))]
+    init_state = index_to_state(idx)
+    length = rng.randint(EVAL_LENGTHS[0], EVAL_LENGTHS[1] + 1)
+
+    forced_bigram = excluded[rng.randint(len(excluded))]
+    insert_pos = rng.randint(0, max(1, length - 1))
+
+    ops = rng.randint(0, NUM_OPS, size=length).astype(np.int64)
+    if length >= 2:
+        ops[insert_pos] = forced_bigram[0]
+        ops[min(insert_pos + 1, length - 1)] = forced_bigram[1]
+
+    final_state = execute_program(init_state, ops)
+    return {"init_state": init_state, "ops": ops, "final_state": final_state,
+            "stratum": "full_intersection"}
+
+
+def generate_eval_batch(rng: np.random.RandomState,
+                        partitions: dict,
+                        n_per_stratum: int = 200) -> dict:
+    """Generate a complete evaluation batch covering all 5 strata."""
+    generators = {
+        "length_extrapolation": generate_length_extrapolation,
+        "excluded_bigram": generate_excluded_bigram,
+        "withheld_trigram": generate_withheld_trigram,
+        "held_out_state": generate_held_out_state,
+        "full_intersection": generate_full_intersection,
+    }
+    batch = {}
+    for name, gen_fn in generators.items():
+        batch[name] = [gen_fn(rng, partitions) for _ in range(n_per_stratum)]
+    return batch
+
+
+# ---------------------------------------------------------------------------
+# Vectorized operations (for verification)
+# ---------------------------------------------------------------------------
 
 def _build_all_states() -> np.ndarray:
-    """Build (65536, 4) array of all register states. Cached for vectorized ops."""
+    """Build (65536, 4) array of all register states."""
     indices = np.arange(STATE_SPACE_SIZE)
     states = np.stack([
         (indices // MOD**3) % MOD,
@@ -338,8 +561,68 @@ def _states_to_indices(states: np.ndarray) -> np.ndarray:
             + states[:, 2] * MOD + states[:, 3])
 
 
+# ---------------------------------------------------------------------------
+# Generator matrices for group order verification
+# ---------------------------------------------------------------------------
+
+def _build_generator_matrices():
+    """Build 4x4 integer matrices over Z_16 for each operation.
+    All operations are linear (no translation) so M*state = new_state.
+    Convention: state is a column vector, new_state = M @ state.
+    Equivalent to: state_row @ M^T = new_state_row.
+    """
+    matrices = []
+    inverses = []
+    for op in range(NUM_OPS):
+        M = np.eye(4, dtype=np.int64)
+        M_inv = np.eye(4, dtype=np.int64)
+        if op == 0:  # add_01: r0 <- r0 + r1
+            M[0, 1] = 1
+            M_inv[0, 1] = MOD - 1
+        elif op == 1:  # add_12: r1 <- r1 + r2
+            M[1, 2] = 1
+            M_inv[1, 2] = MOD - 1
+        elif op == 2:  # add_23: r2 <- r2 + r3
+            M[2, 3] = 1
+            M_inv[2, 3] = MOD - 1
+        elif op == 3:  # add_30: r3 <- r3 + r0
+            M[3, 0] = 1
+            M_inv[3, 0] = MOD - 1
+        elif op == 4:  # swap_02
+            M = np.array([[0, 0, 1, 0],
+                          [0, 1, 0, 0],
+                          [1, 0, 0, 0],
+                          [0, 0, 0, 1]], dtype=np.int64)
+            M_inv = M.copy()
+        elif op == 5:  # swap_13
+            M = np.array([[1, 0, 0, 0],
+                          [0, 0, 0, 1],
+                          [0, 0, 1, 0],
+                          [0, 1, 0, 0]], dtype=np.int64)
+            M_inv = M.copy()
+        elif op == 6:  # rotate_L: (r0,r1,r2,r3) <- (r1,r2,r3,r0)
+            M = np.array([[0, 1, 0, 0],
+                          [0, 0, 1, 0],
+                          [0, 0, 0, 1],
+                          [1, 0, 0, 0]], dtype=np.int64)
+            M_inv = np.array([[0, 0, 0, 1],
+                              [1, 0, 0, 0],
+                              [0, 1, 0, 0],
+                              [0, 0, 1, 0]], dtype=np.int64)
+        elif op == 7:  # neg_02: r0 <- -r0, r2 <- -r2
+            M = np.diag(np.array([MOD - 1, 1, MOD - 1, 1], dtype=np.int64))
+            M_inv = M.copy()
+        matrices.append(M % MOD)
+        inverses.append(M_inv % MOD)
+    return matrices, inverses
+
+
+# ---------------------------------------------------------------------------
+# Verification suite
+# ---------------------------------------------------------------------------
+
 def verify_invertibility():
-    """Verify all 8 operations are invertible over all 65536 states (vectorized)."""
+    """Verify all 8 operations are invertible over all 65536 states."""
     print("Verifying invertibility...")
     all_states = _build_all_states()
     for op in range(NUM_OPS):
@@ -355,7 +638,7 @@ def verify_invertibility():
 
 
 def verify_bijectivity():
-    """Verify all 8 operations are bijections (vectorized)."""
+    """Verify all 8 operations are bijections."""
     print("Verifying bijectivity...")
     all_states = _build_all_states()
     for op in range(NUM_OPS):
@@ -364,16 +647,14 @@ def verify_bijectivity():
         n_unique = len(np.unique(result_indices))
         if n_unique != STATE_SPACE_SIZE:
             raise AssertionError(
-                f"Bijectivity failed: op={op}, {n_unique} unique outputs != {STATE_SPACE_SIZE}"
+                f"Bijectivity failed: op={op}, {n_unique} unique != {STATE_SPACE_SIZE}"
             )
         print(f"  {OP_NAMES[op]}: PASS ({n_unique} unique outputs)")
     print("Bijectivity: ALL PASS")
 
 
 def verify_noncommutativity():
-    """Verify non-commutativity (vectorized): for each pair (i,j) with i<j,
-    check if U_i(U_j(r)) != U_j(U_i(r)) for any state.
-    """
+    """Verify non-commutativity for each pair (i,j) with i<j."""
     print("Verifying non-commutativity...")
     all_states = _build_all_states()
     noncommuting_pairs = 0
@@ -396,53 +677,70 @@ def verify_noncommutativity():
     return noncommuting_pairs, commuting_pairs
 
 
-def verify_group_generates_large():
-    """Verify the 8 operations generate a group much larger than 65,536.
+def verify_generator_matrices():
+    """Verify generator matrices match scalar operations on all states."""
+    print("Verifying generator matrices...")
+    all_states = _build_all_states()
+    generators, gen_inverses = _build_generator_matrices()
 
-    Instead of BFS on S_65536 (infeasible), we check algebraic properties:
-    1. add_01 alone generates Z_16 orbits on r0 (order 16 per r1 value)
-    2. rotate_L cycles all 4 registers
-    3. Combined with swaps and negation, these generate a group acting
-       transitively on all coordinates with independent Z_16 actions.
+    for op in range(NUM_OPS):
+        M = generators[op]
+        result_mat = (all_states @ M.T) % MOD
+        result_scalar = _apply_op_vectorized(all_states, op)
+        assert np.array_equal(result_mat, result_scalar), (
+            f"Generator matrix mismatch for {OP_NAMES[op]}"
+        )
 
-    We verify by checking that composing generators can reach all 65,536
-    states from any fixed starting state.
+        M_inv = gen_inverses[op]
+        result_inv_mat = (all_states @ M_inv.T) % MOD
+        result_inv_scalar = _apply_inverse_op_vectorized(all_states, op)
+        assert np.array_equal(result_inv_mat, result_inv_scalar), (
+            f"Inverse matrix mismatch for {OP_NAMES[op]}"
+        )
+
+    print("  All 8 generators + inverses match scalar ops: PASS")
+
+
+def verify_group_order():
+    """Verify group order >> 65,536 by BFS on 4x4 matrices mod 16.
+    Each operation is linear, so we do BFS in GL_4(Z_16).
     """
-    print("Verifying group generates a large subgroup...")
+    print("Verifying group order via matrix BFS...")
+    generators, gen_inverses = _build_generator_matrices()
+    all_gens = generators + gen_inverses
 
-    start = np.array([1, 2, 3, 4], dtype=np.int64)
-    reachable = set()
-    reachable.add(tuple(start))
-    frontier = [start]
-    max_bfs = STATE_SPACE_SIZE + 1000
+    identity = np.eye(4, dtype=np.int64)
+    seen = {identity.astype(np.int8).tobytes()}
+    queue = [identity]
+    cap = GROUP_ORDER_MIN + 1000
 
-    while frontier and len(reachable) < max_bfs:
-        next_frontier = []
-        for state in frontier:
-            for op in range(NUM_OPS):
-                result = apply_op(state, op)
-                key = tuple(result)
-                if key not in reachable:
-                    reachable.add(key)
-                    next_frontier.append(result)
-                inv_result = apply_inverse_op(state, op)
-                inv_key = tuple(inv_result)
-                if inv_key not in reachable:
-                    reachable.add(inv_key)
-                    next_frontier.append(inv_result)
-        frontier = next_frontier
-        if len(reachable) % 10000 < 100:
-            print(f"  ...{len(reachable)} states reached so far")
+    while queue and len(seen) < cap:
+        mat = queue.pop(0)
+        for gen in all_gens:
+            product = (mat @ gen) % MOD
+            key = product.astype(np.int8).tobytes()
+            if key not in seen:
+                seen.add(key)
+                queue.append(product)
+                if len(seen) >= cap:
+                    break
+        if len(seen) % 50000 == 0 and len(seen) > 0:
+            print(f"  ...{len(seen)} distinct matrices found")
 
-    print(f"  Reachable states from (1,2,3,4): {len(reachable)}")
-    if len(reachable) == STATE_SPACE_SIZE:
-        print("  Group orbit covers ALL Z_16^4 states (transitive action)")
-    elif len(reachable) > STATE_SPACE_SIZE // 2:
-        print(f"  Large orbit: {len(reachable)}/{STATE_SPACE_SIZE} "
-              f"({100*len(reachable)/STATE_SPACE_SIZE:.1f}%)")
+    group_order = len(seen)
+    capped = len(queue) > 0
+
+    if capped:
+        print(f"  Group order >= {group_order} (BFS capped)")
     else:
-        print(f"  WARNING: Small orbit {len(reachable)}/{STATE_SPACE_SIZE}")
-    return len(reachable)
+        print(f"  Exact group order: {group_order}")
+
+    assert group_order >= GROUP_ORDER_MIN, (
+        f"Group order {group_order} < {GROUP_ORDER_MIN} (required >> {STATE_SPACE_SIZE})"
+    )
+    print(f"  PASS: group order {'>' if capped else '='}"
+          f" {group_order} >> {STATE_SPACE_SIZE}")
+    return group_order, capped
 
 
 def verify_partitions():
@@ -463,9 +761,11 @@ def verify_partitions():
     n_exc = len(p["excluded_bigrams"])
     print(f"  Included bigrams: {n_inc}, Excluded bigrams: {n_exc}")
     assert n_inc + n_exc == NUM_OPS * NUM_OPS, "Bigram partition incomplete"
+    assert n_exc == NUM_EXCLUDED_BIGRAMS
 
     n_tri = len(p["withheld_trigrams"])
     print(f"  Withheld trigrams: {n_tri}")
+    assert n_tri == NUM_WITHHELD_TRIGRAMS
 
     p2 = init_partitions()
     assert np.array_equal(p["train_state_indices"], p2["train_state_indices"])
@@ -485,30 +785,56 @@ def verify_data_generation(partitions: dict, n_samples: int = 1000):
     """Verify training and eval data generation produces correct results."""
     print(f"Verifying data generation ({n_samples} samples each)...")
     rng = np.random.RandomState(123)
+    train_states_set = set(partitions["train_state_indices"])
+    eval_states_set = set(partitions["eval_state_indices"])
+    included_set = partitions["included_bigram_set"]
+    withheld_set = partitions["withheld_trigram_set"]
 
     for i in range(n_samples):
-        init_state, ops, final_state = generate_training_example(
-            rng, partitions["train_state_indices"],
-            partitions["included_bigrams"]
-        )
+        init_state, ops, final_state = generate_training_example(rng, partitions)
         expected = execute_program(init_state, ops)
         assert np.array_equal(final_state, expected), f"Train sample {i} mismatch"
-        assert state_to_index(init_state) in set(partitions["train_state_indices"])
+        assert state_to_index(init_state) in train_states_set
         assert TRAIN_LENGTHS[0] <= len(ops) <= TRAIN_LENGTHS[1]
         for j in range(1, len(ops)):
-            bigram = (int(ops[j-1]), int(ops[j]))
-            assert bigram in _INCLUDED_BIGRAM_SET, f"Excluded bigram in train: {bigram}"
-
-    for i in range(n_samples):
-        init_state, ops, final_state = generate_eval_example(
-            rng, partitions["eval_state_indices"]
+            bigram = (int(ops[j - 1]), int(ops[j]))
+            assert bigram in included_set, f"Excluded bigram in train: {bigram}"
+        assert not _contains_withheld_trigram(ops, withheld_set), (
+            f"Withheld trigram in train sample {i}"
         )
-        expected = execute_program(init_state, ops)
-        assert np.array_equal(final_state, expected), f"Eval sample {i} mismatch"
-        assert state_to_index(init_state) in set(partitions["eval_state_indices"])
-        assert EVAL_LENGTHS[0] <= len(ops) <= EVAL_LENGTHS[1]
+
+    for stratum_name, gen_fn in [
+        ("length_extrapolation", generate_length_extrapolation),
+        ("excluded_bigram", generate_excluded_bigram),
+        ("withheld_trigram", generate_withheld_trigram),
+        ("held_out_state", generate_held_out_state),
+        ("full_intersection", generate_full_intersection),
+    ]:
+        for i in range(n_samples // 5):
+            example = gen_fn(rng, partitions)
+            expected = execute_program(example["init_state"], example["ops"])
+            assert np.array_equal(example["final_state"], expected), (
+                f"{stratum_name} sample {i} mismatch"
+            )
+            assert example["stratum"] == stratum_name
 
     print("Data generation: ALL PASS")
+
+
+def verify_trigram_exclusion(partitions: dict, n_samples: int = 10000):
+    """Verify no withheld trigrams appear in training data (high-volume)."""
+    print(f"Verifying trigram exclusion ({n_samples} training samples)...")
+    rng = np.random.RandomState(456)
+    withheld_set = partitions["withheld_trigram_set"]
+    violations = 0
+
+    for _ in range(n_samples):
+        _, ops, _ = generate_training_example(rng, partitions)
+        if _contains_withheld_trigram(ops, withheld_set):
+            violations += 1
+
+    assert violations == 0, f"Trigram leakage: {violations}/{n_samples} training samples"
+    print(f"  Zero withheld trigrams in {n_samples} training samples: PASS")
 
 
 def run_full_verification():
@@ -524,10 +850,16 @@ def run_full_verification():
     print()
     nc, commuting = verify_noncommutativity()
     print()
+    verify_generator_matrices()
+    print()
+    group_order, capped = verify_group_order()
+    print()
 
     partitions, hashes = verify_partitions()
     print()
     verify_data_generation(partitions)
+    print()
+    verify_trigram_exclusion(partitions)
     print()
 
     print("=" * 60)
@@ -535,6 +867,7 @@ def run_full_verification():
     print(f"Non-commuting pairs: {nc}/28")
     if commuting:
         print(f"Commuting pairs: {commuting}")
+    print(f"Group order: {'>' if capped else '='} {group_order}")
     print(f"Train states: {len(partitions['train_state_indices'])}")
     print(f"Eval states: {len(partitions['eval_state_indices'])}")
     print(f"Excluded bigrams: {len(partitions['excluded_bigrams'])}")
@@ -554,5 +887,5 @@ if __name__ == "__main__":
     for b in partitions["excluded_bigrams"]:
         print(f"  ({OP_NAMES[b[0]]}, {OP_NAMES[b[1]]})")
 
-    print("\nRunning transitivity check (reachability from origin)...")
-    n_reachable = verify_group_generates_large()
+    print("\nWriting precommit...")
+    create_precommit(partitions)

@@ -2,9 +2,9 @@
 
 Protocol: CSO_ADMISSION_V1 (locked Jul 26 2026).
 
-Donor: ~19.5M recurrent-state Transformer with designated latent state slot.
-Host T: ~1.9M Transformer (same block family, smaller).
-Host G: ~1.85M GRU.
+Donor: ~19M recurrent-state Transformer with designated latent state slot.
+Host T: ~0.9M Transformer (same block family, smaller). <=10% donor inference compute.
+Host G: ~1.3M GRU.
 
 The donor processes one instruction at a time through a recurrent state.
 The state slot is an architectural causal boundary -- true register values
@@ -21,23 +21,20 @@ import torch.nn.functional as F
 
 from cti_causal_register_transducer import MOD, NUM_OPS, NUM_REGS
 
-NUM_INPUT_TOKENS = MOD + NUM_OPS  # 16 register values + 8 operation tokens
+NUM_INPUT_TOKENS = MOD + NUM_OPS
 REG_OFFSET = 0
-OP_OFFSET = MOD  # operations start at index 16
+OP_OFFSET = MOD
+
+MAX_ORGAN_D_STATE = 32
+MAX_ORGAN_PARAMS = 32_000
+MAX_ORGAN_BYTES = 65_536
 
 
 class RecurrentTransformerDonor(nn.Module):
-    """~19.5M recurrent-state Transformer donor.
+    """~19M recurrent-state Transformer donor.
 
     Processes a sequence of instructions one at a time with an explicit
-    recurrent state vector that carries across steps. The state slot is
-    a learnable hidden vector (not supervised with true register values).
-
-    Architecture:
-    - Input: 4 initial register values + L operation tokens (one at a time)
-    - Recurrent state: d_state dimensional vector, initialized from register embedding
-    - At each step: state + instruction embedding -> Transformer layers -> updated state
-    - Output: 4 x 16-way classification heads from final state
+    recurrent state vector. LayerNorm stabilizes the residual recurrence.
     """
 
     def __init__(
@@ -80,6 +77,8 @@ class RecurrentTransformerDonor(nn.Module):
             nn.Linear(d_model, d_state),
         )
 
+        self.state_norm = nn.LayerNorm(d_state)
+
         self.output_heads = nn.ModuleList([
             nn.Sequential(
                 nn.Linear(d_state, d_model),
@@ -94,9 +93,9 @@ class RecurrentTransformerDonor(nn.Module):
         init_regs: (B, 4) long tensor of register values in [0, 15].
         Returns: (B, d_state) state vector.
         """
-        reg_emb = self.reg_embed(init_regs)  # (B, 4, d_model)
-        reg_flat = reg_emb.reshape(reg_emb.size(0), -1)  # (B, 4*d_model)
-        return self.state_init(reg_flat)  # (B, d_state)
+        reg_emb = self.reg_embed(init_regs)
+        reg_flat = reg_emb.reshape(reg_emb.size(0), -1)
+        return self.state_init(reg_flat)
 
     def step(self, state: torch.Tensor, op: torch.Tensor) -> torch.Tensor:
         """Process one instruction step.
@@ -104,14 +103,14 @@ class RecurrentTransformerDonor(nn.Module):
         op: (B,) long tensor of operation indices in [0, 7].
         Returns: (B, d_state) updated state.
         """
-        state_input = self.state_to_input(state)  # (B, d_model)
-        op_input = self.op_embed(op)  # (B, d_model)
+        state_input = self.state_to_input(state)
+        op_input = self.op_embed(op)
 
-        x = torch.stack([state_input, op_input], dim=1)  # (B, 2, d_model)
-        x = self.transformer(x)  # (B, 2, d_model)
+        x = torch.stack([state_input, op_input], dim=1)
+        x = self.transformer(x)
 
-        new_state = self.state_update(x[:, 0, :])  # (B, d_model) -> (B, d_state)
-        return state + new_state  # residual connection on state
+        new_state = self.state_update(x[:, 0, :])
+        return self.state_norm(state + new_state)
 
     def forward(
         self,
@@ -124,15 +123,13 @@ class RecurrentTransformerDonor(nn.Module):
         ops: (B, L) operation sequence.
         ops_mask: (B, L) bool mask (True = valid step).
         Returns: (logits, final_state)
-            logits: tuple of 4 tensors, each (B, 16)
-            final_state: (B, d_state)
         """
         state = self.init_state(init_regs)
         B, L = ops.shape
 
         for t in range(L):
             if ops_mask is not None:
-                mask_t = ops_mask[:, t]  # (B,)
+                mask_t = ops_mask[:, t]
                 step_state = self.step(state, ops[:, t])
                 state = torch.where(mask_t.unsqueeze(1), step_state, state)
             else:
@@ -154,20 +151,32 @@ class RecurrentTransformerDonor(nn.Module):
         return state
 
 
-class TransformerHost(nn.Module):
-    """~1.9M Transformer host (same block family, smaller).
+def _make_frozen_socket(d_in: int, d_out: int, seed: int = 777) -> nn.Linear:
+    """Create a parameter-free random projection socket.
+    Fixed initialization, frozen (no gradients). Task-independent.
+    """
+    socket = nn.Linear(d_in, d_out, bias=False)
+    gen = torch.Generator()
+    gen.manual_seed(seed)
+    nn.init.orthogonal_(socket.weight, gain=1.0)
+    socket.weight.requires_grad_(False)
+    return socket
 
-    Architecture matches donor but with fewer layers and smaller dimensions.
-    Has a socket for receiving an external organ state.
+
+class TransformerHost(nn.Module):
+    """~0.9M Transformer host. <=10% donor inference compute.
+
+    Socket is a frozen random projection (task-independent).
+    Consumes organ.read() messages, not raw organ state.
     """
 
     def __init__(
         self,
-        d_model: int = 192,
-        n_layers: int = 5,
+        d_model: int = 128,
+        n_layers: int = 4,
         n_heads: int = 4,
-        d_state: int = 96,
-        d_organ: int = 32,
+        d_state: int = 64,
+        d_organ: int = MAX_ORGAN_D_STATE,
         dropout: float = 0.0,
     ):
         super().__init__()
@@ -185,8 +194,9 @@ class TransformerHost(nn.Module):
         )
 
         self.state_to_input = nn.Linear(d_state, d_model)
+        self.state_norm = nn.LayerNorm(d_state)
 
-        self.organ_socket = nn.Linear(d_organ, d_model)
+        self.organ_socket = _make_frozen_socket(d_organ, d_model)
 
         layer = nn.TransformerEncoderLayer(
             d_model=d_model,
@@ -223,20 +233,20 @@ class TransformerHost(nn.Module):
         self,
         state: torch.Tensor,
         op: torch.Tensor,
-        organ_state: Optional[torch.Tensor] = None,
+        organ_msg: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
         state_input = self.state_to_input(state)
         op_input = self.op_embed(op)
 
-        if organ_state is not None:
-            organ_input = self.organ_socket(organ_state)
-            x = torch.stack([state_input, op_input, organ_input], dim=1)  # (B, 3, d)
+        if organ_msg is not None:
+            organ_input = self.organ_socket(organ_msg)
+            x = torch.stack([state_input, op_input, organ_input], dim=1)
         else:
-            x = torch.stack([state_input, op_input], dim=1)  # (B, 2, d)
+            x = torch.stack([state_input, op_input], dim=1)
 
         x = self.transformer(x)
         new_state = self.state_update(x[:, 0, :])
-        return state + new_state
+        return self.state_norm(state + new_state)
 
     def forward(
         self,
@@ -253,25 +263,34 @@ class TransformerHost(nn.Module):
             organ_state = organ.init_state(init_regs)
 
         for t in range(L):
-            if organ is not None:
-                organ_state = organ.step(organ_state, ops[:, t])
+            active = ops_mask[:, t] if ops_mask is not None else None
 
-            if ops_mask is not None:
-                mask_t = ops_mask[:, t]
-                step_state = self.step(state, ops[:, t], organ_state)
-                state = torch.where(mask_t.unsqueeze(1), step_state, state)
+            organ_msg = None
+            if organ is not None:
+                new_organ = organ.step(organ_state, ops[:, t])
+                if active is not None:
+                    organ_state = torch.where(
+                        active.unsqueeze(1), new_organ, organ_state
+                    )
+                else:
+                    organ_state = new_organ
+                organ_msg = organ.read(organ_state)
+
+            step_state = self.step(state, ops[:, t], organ_msg)
+            if active is not None:
+                state = torch.where(active.unsqueeze(1), step_state, state)
             else:
-                state = self.step(state, ops[:, t], organ_state)
+                state = step_state
 
         logits = tuple(head(state) for head in self.output_heads)
         return logits, state
 
 
 class GRUHost(nn.Module):
-    """~1.85M GRU host.
+    """~1.3M GRU host.
 
-    Fundamentally different architecture from the Transformer donor/host.
-    Has the same socket contract for receiving organ state.
+    Socket is a frozen random projection (task-independent).
+    Consumes organ.read() messages, not raw organ state.
     """
 
     def __init__(
@@ -279,7 +298,7 @@ class GRUHost(nn.Module):
         d_model: int = 256,
         n_layers: int = 3,
         d_state: int = 192,
-        d_organ: int = 32,
+        d_organ: int = MAX_ORGAN_D_STATE,
         dropout: float = 0.0,
     ):
         super().__init__()
@@ -297,7 +316,7 @@ class GRUHost(nn.Module):
             nn.Linear(d_model, n_layers * d_state),
         )
 
-        self.organ_proj = nn.Linear(d_organ, d_model)
+        self.organ_socket = _make_frozen_socket(d_organ, d_model)
 
         self.gru = nn.GRU(
             input_size=d_model,
@@ -321,7 +340,7 @@ class GRUHost(nn.Module):
         reg_flat = reg_emb.reshape(reg_emb.size(0), -1)
         h = self.state_init(reg_flat)
         h = h.reshape(-1, self.n_layers, self.d_state)
-        h = h.permute(1, 0, 2).contiguous()  # (n_layers, B, d_state)
+        h = h.permute(1, 0, 2).contiguous()
         return h
 
     def forward(
@@ -334,23 +353,31 @@ class GRUHost(nn.Module):
         B, L = ops.shape
         hidden = self.init_hidden(init_regs)
 
-        op_emb = self.op_embed(ops)  # (B, L, d_model)
+        op_emb = self.op_embed(ops)
 
         if organ is not None:
             organ_state = organ.init_state(init_regs)
             organ_inputs = []
             for t in range(L):
-                organ_state = organ.step(organ_state, ops[:, t])
-                organ_inputs.append(self.organ_proj(organ_state))
-            organ_seq = torch.stack(organ_inputs, dim=1)  # (B, L, d_model)
+                new_organ = organ.step(organ_state, ops[:, t])
+                if ops_mask is not None:
+                    active = ops_mask[:, t]
+                    organ_state = torch.where(
+                        active.unsqueeze(1), new_organ, organ_state
+                    )
+                else:
+                    organ_state = new_organ
+                organ_msg = organ.read(organ_state)
+                organ_inputs.append(self.organ_socket(organ_msg))
+            organ_seq = torch.stack(organ_inputs, dim=1)
             gru_input = op_emb + organ_seq
         else:
             gru_input = op_emb
 
-        output, hidden = self.gru(gru_input, hidden)  # output: (B, L, d_state)
+        output, hidden = self.gru(gru_input, hidden)
 
         if ops_mask is not None:
-            lengths = ops_mask.sum(dim=1).long() - 1  # last valid step
+            lengths = ops_mask.long().sum(dim=1) - 1
             lengths = lengths.clamp(min=0)
             final = output[torch.arange(B, device=output.device), lengths]
         else:
@@ -363,7 +390,7 @@ class GRUHost(nn.Module):
 class CausalOrgan(nn.Module):
     """Causal Skill Organ: compact executable state-transition module.
 
-    Maximum 32-dim state, 32K quantized parameters.
+    Maximum 32-dim state, 32K quantized parameters, 64 KiB.
     Frozen after extraction, identical bytes for both hosts.
 
     z_{t+1} = F(z_t, U_t)
@@ -372,6 +399,9 @@ class CausalOrgan(nn.Module):
 
     def __init__(self, d_state: int = 32, d_hidden: int = 48):
         super().__init__()
+        assert d_state <= MAX_ORGAN_D_STATE, (
+            f"Organ d_state={d_state} > max {MAX_ORGAN_D_STATE}"
+        )
         self.d_state = d_state
 
         self.reg_init = nn.Sequential(
@@ -390,20 +420,26 @@ class CausalOrgan(nn.Module):
             nn.Linear(d_hidden, d_state),
         )
 
+        self.state_norm = nn.LayerNorm(d_state)
         self.readout = nn.Linear(d_state, d_state)
+
+        n_params = sum(p.numel() for p in self.parameters())
+        assert n_params <= MAX_ORGAN_PARAMS, (
+            f"Organ has {n_params} params > max {MAX_ORGAN_PARAMS}"
+        )
 
     def init_state(self, init_regs: torch.Tensor) -> torch.Tensor:
         """Initialize organ state from register values (one-hot encoded)."""
         B = init_regs.size(0)
-        one_hot = F.one_hot(init_regs.long(), MOD).float()  # (B, 4, 16)
-        flat = one_hot.reshape(B, -1)  # (B, 64)
-        return self.reg_init(flat)  # (B, d_state)
+        one_hot = F.one_hot(init_regs.long(), MOD).float()
+        flat = one_hot.reshape(B, -1)
+        return self.reg_init(flat)
 
     def step(self, state: torch.Tensor, op: torch.Tensor) -> torch.Tensor:
         """One transition step. Returns updated state."""
-        op_emb = self.op_embed(op)  # (B, d_hidden)
+        op_emb = self.op_embed(op)
         x = torch.cat([state, op_emb], dim=1)
-        return state + self.transition(x)  # residual
+        return self.state_norm(state + self.transition(x))
 
     def read(self, state: torch.Tensor) -> torch.Tensor:
         """Readout message from current state."""
@@ -421,36 +457,96 @@ class CausalOrgan(nn.Module):
         return state
 
 
+# ---------------------------------------------------------------------------
+# FLOP estimation
+# ---------------------------------------------------------------------------
+
+def estimate_step_macs(model: nn.Module) -> int:
+    """Rough per-step MAC estimate for compute budget verification."""
+    if isinstance(model, RecurrentTransformerDonor):
+        d = model.d_model
+        n = model.transformer.num_layers
+        seq = 2
+        attn = 4 * d * d * seq + seq * seq * d
+        ffn = 2 * d * 4 * d
+        per_layer = attn + ffn
+        return per_layer * n
+    elif isinstance(model, TransformerHost):
+        d = model.d_model
+        n = model.transformer.num_layers
+        seq = 3
+        attn = 4 * d * d * seq + seq * seq * d
+        ffn = 2 * d * 4 * d
+        per_layer = attn + ffn
+        return per_layer * n
+    elif isinstance(model, GRUHost):
+        d = model.d_model
+        h = model.d_state
+        n = model.n_layers
+        return n * 3 * (d * h + h * h)
+    return 0
+
+
+def verify_compute_budget(donor, host_t, threshold: float = 0.10):
+    """Assert host + organ inference compute <= threshold * donor."""
+    donor_macs = estimate_step_macs(donor)
+    host_macs = estimate_step_macs(host_t)
+    ratio = host_macs / donor_macs if donor_macs > 0 else 0
+    print(f"  Donor per-step MACs: ~{donor_macs:,}")
+    print(f"  Host T per-step MACs: ~{host_macs:,}")
+    print(f"  Ratio: {ratio:.1%} (limit: {threshold:.0%})")
+    assert ratio <= threshold, (
+        f"Host T compute ratio {ratio:.1%} > {threshold:.0%} limit"
+    )
+    return ratio
+
+
+# ---------------------------------------------------------------------------
+# Factory functions
+# ---------------------------------------------------------------------------
+
 def count_parameters(model: nn.Module) -> int:
     return sum(p.numel() for p in model.parameters())
+
+
+def count_trainable_parameters(model: nn.Module) -> int:
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
 def create_donor(**kwargs) -> RecurrentTransformerDonor:
     model = RecurrentTransformerDonor(**kwargs)
     n = count_parameters(model)
-    print(f"Donor: {n:,} parameters ({n/1e6:.1f}M)")
+    n_train = count_trainable_parameters(model)
+    print(f"Donor: {n:,} parameters ({n/1e6:.1f}M), {n_train:,} trainable")
     return model
 
 
 def create_host_transformer(**kwargs) -> TransformerHost:
     model = TransformerHost(**kwargs)
     n = count_parameters(model)
-    print(f"Host T: {n:,} parameters ({n/1e6:.1f}M)")
+    n_train = count_trainable_parameters(model)
+    print(f"Host T: {n:,} parameters ({n/1e6:.1f}M), "
+          f"{n_train:,} trainable (socket frozen)")
     return model
 
 
 def create_host_gru(**kwargs) -> GRUHost:
     model = GRUHost(**kwargs)
     n = count_parameters(model)
-    print(f"Host G: {n:,} parameters ({n/1e6:.1f}M)")
+    n_train = count_trainable_parameters(model)
+    print(f"Host G: {n:,} parameters ({n/1e6:.1f}M), "
+          f"{n_train:,} trainable (socket frozen)")
     return model
 
 
 def create_organ(**kwargs) -> CausalOrgan:
     model = CausalOrgan(**kwargs)
     n = count_parameters(model)
-    size_kb = n * 4 / 1024  # float32
+    size_kb = n * 4 / 1024
     print(f"Organ: {n:,} parameters ({size_kb:.1f} KiB float32)")
+    assert size_kb * 1024 <= MAX_ORGAN_BYTES, (
+        f"Organ {size_kb:.1f} KiB > {MAX_ORGAN_BYTES/1024:.0f} KiB limit"
+    )
     return model
 
 
@@ -469,6 +565,10 @@ if __name__ == "__main__":
     organ = create_organ()
     print()
 
+    print("--- Compute budget check ---")
+    verify_compute_budget(donor, host_t)
+    print()
+
     print("--- Smoke test (batch=4, L=8) ---")
     B, L = 4, 8
     init_regs = torch.randint(0, MOD, (B, NUM_REGS))
@@ -477,6 +577,15 @@ if __name__ == "__main__":
     print("Donor forward...")
     logits_d, state_d = donor(init_regs, ops)
     print(f"  Logits: {[l.shape for l in logits_d]}, State: {state_d.shape}")
+    assert all(torch.isfinite(l).all() for l in logits_d), "Donor logits not finite"
+    assert torch.isfinite(state_d).all(), "Donor state not finite"
+
+    print("Donor forward (L=32 stability check)...")
+    ops_long = torch.randint(0, NUM_OPS, (B, 32))
+    logits_long, state_long = donor(init_regs, ops_long)
+    assert torch.isfinite(state_long).all(), "Donor state not finite at L=32"
+    state_rms = state_long.float().pow(2).mean().sqrt().item()
+    print(f"  State RMS at L=32: {state_rms:.2f}")
 
     print("Host T forward (no organ)...")
     logits_t, state_t = host_t(init_regs, ops)
