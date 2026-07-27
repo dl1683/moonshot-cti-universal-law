@@ -239,7 +239,7 @@ def _get_precommit_hash() -> str:
         return json.load(f)["integrity_sha256"]
 
 
-def train_donor(max_steps=MAX_STEPS, smoke=False):
+def train_donor(smoke=False):
     """Train the donor model."""
     ckpt_dir = SMOKE_CHECKPOINT_DIR if smoke else CHECKPOINT_DIR
 
@@ -251,6 +251,7 @@ def train_donor(max_steps=MAX_STEPS, smoke=False):
         print("DONOR CAPACITY TRAINING: SMOKE TEST")
         print("=" * 60)
     else:
+        max_steps = MAX_STEPS
         eval_every = EVAL_EVERY
         checkpoint_every = CHECKPOINT_EVERY
         print("=" * 60)

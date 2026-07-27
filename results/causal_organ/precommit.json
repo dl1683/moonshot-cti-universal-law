@@ -429,9 +429,9 @@
       7
     ]
   ],
-  "generator_source_sha256": "9b6c27e58f096dffdb499ad5cddbc241cb5b79146b0094751dd5084549d29223",
+  "generator_source_sha256": "a229042d25e3cbe3e911e8c6196d458d9fab57d37ec8762d61f57687f3f1e71f",
   "models_source_sha256": "0b252b18bc5fb87b472f927fef61826bbb199c17dce93efe643490ee509ef8c7",
-  "trainer_source_sha256": "494e836fe918653e93017840f06cabcaa31f6894a0ff5b73bef560b79976c4bb",
+  "trainer_source_sha256": "2189d7fc0fa435d3c8c12edb9fdb5ce9a033afd8de96fba96f41f4650391918b",
   "encoding": {
     "state_dtype": "uint32_be",
     "bigram_dtype": "uint8_be"
@@ -439,6 +439,14 @@
   "socket_seed": 777,
   "socket_weight_sha256": "e57d7d7de57bb4540ea2adf73f47126dba1ed5b8e8771b9ca5ae4a2dbf611ddd",
   "socket_weight_gru_sha256": "eb9669024b85321ed77de2a6dd4b74e9f90723353644d7724bfcc0d2a34ec15d",
+  "runtime_env": {
+    "python": "3.13.7",
+    "numpy": "2.2.6",
+    "torch": "2.11.0+cu128",
+    "cuda_available": true,
+    "cuda_version": "12.8",
+    "cudnn_version": "91900"
+  },
   "hashes": {
     "train_states_sha256": "d28dc8adda28fab202f358b6c03d05568891eeec0eaeab1800c795b6747f747c",
     "eval_states_sha256": "14e05cbd9b6a7e23ad529011137f5517e5dc071ad390664e7082fdb72786e3cb",
@@ -484,5 +492,5 @@
       "serialized_bytes": 61110
     }
   },
-  "integrity_sha256": "8b9ad9447beda5ba3019aed2d0cd2c19394994b459d06723ad006305a1f47784"
+  "integrity_sha256": "1941154201ea6cfb0d61ace9e1592de78d8f4304cb4845708586702c95a263ac"
 }

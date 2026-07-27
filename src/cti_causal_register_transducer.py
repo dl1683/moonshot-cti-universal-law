@@ -283,6 +283,7 @@ def create_precommit(partitions: dict, model_config: dict) -> dict:
         "socket_seed": SOCKET_SEED,
         "socket_weight_sha256": _socket_hash(SOCKET_SEED, 32, 128),
         "socket_weight_gru_sha256": _socket_hash(SOCKET_SEED, 32, 256),
+        "runtime_env": _runtime_env(),
         "hashes": hashes,
         "model_config": model_config,
     }
@@ -308,6 +309,7 @@ _PRECOMMIT_REQUIRED_KEYS = {
     "generator_source_sha256", "models_source_sha256", "trainer_source_sha256",
     "encoding", "socket_seed",
     "socket_weight_sha256", "socket_weight_gru_sha256",
+    "runtime_env",
     "hashes", "model_config", "integrity_sha256",
 }
 
@@ -449,6 +451,21 @@ def verify_precommit(partitions: dict) -> bool:
             f"expected={expected_encoding}"
         )
 
+    live_env = _runtime_env()
+    frozen_env = precommit["runtime_env"]
+    for env_key in ("python", "numpy", "torch"):
+        if frozen_env.get(env_key) != live_env.get(env_key):
+            raise ValueError(
+                f"runtime_env.{env_key} mismatch: "
+                f"frozen={frozen_env.get(env_key)!r}, live={live_env.get(env_key)!r}"
+            )
+    if frozen_env.get("cuda_available") != live_env.get("cuda_available"):
+        raise ValueError(
+            f"runtime_env.cuda_available mismatch: "
+            f"frozen={frozen_env.get('cuda_available')}, "
+            f"live={live_env.get('cuda_available')}"
+        )
+
     if precommit["socket_seed"] != SOCKET_SEED:
         raise ValueError(
             f"socket_seed mismatch: frozen={precommit['socket_seed']}, "
@@ -490,6 +507,11 @@ def verify_precommit(partitions: dict) -> bool:
         for field in live_mc[model_key]:
             frozen_val = frozen_mc[model_key].get(field)
             live_val = live_mc[model_key][field]
+            if isinstance(frozen_val, bool) or isinstance(live_val, bool):
+                raise ValueError(
+                    f"model_config.{model_key}.{field}: "
+                    f"boolean values not allowed (frozen={frozen_val!r}, live={live_val!r})"
+                )
             if isinstance(live_val, float):
                 if frozen_val is None or not isinstance(frozen_val, (int, float)):
                     raise ValueError(
@@ -1206,6 +1228,22 @@ def run_full_verification():
     print("=" * 60)
 
     return partitions, hashes
+
+
+def _runtime_env() -> dict:
+    """Capture runtime environment for precommit reproducibility."""
+    import platform
+    import torch
+    env = {
+        "python": platform.python_version(),
+        "numpy": np.__version__,
+        "torch": torch.__version__,
+        "cuda_available": torch.cuda.is_available(),
+    }
+    if torch.cuda.is_available():
+        env["cuda_version"] = torch.version.cuda or ""
+        env["cudnn_version"] = str(torch.backends.cudnn.version()) if torch.backends.cudnn.is_available() else ""
+    return env
 
 
 def _models_source_hash() -> str:
