@@ -95,7 +95,7 @@ local_checkpoints:
 api_systems:
   gpt56_sol:
     provider: "openai"
-    model_id: null  # Pin exact snapshot at P0
+    model_id: "gpt-5.6-sol"
     role: "frontier"
     pricing_per_m_tokens:
       input: 5.0
@@ -105,7 +105,7 @@ api_systems:
 
   gpt56_luna:
     provider: "openai"
-    model_id: null
+    model_id: "gpt-5.6-luna"
     role: "value_control"
     pricing_per_m_tokens:
       input: 1.0
@@ -115,7 +115,7 @@ api_systems:
 
   claude_fable5:
     provider: "anthropic"
-    model_id: null
+    model_id: "claude-fable-5"
     role: "frontier"
     pricing_per_m_tokens:
       input: 10.0
@@ -125,7 +125,7 @@ api_systems:
 
   claude_sonnet5:
     provider: "anthropic"
-    model_id: null
+    model_id: "claude-sonnet-5"
     role: "value_control"
     pricing_per_m_tokens:
       input: 3.0
@@ -135,7 +135,7 @@ api_systems:
 
   gemini_31_pro:
     provider: "google"
-    model_id: null
+    model_id: "gemini-3.1-pro-preview"
     role: "frontier"
     mutable_preview: true
     drift_audit_window_days: 7
@@ -148,7 +148,7 @@ api_systems:
 
   gemini_31_flash_lite:
     provider: "google"
-    model_id: null
+    model_id: "gemini-3.1-flash-lite"
     role: "value_control"
     mutable_preview: false
     pricing_per_m_tokens:
