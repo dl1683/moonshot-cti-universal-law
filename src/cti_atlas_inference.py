@@ -20,7 +20,7 @@ def load_systems_config():
         return yaml.safe_load(f)
 
 
-def load_model(system_id, dtype=torch.float16, device="cuda"):
+def load_model(system_id, device="cuda"):
     cfg = load_systems_config()
     local = cfg.get("local_checkpoints", {})
     if system_id not in local:
@@ -30,14 +30,30 @@ def load_model(system_id, dtype=torch.float16, device="cuda"):
     spec = local[system_id]
     hf_id = spec["hf_id"]
     revision = spec.get("hf_revision")
+    params_b = spec.get("params_b", 0)
 
     tok = AutoTokenizer.from_pretrained(
         hf_id, revision=revision, trust_remote_code=True,
     )
-    model = AutoModelForCausalLM.from_pretrained(
-        hf_id, revision=revision, dtype=dtype,
-        device_map=device, trust_remote_code=True,
-    )
+
+    if params_b > 7:
+        from transformers import BitsAndBytesConfig
+        bnb_cfg = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_compute_dtype=torch.float16,
+            bnb_4bit_quant_type="nf4",
+        )
+        model = AutoModelForCausalLM.from_pretrained(
+            hf_id, revision=revision,
+            quantization_config=bnb_cfg,
+            device_map=device, trust_remote_code=True,
+        )
+    else:
+        model = AutoModelForCausalLM.from_pretrained(
+            hf_id, revision=revision, dtype=torch.float16,
+            device_map=device, trust_remote_code=True,
+        )
+
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
 
