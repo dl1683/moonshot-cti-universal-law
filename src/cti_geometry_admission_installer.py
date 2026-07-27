@@ -135,17 +135,26 @@ def calibrate_coefficient(
     g_task = torch.sqrt(sum(
         (g ** 2).sum() for g in task_grads if g is not None
     )).item()
-    if not np.isfinite(g_task) or g_task == 0:
-        return 1.0
+    if not np.isfinite(g_task) or g_task <= 0:
+        raise RuntimeError(
+            f"Calibration fail-closed: invalid task gradient norm={g_task} for arm={arm}"
+        )
 
     aux_norms = []
+    n_banks = len(anchor_banks)
     for bank_idx, bank in enumerate(anchor_banks):
         model.zero_grad()
         aux_loss = compute_auxiliary_loss(
             model, bank, arm, teacher_artifacts, bank_idx, device,
         )
-        if aux_loss is None or aux_loss.item() == 0:
-            continue
+        if aux_loss is None:
+            raise RuntimeError(
+                f"Calibration fail-closed: missing auxiliary loss for arm={arm}, bank={bank_idx}"
+            )
+        if aux_loss.item() == 0:
+            raise RuntimeError(
+                f"Calibration fail-closed: zero auxiliary loss for arm={arm}, bank={bank_idx}"
+            )
 
         aux_grads = torch.autograd.grad(
             aux_loss, trunk_params, retain_graph=False, allow_unused=True,
@@ -153,8 +162,16 @@ def calibrate_coefficient(
         g_aux = torch.sqrt(sum(
             (g ** 2).sum() for g in aux_grads if g is not None
         )).item()
-        if g_aux > 0 and np.isfinite(g_aux):
-            aux_norms.append(g_aux)
+        if not np.isfinite(g_aux) or g_aux <= 0:
+            raise RuntimeError(
+                f"Calibration fail-closed: invalid aux gradient norm={g_aux} for arm={arm}, bank={bank_idx}"
+            )
+        aux_norms.append(g_aux)
+
+    if len(aux_norms) != n_banks:
+        raise RuntimeError(
+            f"Calibration fail-closed: only {len(aux_norms)}/{n_banks} banks produced valid gradients"
+        )
 
     if not aux_norms:
         raise RuntimeError(
