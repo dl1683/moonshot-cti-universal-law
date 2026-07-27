@@ -35,6 +35,9 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 RESULTS_DIR = Path(__file__).resolve().parent.parent / "results" / "causal_organ"
 CHECKPOINT_DIR = RESULTS_DIR / "checkpoints"
+SMOKE_CHECKPOINT_DIR = RESULTS_DIR / "checkpoints_smoke"
+
+TORCH_SEED = 2026
 
 MAX_STEPS = 50_000
 BATCH_SIZE = 128
@@ -155,37 +158,61 @@ def check_gates(eval_results):
     return passed
 
 
-def save_checkpoint(model, optimizer, step, eval_results, path):
-    """Save training checkpoint."""
+def save_checkpoint(model, optimizer, step, eval_results, path,
+                    rng_state=None, precommit_hash=None):
+    """Save training checkpoint with RNG state for reproducibility."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    torch.save({
+    ckpt = {
         "step": step,
         "model_state_dict": model.state_dict(),
         "optimizer_state_dict": optimizer.state_dict(),
         "eval_results": eval_results,
-    }, path)
+        "torch_rng_state": torch.random.get_rng_state(),
+    }
+    if DEVICE.type == "cuda":
+        ckpt["cuda_rng_state"] = torch.cuda.get_rng_state()
+    if rng_state is not None:
+        ckpt["numpy_rng_state"] = rng_state
+    if precommit_hash is not None:
+        ckpt["precommit_integrity_sha256"] = precommit_hash
+    torch.save(ckpt, path)
     print(f"  Checkpoint saved: {path}")
 
 
 def load_checkpoint(model, optimizer, path):
-    """Load training checkpoint. Returns step number."""
+    """Load training checkpoint. Returns (step, numpy_rng_state_or_None)."""
     ckpt = torch.load(path, map_location=DEVICE, weights_only=False)
     model.load_state_dict(ckpt["model_state_dict"])
     optimizer.load_state_dict(ckpt["optimizer_state_dict"])
-    print(f"  Resumed from step {ckpt['step']}: {path}")
-    return ckpt["step"]
+    if "torch_rng_state" in ckpt:
+        torch.random.set_rng_state(ckpt["torch_rng_state"].cpu())
+    if DEVICE.type == "cuda" and "cuda_rng_state" in ckpt:
+        torch.cuda.set_rng_state(ckpt["cuda_rng_state"])
+    step = ckpt["step"]
+    numpy_state = ckpt.get("numpy_rng_state")
+    print(f"  Resumed from step {step}: {path}")
+    return step, numpy_state
 
 
-def find_latest_checkpoint():
-    """Find the latest checkpoint file."""
-    if not CHECKPOINT_DIR.exists():
+def find_latest_checkpoint(ckpt_dir):
+    """Find the latest checkpoint file in the given directory."""
+    if not ckpt_dir.exists():
         return None
-    ckpts = sorted(CHECKPOINT_DIR.glob("donor_step_*.pt"))
+    ckpts = sorted(ckpt_dir.glob("donor_step_*.pt"))
     return ckpts[-1] if ckpts else None
+
+
+def _get_precommit_hash() -> str:
+    """Read integrity hash from the precommit artifact."""
+    precommit_path = RESULTS_DIR / "precommit.json"
+    with open(precommit_path) as f:
+        return json.load(f)["integrity_sha256"]
 
 
 def train_donor(max_steps=MAX_STEPS, smoke=False):
     """Train the donor model."""
+    ckpt_dir = SMOKE_CHECKPOINT_DIR if smoke else CHECKPOINT_DIR
+
     if smoke:
         max_steps = SMOKE_STEPS
         eval_every = SMOKE_EVAL_EVERY
@@ -206,7 +233,12 @@ def train_donor(max_steps=MAX_STEPS, smoke=False):
 
     partitions = init_partitions()
     verify_precommit(partitions)
+    precommit_hash = _get_precommit_hash()
     print()
+
+    torch.manual_seed(TORCH_SEED)
+    if DEVICE.type == "cuda":
+        torch.cuda.manual_seed(TORCH_SEED)
 
     model = create_donor()
     model = model.to(DEVICE)
@@ -219,11 +251,14 @@ def train_donor(max_steps=MAX_STEPS, smoke=False):
     )
 
     start_step = 0
-    latest_ckpt = find_latest_checkpoint()
+    rng = np.random.RandomState(42)
+    latest_ckpt = find_latest_checkpoint(ckpt_dir)
     if latest_ckpt is not None and not smoke:
-        start_step = load_checkpoint(model, optimizer, latest_ckpt)
-
-    rng = np.random.RandomState(42 + start_step)
+        start_step, saved_rng = load_checkpoint(model, optimizer, latest_ckpt)
+        if saved_rng is not None:
+            rng.set_state(saved_rng)
+        else:
+            rng = np.random.RandomState(42 + start_step)
     eval_rng = np.random.RandomState(9999)
 
     model.train()
@@ -231,6 +266,7 @@ def train_donor(max_steps=MAX_STEPS, smoke=False):
 
     best_acc = 0.0
     gate_passed = False
+    eval_results = {}
     t0 = time.time()
 
     for step in range(start_step, max_steps):
@@ -276,13 +312,17 @@ def train_donor(max_steps=MAX_STEPS, smoke=False):
                 best_acc = train_acc
                 save_checkpoint(
                     model, optimizer, step + 1, eval_results,
-                    CHECKPOINT_DIR / "donor_best.pt"
+                    ckpt_dir / "donor_best.pt",
+                    rng_state=rng.get_state(),
+                    precommit_hash=precommit_hash,
                 )
 
         if (step + 1) % checkpoint_every == 0:
             save_checkpoint(
-                model, optimizer, step + 1, eval_results if 'eval_results' in dir() else {},
-                CHECKPOINT_DIR / f"donor_step_{step + 1:06d}.pt"
+                model, optimizer, step + 1, eval_results,
+                ckpt_dir / f"donor_step_{step + 1:06d}.pt",
+                rng_state=rng.get_state(),
+                precommit_hash=precommit_hash,
             )
             if DEVICE.type == "cuda" and COOLDOWN_SECONDS > 0:
                 time.sleep(COOLDOWN_SECONDS)
@@ -302,7 +342,9 @@ def train_donor(max_steps=MAX_STEPS, smoke=False):
 
     save_checkpoint(
         model, optimizer, max_steps, final_eval,
-        CHECKPOINT_DIR / "donor_final.pt"
+        ckpt_dir / "donor_final.pt",
+        rng_state=rng.get_state(),
+        precommit_hash=precommit_hash,
     )
 
     result = {
@@ -314,6 +356,8 @@ def train_donor(max_steps=MAX_STEPS, smoke=False):
         "smoke": smoke,
         "device": str(DEVICE),
         "elapsed_seconds": time.time() - t0,
+        "precommit_integrity_sha256": precommit_hash,
+        "torch_seed": TORCH_SEED,
     }
 
     result_path = RESULTS_DIR / (

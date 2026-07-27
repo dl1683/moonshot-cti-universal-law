@@ -235,6 +235,21 @@ def _source_hash() -> str:
     return hashlib.sha256(src).hexdigest()
 
 
+def _socket_hash(seed: int = 777) -> str:
+    """SHA-256 of the frozen socket weight bytes for precommit."""
+    import torch
+    import torch.nn as nn
+    rng_state = torch.random.get_rng_state()
+    torch.manual_seed(seed)
+    socket = nn.Linear(32, 128, bias=False)
+    nn.init.orthogonal_(socket.weight, gain=1.0)
+    torch.random.set_rng_state(rng_state)
+    return hashlib.sha256(socket.weight.detach().cpu().numpy().tobytes()).hexdigest()
+
+
+SOCKET_SEED = 777
+
+
 def create_precommit(partitions: dict, model_config: Optional[dict] = None) -> dict:
     """Create and write the immutable precommit artifact.
     model_config should include exact param counts, dims, and FLOPs.
@@ -255,6 +270,8 @@ def create_precommit(partitions: dict, model_config: Optional[dict] = None) -> d
         "withheld_trigrams": partitions["withheld_trigrams"],
         "generator_source_sha256": _source_hash(),
         "encoding": {"state_dtype": "int64_be", "bigram_dtype": "uint8_be"},
+        "socket_seed": SOCKET_SEED,
+        "socket_weight_sha256": _socket_hash(SOCKET_SEED),
         "hashes": hashes,
     }
 
@@ -264,6 +281,8 @@ def create_precommit(partitions: dict, model_config: Optional[dict] = None) -> d
     h = hashlib.sha256()
     h.update(json.dumps(hashes, sort_keys=True).encode())
     h.update(precommit["generator_source_sha256"].encode())
+    h.update(precommit["socket_weight_sha256"].encode())
+    h.update(json.dumps(precommit["encoding"], sort_keys=True).encode())
     precommit["integrity_sha256"] = h.hexdigest()
 
     PRECOMMIT_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -309,11 +328,41 @@ def verify_precommit(partitions: dict) -> bool:
     h = hashlib.sha256()
     h.update(json.dumps(frozen_hashes, sort_keys=True).encode())
     h.update(precommit.get("generator_source_sha256", "").encode())
+    h.update(precommit.get("socket_weight_sha256", "").encode())
+    h.update(json.dumps(precommit.get("encoding", {}), sort_keys=True).encode())
     if h.hexdigest() != precommit["integrity_sha256"]:
         raise ValueError("Precommit integrity hash mismatch")
 
     if "model_config" not in precommit:
         raise ValueError("Precommit missing model_config")
+
+    if "encoding" not in precommit:
+        raise ValueError("Precommit missing encoding contract")
+
+    frozen_mc = precommit["model_config"]
+    live_mc = build_model_config()
+    for model_key in live_mc:
+        if model_key not in frozen_mc:
+            raise ValueError(
+                f"Precommit model_config missing '{model_key}'"
+            )
+        for field in live_mc[model_key]:
+            frozen_val = frozen_mc[model_key].get(field)
+            live_val = live_mc[model_key][field]
+            if isinstance(live_val, float):
+                if frozen_val is None or abs(frozen_val - live_val) > 1e-6:
+                    raise ValueError(
+                        f"model_config.{model_key}.{field} mismatch: "
+                        f"frozen={frozen_val}, live={live_val}"
+                    )
+            elif frozen_val != live_val:
+                raise ValueError(
+                    f"model_config.{model_key}.{field} mismatch: "
+                    f"frozen={frozen_val}, live={live_val}"
+                )
+
+    if "socket_seed" not in precommit:
+        raise ValueError("Precommit missing socket_seed")
 
     frozen_src = precommit.get("generator_source_sha256", "")
     live_src = _source_hash()
@@ -386,7 +435,8 @@ def generate_training_example(rng: np.random.RandomState,
             continue
 
         final_state = execute_program(init_state, ops)
-        return init_state, ops, final_state
+        return {"init_state": init_state, "ops": ops, "final_state": final_state,
+                "stratum": "training"}
 
     raise RuntimeError("Failed to generate training example after max_retries")
 
@@ -849,7 +899,8 @@ def verify_data_generation(partitions: dict, n_samples: int = 1000):
     withheld_set = partitions["withheld_trigram_set"]
 
     for i in range(n_samples):
-        init_state, ops, final_state = generate_training_example(rng, partitions)
+        ex = generate_training_example(rng, partitions)
+        init_state, ops, final_state = ex["init_state"], ex["ops"], ex["final_state"]
         expected = execute_program(init_state, ops)
         assert np.array_equal(final_state, expected), f"Train sample {i} mismatch"
         assert state_to_index(init_state) in train_states_set
@@ -887,8 +938,8 @@ def verify_trigram_exclusion(partitions: dict, n_samples: int = 10000):
     violations = 0
 
     for _ in range(n_samples):
-        _, ops, _ = generate_training_example(rng, partitions)
-        if _contains_withheld_trigram(ops, withheld_set):
+        ex = generate_training_example(rng, partitions)
+        if _contains_withheld_trigram(ex["ops"], withheld_set):
             violations += 1
 
     assert violations == 0, f"Trigram leakage: {violations}/{n_samples} training samples"

@@ -429,11 +429,13 @@
       7
     ]
   ],
-  "generator_source_sha256": "f45b89989c636d4d5915cf4e9272b297c87b2f25448f11cdf92718088f472bdd",
+  "generator_source_sha256": "312c1aad9de5e6b2008124975b6909265b8f3e7516670480ca360f4aefbed4da",
   "encoding": {
     "state_dtype": "int64_be",
     "bigram_dtype": "uint8_be"
   },
+  "socket_seed": 777,
+  "socket_weight_sha256": "e57d7d7de57bb4540ea2adf73f47126dba1ed5b8e8771b9ca5ae4a2dbf611ddd",
   "hashes": {
     "train_states_sha256": "d28dc8adda28fab202f358b6c03d05568891eeec0eaeab1800c795b6747f747c",
     "eval_states_sha256": "14e05cbd9b6a7e23ad529011137f5517e5dc071ad390664e7082fdb72786e3cb",
@@ -474,5 +476,5 @@
       "serialized_bytes": 61110
     }
   },
-  "integrity_sha256": "adfc818c0054ae4f438974bf2e9547c9c42e216c286c9538c90ba9fbe6063eda"
+  "integrity_sha256": "a691285fd5486aec16267932f1ceca0107c81787cae87dd3cae7f8cc24fc6645"
 }

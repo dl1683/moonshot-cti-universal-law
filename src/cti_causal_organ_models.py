@@ -19,7 +19,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from cti_causal_register_transducer import MOD, NUM_OPS, NUM_REGS
+from cti_causal_register_transducer import MOD, NUM_OPS, NUM_REGS, SOCKET_SEED
 
 NUM_INPUT_TOKENS = MOD + NUM_OPS
 REG_OFFSET = 0
@@ -151,13 +151,14 @@ class RecurrentTransformerDonor(nn.Module):
         return state
 
 
-def _make_frozen_socket(d_in: int, d_out: int, seed: int = 777) -> nn.Linear:
+def _make_frozen_socket(d_in: int, d_out: int, seed: int = SOCKET_SEED) -> nn.Linear:
     """Create a parameter-free random projection socket.
     Fixed initialization, frozen (no gradients). Task-independent.
+    Saves/restores global RNG so socket creation never perturbs training.
     """
-    socket = nn.Linear(d_in, d_out, bias=False)
     rng_state = torch.random.get_rng_state()
     torch.manual_seed(seed)
+    socket = nn.Linear(d_in, d_out, bias=False)
     nn.init.orthogonal_(socket.weight, gain=1.0)
     torch.random.set_rng_state(rng_state)
     socket.weight.requires_grad_(False)
@@ -258,6 +259,12 @@ class TransformerHost(nn.Module):
     ) -> tuple:
         state = self.init_state(init_regs)
         B, L = ops.shape
+
+        if ops_mask is not None and L > 1:
+            reactivated = (~ops_mask[:, :-1]) & ops_mask[:, 1:]
+            assert not reactivated.any(), (
+                "ops_mask must be contiguous right-padding (no holes)"
+            )
 
         organ_state = None
         if organ is not None:
@@ -434,6 +441,15 @@ class CausalOrgan(nn.Module):
         n_params = sum(p.numel() for p in self.parameters())
         assert n_params <= MAX_ORGAN_PARAMS, (
             f"Organ has {n_params} params > max {MAX_ORGAN_PARAMS}"
+        )
+
+        import io
+        buf = io.BytesIO()
+        torch.save(self.state_dict(), buf)
+        serialized = buf.tell()
+        assert serialized <= MAX_ORGAN_BYTES, (
+            f"Organ serialized size {serialized:,} bytes > "
+            f"{MAX_ORGAN_BYTES:,} byte limit"
         )
 
     def init_state(self, init_regs: torch.Tensor) -> torch.Tensor:
