@@ -297,59 +297,160 @@ def create_precommit(partitions: dict, model_config: Optional[dict] = None) -> d
     return precommit
 
 
+_PRECOMMIT_REQUIRED_KEYS = {
+    "protocol", "partition_seed", "train_fraction_threshold",
+    "n_train_states", "n_eval_states",
+    "n_included_bigrams", "n_excluded_bigrams", "n_withheld_trigrams",
+    "included_bigrams", "excluded_bigrams", "withheld_trigrams",
+    "generator_source_sha256", "encoding", "socket_seed",
+    "socket_weight_sha256", "socket_weight_gru_sha256",
+    "hashes", "model_config", "integrity_sha256",
+}
+
+
+class _DuplicateKeyError(ValueError):
+    pass
+
+
+def _json_no_duplicates(pairs):
+    """JSON object_pairs_hook that rejects duplicate keys."""
+    d = {}
+    for k, v in pairs:
+        if k in d:
+            raise _DuplicateKeyError(f"Duplicate JSON key: '{k}'")
+        d[k] = v
+    return d
+
+
 def verify_precommit(partitions: dict) -> bool:
-    """Verify current partitions match the frozen precommit. Raises on mismatch."""
+    """Verify current partitions match the frozen precommit. Raises on mismatch.
+
+    Fail-closed: rejects unknown keys, duplicate JSON keys, missing fields,
+    and verifies every frozen value against its live computation.
+    """
     if not PRECOMMIT_PATH.exists():
         raise FileNotFoundError(f"Precommit not found at {PRECOMMIT_PATH}")
 
     with open(PRECOMMIT_PATH) as f:
-        precommit = json.load(f)
+        raw = f.read()
+    try:
+        precommit = json.loads(raw, object_pairs_hook=_json_no_duplicates)
+    except _DuplicateKeyError as e:
+        raise ValueError(f"Precommit contains duplicate keys: {e}") from e
+
+    frozen_keys = set(precommit.keys())
+    missing = _PRECOMMIT_REQUIRED_KEYS - frozen_keys
+    if missing:
+        raise ValueError(f"Precommit missing required keys: {missing}")
+    extra = frozen_keys - _PRECOMMIT_REQUIRED_KEYS
+    if extra:
+        raise ValueError(f"Precommit has unexpected keys: {extra}")
+
+    if precommit["protocol"] != "CSO_ADMISSION_V1":
+        raise ValueError(
+            f"protocol mismatch: frozen={precommit['protocol']!r}, "
+            f"expected='CSO_ADMISSION_V1'"
+        )
+    if precommit["partition_seed"] != PARTITION_SEED:
+        raise ValueError(
+            f"partition_seed mismatch: frozen={precommit['partition_seed']}, "
+            f"expected={PARTITION_SEED}"
+        )
+    if precommit["train_fraction_threshold"] != TRAIN_FRACTION:
+        raise ValueError(
+            f"train_fraction_threshold mismatch: "
+            f"frozen={precommit['train_fraction_threshold']}, "
+            f"expected={TRAIN_FRACTION}"
+        )
+
+    live_n_train = len(partitions["train_state_indices"])
+    if precommit["n_train_states"] != live_n_train:
+        raise ValueError(
+            f"n_train_states mismatch: frozen={precommit['n_train_states']}, "
+            f"live={live_n_train}"
+        )
+    live_n_eval = len(partitions["eval_state_indices"])
+    if precommit["n_eval_states"] != live_n_eval:
+        raise ValueError(
+            f"n_eval_states mismatch: frozen={precommit['n_eval_states']}, "
+            f"live={live_n_eval}"
+        )
+    if precommit["n_included_bigrams"] != len(partitions["included_bigrams"]):
+        raise ValueError("n_included_bigrams count mismatch")
+    if precommit["n_excluded_bigrams"] != len(partitions["excluded_bigrams"]):
+        raise ValueError("n_excluded_bigrams count mismatch")
+    if precommit["n_withheld_trigrams"] != len(partitions["withheld_trigrams"]):
+        raise ValueError("n_withheld_trigrams count mismatch")
+
+    if ([tuple(b) for b in precommit["included_bigrams"]]
+            != [tuple(b) for b in partitions["included_bigrams"]]):
+        raise ValueError("included_bigrams mismatch between precommit and live")
+    if ([tuple(b) for b in precommit["excluded_bigrams"]]
+            != [tuple(b) for b in partitions["excluded_bigrams"]]):
+        raise ValueError("excluded_bigrams mismatch between precommit and live")
+    if ([tuple(t) for t in precommit["withheld_trigrams"]]
+            != [tuple(t) for t in partitions["withheld_trigrams"]]):
+        raise ValueError("withheld_trigrams mismatch between precommit and live")
+
+    live_src = _source_hash()
+    if not precommit["generator_source_sha256"]:
+        raise ValueError("generator_source_sha256 is empty")
+    if precommit["generator_source_sha256"] != live_src:
+        raise ValueError(
+            "generator source code changed.\n"
+            f"  Frozen: {precommit['generator_source_sha256']}\n"
+            f"  Live:   {live_src}\n"
+            "Re-run create_precommit() to update."
+        )
+
+    expected_encoding = {"state_dtype": "uint32_be", "bigram_dtype": "uint8_be"}
+    if precommit["encoding"] != expected_encoding:
+        raise ValueError(
+            f"encoding mismatch: frozen={precommit['encoding']}, "
+            f"expected={expected_encoding}"
+        )
+
+    if precommit["socket_seed"] != SOCKET_SEED:
+        raise ValueError(
+            f"socket_seed mismatch: frozen={precommit['socket_seed']}, "
+            f"expected={SOCKET_SEED}"
+        )
+    live_socket_hash = _socket_hash(SOCKET_SEED, 32, 128)
+    if precommit["socket_weight_sha256"] != live_socket_hash:
+        raise ValueError("socket_weight_sha256 does not match live socket")
+    live_gru_hash = _socket_hash(SOCKET_SEED, 32, 256)
+    if precommit["socket_weight_gru_sha256"] != live_gru_hash:
+        raise ValueError("socket_weight_gru_sha256 does not match live GRU socket")
 
     current_hashes = partition_hashes(partitions)
     frozen_hashes = precommit["hashes"]
-
     for key in current_hashes:
-        frozen_val = frozen_hashes.get(key)
-        if frozen_val is None:
+        if key not in frozen_hashes:
+            raise ValueError(f"Partition hash key '{key}' missing from frozen")
+        if current_hashes[key] != frozen_hashes[key]:
             raise ValueError(
-                f"Precommit verification FAILED: key '{key}' missing from frozen"
-            )
-        if current_hashes[key] != frozen_val:
-            raise ValueError(
-                f"Precommit verification FAILED: {key} mismatch.\n"
-                f"  Frozen: {frozen_val}\n"
+                f"Partition hash mismatch: {key}\n"
+                f"  Frozen: {frozen_hashes[key]}\n"
                 f"  Current: {current_hashes[key]}"
             )
-
     for key in frozen_hashes:
         if key not in current_hashes:
-            raise ValueError(
-                f"Precommit verification FAILED: frozen key '{key}' "
-                f"not in current hashes"
-            )
+            raise ValueError(f"Frozen partition hash key '{key}' not in live")
 
     h = hashlib.sha256()
     h.update(json.dumps(frozen_hashes, sort_keys=True).encode())
-    h.update(precommit.get("generator_source_sha256", "").encode())
-    h.update(precommit.get("socket_weight_sha256", "").encode())
-    h.update(precommit.get("socket_weight_gru_sha256", "").encode())
-    h.update(json.dumps(precommit.get("encoding", {}), sort_keys=True).encode())
+    h.update(precommit["generator_source_sha256"].encode())
+    h.update(precommit["socket_weight_sha256"].encode())
+    h.update(precommit["socket_weight_gru_sha256"].encode())
+    h.update(json.dumps(precommit["encoding"], sort_keys=True).encode())
     if h.hexdigest() != precommit["integrity_sha256"]:
         raise ValueError("Precommit integrity hash mismatch")
-
-    if "model_config" not in precommit:
-        raise ValueError("Precommit missing model_config")
-
-    if "encoding" not in precommit:
-        raise ValueError("Precommit missing encoding contract")
 
     frozen_mc = precommit["model_config"]
     live_mc = build_model_config()
     for model_key in live_mc:
         if model_key not in frozen_mc:
-            raise ValueError(
-                f"Precommit model_config missing '{model_key}'"
-            )
+            raise ValueError(f"Precommit model_config missing '{model_key}'")
         for field in live_mc[model_key]:
             frozen_val = frozen_mc[model_key].get(field)
             live_val = live_mc[model_key][field]
@@ -374,45 +475,6 @@ def verify_precommit(partitions: dict) -> bool:
                 raise ValueError(
                     f"model_config.{model_key} has unexpected field '{field}'"
                 )
-
-    if "socket_seed" not in precommit:
-        raise ValueError("Precommit missing socket_seed")
-    if precommit["socket_seed"] != SOCKET_SEED:
-        raise ValueError(
-            f"socket_seed mismatch: frozen={precommit['socket_seed']}, "
-            f"expected={SOCKET_SEED}"
-        )
-
-    live_socket_hash = _socket_hash(SOCKET_SEED, 32, 128)
-    if precommit.get("socket_weight_sha256") != live_socket_hash:
-        raise ValueError("socket_weight_sha256 does not match live socket")
-
-    live_gru_hash = _socket_hash(SOCKET_SEED, 32, 256)
-    if precommit.get("socket_weight_gru_sha256") != live_gru_hash:
-        raise ValueError("socket_weight_gru_sha256 does not match live GRU socket")
-
-    frozen_bigrams = precommit.get("included_bigrams", [])
-    live_bigrams = partitions["included_bigrams"]
-    if [tuple(b) for b in frozen_bigrams] != [tuple(b) for b in live_bigrams]:
-        raise ValueError("included_bigrams mismatch between precommit and live")
-    frozen_excluded = precommit.get("excluded_bigrams", [])
-    live_excluded = partitions["excluded_bigrams"]
-    if [tuple(b) for b in frozen_excluded] != [tuple(b) for b in live_excluded]:
-        raise ValueError("excluded_bigrams mismatch between precommit and live")
-    frozen_trigrams = precommit.get("withheld_trigrams", [])
-    live_trigrams = partitions["withheld_trigrams"]
-    if [tuple(t) for t in frozen_trigrams] != [tuple(t) for t in live_trigrams]:
-        raise ValueError("withheld_trigrams mismatch between precommit and live")
-
-    frozen_src = precommit.get("generator_source_sha256", "")
-    live_src = _source_hash()
-    if frozen_src and live_src != frozen_src:
-        raise ValueError(
-            "Precommit verification FAILED: generator source code changed.\n"
-            f"  Frozen: {frozen_src}\n"
-            f"  Live:   {live_src}\n"
-            "Re-run create_precommit() to update."
-        )
 
     print("Precommit verification: PASS")
     return True
@@ -952,20 +1014,66 @@ def verify_data_generation(partitions: dict, n_samples: int = 1000):
             f"Withheld trigram in train sample {i}"
         )
 
-    for stratum_name, gen_fn in [
-        ("length_extrapolation", generate_length_extrapolation),
-        ("excluded_bigram", generate_excluded_bigram),
-        ("withheld_trigram", generate_withheld_trigram),
-        ("held_out_state", generate_held_out_state),
-        ("full_intersection", generate_full_intersection),
-    ]:
-        for i in range(n_samples // 5):
-            example = gen_fn(rng, partitions)
-            expected = execute_program(example["init_state"], example["ops"])
-            assert np.array_equal(example["final_state"], expected), (
-                f"{stratum_name} sample {i} mismatch"
-            )
-            assert example["stratum"] == stratum_name
+    excluded_set = partitions["excluded_bigram_set"]
+    n_eval = n_samples // 5
+
+    for i in range(n_eval):
+        ex = generate_length_extrapolation(rng, partitions)
+        expected = execute_program(ex["init_state"], ex["ops"])
+        assert np.array_equal(ex["final_state"], expected)
+        assert ex["stratum"] == "length_extrapolation"
+        assert EVAL_LENGTHS[0] <= len(ex["ops"]) <= EVAL_LENGTHS[1], (
+            f"length_extrapolation len={len(ex['ops'])} outside {EVAL_LENGTHS}"
+        )
+
+    for i in range(n_eval):
+        ex = generate_excluded_bigram(rng, partitions)
+        expected = execute_program(ex["init_state"], ex["ops"])
+        assert np.array_equal(ex["final_state"], expected)
+        assert ex["stratum"] == "excluded_bigram"
+        has_excluded = any(
+            (int(ex["ops"][j - 1]), int(ex["ops"][j])) in excluded_set
+            for j in range(1, len(ex["ops"]))
+        )
+        assert has_excluded, f"excluded_bigram sample {i} has no excluded bigram"
+
+    for i in range(n_eval):
+        ex = generate_withheld_trigram(rng, partitions)
+        expected = execute_program(ex["init_state"], ex["ops"])
+        assert np.array_equal(ex["final_state"], expected)
+        assert ex["stratum"] == "withheld_trigram"
+        assert _contains_withheld_trigram(ex["ops"], withheld_set), (
+            f"withheld_trigram sample {i} has no withheld trigram"
+        )
+
+    for i in range(n_eval):
+        ex = generate_held_out_state(rng, partitions)
+        expected = execute_program(ex["init_state"], ex["ops"])
+        assert np.array_equal(ex["final_state"], expected)
+        assert ex["stratum"] == "held_out_state"
+        assert state_to_index(ex["init_state"]) in eval_states_set, (
+            f"held_out_state sample {i} uses training init state"
+        )
+
+    for i in range(n_eval):
+        ex = generate_full_intersection(rng, partitions)
+        expected = execute_program(ex["init_state"], ex["ops"])
+        assert np.array_equal(ex["final_state"], expected)
+        assert ex["stratum"] == "full_intersection"
+        assert state_to_index(ex["init_state"]) in eval_states_set, (
+            f"full_intersection sample {i}: not held-out state"
+        )
+        assert EVAL_LENGTHS[0] <= len(ex["ops"]) <= EVAL_LENGTHS[1], (
+            f"full_intersection sample {i}: len={len(ex['ops'])} outside eval"
+        )
+        has_excluded = any(
+            (int(ex["ops"][j - 1]), int(ex["ops"][j])) in excluded_set
+            for j in range(1, len(ex["ops"]))
+        )
+        assert has_excluded, f"full_intersection sample {i}: no excluded bigram"
+        assert _contains_withheld_trigram(ex["ops"], withheld_set), (
+            f"full_intersection sample {i}: no withheld trigram"
+        )
 
     print("Data generation: ALL PASS")
 

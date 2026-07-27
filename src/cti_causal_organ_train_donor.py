@@ -55,6 +55,7 @@ CAPACITY_GATES = {
     "train_lengths": 0.995,
     "length_extrapolation": 0.990,
     "excluded_bigram": 0.990,
+    "withheld_trigram": 0.990,
 }
 
 
@@ -193,7 +194,12 @@ def load_checkpoint(model, optimizer, path, expected_precommit_hash=None,
     ckpt = torch.load(path, map_location=DEVICE, weights_only=False)
     if expected_precommit_hash is not None:
         saved_hash = ckpt.get("precommit_integrity_sha256")
-        if saved_hash is not None and saved_hash != expected_precommit_hash:
+        if saved_hash is None:
+            raise ValueError(
+                "Checkpoint has no precommit_integrity_sha256 but "
+                f"expected_precommit_hash={expected_precommit_hash!r} was supplied."
+            )
+        if saved_hash != expected_precommit_hash:
             raise ValueError(
                 f"Checkpoint precommit hash mismatch.\n"
                 f"  Checkpoint: {saved_hash}\n"
