@@ -38,42 +38,88 @@ It has repeatedly mistaken breadth of internal validation for depth of external 
 - 504 files deleted. Zero empirical results ever existed.
 - 20 GPU-hours reallocated to Geometry Admission Test reserve.
 
-### Phase 1 — Open Capability File (primary moonshot, pivoted from DG-0)
+### Phase 1 — Geometry Admission Test (PERMANENTLY CLOSED — Jul 26, 2026)
 
-**Thesis:** A teacher's differential competence can be extracted once into a compact,
+**Thesis (KILLED):** A teacher's differential competence can be extracted once into a compact,
 causally grounded behavioral artifact that installs into multiple incompatible students
 without teacher access or pair-specific tuning.
 
-**Headline:** "Download a skill, not a giant AI."
+**GAT Result: STRUCTURAL_SCREEN_FAIL (WL25)**
+- Stage A: PASS (3/3 students, teacher 99.99% target-family)
+- Stage B: FAIL — both candidates (raw R, observable R) showed all deltas negative
+  - Raw: mean delta = -0.0065, sign_test_p = 1.0
+  - Observable: mean delta = -0.014, sign_test_p = 1.0
+  - Withheld acc 10-13% (chance = 8.3%)
+- Geometry installs (aux loss converges) but does NOT transfer capability
+- Stage C-I: PERMANENTLY CANCELLED
+- Conditional GRU: PERMANENTLY CANCELLED
+- Evidence preserved in `results/geometry_admission/stage_b/decision.json`
 
-**Geometry Admission Test (concrete spec in research/OPEN_CAPABILITY_FILE_GEOMETRY_ADMISSION_STAGE_A_2026_07_25.md):**
-- 12-state, 4-symbol permutation automaton (115 bits key entropy)
-- Teacher: 12L/384d/19.5M params Transformer
-- Student: 6L/160d/1.9M Transformer (10.15x compression)
-- Conditional: 6L/224d/1.8M GRU (10.55x compression)
-- 2 candidates: raw R trace vs observable connection (VJP-balanced)
-- 5 controls: no auxiliary, static G, wrong-key, Haar-matched, generic smoothness
-- Staged: preflight (A) -> CM-CKS paired screen (B-P) -> 8-pair sealed confirmation (C-I) -> conditional GRU
+**Codex R11 diagnosis (5 failure mechanisms):**
+1. R describes sample flow, not the transition law
+2. Same anchors optimized repeatedly (memorization)
+3. No compositional factorization constraint
+4. Geometry lives in sidecar subspace (QL5 counterexample predicted this)
+5. Normalization removes functional information
 
-**Budget (revised after R6 — bridge hours reallocated):**
-| GPU-hours | Work |
-|---:|---|
-| ~~20~~ | ~~Gate B~~ — TERMINATED, hours reallocated to reserve |
-| 30 | Stage A-T: teacher + 3 Transformer students + extraction (GRU deferred) |
-| 25 | Conditional GRU confirmation (after Transformer Stage C pass) |
-| 45 | Reserve: Stage B screen, Stage C confirmation, extra seeds, causal ablation |
+**Kill conclusion:** Observational geometric resemblance is not functional equivalence.
+The strong form "Intelligence = Geometry" is dead.
 
-**Honest scores (Steering R2):**
-- Today: Turing 3/10
-- After 100h best case (synthetic automaton passes): 4.5/10
-- 8/10 requires: language competence + cross-substrate + composition + economics + replication
+### Phase 2 — Causal Skill Organs (CSO) — ACTIVE
 
-### Pivot Ladder (updated)
+**R11 steering dialogue converged (3 rounds, Jul 26 2026).**
 
-1. Bridge fails: close CTI universal-law project or reposition as training coordinate
-2. GAT fails: kill "Intelligence = Geometry" strong form, consider Universal Compute Governor
-3. GAT Transformer passes: earn the right to test cross-substrate (GRU)
-4. GAT cross-substrate passes: earn the right to test language transfer
+**New thesis:**
+> Capabilities are causal mechanisms with interfaces — not geometric shapes and not monolithic checkpoints.
+
+**Headline:** "From giant models to transplantable causal skills. Train an expensive model
+once, extract the mechanism it learned, and let cheap local AIs reuse it."
+
+**What CSO IS NOT (learned from GAT kill):**
+- Not representation matching (geometry failed)
+- Not program transmission (trivial for random automata)
+- Not Kolmogorov compression (not about shortest description)
+- Not standard KD (which matches outputs, not mechanisms)
+
+**What CSO IS:**
+- Extract a learned causal state-transition mechanism from a donor model
+- Validate it with interchange interventions (counterfactual fidelity)
+- Freeze it as a standalone executable organ
+- Transplant identical bytes into cross-architecture hosts
+- Eventually compose independently extracted organs without joint retraining
+
+**Prior art gap (Claude internet search Jul 26):**
+| Property | NOT (2601.13580) | Circuit Dist. | CT-SFT | DAS | CSO (ours) |
+|----------|-----------------|--------------|--------|-----|------------|
+| Auto extraction | Partial | Yes | Partial | Yes | YES |
+| Causal validation | No | No | No | Yes | YES |
+| Standalone execution | Yes | No | No | No | YES |
+| Cross-architecture | No | No | No | N/A | YES |
+| Zero-shot composition | No | No | No | N/A | YES |
+
+**Admission test: Causal Register Transducer**
+- 4 registers in Z_16 (65,536 states), 8 invertible non-commuting operations
+- Donor: 19.5M recurrent-state Transformer; Hosts: 1.9M Transformer + 1.85M GRU
+- Organ: max 32-dim state, 32K quantized params, frozen before host installation
+- Withheld: lengths 13-32, excluded bigrams, held-out initial states, counterfactuals
+- Budget: 40 GPU-hours, 4 calendar weeks
+- Admission: >=95% exact withheld acc, >=90% counterfactual fidelity, >=15pt over observational baseline, identical bytes in both hosts
+
+**Kill criteria:**
+1. Observational bottleneck within 3pt of organ -> ordinary compression, not causal transfer
+2. Output KD matches organ within 3pt -> same
+3. Counterfactual fidelity <90% -> no causal content
+4. Organ ablation doesn't selectively remove behavior -> sidecar
+5. Wrong-donor organ works similarly -> not teacher-specific
+6. Same bytes fail in either host -> not cross-architecture
+7. Ground-truth latent states needed -> not automatic extraction
+8. >40 GPU-hours without >70% counterfactual fidelity -> infeasible
+
+**Pivot ladder:**
+1. Admission fails: reassess causal extraction feasibility
+2. Admission passes: earn the right to test world-model organ (novel goals)
+3. World-model passes: earn the right to test zero-shot composition
+4. Composition passes: moonshot narrative earned
 
 ---
 
@@ -135,6 +181,7 @@ without teacher access or pair-specific tuning.
 | R8 | CM-CKS design | DONE | 2 rounds converged. 0 new modules, 5 files modified. 8 sealed pairs, 7/8 threshold |
 | R9 | Gate redesign: target-family capacity | DONE | 3 rounds converged. Replace 99% random-long gate with target-family (p,r in [0,7]). Teacher: 99.99% target_family (PASS). Anchors 8-20. |
 | R10 | Stage B redesign | DONE | 3 rounds converged. Haar control (not deranged teacher), fresh init, target-only coefficient, effect-size screen. 5 binding amendments: PCG64DXSM, Helmert basis, frozen coefficients, diagnostic-only probe, VOID verdict. |
+| R11 | Post-kill pivot: Causal Skill Organs | DONE | 3 rounds converged. Kill "Intelligence = Geometry" strong form. New direction: Causal Skill Organs (CSO). Register transducer admission test. Prior art gap confirmed (5-way conjunction novel). |
 
 ### GAT Implementation Status
 | Module | File | Status |

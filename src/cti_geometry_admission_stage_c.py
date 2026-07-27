@@ -1,8 +1,16 @@
 """Geometry Admission Test: Stage C-I orchestrator (CM-CKS sealed confirmation).
 
-8 independent sealed base/partner pairs. 2 student seeds per pair = 32 runs.
-Exact sign test with 7/8 threshold. PASS/FAIL/VOID verdict.
+PERMANENTLY CLOSED (Jul 26, 2026).
+Stage B STRUCTURAL_SCREEN_FAIL killed the geometry transfer thesis.
+R11 steering converged on Causal Skill Organs (CSO) as successor.
+This file is preserved for historical reference only.
 """
+raise SystemExit(
+    "GAT Stage C-I is PERMANENTLY CLOSED (Jul 26 2026). "
+    "Stage B STRUCTURAL_SCREEN_FAIL killed the geometry transfer thesis. "
+    "See results/geometry_admission/stage_b/decision.json and STATUS.md."
+)
+
 from __future__ import annotations
 
 import hashlib
