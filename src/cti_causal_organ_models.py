@@ -1,0 +1,514 @@
+"""Model architectures for Causal Skill Organ admission test.
+
+Protocol: CSO_ADMISSION_V1 (locked Jul 26 2026).
+
+Donor: ~19.5M recurrent-state Transformer with designated latent state slot.
+Host T: ~1.9M Transformer (same block family, smaller).
+Host G: ~1.85M GRU.
+
+The donor processes one instruction at a time through a recurrent state.
+The state slot is an architectural causal boundary -- true register values
+are NEVER provided there.
+"""
+from __future__ import annotations
+
+import math
+from typing import Optional
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+from cti_causal_register_transducer import MOD, NUM_OPS, NUM_REGS
+
+NUM_INPUT_TOKENS = MOD + NUM_OPS  # 16 register values + 8 operation tokens
+REG_OFFSET = 0
+OP_OFFSET = MOD  # operations start at index 16
+
+
+class RecurrentTransformerDonor(nn.Module):
+    """~19.5M recurrent-state Transformer donor.
+
+    Processes a sequence of instructions one at a time with an explicit
+    recurrent state vector that carries across steps. The state slot is
+    a learnable hidden vector (not supervised with true register values).
+
+    Architecture:
+    - Input: 4 initial register values + L operation tokens (one at a time)
+    - Recurrent state: d_state dimensional vector, initialized from register embedding
+    - At each step: state + instruction embedding -> Transformer layers -> updated state
+    - Output: 4 x 16-way classification heads from final state
+    """
+
+    def __init__(
+        self,
+        d_model: int = 384,
+        n_layers: int = 10,
+        n_heads: int = 6,
+        d_state: int = 128,
+        dropout: float = 0.0,
+    ):
+        super().__init__()
+        self.d_model = d_model
+        self.d_state = d_state
+
+        self.reg_embed = nn.Embedding(MOD, d_model)
+        self.op_embed = nn.Embedding(NUM_OPS, d_model)
+
+        self.state_init = nn.Sequential(
+            nn.Linear(NUM_REGS * d_model, d_model),
+            nn.GELU(),
+            nn.Linear(d_model, d_state),
+        )
+
+        self.state_to_input = nn.Linear(d_state, d_model)
+
+        layer = nn.TransformerEncoderLayer(
+            d_model=d_model,
+            nhead=n_heads,
+            dim_feedforward=d_model * 4,
+            dropout=dropout,
+            activation="gelu",
+            batch_first=True,
+            norm_first=True,
+        )
+        self.transformer = nn.TransformerEncoder(layer, num_layers=n_layers)
+
+        self.state_update = nn.Sequential(
+            nn.Linear(d_model, d_model),
+            nn.GELU(),
+            nn.Linear(d_model, d_state),
+        )
+
+        self.output_heads = nn.ModuleList([
+            nn.Sequential(
+                nn.Linear(d_state, d_model),
+                nn.GELU(),
+                nn.Linear(d_model, MOD),
+            )
+            for _ in range(NUM_REGS)
+        ])
+
+    def init_state(self, init_regs: torch.Tensor) -> torch.Tensor:
+        """Initialize recurrent state from register values.
+        init_regs: (B, 4) long tensor of register values in [0, 15].
+        Returns: (B, d_state) state vector.
+        """
+        reg_emb = self.reg_embed(init_regs)  # (B, 4, d_model)
+        reg_flat = reg_emb.reshape(reg_emb.size(0), -1)  # (B, 4*d_model)
+        return self.state_init(reg_flat)  # (B, d_state)
+
+    def step(self, state: torch.Tensor, op: torch.Tensor) -> torch.Tensor:
+        """Process one instruction step.
+        state: (B, d_state)
+        op: (B,) long tensor of operation indices in [0, 7].
+        Returns: (B, d_state) updated state.
+        """
+        state_input = self.state_to_input(state)  # (B, d_model)
+        op_input = self.op_embed(op)  # (B, d_model)
+
+        x = torch.stack([state_input, op_input], dim=1)  # (B, 2, d_model)
+        x = self.transformer(x)  # (B, 2, d_model)
+
+        new_state = self.state_update(x[:, 0, :])  # (B, d_model) -> (B, d_state)
+        return state + new_state  # residual connection on state
+
+    def forward(
+        self,
+        init_regs: torch.Tensor,
+        ops: torch.Tensor,
+        ops_mask: Optional[torch.Tensor] = None,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """Full forward pass.
+        init_regs: (B, 4) initial register values.
+        ops: (B, L) operation sequence.
+        ops_mask: (B, L) bool mask (True = valid step).
+        Returns: (logits, final_state)
+            logits: tuple of 4 tensors, each (B, 16)
+            final_state: (B, d_state)
+        """
+        state = self.init_state(init_regs)
+        B, L = ops.shape
+
+        for t in range(L):
+            if ops_mask is not None:
+                mask_t = ops_mask[:, t]  # (B,)
+                step_state = self.step(state, ops[:, t])
+                state = torch.where(mask_t.unsqueeze(1), step_state, state)
+            else:
+                state = self.step(state, ops[:, t])
+
+        logits = tuple(head(state) for head in self.output_heads)
+        return logits, state
+
+    def get_state_at_step(
+        self,
+        init_regs: torch.Tensor,
+        ops: torch.Tensor,
+        step: int,
+    ) -> torch.Tensor:
+        """Get the recurrent state after a specific step (for intervention)."""
+        state = self.init_state(init_regs)
+        for t in range(min(step, ops.shape[1])):
+            state = self.step(state, ops[:, t])
+        return state
+
+
+class TransformerHost(nn.Module):
+    """~1.9M Transformer host (same block family, smaller).
+
+    Architecture matches donor but with fewer layers and smaller dimensions.
+    Has a socket for receiving an external organ state.
+    """
+
+    def __init__(
+        self,
+        d_model: int = 192,
+        n_layers: int = 5,
+        n_heads: int = 4,
+        d_state: int = 96,
+        d_organ: int = 32,
+        dropout: float = 0.0,
+    ):
+        super().__init__()
+        self.d_model = d_model
+        self.d_state = d_state
+        self.d_organ = d_organ
+
+        self.reg_embed = nn.Embedding(MOD, d_model)
+        self.op_embed = nn.Embedding(NUM_OPS, d_model)
+
+        self.state_init = nn.Sequential(
+            nn.Linear(NUM_REGS * d_model, d_model),
+            nn.GELU(),
+            nn.Linear(d_model, d_state),
+        )
+
+        self.state_to_input = nn.Linear(d_state, d_model)
+
+        self.organ_socket = nn.Linear(d_organ, d_model)
+
+        layer = nn.TransformerEncoderLayer(
+            d_model=d_model,
+            nhead=n_heads,
+            dim_feedforward=d_model * 4,
+            dropout=dropout,
+            activation="gelu",
+            batch_first=True,
+            norm_first=True,
+        )
+        self.transformer = nn.TransformerEncoder(layer, num_layers=n_layers)
+
+        self.state_update = nn.Sequential(
+            nn.Linear(d_model, d_model),
+            nn.GELU(),
+            nn.Linear(d_model, d_state),
+        )
+
+        self.output_heads = nn.ModuleList([
+            nn.Sequential(
+                nn.Linear(d_state, d_model),
+                nn.GELU(),
+                nn.Linear(d_model, MOD),
+            )
+            for _ in range(NUM_REGS)
+        ])
+
+    def init_state(self, init_regs: torch.Tensor) -> torch.Tensor:
+        reg_emb = self.reg_embed(init_regs)
+        reg_flat = reg_emb.reshape(reg_emb.size(0), -1)
+        return self.state_init(reg_flat)
+
+    def step(
+        self,
+        state: torch.Tensor,
+        op: torch.Tensor,
+        organ_state: Optional[torch.Tensor] = None,
+    ) -> torch.Tensor:
+        state_input = self.state_to_input(state)
+        op_input = self.op_embed(op)
+
+        if organ_state is not None:
+            organ_input = self.organ_socket(organ_state)
+            x = torch.stack([state_input, op_input, organ_input], dim=1)  # (B, 3, d)
+        else:
+            x = torch.stack([state_input, op_input], dim=1)  # (B, 2, d)
+
+        x = self.transformer(x)
+        new_state = self.state_update(x[:, 0, :])
+        return state + new_state
+
+    def forward(
+        self,
+        init_regs: torch.Tensor,
+        ops: torch.Tensor,
+        organ=None,
+        ops_mask: Optional[torch.Tensor] = None,
+    ) -> tuple:
+        state = self.init_state(init_regs)
+        B, L = ops.shape
+
+        organ_state = None
+        if organ is not None:
+            organ_state = organ.init_state(init_regs)
+
+        for t in range(L):
+            if organ is not None:
+                organ_state = organ.step(organ_state, ops[:, t])
+
+            if ops_mask is not None:
+                mask_t = ops_mask[:, t]
+                step_state = self.step(state, ops[:, t], organ_state)
+                state = torch.where(mask_t.unsqueeze(1), step_state, state)
+            else:
+                state = self.step(state, ops[:, t], organ_state)
+
+        logits = tuple(head(state) for head in self.output_heads)
+        return logits, state
+
+
+class GRUHost(nn.Module):
+    """~1.85M GRU host.
+
+    Fundamentally different architecture from the Transformer donor/host.
+    Has the same socket contract for receiving organ state.
+    """
+
+    def __init__(
+        self,
+        d_model: int = 256,
+        n_layers: int = 3,
+        d_state: int = 192,
+        d_organ: int = 32,
+        dropout: float = 0.0,
+    ):
+        super().__init__()
+        self.d_model = d_model
+        self.d_state = d_state
+        self.d_organ = d_organ
+        self.n_layers = n_layers
+
+        self.reg_embed = nn.Embedding(MOD, d_model)
+        self.op_embed = nn.Embedding(NUM_OPS, d_model)
+
+        self.state_init = nn.Sequential(
+            nn.Linear(NUM_REGS * d_model, d_model),
+            nn.GELU(),
+            nn.Linear(d_model, n_layers * d_state),
+        )
+
+        self.organ_proj = nn.Linear(d_organ, d_model)
+
+        self.gru = nn.GRU(
+            input_size=d_model,
+            hidden_size=d_state,
+            num_layers=n_layers,
+            batch_first=True,
+            dropout=dropout if n_layers > 1 else 0.0,
+        )
+
+        self.output_heads = nn.ModuleList([
+            nn.Sequential(
+                nn.Linear(d_state, d_model),
+                nn.GELU(),
+                nn.Linear(d_model, MOD),
+            )
+            for _ in range(NUM_REGS)
+        ])
+
+    def init_hidden(self, init_regs: torch.Tensor) -> torch.Tensor:
+        reg_emb = self.reg_embed(init_regs)
+        reg_flat = reg_emb.reshape(reg_emb.size(0), -1)
+        h = self.state_init(reg_flat)
+        h = h.reshape(-1, self.n_layers, self.d_state)
+        h = h.permute(1, 0, 2).contiguous()  # (n_layers, B, d_state)
+        return h
+
+    def forward(
+        self,
+        init_regs: torch.Tensor,
+        ops: torch.Tensor,
+        organ=None,
+        ops_mask: Optional[torch.Tensor] = None,
+    ) -> tuple:
+        B, L = ops.shape
+        hidden = self.init_hidden(init_regs)
+
+        op_emb = self.op_embed(ops)  # (B, L, d_model)
+
+        if organ is not None:
+            organ_state = organ.init_state(init_regs)
+            organ_inputs = []
+            for t in range(L):
+                organ_state = organ.step(organ_state, ops[:, t])
+                organ_inputs.append(self.organ_proj(organ_state))
+            organ_seq = torch.stack(organ_inputs, dim=1)  # (B, L, d_model)
+            gru_input = op_emb + organ_seq
+        else:
+            gru_input = op_emb
+
+        output, hidden = self.gru(gru_input, hidden)  # output: (B, L, d_state)
+
+        if ops_mask is not None:
+            lengths = ops_mask.sum(dim=1).long() - 1  # last valid step
+            lengths = lengths.clamp(min=0)
+            final = output[torch.arange(B, device=output.device), lengths]
+        else:
+            final = output[:, -1, :]
+
+        logits = tuple(head(final) for head in self.output_heads)
+        return logits, final
+
+
+class CausalOrgan(nn.Module):
+    """Causal Skill Organ: compact executable state-transition module.
+
+    Maximum 32-dim state, 32K quantized parameters.
+    Frozen after extraction, identical bytes for both hosts.
+
+    z_{t+1} = F(z_t, U_t)
+    m_t = G(z_t)
+    """
+
+    def __init__(self, d_state: int = 32, d_hidden: int = 48):
+        super().__init__()
+        self.d_state = d_state
+
+        self.reg_init = nn.Sequential(
+            nn.Linear(NUM_REGS * 16, d_hidden),
+            nn.GELU(),
+            nn.Linear(d_hidden, d_state),
+        )
+
+        self.op_embed = nn.Embedding(NUM_OPS, d_hidden)
+
+        self.transition = nn.Sequential(
+            nn.Linear(d_state + d_hidden, d_hidden),
+            nn.GELU(),
+            nn.Linear(d_hidden, d_hidden),
+            nn.GELU(),
+            nn.Linear(d_hidden, d_state),
+        )
+
+        self.readout = nn.Linear(d_state, d_state)
+
+    def init_state(self, init_regs: torch.Tensor) -> torch.Tensor:
+        """Initialize organ state from register values (one-hot encoded)."""
+        B = init_regs.size(0)
+        one_hot = F.one_hot(init_regs.long(), MOD).float()  # (B, 4, 16)
+        flat = one_hot.reshape(B, -1)  # (B, 64)
+        return self.reg_init(flat)  # (B, d_state)
+
+    def step(self, state: torch.Tensor, op: torch.Tensor) -> torch.Tensor:
+        """One transition step. Returns updated state."""
+        op_emb = self.op_embed(op)  # (B, d_hidden)
+        x = torch.cat([state, op_emb], dim=1)
+        return state + self.transition(x)  # residual
+
+    def read(self, state: torch.Tensor) -> torch.Tensor:
+        """Readout message from current state."""
+        return self.readout(state)
+
+    def forward(
+        self,
+        init_regs: torch.Tensor,
+        ops: torch.Tensor,
+    ) -> torch.Tensor:
+        """Full rollout. Returns final organ state."""
+        state = self.init_state(init_regs)
+        for t in range(ops.shape[1]):
+            state = self.step(state, ops[:, t])
+        return state
+
+
+def count_parameters(model: nn.Module) -> int:
+    return sum(p.numel() for p in model.parameters())
+
+
+def create_donor(**kwargs) -> RecurrentTransformerDonor:
+    model = RecurrentTransformerDonor(**kwargs)
+    n = count_parameters(model)
+    print(f"Donor: {n:,} parameters ({n/1e6:.1f}M)")
+    return model
+
+
+def create_host_transformer(**kwargs) -> TransformerHost:
+    model = TransformerHost(**kwargs)
+    n = count_parameters(model)
+    print(f"Host T: {n:,} parameters ({n/1e6:.1f}M)")
+    return model
+
+
+def create_host_gru(**kwargs) -> GRUHost:
+    model = GRUHost(**kwargs)
+    n = count_parameters(model)
+    print(f"Host G: {n:,} parameters ({n/1e6:.1f}M)")
+    return model
+
+
+def create_organ(**kwargs) -> CausalOrgan:
+    model = CausalOrgan(**kwargs)
+    n = count_parameters(model)
+    size_kb = n * 4 / 1024  # float32
+    print(f"Organ: {n:,} parameters ({size_kb:.1f} KiB float32)")
+    return model
+
+
+if __name__ == "__main__":
+    print("=" * 60)
+    print("CAUSAL SKILL ORGAN: MODEL PARAMETER CENSUS")
+    print("=" * 60)
+    print()
+
+    donor = create_donor()
+    print()
+    host_t = create_host_transformer()
+    print()
+    host_g = create_host_gru()
+    print()
+    organ = create_organ()
+    print()
+
+    print("--- Smoke test (batch=4, L=8) ---")
+    B, L = 4, 8
+    init_regs = torch.randint(0, MOD, (B, NUM_REGS))
+    ops = torch.randint(0, NUM_OPS, (B, L))
+
+    print("Donor forward...")
+    logits_d, state_d = donor(init_regs, ops)
+    print(f"  Logits: {[l.shape for l in logits_d]}, State: {state_d.shape}")
+
+    print("Host T forward (no organ)...")
+    logits_t, state_t = host_t(init_regs, ops)
+    print(f"  Logits: {[l.shape for l in logits_t]}, State: {state_t.shape}")
+
+    print("Host G forward (no organ)...")
+    logits_g, state_g = host_g(init_regs, ops)
+    print(f"  Logits: {[l.shape for l in logits_g]}, State: {state_g.shape}")
+
+    print("Organ forward...")
+    organ_out = organ(init_regs, ops)
+    print(f"  Organ state: {organ_out.shape}")
+
+    print("Host T forward (with organ)...")
+    logits_to, state_to = host_t(init_regs, ops, organ=organ)
+    print(f"  Logits: {[l.shape for l in logits_to]}, State: {state_to.shape}")
+
+    print("Host G forward (with organ)...")
+    logits_go, state_go = host_g(init_regs, ops, organ=organ)
+    print(f"  Logits: {[l.shape for l in logits_go]}, State: {state_go.shape}")
+
+    print()
+
+    n_donor = count_parameters(donor)
+    n_host_t = count_parameters(host_t)
+    n_host_g = count_parameters(host_g)
+    n_organ = count_parameters(organ)
+
+    print(f"Compression ratio (donor/host_t): {n_donor/n_host_t:.1f}x")
+    print(f"Compression ratio (donor/host_g): {n_donor/n_host_g:.1f}x")
+    print(f"Organ as % of donor: {100*n_organ/n_donor:.2f}%")
+    print(f"Organ size: {n_organ*4/1024:.1f} KiB (limit: 64 KiB)")
+
+    print()
+    print("ALL SMOKE TESTS PASSED")
