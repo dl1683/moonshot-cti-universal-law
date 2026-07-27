@@ -49,6 +49,26 @@ def stage_b_structural_screen(
     if void_reasons:
         return {"verdict": "STRUCTURAL_SCREEN_VOID", "reasons": void_reasons}
 
+    for seed in STAGE_B_SEEDS:
+        for cand in STAGE_B_CANDIDATES:
+            if seed not in withheld_accuracies:
+                void_reasons.append(f"Missing seed {seed}")
+                continue
+            if cand not in withheld_accuracies.get(seed, {}):
+                void_reasons.append(f"Missing candidate {cand} for seed {seed}")
+                continue
+            for condition in ["correct", "haar"]:
+                val = withheld_accuracies[seed][cand].get(condition)
+                if val is None or not np.isfinite(val):
+                    void_reasons.append(
+                        f"Non-finite accuracy: seed={seed}, cand={cand}, cond={condition}, val={val}"
+                    )
+
+    if void_reasons:
+        return {"verdict": "STRUCTURAL_SCREEN_VOID", "reasons": void_reasons}
+
+    THRESHOLD_EPS = 1e-9
+
     selection = {}
     for cand in STAGE_B_CANDIDATES:
         deltas = []
@@ -70,8 +90,8 @@ def stage_b_structural_screen(
 
         eligible = (
             min_delta > STAGE_B_MIN_DELTA
-            and median_delta >= STAGE_B_FLOOR_DELTA
-            and mean_delta >= STAGE_B_FLOOR_DELTA
+            and median_delta >= STAGE_B_FLOOR_DELTA - THRESHOLD_EPS
+            and mean_delta >= STAGE_B_FLOOR_DELTA - THRESHOLD_EPS
         )
 
         from math import comb

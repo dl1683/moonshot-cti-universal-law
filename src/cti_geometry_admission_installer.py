@@ -129,8 +129,14 @@ def calibrate_coefficient(
     trunk_params = [p for name, p in model.named_parameters()
                     if "classifier" not in name and p.requires_grad]
 
-    task_grads = torch.autograd.grad(task_loss, trunk_params, retain_graph=False)
-    g_task = torch.sqrt(sum((g ** 2).sum() for g in task_grads)).item()
+    task_grads = torch.autograd.grad(
+        task_loss, trunk_params, retain_graph=False, allow_unused=True,
+    )
+    g_task = torch.sqrt(sum(
+        (g ** 2).sum() for g in task_grads if g is not None
+    )).item()
+    if not np.isfinite(g_task) or g_task == 0:
+        return 1.0
 
     aux_norms = []
     for bank_idx, bank in enumerate(anchor_banks):
@@ -141,8 +147,12 @@ def calibrate_coefficient(
         if aux_loss is None or aux_loss.item() == 0:
             continue
 
-        aux_grads = torch.autograd.grad(aux_loss, trunk_params, retain_graph=False)
-        g_aux = torch.sqrt(sum((g ** 2).sum() for g in aux_grads)).item()
+        aux_grads = torch.autograd.grad(
+            aux_loss, trunk_params, retain_graph=False, allow_unused=True,
+        )
+        g_aux = torch.sqrt(sum(
+            (g ** 2).sum() for g in aux_grads if g is not None
+        )).item()
         if g_aux > 0 and np.isfinite(g_aux):
             aux_norms.append(g_aux)
 
@@ -337,19 +347,22 @@ def train_installer_run(
             print(f"[{name}] Already complete, skipping.")
             return summary
 
-    if arch == "gru":
-        model = create_gru_student()
-    else:
-        model = create_transformer_student()
-
     if init_checkpoint:
         init_path = Path(init_checkpoint)
+        if arch == "gru":
+            model = create_gru_student()
+        else:
+            model = create_transformer_student()
         state_dict = torch.load(init_path, map_location="cpu", weights_only=True)
         model.load_state_dict(state_dict)
         init_hash = _hashlib.sha256(init_path.read_bytes()).hexdigest()
     else:
         torch.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
+        if arch == "gru":
+            model = create_gru_student()
+        else:
+            model = create_transformer_student()
         init_hash = "dynamic"
 
     model = model.to(device)
@@ -482,10 +495,11 @@ def train_installer_run(
         "status": "complete",
     }
 
+    torch.save(model.state_dict(), run_dir / "model_final.pt")
+
     with open(summary_path, "w") as f:
         json.dump(summary, f, indent=2)
 
-    torch.save(model.state_dict(), run_dir / "model_final.pt")
     return summary
 
 

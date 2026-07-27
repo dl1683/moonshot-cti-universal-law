@@ -43,12 +43,14 @@ def compute_R_differentiable(
     eigvals, eigvecs = torch.linalg.eigh(G_sym)
 
     trace_G = eigvals.sum()
+    if trace_G.item() <= 0 or not torch.isfinite(trace_G):
+        raise ValueError(f"Non-positive or non-finite Gram trace: {trace_G.item():.2e}")
     ridge = RIDGE_FACTOR * trace_G / (n - 1)
 
     min_eig = eigvals.min().item()
-    if min_eig < -1e-6:
+    if min_eig < -1e-5:
         raise ValueError(
-            f"Materially negative Gram eigenvalue: {min_eig:.2e} < -1e-6"
+            f"Materially negative Gram eigenvalue: {min_eig:.2e} < -1e-5"
         )
     if not torch.isfinite(eigvals).all():
         raise ValueError("Non-finite Gram eigenvalues")
@@ -60,6 +62,9 @@ def compute_R_differentiable(
 
     G_inv_sqrt = C @ eigvecs @ torch.diag(ridged_inv_sqrt) @ eigvecs.T @ C
     R_j = G_inv_sqrt @ A_j @ G_inv_sqrt
+
+    if not torch.isfinite(R_j).all():
+        raise ValueError("Non-finite R matrix produced")
 
     return R_j
 

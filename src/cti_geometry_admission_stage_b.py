@@ -375,6 +375,12 @@ def adjudicate(prep: dict, device: torch.device) -> dict:
                 del model
                 torch.cuda.empty_cache()
 
+    precommit_path = RESULTS_DIR / "precommit.json"
+    if not precommit_path.exists():
+        raise RuntimeError("Missing precommit.json -- prepare() was not run")
+    with open(precommit_path) as f:
+        precommit = json.load(f)
+
     protocol_checks = {
         "stage_a_artifacts_valid": True,
         "all_runs_complete": True,
@@ -384,6 +390,17 @@ def adjudicate(prep: dict, device: torch.device) -> dict:
         "no_forbidden_info": True,
         "all_losses_finite": True,
     }
+
+    init_dir = RESULTS_DIR / "initializations"
+    for seed in STAGE_B_SEEDS:
+        init_path = init_dir / f"init_s{seed}.pt"
+        if not init_path.exists():
+            protocol_checks["initialization_hashes_paired"] = False
+        else:
+            actual_hash = _sha256_file(init_path)
+            expected = precommit.get("init_hashes", {}).get(str(seed))
+            if actual_hash != expected:
+                protocol_checks["initialization_hashes_paired"] = False
 
     for seed in STAGE_B_SEEDS:
         for cand in STAGE_B_CANDIDATES:
@@ -398,6 +415,27 @@ def adjudicate(prep: dict, device: torch.device) -> dict:
                     summary = json.load(f)
                 if summary.get("status") != "complete":
                     protocol_checks["all_runs_complete"] = False
+                    continue
+
+                init_hash = summary.get("init_hash", "")
+                expected_init = precommit.get("init_hashes", {}).get(str(seed))
+                if init_hash != expected_init:
+                    protocol_checks["initialization_hashes_paired"] = False
+
+                expected_coeff = precommit.get("frozen_coefficients", {}).get(cand)
+                actual_coeff = summary.get("coefficient")
+                if expected_coeff is not None and actual_coeff != expected_coeff:
+                    protocol_checks["coefficient_frozen"] = False
+
+                log_path = run_dir / "training_log.jsonl"
+                if log_path.exists():
+                    with open(log_path) as lf:
+                        for line in lf:
+                            entry = json.loads(line)
+                            if not np.isfinite(entry.get("task_loss", 0)):
+                                protocol_checks["all_losses_finite"] = False
+                            if not np.isfinite(entry.get("aux_loss", 0)):
+                                protocol_checks["all_losses_finite"] = False
 
     screen = stage_b_structural_screen(withheld_accuracies, protocol_checks)
 
