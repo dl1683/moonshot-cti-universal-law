@@ -188,6 +188,8 @@ def main():
 
     if args.phase == "P1" and args.workload == "W-D2":
         return run_p1_mkqa(budget)
+    if args.phase == "P1" and args.workload == "W-D3":
+        return run_p1_policybench(budget)
 
     print(f"\nPhase {args.phase} ready for execution.")
     print(f"Dispatch not yet implemented for {args.phase}/{args.workload}.")
@@ -316,6 +318,132 @@ def run_p1_mkqa(budget):
         print(f"  {sid:20s}  pass={s['pass_rate']:.1%}  "
               f"F1={s['mean_f1']:.3f}  "
               f"{s['energy']['energy_joules']:.0f}J  "
+              f"({s['params_b']}B)")
+
+    return 0
+
+
+def run_p1_policybench(budget):
+    """P1: Raw W-D3 screen — 9 checkpoints x 1970 PolicyBench episodes."""
+    sys.path.insert(0, str(REPO / "src"))
+    import torch
+    import yaml
+    from cti_atlas_inference import load_model, generate
+    from cti_atlas_workloads import (
+        load_policybench, format_policybench_prompt, score_policybench,
+    )
+    from cti_energy_meter import EnergyMeter
+
+    with open(REPO / "configs" / "atlas_r2_systems.yaml", encoding="utf-8") as f:
+        systems_cfg = yaml.safe_load(f)
+
+    local_systems = list(systems_cfg["local_checkpoints"].keys())
+    episodes = load_policybench()
+
+    print(f"\nP1 W-D3: {len(local_systems)} systems x "
+          f"{len(episodes)} episodes")
+
+    all_summaries = {}
+
+    for sys_id in local_systems:
+        print(f"\n{'='*50}")
+        print(f"System: {sys_id}")
+        print(f"{'='*50}")
+
+        model, tok, spec = load_model(sys_id)
+        meter = EnergyMeter()
+
+        passed = 0
+        total = 0
+        task_results = []
+        meter.start()
+
+        for i, ep in enumerate(episodes):
+            prompt = format_policybench_prompt(ep)
+            t0 = time.perf_counter()
+            result = generate(model, tok, prompt, max_new_tokens=32)
+            gpu_seconds = time.perf_counter() - t0
+
+            clean_text = _strip_think(result["text"])
+            score = score_policybench(clean_text, ep)
+            total += 1
+            if score["status"] == "pass":
+                passed += 1
+
+            log_task(
+                phase="P1", workload="W-D3", system_id=sys_id,
+                task_id=ep["task_id"], status=score["status"],
+                gpu_seconds=round(gpu_seconds, 3),
+                wall_seconds=result["wall_seconds"],
+                input_tokens=result["input_tokens"],
+                output_tokens=result["output_tokens"],
+            )
+
+            task_results.append({
+                "task_id": ep["task_id"],
+                "variable": ep["variable"],
+                "is_binary": ep["is_binary"],
+                "status": score["status"],
+                "exact_match": score["exact_match"],
+                "error": score.get("error", 0),
+                "gpu_seconds": round(gpu_seconds, 3),
+            })
+
+            if (i + 1) % 200 == 0 or i == 0:
+                print(f"  [{i+1}/{len(episodes)}] "
+                      f"pass={passed}/{total} "
+                      f"({100*passed/total:.1f}%)")
+
+        meter.stop()
+        energy = meter.summary()
+
+        binary_pass = sum(1 for t in task_results
+                         if t["is_binary"] and t["status"] == "pass")
+        binary_total = sum(1 for t in task_results if t["is_binary"])
+        dollar_pass = sum(1 for t in task_results
+                         if not t["is_binary"] and t["status"] == "pass")
+        dollar_total = sum(1 for t in task_results if not t["is_binary"])
+
+        summary = {
+            "system_id": sys_id,
+            "hf_id": spec["hf_id"],
+            "params_b": spec["params_b"],
+            "family": spec["family"],
+            "pass_rate": round(passed / total, 4) if total else 0,
+            "binary_pass_rate": round(binary_pass / binary_total, 4)
+            if binary_total else 0,
+            "dollar_pass_rate": round(dollar_pass / dollar_total, 4)
+            if dollar_total else 0,
+            "passed": passed,
+            "total": total,
+            "energy": energy,
+            "tasks": task_results,
+        }
+        all_summaries[sys_id] = summary
+
+        print(f"  Final: {passed}/{total} "
+              f"({100*passed/total:.1f}%) | "
+              f"binary={binary_pass}/{binary_total} "
+              f"dollar={dollar_pass}/{dollar_total} | "
+              f"{energy['energy_joules']:.0f}J")
+
+        del model, tok
+        torch.cuda.empty_cache()
+        gc.collect()
+
+    out_path = RESULTS_DIR / "atlas_r2_p1_policybench_raw.json"
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(all_summaries, f, indent=2)
+    print(f"\nResults written to {out_path}")
+
+    print("\n" + "=" * 60)
+    print("P1 W-D3 SUMMARY")
+    print("=" * 60)
+    for sid, s in sorted(all_summaries.items(),
+                         key=lambda x: x[1]["pass_rate"], reverse=True):
+        print(f"  {sid:20s}  pass={s['pass_rate']:.1%}  "
+              f"bin={s['binary_pass_rate']:.1%}  "
+              f"$={s['dollar_pass_rate']:.1%}  "
               f"({s['params_b']}B)")
 
     return 0

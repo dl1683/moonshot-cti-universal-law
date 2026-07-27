@@ -140,6 +140,121 @@ def score_mkqa(prediction, episode):
     }
 
 
+def load_policybench(n_households=100):
+    """Load PolicyBench (W-D3) scenarios and reference outputs.
+
+    Returns list of episodes: {scenario_id, variable, ref_value, prompt_text,
+    is_binary, scenario_json}.
+    """
+    import csv
+
+    pb_dir = DATA_DIR / "policybench"
+    scenarios_path = pb_dir / "scenarios.csv"
+    refs_path = pb_dir / "reference_outputs.csv"
+
+    if not scenarios_path.exists():
+        raise FileNotFoundError(
+            f"PolicyBench data not found at {pb_dir}. "
+            "Run: policybench reference-outputs -n 100 --seed 42"
+        )
+
+    scenarios = {}
+    with open(scenarios_path, encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            scenarios[row["scenario_id"]] = row
+
+    refs = []
+    with open(refs_path, encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            refs.append(row)
+
+    binary_vars = {v for v in
+                   {r["variable"] for r in refs}
+                   if "eligible" in v}
+
+    episodes = []
+    for ref in refs:
+        sid = ref["scenario_id"]
+        if sid not in scenarios:
+            continue
+        sc = scenarios[sid]
+        var = ref["variable"]
+        val = float(ref["value"])
+
+        episodes.append({
+            "scenario_id": sid,
+            "variable": var,
+            "task_id": f"pb_{sid}_{var}",
+            "ref_value": val,
+            "is_binary": var in binary_vars,
+            "scenario_json": sc.get("scenario_json", ""),
+            "state": sc.get("state", ""),
+            "filing_status": sc.get("filing_status", ""),
+        })
+
+    return episodes
+
+
+def format_policybench_prompt(episode):
+    """Format a PolicyBench episode as a generation prompt."""
+    var = episode["variable"]
+    sc = episode["scenario_json"]
+
+    if episode["is_binary"]:
+        return (
+            f"Given the following US household for tax year 2026, "
+            f"determine if the variable '{var}' applies (1 for yes, 0 for no).\n\n"
+            f"Household: {sc}\n\n"
+            f"Answer with ONLY the number (0 or 1), nothing else.\n"
+            f"Answer:"
+        )
+    return (
+        f"Given the following US household for tax year 2026, "
+        f"compute the value of '{var}' in US dollars.\n\n"
+        f"Household: {sc}\n\n"
+        f"Answer with ONLY the numeric dollar amount (no $ sign, "
+        f"no commas), nothing else.\n"
+        f"Answer:"
+    )
+
+
+def score_policybench(prediction, episode):
+    """Score a PolicyBench prediction against reference value.
+
+    Binary variables: exact match (0 or 1).
+    Dollar variables: within 5% relative tolerance or $50 absolute.
+    """
+    pred_text = _normalize(prediction)
+    pred_text = pred_text.replace("$", "").replace(",", "")
+
+    try:
+        pred_val = float(pred_text.split()[0])
+    except (ValueError, IndexError):
+        return {"exact_match": False, "error": 0.0, "status": "parse_fail"}
+
+    ref = episode["ref_value"]
+
+    if episode["is_binary"]:
+        match = (pred_val > 0.5) == (ref > 0.5)
+        return {"exact_match": match, "error": 0.0,
+                "status": "pass" if match else "fail"}
+
+    if ref == 0:
+        match = abs(pred_val) < 50
+    else:
+        rel_err = abs(pred_val - ref) / abs(ref)
+        abs_err = abs(pred_val - ref)
+        match = rel_err < 0.05 or abs_err < 50
+
+    return {
+        "exact_match": pred_val == ref,
+        "error": round(abs(pred_val - ref), 2),
+        "status": "pass" if match else "fail",
+    }
+
+
 if __name__ == "__main__":
     print("Loading MKQA (W-D2)...")
     episodes = load_mkqa(n_queries=5, languages=["en", "es"])
