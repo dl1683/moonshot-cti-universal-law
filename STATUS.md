@@ -65,11 +65,21 @@ without teacher access or pair-specific tuning.
 **Kill conclusion:** Observational geometric resemblance is not functional equivalence.
 The strong form "Intelligence = Geometry" is dead.
 
-### Phase 2 — Causal Skill Organs (CSO) — ACTIVE
+### Phase 2 — Causal Skill Organs (CSO) — DONOR GATE FAIL (Jul 27, 2026)
 
-**R11 steering dialogue converged (3 rounds, Jul 26 2026).**
+**Donor capacity training: ALL GATES FAIL.** 50K steps (4.1h), precommit hash verified.
+- Train: 33.9% (gate: >=99.5%) — FAIL by 65.6pt
+- Length extrapolation: 0.4% (gate: >=99.0%) — FAIL by 98.6pt
+- Excluded bigrams: 24.5% (gate: >=99.0%) — FAIL by 74.5pt
+- Withheld trigrams: 5.9% (gate: >=99.0%) — FAIL by 93.1pt
 
-**New thesis:**
+**Failure mode:** Model learned per-register prediction (~76% per register, ~34% exact 4-register match) but never learned the compositional state-transition function. Length extrapolation near 0% throughout — no generalizable algorithm discovered. Cosine LR schedule drove learning rate to ~7.5e-10 by step 45K, eliminating any possibility of late grokking.
+
+**QL11 strategic assessment (2-round Codex dialogue):** CSO caps at 3/10 even with perfect admission. Six systematic direction-selection antipatterns diagnosed. ACQ-1 (Actionable Causal Quotient) proposed as next direction (6-7/10 ceiling).
+
+**CSO disposition:** Donor never achieved capacity. Remaining pipeline (host training, intervention generation, organ extraction, installation) never reached. Direction closed at first gate.
+
+**Original thesis:**
 > Capabilities are causal mechanisms with interfaces — not geometric shapes and not monolithic checkpoints.
 
 **Headline:** "From giant models to transplantable causal skills. Train an expensive model
@@ -116,10 +126,24 @@ once, extract the mechanism it learned, and let cheap local AIs reuse it."
 8. >40 GPU-hours without >70% counterfactual fidelity -> infeasible
 
 **Pivot ladder:**
-1. Admission fails: reassess causal extraction feasibility
+1. Admission fails: reassess causal extraction feasibility  **<-- WE ARE HERE. Donor never achieved capacity.**
 2. Admission passes: earn the right to test world-model organ (novel goals)
 3. World-model passes: earn the right to test zero-shot composition
 4. Composition passes: moonshot narrative earned
+
+### Phase 3 — Actionable Causal Quotient (ACQ-1) — NEXT
+
+**Proposed by Codex QL11 R2 (Jul 27, 2026). Pre-registration pending.**
+
+**Central claim:** Planning compute scales with intervention-distinguishable causal complexity, not sensory complexity.
+
+**Viral headline:** "We made the AI's visual world a million times noisier. Its brain did not get larger, slower, or worse — because it learned to model only what actions could change."
+
+**Design:** 3 environments (Key-Door Memory, Switch Maze, Sokoban-Lite), 64x64 RGB with controlled exogenous nuisance, 10 baselines (ACRO, bisimulation, paired invariance, JEPA, etc.), 6 gates, 10 kill criteria, 6 VOID criteria. Budget: 60-80 GPU-hours, 8 weeks.
+
+**Ceiling:** 6-7/10 (honest Codex assessment).
+
+**Status:** Awaiting pre-registration. Full design in `results/codex_cso_question_loop_ql11_r2.md`.
 
 ---
 
@@ -156,7 +180,8 @@ once, extract the mechanism it learned, and let cheap local AIs reuse it."
 | 26 | R11 steering: post-kill pivot | DONE | 3 rounds converged. Kill "Intelligence = Geometry" strong form. New direction: Causal Skill Organs (CSO). Register transducer admission test. Prior art gap confirmed. |
 | 27 | CSO simulator + model smoke | DONE | Register transducer verified (8 ops, 65536 states, 23/28 non-commuting, group >201K). Models: donor 18.9M, host T 0.9M (5.6% compute), host G 1.3M, organ 54.7 KiB. Codex NO-GO -> 13 bugs fixed (5 CRITICAL, 4 HIGH, 4 MEDIUM). Precommit frozen. All verification PASS. |
 | 28 | CSO precommit hardening (v3-v12 review cycle) | DONE | 12-iteration Codex review cycle. v3-v11 NO-GO: NaN/tolerance, semantic gaps, thread-sensitive sockets, derived-set bypass, boolean type confusion, runtime env, training config binding, list recursion. All fixed. v12: **GO**. Integrity hash: 745f10e7... |
-| 29 | Donor capacity training (50K steps) | IN PROGRESS | Smoke PASS (500 steps, loss 2.80->2.43, ~2.6 steps/sec). Full run launched. Gates: >=99.5% train, >=99.0% extrap/excluded/withheld. ETA ~5.3h. |
+| 29 | Donor capacity training (50K steps) | DONE | ALL GATES FAIL. 50K steps, 4.1h. Train 33.9%, extrap 0.4%, excluded 24.5%, withheld 5.9%. Model learned per-register tracking (~76%/reg) but never composed across registers. No grokking. Cosine LR drove to ~7.5e-10 by step 45K. |
+| 30 | CSO admission closure + ACQ-1 pivot | PENDING | Document failure, commit results, update STATUS.md, begin ACQ-1 pre-registration. |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
@@ -171,6 +196,7 @@ once, extract the mechanism it learned, and let cheap local AIs reuse it."
 | 8 | Generative directions for DG-0 | DONE | Lead with observable connection codec; pursue differential skill patches, closed-loop transfer, and gauge-invariant loop structure |
 | 9 | Memorization threat to GAT | DONE | Artifact 290,000x over-budgeted for 86.5 bits. Paired-key signed selectivity is decisive experiment. QL6 tests only partially implemented |
 | 10 | Calibration-matched counterfactual | DONE | Wrong-key control fatally unmatched on calibration edges. CM-CKS design required. |
+| 11 | CSO ceiling + Nobel path assessment | DONE | CSO caps at 3/10 even if perfect. Six direction-selection antipatterns identified. ACQ-1 proposed (6-7/10 ceiling). Codex QL11 R2: "What did the large model discover that the researchers did not already know? Nothing scientifically new." |
 
 ### Steering Dialogue (5-round supervisor check-in)
 | Round | Topic | Status | Outcome |
