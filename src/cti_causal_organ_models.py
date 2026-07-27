@@ -48,6 +48,8 @@ class RecurrentTransformerDonor(nn.Module):
         super().__init__()
         self.d_model = d_model
         self.d_state = d_state
+        self.n_heads = n_heads
+        self.dropout = dropout
 
         self.reg_embed = nn.Embedding(MOD, d_model)
         self.op_embed = nn.Embedding(NUM_OPS, d_model)
@@ -189,6 +191,8 @@ class TransformerHost(nn.Module):
         self.d_model = d_model
         self.d_state = d_state
         self.d_organ = d_organ
+        self.n_heads = n_heads
+        self.dropout = dropout
 
         self.reg_embed = nn.Embedding(MOD, d_model)
         self.op_embed = nn.Embedding(NUM_OPS, d_model)
@@ -318,6 +322,7 @@ class GRUHost(nn.Module):
         self.d_state = d_state
         self.d_organ = d_organ
         self.n_layers = n_layers
+        self.dropout = dropout
 
         self.reg_embed = nn.Embedding(MOD, d_model)
         self.op_embed = nn.Embedding(NUM_OPS, d_model)

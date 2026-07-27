@@ -256,10 +256,12 @@ def _socket_hash(seed: int = 777, d_in: int = 32, d_out: int = 128) -> str:
 SOCKET_SEED = 777
 
 
-def create_precommit(partitions: dict, model_config: Optional[dict] = None) -> dict:
+def create_precommit(partitions: dict, model_config: dict) -> dict:
     """Create and write the immutable precommit artifact.
-    model_config should include exact param counts, dims, and FLOPs.
+    model_config is required and must include exact param counts, dims, and FLOPs.
     """
+    if not model_config:
+        raise ValueError("model_config is required for precommit creation")
     hashes = partition_hashes(partitions)
 
     precommit = {
@@ -275,15 +277,15 @@ def create_precommit(partitions: dict, model_config: Optional[dict] = None) -> d
         "excluded_bigrams": partitions["excluded_bigrams"],
         "withheld_trigrams": partitions["withheld_trigrams"],
         "generator_source_sha256": _source_hash(),
+        "models_source_sha256": _models_source_hash(),
+        "trainer_source_sha256": _trainer_source_hash(),
         "encoding": {"state_dtype": "uint32_be", "bigram_dtype": "uint8_be"},
         "socket_seed": SOCKET_SEED,
         "socket_weight_sha256": _socket_hash(SOCKET_SEED, 32, 128),
         "socket_weight_gru_sha256": _socket_hash(SOCKET_SEED, 32, 256),
         "hashes": hashes,
+        "model_config": model_config,
     }
-
-    if model_config is not None:
-        precommit["model_config"] = model_config
 
     h = hashlib.sha256()
     h.update(json.dumps(precommit, sort_keys=True).encode())
@@ -303,7 +305,8 @@ _PRECOMMIT_REQUIRED_KEYS = {
     "n_train_states", "n_eval_states",
     "n_included_bigrams", "n_excluded_bigrams", "n_withheld_trigrams",
     "included_bigrams", "excluded_bigrams", "withheld_trigrams",
-    "generator_source_sha256", "encoding", "socket_seed",
+    "generator_source_sha256", "models_source_sha256", "trainer_source_sha256",
+    "encoding", "socket_seed",
     "socket_weight_sha256", "socket_weight_gru_sha256",
     "hashes", "model_config", "integrity_sha256",
 }
@@ -414,6 +417,28 @@ def verify_precommit(partitions: dict) -> bool:
             "generator source code changed.\n"
             f"  Frozen: {precommit['generator_source_sha256']}\n"
             f"  Live:   {live_src}\n"
+            "Re-run create_precommit() to update."
+        )
+
+    live_models_src = _models_source_hash()
+    if not precommit["models_source_sha256"]:
+        raise ValueError("models_source_sha256 is empty")
+    if precommit["models_source_sha256"] != live_models_src:
+        raise ValueError(
+            "models source code changed.\n"
+            f"  Frozen: {precommit['models_source_sha256']}\n"
+            f"  Live:   {live_models_src}\n"
+            "Re-run create_precommit() to update."
+        )
+
+    live_trainer_src = _trainer_source_hash()
+    if not precommit["trainer_source_sha256"]:
+        raise ValueError("trainer_source_sha256 is empty")
+    if precommit["trainer_source_sha256"] != live_trainer_src:
+        raise ValueError(
+            "trainer source code changed.\n"
+            f"  Frozen: {precommit['trainer_source_sha256']}\n"
+            f"  Live:   {live_trainer_src}\n"
             "Re-run create_precommit() to update."
         )
 
@@ -1183,6 +1208,18 @@ def run_full_verification():
     return partitions, hashes
 
 
+def _models_source_hash() -> str:
+    """SHA-256 of cti_causal_organ_models.py for precommit provenance."""
+    src = (Path(__file__).resolve().parent / "cti_causal_organ_models.py").read_bytes()
+    return hashlib.sha256(src).hexdigest()
+
+
+def _trainer_source_hash() -> str:
+    """SHA-256 of cti_causal_organ_train_donor.py for precommit provenance."""
+    src = (Path(__file__).resolve().parent / "cti_causal_organ_train_donor.py").read_bytes()
+    return hashlib.sha256(src).hexdigest()
+
+
 def build_model_config() -> dict:
     """Build model config dict with exact param counts and FLOPs."""
     from cti_causal_organ_models import (
@@ -1203,7 +1240,9 @@ def build_model_config() -> dict:
             "class": "RecurrentTransformerDonor",
             "d_model": donor.d_model,
             "n_layers": donor.transformer.num_layers,
+            "n_heads": donor.n_heads,
             "d_state": donor.d_state,
+            "dropout": donor.dropout,
             "params": count_parameters(donor),
             "step_macs": donor_macs,
         },
@@ -1211,7 +1250,9 @@ def build_model_config() -> dict:
             "class": "TransformerHost",
             "d_model": host_t.d_model,
             "n_layers": host_t.transformer.num_layers,
+            "n_heads": host_t.n_heads,
             "d_state": host_t.d_state,
+            "dropout": host_t.dropout,
             "params": count_parameters(host_t),
             "step_macs": host_t_macs,
             "compute_ratio": host_t_macs / donor_macs if donor_macs else 0,
@@ -1221,6 +1262,7 @@ def build_model_config() -> dict:
             "d_model": host_g.d_model,
             "n_layers": host_g.n_layers,
             "d_state": host_g.d_state,
+            "dropout": host_g.dropout,
             "params": count_parameters(host_g),
             "step_macs": host_g_macs,
         },

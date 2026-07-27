@@ -429,7 +429,9 @@
       7
     ]
   ],
-  "generator_source_sha256": "c7141d574987a04d2d92ee01e9f1ff8c2aad9bb2bb1bf3561cb1ed7179bccb10",
+  "generator_source_sha256": "9b6c27e58f096dffdb499ad5cddbc241cb5b79146b0094751dd5084549d29223",
+  "models_source_sha256": "0b252b18bc5fb87b472f927fef61826bbb199c17dce93efe643490ee509ef8c7",
+  "trainer_source_sha256": "494e836fe918653e93017840f06cabcaa31f6894a0ff5b73bef560b79976c4bb",
   "encoding": {
     "state_dtype": "uint32_be",
     "bigram_dtype": "uint8_be"
@@ -449,7 +451,9 @@
       "class": "RecurrentTransformerDonor",
       "d_model": 384,
       "n_layers": 10,
+      "n_heads": 6,
       "d_state": 128,
+      "dropout": 0.0,
       "params": 18863040,
       "step_macs": 35420160
     },
@@ -457,7 +461,9 @@
       "class": "TransformerHost",
       "d_model": 128,
       "n_layers": 4,
+      "n_heads": 4,
       "d_state": 64,
+      "dropout": 0.0,
       "params": 948928,
       "step_macs": 2368512,
       "compute_ratio": 0.06686903729401561
@@ -467,6 +473,7 @@
       "d_model": 256,
       "n_layers": 3,
       "d_state": 192,
+      "dropout": 0.0,
       "params": 1342720,
       "step_macs": 774144
     },
@@ -477,5 +484,5 @@
       "serialized_bytes": 61110
     }
   },
-  "integrity_sha256": "0157bcbdcb00022d6aff070316bec267ab6aed28bf2d9deee946a12867185185"
+  "integrity_sha256": "8b9ad9447beda5ba3019aed2d0cd2c19394994b459d06723ad006305a1f47784"
 }
