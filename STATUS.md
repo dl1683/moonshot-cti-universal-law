@@ -148,14 +148,32 @@ Revised ceiling: 3-4/10 (down from 6-7/10). Six antipatterns apply.
 - CIF retained ONLY as empirical affordability study (not 7/10 theorem)
 - Full verdict: `results/codex_cif_theorem_gate.md`
 
-**11 DIRECTIONS KILLED. Direction selection restarting from scratch.**
-- Codex recommendation: start from concrete unmet need of poor users, not from another universal object
-- Comprehensive failure synthesis + R13 steering required
+**11 DIRECTIONS KILLED. Identity pivot underway (R13).**
 
-**Deep pattern (R12 failure synthesis): The Compactness-Consequence Trap.**
-All 6 prior directions searched for a small, universal internal object after intelligence already exists. When easy to identify, tautological. When genuinely causal, difficult to learn and not cheaply portable. Next direction must start from direct scale-defying consequence and remain mechanism-agnostic.
+**R13 failure synthesis: four layers of the same failure (Codex R13 R1).**
 
-**Full dialogue:** `results/codex_steering_r12.md` (R1), `results/codex_steering_r12_r2.md` (R2)
+| Layer | Directions | What failed |
+|---|---|---|
+| Assay validity | CTI, equicorrelation, bridge | Measured object adjacent to target, created by preprocessing, or confounded by scale |
+| Artifact consequence | AMCL, GAT | Infrastructure or installable object existed, but no independent capability consequence |
+| Mechanism acquisition | CSO | Genuinely causal object could not be learned even in favorable synthetic setting |
+| Scientific novelty | ACQ, CCL, PCI, VIL, CIF | Claimed principle reduces to established theory, existing work, or information tautology |
+
+**Two deep traps:**
+- A. Compactness-Consequence Trap: search for compact internal object after intelligence exists
+- B. Observability-Consequence Tautology: hide info, permit query, prove query helps
+
+**Identity pivot:** "Find a universal law" -> "Affordable Intelligence Science" (predict deployment regimes where limited hardware achieves equal/better outcomes than frontier-scale systems).
+
+**R13 converged decision (2 rounds, Jul 27):**
+- PCSI-1 demoted to **PC-H1** (bounded crossover-window hypothesis, 3/10 standalone)
+- **Scale-Inversion Atlas** becomes primary program (4/10 today, conditional 7/10)
+- Core question: "Given my workload, hardware, volume, quality, and safety floor, what is the cheapest complete AI system that meets them?"
+- Discovery/confirmation split: map frontier -> freeze hypotheses -> confirm on untouched workloads
+- Prospective model test required: evaluate model released after selector is frozen
+- Viral narrative: **"Stop paying for the biggest AI."**
+
+**Full dialogue:** `results/codex_steering_r12.md` (R1), `results/codex_steering_r12_r2.md` (R2), `results/codex_steering_r13.md` (R13 R1), `results/codex_steering_r13_r2.md` (R13 R2)
 
 ---
 
@@ -195,7 +213,7 @@ All 6 prior directions searched for a small, universal internal object after int
 | 29 | Donor capacity training (50K steps) | DONE | ALL GATES FAIL. 50K steps, 4.1h. Train 33.9%, extrap 0.4%, excluded 24.5%, withheld 5.9%. Model learned per-register tracking (~76%/reg) but never composed across registers. No grokking. Cosine LR drove to ~7.5e-10 by step 45K. |
 | 30 | CSO closure + R12 direction stress test | DONE | Results committed, STATUS updated. ACQ-1 killed (R12 R1), CCL-1/PCI-1/VIL-1 killed (R12 R2). CIF survives. 5-day theorem gate next. |
 | 31 | CIF 5-day theorem gate | DONE | FAIL Day 0. Fatal trilemma: criterion 6 dead. No theorem target exists. CIF retained as empirical question only. |
-| 32 | Comprehensive failure synthesis + R13 | PENDING | 11 kills accumulated. Full constraint map. Direction restart from user needs. |
+| 32 | R13 steering: failure synthesis + pivot | DONE | R13 converged (2 rounds). Atlas primary, PC-H1 secondary. PCSI-1 demoted (3/10). Scale-Inversion Atlas: 4/10 today, conditional 7/10. |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
@@ -227,6 +245,7 @@ All 6 prior directions searched for a small, universal internal object after int
 | R10 | Stage B redesign | DONE | 3 rounds converged. Haar control (not deranged teacher), fresh init, target-only coefficient, effect-size screen. 5 binding amendments: PCG64DXSM, Helmert basis, frozen coefficients, diagnostic-only probe, VOID verdict. |
 | R11 | Post-kill pivot: Causal Skill Organs | DONE | 3 rounds converged. Kill "Intelligence = Geometry" strong form. New direction: Causal Skill Organs (CSO). Register transducer admission test. Prior art gap confirmed (5-way conjunction novel). |
 | R12 | Post-CSO failure: direction stress test | DONE | 2 rounds. ACQ-1 killed (3-4/10). CCL-1 retracted, PCI-1 demoted (4/10), VIL-1 weakened (5/10). Surviving: Compute-Interaction Frontier (conditional 7/10). 5-day theorem gate. |
+| R13 | Comprehensive failure synthesis + direction restart | DONE | 2 rounds converged. PCSI-1 demoted to PC-H1 (3/10). Scale-Inversion Atlas becomes primary program (4/10 today, conditional 7/10). Identity pivot: Affordable Intelligence Science. "Stop paying for the biggest AI." |
 
 ### Dead Code Cleanup Log
 | Direction | Files Deleted | Date | Evidence Preserved |
