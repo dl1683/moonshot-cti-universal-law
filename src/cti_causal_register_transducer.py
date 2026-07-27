@@ -453,18 +453,28 @@ def verify_precommit(partitions: dict) -> bool:
 
     live_env = _runtime_env()
     frozen_env = precommit["runtime_env"]
-    for env_key in ("python", "numpy", "torch"):
-        if frozen_env.get(env_key) != live_env.get(env_key):
+    frozen_keys = set(frozen_env.keys())
+    live_keys = set(live_env.keys())
+    if frozen_keys != live_keys:
+        raise ValueError(
+            f"runtime_env key mismatch: "
+            f"frozen_only={frozen_keys - live_keys}, "
+            f"live_only={live_keys - frozen_keys}"
+        )
+    for env_key in live_keys:
+        frozen_val = frozen_env[env_key]
+        live_val = live_env[env_key]
+        if type(frozen_val) is not type(live_val):
+            raise ValueError(
+                f"runtime_env.{env_key} type mismatch: "
+                f"frozen={type(frozen_val).__name__}({frozen_val!r}), "
+                f"live={type(live_val).__name__}({live_val!r})"
+            )
+        if frozen_val != live_val:
             raise ValueError(
                 f"runtime_env.{env_key} mismatch: "
-                f"frozen={frozen_env.get(env_key)!r}, live={live_env.get(env_key)!r}"
+                f"frozen={frozen_val!r}, live={live_val!r}"
             )
-    if frozen_env.get("cuda_available") != live_env.get("cuda_available"):
-        raise ValueError(
-            f"runtime_env.cuda_available mismatch: "
-            f"frozen={frozen_env.get('cuda_available')}, "
-            f"live={live_env.get('cuda_available')}"
-        )
 
     if precommit["socket_seed"] != SOCKET_SEED:
         raise ValueError(
@@ -1231,17 +1241,19 @@ def run_full_verification():
 
 
 def _runtime_env() -> dict:
-    """Capture runtime environment for precommit reproducibility."""
+    """Capture runtime environment for precommit reproducibility.
+    All values are normalized to plain str/bool types for JSON round-trip.
+    """
     import platform
     import torch
     env = {
-        "python": platform.python_version(),
-        "numpy": np.__version__,
-        "torch": torch.__version__,
-        "cuda_available": torch.cuda.is_available(),
+        "python": str(platform.python_version()),
+        "numpy": str(np.__version__),
+        "torch": str(torch.__version__),
+        "cuda_available": bool(torch.cuda.is_available()),
     }
     if torch.cuda.is_available():
-        env["cuda_version"] = torch.version.cuda or ""
+        env["cuda_version"] = str(torch.version.cuda or "")
         env["cudnn_version"] = str(torch.backends.cudnn.version()) if torch.backends.cudnn.is_available() else ""
     return env
 
