@@ -1,0 +1,19 @@
+{
+  "model": "RecurrentTransformerDonor",
+  "params": 18863040,
+  "max_steps": 500,
+  "final_eval": {
+    "train_lengths": 0.00234375,
+    "length_extrapolation": 0.0,
+    "excluded_bigram": 0.00078125,
+    "withheld_trigram": 0.000390625,
+    "held_out_state": 0.001171875,
+    "full_intersection": 0.0
+  },
+  "gates_passed": false,
+  "smoke": true,
+  "device": "cuda",
+  "elapsed_seconds": 190.616277217865,
+  "precommit_integrity_sha256": "745f10e732c9b6876998d73dfad1d847bf1ffeed728d2b398ad93715d2205c38",
+  "torch_seed": 2026
+}
