@@ -156,9 +156,10 @@ def _make_frozen_socket(d_in: int, d_out: int, seed: int = 777) -> nn.Linear:
     Fixed initialization, frozen (no gradients). Task-independent.
     """
     socket = nn.Linear(d_in, d_out, bias=False)
-    gen = torch.Generator()
-    gen.manual_seed(seed)
+    rng_state = torch.random.get_rng_state()
+    torch.manual_seed(seed)
     nn.init.orthogonal_(socket.weight, gain=1.0)
+    torch.random.set_rng_state(rng_state)
     socket.weight.requires_grad_(False)
     return socket
 
@@ -351,6 +352,13 @@ class GRUHost(nn.Module):
         ops_mask: Optional[torch.Tensor] = None,
     ) -> tuple:
         B, L = ops.shape
+
+        if ops_mask is not None and L > 1:
+            reactivated = (~ops_mask[:, :-1]) & ops_mask[:, 1:]
+            assert not reactivated.any(), (
+                "ops_mask must be contiguous right-padding (no holes)"
+            )
+
         hidden = self.init_hidden(init_regs)
 
         op_emb = self.op_embed(ops)
@@ -377,9 +385,9 @@ class GRUHost(nn.Module):
         output, hidden = self.gru(gru_input, hidden)
 
         if ops_mask is not None:
-            lengths = ops_mask.long().sum(dim=1) - 1
-            lengths = lengths.clamp(min=0)
-            final = output[torch.arange(B, device=output.device), lengths]
+            lengths = ops_mask.long().sum(dim=1)
+            last_idx = (lengths - 1).clamp(min=0)
+            final = output[torch.arange(B, device=output.device), last_idx]
         else:
             final = output[:, -1, :]
 
@@ -462,21 +470,24 @@ class CausalOrgan(nn.Module):
 # ---------------------------------------------------------------------------
 
 def estimate_step_macs(model: nn.Module) -> int:
-    """Rough per-step MAC estimate for compute budget verification."""
+    """Per-step MAC estimate for compute budget verification.
+    Attention: QKV projections + output proj = 4*d*d*seq, scores = 2*seq*seq*d.
+    FFN: up + down projections = 2 * d * 4d * seq = 8*d*d*seq.
+    """
     if isinstance(model, RecurrentTransformerDonor):
         d = model.d_model
         n = model.transformer.num_layers
         seq = 2
-        attn = 4 * d * d * seq + seq * seq * d
-        ffn = 2 * d * 4 * d
+        attn = 4 * d * d * seq + 2 * seq * seq * d
+        ffn = 8 * d * d * seq
         per_layer = attn + ffn
         return per_layer * n
     elif isinstance(model, TransformerHost):
         d = model.d_model
         n = model.transformer.num_layers
         seq = 3
-        attn = 4 * d * d * seq + seq * seq * d
-        ffn = 2 * d * 4 * d
+        attn = 4 * d * d * seq + 2 * seq * seq * d
+        ffn = 8 * d * d * seq
         per_layer = attn + ffn
         return per_layer * n
     elif isinstance(model, GRUHost):
@@ -539,13 +550,23 @@ def create_host_gru(**kwargs) -> GRUHost:
     return model
 
 
+def measure_organ_serialized_bytes(organ: CausalOrgan) -> int:
+    """Measure actual serialized state_dict size in bytes."""
+    import io
+    buf = io.BytesIO()
+    torch.save(organ.state_dict(), buf)
+    return buf.tell()
+
+
 def create_organ(**kwargs) -> CausalOrgan:
     model = CausalOrgan(**kwargs)
     n = count_parameters(model)
-    size_kb = n * 4 / 1024
-    print(f"Organ: {n:,} parameters ({size_kb:.1f} KiB float32)")
-    assert size_kb * 1024 <= MAX_ORGAN_BYTES, (
-        f"Organ {size_kb:.1f} KiB > {MAX_ORGAN_BYTES/1024:.0f} KiB limit"
+    actual_bytes = measure_organ_serialized_bytes(model)
+    print(f"Organ: {n:,} parameters, {actual_bytes:,} serialized bytes "
+          f"({actual_bytes/1024:.1f} KiB, limit: {MAX_ORGAN_BYTES/1024:.0f} KiB)")
+    assert actual_bytes <= MAX_ORGAN_BYTES, (
+        f"Organ serialized size {actual_bytes:,} bytes > "
+        f"{MAX_ORGAN_BYTES:,} byte limit"
     )
     return model
 

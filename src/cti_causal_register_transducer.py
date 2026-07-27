@@ -36,7 +36,7 @@ TRAIN_LENGTHS = (1, 12)
 EVAL_LENGTHS = (13, 32)
 NUM_EXCLUDED_BIGRAMS = 16
 NUM_WITHHELD_TRIGRAMS = 32
-GROUP_ORDER_MIN = 200_000
+GROUP_ORDER_MIN = 1_000_000
 
 
 # ---------------------------------------------------------------------------
@@ -229,8 +229,16 @@ def partition_hashes(partitions: dict) -> dict:
 PRECOMMIT_PATH = Path(__file__).resolve().parent.parent / "results" / "causal_organ" / "precommit.json"
 
 
+def _source_hash() -> str:
+    """SHA-256 of this generator source file for precommit provenance."""
+    src = Path(__file__).read_bytes()
+    return hashlib.sha256(src).hexdigest()
+
+
 def create_precommit(partitions: dict, model_config: Optional[dict] = None) -> dict:
-    """Create and write the immutable precommit artifact."""
+    """Create and write the immutable precommit artifact.
+    model_config should include exact param counts, dims, and FLOPs.
+    """
     hashes = partition_hashes(partitions)
 
     precommit = {
@@ -242,8 +250,11 @@ def create_precommit(partitions: dict, model_config: Optional[dict] = None) -> d
         "n_included_bigrams": len(partitions["included_bigrams"]),
         "n_excluded_bigrams": len(partitions["excluded_bigrams"]),
         "n_withheld_trigrams": len(partitions["withheld_trigrams"]),
+        "included_bigrams": partitions["included_bigrams"],
         "excluded_bigrams": partitions["excluded_bigrams"],
         "withheld_trigrams": partitions["withheld_trigrams"],
+        "generator_source_sha256": _source_hash(),
+        "encoding": {"state_dtype": "int64_be", "bigram_dtype": "uint8_be"},
         "hashes": hashes,
     }
 
@@ -252,11 +263,14 @@ def create_precommit(partitions: dict, model_config: Optional[dict] = None) -> d
 
     h = hashlib.sha256()
     h.update(json.dumps(hashes, sort_keys=True).encode())
+    h.update(precommit["generator_source_sha256"].encode())
     precommit["integrity_sha256"] = h.hexdigest()
 
     PRECOMMIT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(PRECOMMIT_PATH, "w") as f:
+    tmp_path = PRECOMMIT_PATH.with_suffix(".tmp")
+    with open(tmp_path, "w") as f:
         json.dump(precommit, f, indent=2)
+    tmp_path.replace(PRECOMMIT_PATH)
     print(f"Precommit written to {PRECOMMIT_PATH}")
     return precommit
 
@@ -272,18 +286,34 @@ def verify_precommit(partitions: dict) -> bool:
     current_hashes = partition_hashes(partitions)
     frozen_hashes = precommit["hashes"]
 
-    for key in frozen_hashes:
-        if current_hashes.get(key) != frozen_hashes[key]:
+    for key in current_hashes:
+        frozen_val = frozen_hashes.get(key)
+        if frozen_val is None:
+            raise ValueError(
+                f"Precommit verification FAILED: key '{key}' missing from frozen"
+            )
+        if current_hashes[key] != frozen_val:
             raise ValueError(
                 f"Precommit verification FAILED: {key} mismatch.\n"
-                f"  Frozen: {frozen_hashes[key]}\n"
-                f"  Current: {current_hashes.get(key)}"
+                f"  Frozen: {frozen_val}\n"
+                f"  Current: {current_hashes[key]}"
+            )
+
+    for key in frozen_hashes:
+        if key not in current_hashes:
+            raise ValueError(
+                f"Precommit verification FAILED: frozen key '{key}' "
+                f"not in current hashes"
             )
 
     h = hashlib.sha256()
     h.update(json.dumps(frozen_hashes, sort_keys=True).encode())
+    h.update(precommit.get("generator_source_sha256", "").encode())
     if h.hexdigest() != precommit["integrity_sha256"]:
         raise ValueError("Precommit integrity hash mismatch")
+
+    if "model_config" not in precommit:
+        raise ValueError("Precommit missing model_config")
 
     print("Precommit verification: PASS")
     return True
@@ -449,23 +479,31 @@ def generate_held_out_state(rng: np.random.RandomState,
 
 def generate_full_intersection(rng: np.random.RandomState,
                                partitions: dict):
-    """Eval stratum: eval states + long lengths + excluded bigrams.
-    The hardest split: everything withheld at once.
+    """Eval stratum: eval states + long lengths + excluded bigram + withheld trigram.
+    The hardest split: ALL withheld dimensions at once.
     """
     eval_states = partitions["eval_state_indices"]
     excluded = partitions["excluded_bigrams"]
+    trigrams = partitions["withheld_trigrams"]
 
     idx = eval_states[rng.randint(len(eval_states))]
     init_state = index_to_state(idx)
-    length = rng.randint(EVAL_LENGTHS[0], EVAL_LENGTHS[1] + 1)
-
-    forced_bigram = excluded[rng.randint(len(excluded))]
-    insert_pos = rng.randint(0, max(1, length - 1))
+    length = max(5, rng.randint(EVAL_LENGTHS[0], EVAL_LENGTHS[1] + 1))
 
     ops = rng.randint(0, NUM_OPS, size=length).astype(np.int64)
-    if length >= 2:
-        ops[insert_pos] = forced_bigram[0]
-        ops[min(insert_pos + 1, length - 1)] = forced_bigram[1]
+
+    forced_bigram = excluded[rng.randint(len(excluded))]
+    bi_pos = rng.randint(0, length - 1)
+    ops[bi_pos] = forced_bigram[0]
+    ops[bi_pos + 1] = forced_bigram[1]
+
+    forced_tri = trigrams[rng.randint(len(trigrams))]
+    tri_pos = rng.randint(0, length - 2)
+    if tri_pos == bi_pos or tri_pos == bi_pos + 1 or tri_pos + 2 == bi_pos:
+        tri_pos = (bi_pos + 3) % (length - 2)
+    ops[tri_pos] = forced_tri[0]
+    ops[tri_pos + 1] = forced_tri[1]
+    ops[tri_pos + 2] = forced_tri[2]
 
     final_state = execute_program(init_state, ops)
     return {"init_state": init_state, "ops": ops, "final_state": final_state,
@@ -877,6 +915,56 @@ def run_full_verification():
     return partitions, hashes
 
 
+def build_model_config() -> dict:
+    """Build model config dict with exact param counts and FLOPs."""
+    from cti_causal_organ_models import (
+        create_donor, create_host_transformer, create_host_gru, create_organ,
+        count_parameters, estimate_step_macs, measure_organ_serialized_bytes,
+    )
+    donor = create_donor()
+    host_t = create_host_transformer()
+    host_g = create_host_gru()
+    organ = create_organ()
+
+    donor_macs = estimate_step_macs(donor)
+    host_t_macs = estimate_step_macs(host_t)
+    host_g_macs = estimate_step_macs(host_g)
+
+    return {
+        "donor": {
+            "class": "RecurrentTransformerDonor",
+            "d_model": donor.d_model,
+            "n_layers": donor.transformer.num_layers,
+            "d_state": donor.d_state,
+            "params": count_parameters(donor),
+            "step_macs": donor_macs,
+        },
+        "host_t": {
+            "class": "TransformerHost",
+            "d_model": host_t.d_model,
+            "n_layers": host_t.transformer.num_layers,
+            "d_state": host_t.d_state,
+            "params": count_parameters(host_t),
+            "step_macs": host_t_macs,
+            "compute_ratio": host_t_macs / donor_macs if donor_macs else 0,
+        },
+        "host_g": {
+            "class": "GRUHost",
+            "d_model": host_g.d_model,
+            "n_layers": host_g.n_layers,
+            "d_state": host_g.d_state,
+            "params": count_parameters(host_g),
+            "step_macs": host_g_macs,
+        },
+        "organ": {
+            "class": "CausalOrgan",
+            "d_state": organ.d_state,
+            "params": count_parameters(organ),
+            "serialized_bytes": measure_organ_serialized_bytes(organ),
+        },
+    }
+
+
 if __name__ == "__main__":
     partitions, hashes = run_full_verification()
 
@@ -887,5 +975,9 @@ if __name__ == "__main__":
     for b in partitions["excluded_bigrams"]:
         print(f"  ({OP_NAMES[b[0]]}, {OP_NAMES[b[1]]})")
 
+    print("\nBuilding model config...")
+    model_cfg = build_model_config()
+    print(json.dumps(model_cfg, indent=2))
+
     print("\nWriting precommit...")
-    create_precommit(partitions)
+    create_precommit(partitions, model_config=model_cfg)
