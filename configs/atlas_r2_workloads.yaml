@@ -32,7 +32,7 @@ workloads:
       languages: 8
       total: 320
     selection: "ascending SHA256('atlas-r2-d2' || example_id), first 40 queries"
-    language_selection: ["en", "es", "fr", "de", "ja", "zh_cn", "ar", "hi"]
+    language_selection: ["en", "es", "fr", "de", "ja", "zh_cn", "ar", "ko"]
     task_type: "short"
     quality_metric: "canonical_answer_accuracy"
     adjudicator: "exact match + F1 with answer aliases"

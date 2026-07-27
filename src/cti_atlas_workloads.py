@@ -25,7 +25,7 @@ def load_mkqa(n_queries=40, languages=None):
     Returns list of episodes: {query_id, lang, question, answers, aliases}.
     """
     if languages is None:
-        languages = ["en", "es", "fr", "de", "ja", "zh_cn", "ar", "hi"]
+        languages = ["en", "es", "fr", "de", "ja", "zh_cn", "ar", "ko"]
 
     mkqa_path = DATA_DIR / "mkqa.jsonl"
     if not mkqa_path.exists():
