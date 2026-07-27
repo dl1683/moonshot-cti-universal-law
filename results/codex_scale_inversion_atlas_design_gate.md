@@ -1,5 +1,9 @@
 # Scale-Inversion Atlas: Exact Experimental Protocol
 
+> **SUPERSEDED ON 2026-07-27.** The arithmetic, roster, confirmation plan,
+> and narrative in this R1 gate are not authorized for execution. The binding
+> protocol is `results/codex_scale_inversion_atlas_design_gate_r2.md`.
+
 **Design-gate date:** 2026-07-27  
 **Architectural verdict:** **CONDITIONAL GO**  
 **Primary unit of analysis:** the user's completed task under a declared workload, hardware, volume, quality floor, and reliability floor  
