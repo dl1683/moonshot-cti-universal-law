@@ -315,6 +315,16 @@ def verify_precommit(partitions: dict) -> bool:
     if "model_config" not in precommit:
         raise ValueError("Precommit missing model_config")
 
+    frozen_src = precommit.get("generator_source_sha256", "")
+    live_src = _source_hash()
+    if frozen_src and live_src != frozen_src:
+        raise ValueError(
+            "Precommit verification FAILED: generator source code changed.\n"
+            f"  Frozen: {frozen_src}\n"
+            f"  Live:   {live_src}\n"
+            "Re-run create_precommit() to update."
+        )
+
     print("Precommit verification: PASS")
     return True
 
@@ -481,6 +491,7 @@ def generate_full_intersection(rng: np.random.RandomState,
                                partitions: dict):
     """Eval stratum: eval states + long lengths + excluded bigram + withheld trigram.
     The hardest split: ALL withheld dimensions at once.
+    Bigram and trigram are placed at non-overlapping positions.
     """
     eval_states = partitions["eval_state_indices"]
     excluded = partitions["excluded_bigrams"]
@@ -488,19 +499,28 @@ def generate_full_intersection(rng: np.random.RandomState,
 
     idx = eval_states[rng.randint(len(eval_states))]
     init_state = index_to_state(idx)
-    length = max(5, rng.randint(EVAL_LENGTHS[0], EVAL_LENGTHS[1] + 1))
+    length = max(7, rng.randint(EVAL_LENGTHS[0], EVAL_LENGTHS[1] + 1))
 
     ops = rng.randint(0, NUM_OPS, size=length).astype(np.int64)
 
     forced_bigram = excluded[rng.randint(len(excluded))]
+    forced_tri = trigrams[rng.randint(len(trigrams))]
+
     bi_pos = rng.randint(0, length - 1)
+    bi_occupied = {bi_pos, bi_pos + 1}
+
+    valid_tri = []
+    for tp in range(length - 2):
+        tri_positions = {tp, tp + 1, tp + 2}
+        if not tri_positions & bi_occupied:
+            valid_tri.append(tp)
+    assert len(valid_tri) > 0, (
+        f"No valid trigram position for length={length}, bi_pos={bi_pos}"
+    )
+    tri_pos = valid_tri[rng.randint(len(valid_tri))]
+
     ops[bi_pos] = forced_bigram[0]
     ops[bi_pos + 1] = forced_bigram[1]
-
-    forced_tri = trigrams[rng.randint(len(trigrams))]
-    tri_pos = rng.randint(0, length - 2)
-    if tri_pos == bi_pos or tri_pos == bi_pos + 1 or tri_pos + 2 == bi_pos:
-        tri_pos = (bi_pos + 3) % (length - 2)
     ops[tri_pos] = forced_tri[0]
     ops[tri_pos + 1] = forced_tri[1]
     ops[tri_pos + 2] = forced_tri[2]
