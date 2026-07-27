@@ -159,7 +159,8 @@ def check_gates(eval_results):
 
 
 def save_checkpoint(model, optimizer, step, eval_results, path,
-                    rng_state=None, precommit_hash=None, scaler=None):
+                    rng_state=None, precommit_hash=None, scaler=None,
+                    best_acc=None, eval_rng_state=None):
     """Save training checkpoint with RNG state for reproducibility."""
     path.parent.mkdir(parents=True, exist_ok=True)
     ckpt = {
@@ -177,13 +178,18 @@ def save_checkpoint(model, optimizer, step, eval_results, path,
         ckpt["precommit_integrity_sha256"] = precommit_hash
     if scaler is not None:
         ckpt["scaler_state_dict"] = scaler.state_dict()
+    if best_acc is not None:
+        ckpt["best_acc"] = best_acc
+    if eval_rng_state is not None:
+        ckpt["eval_rng_state"] = eval_rng_state
     torch.save(ckpt, path)
     print(f"  Checkpoint saved: {path}")
 
 
 def load_checkpoint(model, optimizer, path, expected_precommit_hash=None,
                     scaler=None):
-    """Load training checkpoint. Returns (step, numpy_rng_state_or_None)."""
+    """Load training checkpoint. Returns dict with step, numpy_rng_state,
+    best_acc, eval_rng_state."""
     ckpt = torch.load(path, map_location=DEVICE, weights_only=False)
     if expected_precommit_hash is not None:
         saved_hash = ckpt.get("precommit_integrity_sha256")
@@ -203,9 +209,13 @@ def load_checkpoint(model, optimizer, path, expected_precommit_hash=None,
     if scaler is not None and "scaler_state_dict" in ckpt:
         scaler.load_state_dict(ckpt["scaler_state_dict"])
     step = ckpt["step"]
-    numpy_state = ckpt.get("numpy_rng_state")
     print(f"  Resumed from step {step}: {path}")
-    return step, numpy_state
+    return {
+        "step": step,
+        "numpy_rng_state": ckpt.get("numpy_rng_state"),
+        "best_acc": ckpt.get("best_acc", 0.0),
+        "eval_rng_state": ckpt.get("eval_rng_state"),
+    }
 
 
 def find_latest_checkpoint(ckpt_dir):
@@ -269,20 +279,24 @@ def train_donor(max_steps=MAX_STEPS, smoke=False):
 
     start_step = 0
     rng = np.random.RandomState(42)
+    eval_rng = np.random.RandomState(9999)
+    best_acc = 0.0
     latest_ckpt = find_latest_checkpoint(ckpt_dir)
     if latest_ckpt is not None and not smoke:
-        start_step, saved_rng = load_checkpoint(
+        ckpt_data = load_checkpoint(
             model, optimizer, latest_ckpt,
             expected_precommit_hash=precommit_hash,
             scaler=scaler,
         )
-        if saved_rng is not None:
-            rng.set_state(saved_rng)
+        start_step = ckpt_data["step"]
+        if ckpt_data["numpy_rng_state"] is not None:
+            rng.set_state(ckpt_data["numpy_rng_state"])
         else:
             rng = np.random.RandomState(42 + start_step)
-    eval_rng = np.random.RandomState(9999)
+        best_acc = ckpt_data["best_acc"]
+        if ckpt_data["eval_rng_state"] is not None:
+            eval_rng.set_state(ckpt_data["eval_rng_state"])
 
-    best_acc = 0.0
     gate_passed = False
     eval_results = {}
     t0 = time.time()
@@ -334,6 +348,8 @@ def train_donor(max_steps=MAX_STEPS, smoke=False):
                     rng_state=rng.get_state(),
                     precommit_hash=precommit_hash,
                     scaler=scaler,
+                    best_acc=best_acc,
+                    eval_rng_state=eval_rng.get_state(),
                 )
 
         if (step + 1) % checkpoint_every == 0:
@@ -343,6 +359,8 @@ def train_donor(max_steps=MAX_STEPS, smoke=False):
                 rng_state=rng.get_state(),
                 precommit_hash=precommit_hash,
                 scaler=scaler,
+                best_acc=best_acc,
+                eval_rng_state=eval_rng.get_state(),
             )
             if DEVICE.type == "cuda" and COOLDOWN_SECONDS > 0:
                 time.sleep(COOLDOWN_SECONDS)
@@ -366,6 +384,8 @@ def train_donor(max_steps=MAX_STEPS, smoke=False):
         rng_state=rng.get_state(),
         precommit_hash=precommit_hash,
         scaler=scaler,
+        best_acc=best_acc,
+        eval_rng_state=eval_rng.get_state(),
     )
 
     result = {

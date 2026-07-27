@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 import struct
+from collections import deque
 from pathlib import Path
 from typing import Optional
 
@@ -235,13 +236,13 @@ def _source_hash() -> str:
     return hashlib.sha256(src).hexdigest()
 
 
-def _socket_hash(seed: int = 777) -> str:
-    """SHA-256 of the frozen socket weight bytes for precommit."""
+def _socket_hash(seed: int = 777, d_in: int = 32, d_out: int = 128) -> str:
+    """SHA-256 of a frozen socket weight bytes for precommit."""
     import torch
     import torch.nn as nn
     rng_state = torch.random.get_rng_state()
     torch.manual_seed(seed)
-    socket = nn.Linear(32, 128, bias=False)
+    socket = nn.Linear(d_in, d_out, bias=False)
     nn.init.orthogonal_(socket.weight, gain=1.0)
     torch.random.set_rng_state(rng_state)
     return hashlib.sha256(socket.weight.detach().cpu().numpy().tobytes()).hexdigest()
@@ -269,9 +270,10 @@ def create_precommit(partitions: dict, model_config: Optional[dict] = None) -> d
         "excluded_bigrams": partitions["excluded_bigrams"],
         "withheld_trigrams": partitions["withheld_trigrams"],
         "generator_source_sha256": _source_hash(),
-        "encoding": {"state_dtype": "int64_be", "bigram_dtype": "uint8_be"},
+        "encoding": {"state_dtype": "uint32_be", "bigram_dtype": "uint8_be"},
         "socket_seed": SOCKET_SEED,
-        "socket_weight_sha256": _socket_hash(SOCKET_SEED),
+        "socket_weight_sha256": _socket_hash(SOCKET_SEED, 32, 128),
+        "socket_weight_gru_sha256": _socket_hash(SOCKET_SEED, 32, 256),
         "hashes": hashes,
     }
 
@@ -282,6 +284,7 @@ def create_precommit(partitions: dict, model_config: Optional[dict] = None) -> d
     h.update(json.dumps(hashes, sort_keys=True).encode())
     h.update(precommit["generator_source_sha256"].encode())
     h.update(precommit["socket_weight_sha256"].encode())
+    h.update(precommit["socket_weight_gru_sha256"].encode())
     h.update(json.dumps(precommit["encoding"], sort_keys=True).encode())
     precommit["integrity_sha256"] = h.hexdigest()
 
@@ -329,6 +332,7 @@ def verify_precommit(partitions: dict) -> bool:
     h.update(json.dumps(frozen_hashes, sort_keys=True).encode())
     h.update(precommit.get("generator_source_sha256", "").encode())
     h.update(precommit.get("socket_weight_sha256", "").encode())
+    h.update(precommit.get("socket_weight_gru_sha256", "").encode())
     h.update(json.dumps(precommit.get("encoding", {}), sort_keys=True).encode())
     if h.hexdigest() != precommit["integrity_sha256"]:
         raise ValueError("Precommit integrity hash mismatch")
@@ -379,9 +383,13 @@ def verify_precommit(partitions: dict) -> bool:
             f"expected={SOCKET_SEED}"
         )
 
-    live_socket_hash = _socket_hash(SOCKET_SEED)
+    live_socket_hash = _socket_hash(SOCKET_SEED, 32, 128)
     if precommit.get("socket_weight_sha256") != live_socket_hash:
         raise ValueError("socket_weight_sha256 does not match live socket")
+
+    live_gru_hash = _socket_hash(SOCKET_SEED, 32, 256)
+    if precommit.get("socket_weight_gru_sha256") != live_gru_hash:
+        raise ValueError("socket_weight_gru_sha256 does not match live GRU socket")
 
     frozen_bigrams = precommit.get("included_bigrams", [])
     live_bigrams = partitions["included_bigrams"]
@@ -851,11 +859,11 @@ def verify_group_order():
 
     identity = np.eye(4, dtype=np.int64)
     seen = {identity.astype(np.int8).tobytes()}
-    queue = [identity]
+    queue = deque([identity])
     cap = GROUP_ORDER_MIN + 1000
 
     while queue and len(seen) < cap:
-        mat = queue.pop(0)
+        mat = queue.popleft()
         for gen in all_gens:
             product = (mat @ gen) % MOD
             key = product.astype(np.int8).tobytes()
