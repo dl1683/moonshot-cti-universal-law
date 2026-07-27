@@ -164,6 +164,8 @@ def main():
                         help="Phase to run (P0-P7)")
     parser.add_argument("--workload", default=None,
                         help="Workload ID (W-D1, W-D2, W-D3, W-C1, W-C2)")
+    parser.add_argument("--system", default=None,
+                        help="Run only this system ID (for resuming)")
     parser.add_argument("--dry-run", action="store_true",
                         help="Check budgets without executing")
     args = parser.parse_args()
@@ -187,9 +189,9 @@ def main():
         return 0
 
     if args.phase == "P1" and args.workload == "W-D2":
-        return run_p1_mkqa(budget)
+        return run_p1_mkqa(budget, system_filter=args.system)
     if args.phase == "P1" and args.workload == "W-D3":
-        return run_p1_policybench(budget)
+        return run_p1_policybench(budget, system_filter=args.system)
 
     print(f"\nPhase {args.phase} ready for execution.")
     print(f"Dispatch not yet implemented for {args.phase}/{args.workload}.")
@@ -205,7 +207,23 @@ def _strip_think(text):
     return THINK_RE.sub("", text).strip()
 
 
-def run_p1_mkqa(budget):
+def _completed_tasks(phase, workload, system_id):
+    """Return set of task_ids already logged in the ledger."""
+    done = set()
+    if not LEDGER_PATH.exists():
+        return done
+    with open(LEDGER_PATH, encoding="utf-8") as f:
+        for line in f:
+            if line.startswith("timestamp"):
+                continue
+            parts = line.strip().split(",")
+            if (len(parts) >= 5 and parts[1] == phase
+                    and parts[2] == workload and parts[3] == system_id):
+                done.add(parts[4])
+    return done
+
+
+def run_p1_mkqa(budget, system_filter=None):
     """P1: Raw W-D2 screen — 9 checkpoints x 320 MKQA episodes."""
     sys.path.insert(0, str(REPO / "src"))
     import torch
@@ -218,6 +236,12 @@ def run_p1_mkqa(budget):
         systems_cfg = yaml.safe_load(f)
 
     local_systems = list(systems_cfg["local_checkpoints"].keys())
+    if system_filter:
+        if system_filter not in local_systems:
+            print(f"Unknown system: {system_filter}", file=sys.stderr)
+            return 1
+        local_systems = [system_filter]
+
     episodes = load_mkqa(n_queries=40)
     episodes_with_answers = [ep for ep in episodes if ep["answers"]]
 
@@ -232,6 +256,15 @@ def run_p1_mkqa(budget):
         print(f"System: {sys_id}")
         print(f"{'='*50}")
 
+        done = _completed_tasks("P1", "W-D2", sys_id)
+        remaining = [ep for ep in episodes_with_answers
+                     if ep["task_id"] not in done]
+        if not remaining:
+            print(f"  All {len(episodes_with_answers)} tasks already done, skipping")
+            continue
+        if done:
+            print(f"  Resuming: {len(done)} done, {len(remaining)} remaining")
+
         model, tok, spec = load_model(sys_id)
         meter = EnergyMeter()
 
@@ -241,7 +274,7 @@ def run_p1_mkqa(budget):
         task_results = []
         meter.start()
 
-        for i, ep in enumerate(episodes_with_answers):
+        for i, ep in enumerate(remaining):
             prompt = format_mkqa_prompt(ep)
             t0 = time.perf_counter()
             result = generate(model, tok, prompt, max_new_tokens=64)
@@ -274,7 +307,7 @@ def run_p1_mkqa(budget):
             })
 
             if (i + 1) % 50 == 0 or i == 0:
-                print(f"  [{i+1}/{len(episodes_with_answers)}] "
+                print(f"  [{i+1}/{len(remaining)}] "
                       f"pass={passed}/{total} "
                       f"({100*passed/total:.1f}%)")
 
@@ -323,7 +356,7 @@ def run_p1_mkqa(budget):
     return 0
 
 
-def run_p1_policybench(budget):
+def run_p1_policybench(budget, system_filter=None):
     """P1: Raw W-D3 screen — 9 checkpoints x 1970 PolicyBench episodes."""
     sys.path.insert(0, str(REPO / "src"))
     import torch
@@ -338,6 +371,12 @@ def run_p1_policybench(budget):
         systems_cfg = yaml.safe_load(f)
 
     local_systems = list(systems_cfg["local_checkpoints"].keys())
+    if system_filter:
+        if system_filter not in local_systems:
+            print(f"Unknown system: {system_filter}", file=sys.stderr)
+            return 1
+        local_systems = [system_filter]
+
     episodes = load_policybench()
 
     print(f"\nP1 W-D3: {len(local_systems)} systems x "
@@ -350,6 +389,14 @@ def run_p1_policybench(budget):
         print(f"System: {sys_id}")
         print(f"{'='*50}")
 
+        done = _completed_tasks("P1", "W-D3", sys_id)
+        remaining = [ep for ep in episodes if ep["task_id"] not in done]
+        if not remaining:
+            print(f"  All {len(episodes)} tasks already done, skipping")
+            continue
+        if done:
+            print(f"  Resuming: {len(done)} done, {len(remaining)} remaining")
+
         model, tok, spec = load_model(sys_id)
         meter = EnergyMeter()
 
@@ -358,7 +405,7 @@ def run_p1_policybench(budget):
         task_results = []
         meter.start()
 
-        for i, ep in enumerate(episodes):
+        for i, ep in enumerate(remaining):
             prompt = format_policybench_prompt(ep)
             t0 = time.perf_counter()
             result = generate(model, tok, prompt, max_new_tokens=32)
@@ -390,7 +437,7 @@ def run_p1_policybench(budget):
             })
 
             if (i + 1) % 200 == 0 or i == 0:
-                print(f"  [{i+1}/{len(episodes)}] "
+                print(f"  [{i+1}/{len(remaining)}] "
                       f"pass={passed}/{total} "
                       f"({100*passed/total:.1f}%)")
 
