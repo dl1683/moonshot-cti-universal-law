@@ -131,19 +131,29 @@ once, extract the mechanism it learned, and let cheap local AIs reuse it."
 3. World-model passes: earn the right to test zero-shot composition
 4. Composition passes: moonshot narrative earned
 
-### Phase 3 — Actionable Causal Quotient (ACQ-1) — NEXT
+### Phase 3 — Direction Selection (R12 Steering Dialogue)
 
-**Proposed by Codex QL11 R2 (Jul 27, 2026). Pre-registration pending.**
+**ACQ-1: KILLED by Codex R12 R1 (Jul 27).** Block-MDP literature preempts core claim.
+Revised ceiling: 3-4/10 (down from 6-7/10). Six antipatterns apply.
 
-**Central claim:** Planning compute scales with intervention-distinguishable causal complexity, not sensory complexity.
+**R12 2-round stress test killed ALL proposed alternatives:**
+- CCL-1 (Capability Conservation Law): RETRACTED — rate-distortion + teaching dimension with new nouns
+- PCI-1 (Proof-Carrying Pocket Intelligence): DEMOTED to 4/10 — test-time compute scaling occupies the frontier
+- VIL-1 (Village Intelligence Phase Transition): ~5/10 max — beyond-union exists weakly (EMNLP 2025 DDS), novelty preempted
+- Interaction necessity theorem (as stated): 3/10 — almost tautological from Bayes risk
 
-**Viral headline:** "We made the AI's visual world a million times noisier. Its brain did not get larger, slower, or worse — because it learned to model only what actions could change."
+**Sole surviving direction concept: Compute-Interaction Frontier (CIF)**
+- **Question:** "When does asking the world beat thinking harder?"
+- **Ceiling:** Conditional 7/10 (not yet earned)
+- **Key object:** Adaptive advantage ratio gamma(eps) = min-cost-nonadaptive / min-cost-adaptive
+- **Surprising result target:** "Two adaptive questions let a 3B offline model beat a 30B model with 100x test-time compute, at 25x lower total cost including user time, across three natural task families."
+- **Cost accounting:** inference joules, latency, user seconds, answer bits, user error probability, connectivity, memory, question complexity
+- **5-day theorem gate (7 criteria):** (1) same external-info budget, (2) unrestricted internal computation, (3) superconstant gap, (4) noisy user responses with heterogeneous costs, (5) independently motivated task class, (6) not obtainable from Fano/active-learning/etc. by substitution, (7) matching constructive policy
 
-**Design:** 3 environments (Key-Door Memory, Switch Maze, Sokoban-Lite), 64x64 RGB with controlled exogenous nuisance, 10 baselines (ACRO, bisimulation, paired invariance, JEPA, etc.), 6 gates, 10 kill criteria, 6 VOID criteria. Budget: 60-80 GPU-hours, 8 weeks.
+**Deep pattern (R12 failure synthesis): The Compactness-Consequence Trap.**
+All 6 prior directions searched for a small, universal internal object after intelligence already exists. When easy to identify, tautological. When genuinely causal, difficult to learn and not cheaply portable. Next direction must start from direct scale-defying consequence and remain mechanism-agnostic.
 
-**Ceiling:** 6-7/10 (honest Codex assessment).
-
-**Status:** Awaiting pre-registration. Full design in `results/codex_cso_question_loop_ql11_r2.md`.
+**Full dialogue:** `results/codex_steering_r12.md` (R1), `results/codex_steering_r12_r2.md` (R2)
 
 ---
 
@@ -181,7 +191,8 @@ once, extract the mechanism it learned, and let cheap local AIs reuse it."
 | 27 | CSO simulator + model smoke | DONE | Register transducer verified (8 ops, 65536 states, 23/28 non-commuting, group >201K). Models: donor 18.9M, host T 0.9M (5.6% compute), host G 1.3M, organ 54.7 KiB. Codex NO-GO -> 13 bugs fixed (5 CRITICAL, 4 HIGH, 4 MEDIUM). Precommit frozen. All verification PASS. |
 | 28 | CSO precommit hardening (v3-v12 review cycle) | DONE | 12-iteration Codex review cycle. v3-v11 NO-GO: NaN/tolerance, semantic gaps, thread-sensitive sockets, derived-set bypass, boolean type confusion, runtime env, training config binding, list recursion. All fixed. v12: **GO**. Integrity hash: 745f10e7... |
 | 29 | Donor capacity training (50K steps) | DONE | ALL GATES FAIL. 50K steps, 4.1h. Train 33.9%, extrap 0.4%, excluded 24.5%, withheld 5.9%. Model learned per-register tracking (~76%/reg) but never composed across registers. No grokking. Cosine LR drove to ~7.5e-10 by step 45K. |
-| 30 | CSO admission closure + ACQ-1 pivot | PENDING | Document failure, commit results, update STATUS.md, begin ACQ-1 pre-registration. |
+| 30 | CSO closure + R12 direction stress test | DONE | Results committed, STATUS updated. ACQ-1 killed (R12 R1), CCL-1/PCI-1/VIL-1 killed (R12 R2). CIF survives. 5-day theorem gate next. |
+| 31 | CIF 5-day theorem gate | PENDING | State theorem satisfying all 7 R12 R2 criteria. Day 0 = today. Kill if gate fails by day 5. |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
@@ -212,6 +223,7 @@ once, extract the mechanism it learned, and let cheap local AIs reuse it."
 | R9 | Gate redesign: target-family capacity | DONE | 3 rounds converged. Replace 99% random-long gate with target-family (p,r in [0,7]). Teacher: 99.99% target_family (PASS). Anchors 8-20. |
 | R10 | Stage B redesign | DONE | 3 rounds converged. Haar control (not deranged teacher), fresh init, target-only coefficient, effect-size screen. 5 binding amendments: PCG64DXSM, Helmert basis, frozen coefficients, diagnostic-only probe, VOID verdict. |
 | R11 | Post-kill pivot: Causal Skill Organs | DONE | 3 rounds converged. Kill "Intelligence = Geometry" strong form. New direction: Causal Skill Organs (CSO). Register transducer admission test. Prior art gap confirmed (5-way conjunction novel). |
+| R12 | Post-CSO failure: direction stress test | DONE | 2 rounds. ACQ-1 killed (3-4/10). CCL-1 retracted, PCI-1 demoted (4/10), VIL-1 weakened (5/10). Surviving: Compute-Interaction Frontier (conditional 7/10). 5-day theorem gate. |
 
 ### GAT Implementation Status
 | Module | File | Status |
