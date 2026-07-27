@@ -214,6 +214,9 @@ Revised ceiling: 3-4/10 (down from 6-7/10). Six antipatterns apply.
 | 30 | CSO closure + R12 direction stress test | DONE | Results committed, STATUS updated. ACQ-1 killed (R12 R1), CCL-1/PCI-1/VIL-1 killed (R12 R2). CIF survives. 5-day theorem gate next. |
 | 31 | CIF 5-day theorem gate | DONE | FAIL Day 0. Fatal trilemma: criterion 6 dead. No theorem target exists. CIF retained as empirical question only. |
 | 32 | R13 steering: failure synthesis + pivot | DONE | R13 converged (2 rounds). Atlas primary, PC-H1 secondary. PCSI-1 demoted (3/10). Scale-Inversion Atlas: 4/10 today, conditional 7/10. |
+| 33 | Dead code audit + cleanup | DONE | 79 LIVE, 6 DEAD, 246 UNCERTAIN (325 scripts). Deleted 19 dead scripts (bridge, equicorr, alpha-rho, campaign C64-C88, misplaced fractal), 8 dead result files. -12,852 lines. |
+| 34 | Atlas design gate R1 (Codex) | DONE | CONDITIONAL GO through P0 only. 832-line protocol: 4 workloads (SWE-bench-Live, MKQA, PolicyBench, RealClawBench), 9 checkpoints (Qwen3/Gemma3/Falcon-H1), 51 system templates, 167 executed cells, 320 GPU-hours, 15 kill criteria, 6 frozen hypotheses. |
+| 35 | Atlas design gate R2 pushback | IN PROGRESS | Five counter-arguments: budget arithmetic, scale range, RealClawBench fragility, recipe bias, narrative weakness. |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
@@ -246,9 +249,14 @@ Revised ceiling: 3-4/10 (down from 6-7/10). Six antipatterns apply.
 | R11 | Post-kill pivot: Causal Skill Organs | DONE | 3 rounds converged. Kill "Intelligence = Geometry" strong form. New direction: Causal Skill Organs (CSO). Register transducer admission test. Prior art gap confirmed (5-way conjunction novel). |
 | R12 | Post-CSO failure: direction stress test | DONE | 2 rounds. ACQ-1 killed (3-4/10). CCL-1 retracted, PCI-1 demoted (4/10), VIL-1 weakened (5/10). Surviving: Compute-Interaction Frontier (conditional 7/10). 5-day theorem gate. |
 | R13 | Comprehensive failure synthesis + direction restart | DONE | 2 rounds converged. PCSI-1 demoted to PC-H1 (3/10). Scale-Inversion Atlas becomes primary program (4/10 today, conditional 7/10). Identity pivot: Affordable Intelligence Science. "Stop paying for the biggest AI." |
+| R14 | Atlas design gate | IN PROGRESS | R1: CONDITIONAL GO (832 lines). R2 pushback running (budget, narrative, fragility). |
 
 ### Dead Code Cleanup Log
 | Direction | Files Deleted | Date | Evidence Preserved |
 |-----------|--------------|------|-------------------|
 | GAT (Phase 1) | 11 files: `src/cti_geometry_admission_*.py` | Jul 27 | `results/geometry_admission/stage_b/decision.json` |
 | CSO (Phase 2) | 3 files: `src/cti_causal_organ_*.py`, `src/cti_causal_register_transducer.py` | Jul 27 | `results/causal_organ/donor_capacity_result.json` |
+| Bridge/equicorr/alpha-rho | 6 cti_* scripts, 7 result JSONs, downstream_bridge dir | Jul 27 | Kill records in STATUS.md |
+| Campaign C64-C88 | 10 numbered campaign scripts | Jul 27 | Kill records in STATUS.md |
+| Stale root files | generate_5task_correlation_summary.py, C80_MILESTONE_SYNTHESIS.md | Jul 27 | N/A |
+| Misplaced | hierarchical_datasets.py (fractal embeddings, wrong project) | Jul 27 | N/A |
