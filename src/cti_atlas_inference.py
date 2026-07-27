@@ -44,8 +44,23 @@ def load_model(system_id, dtype=torch.float16, device="cuda"):
     return model, tok, spec
 
 
-def generate(model, tok, prompt, max_new_tokens=128, temperature=0.0):
-    inputs = tok(prompt, return_tensors="pt", truncation=True,
+def generate(model, tok, prompt, max_new_tokens=128, temperature=0.0,
+             use_chat=True):
+    if use_chat and hasattr(tok, "apply_chat_template"):
+        messages = [{"role": "user", "content": prompt}]
+        try:
+            text_in = tok.apply_chat_template(
+                messages, tokenize=False, add_generation_prompt=True,
+                enable_thinking=False,
+            )
+        except TypeError:
+            text_in = tok.apply_chat_template(
+                messages, tokenize=False, add_generation_prompt=True,
+            )
+    else:
+        text_in = prompt
+
+    inputs = tok(text_in, return_tensors="pt", truncation=True,
                  max_length=2048).to(model.device)
     input_len = inputs["input_ids"].shape[1]
 
