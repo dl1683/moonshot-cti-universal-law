@@ -360,9 +360,41 @@ def verify_precommit(partitions: dict) -> bool:
                     f"model_config.{model_key}.{field} mismatch: "
                     f"frozen={frozen_val}, live={live_val}"
                 )
+    for model_key in frozen_mc:
+        if model_key not in live_mc:
+            raise ValueError(
+                f"Precommit model_config has unexpected key '{model_key}'"
+            )
+        for field in frozen_mc[model_key]:
+            if field not in live_mc[model_key]:
+                raise ValueError(
+                    f"model_config.{model_key} has unexpected field '{field}'"
+                )
 
     if "socket_seed" not in precommit:
         raise ValueError("Precommit missing socket_seed")
+    if precommit["socket_seed"] != SOCKET_SEED:
+        raise ValueError(
+            f"socket_seed mismatch: frozen={precommit['socket_seed']}, "
+            f"expected={SOCKET_SEED}"
+        )
+
+    live_socket_hash = _socket_hash(SOCKET_SEED)
+    if precommit.get("socket_weight_sha256") != live_socket_hash:
+        raise ValueError("socket_weight_sha256 does not match live socket")
+
+    frozen_bigrams = precommit.get("included_bigrams", [])
+    live_bigrams = partitions["included_bigrams"]
+    if [tuple(b) for b in frozen_bigrams] != [tuple(b) for b in live_bigrams]:
+        raise ValueError("included_bigrams mismatch between precommit and live")
+    frozen_excluded = precommit.get("excluded_bigrams", [])
+    live_excluded = partitions["excluded_bigrams"]
+    if [tuple(b) for b in frozen_excluded] != [tuple(b) for b in live_excluded]:
+        raise ValueError("excluded_bigrams mismatch between precommit and live")
+    frozen_trigrams = precommit.get("withheld_trigrams", [])
+    live_trigrams = partitions["withheld_trigrams"]
+    if [tuple(t) for t in frozen_trigrams] != [tuple(t) for t in live_trigrams]:
+        raise ValueError("withheld_trigrams mismatch between precommit and live")
 
     frozen_src = precommit.get("generator_source_sha256", "")
     live_src = _source_hash()

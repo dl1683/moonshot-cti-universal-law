@@ -159,7 +159,7 @@ def check_gates(eval_results):
 
 
 def save_checkpoint(model, optimizer, step, eval_results, path,
-                    rng_state=None, precommit_hash=None):
+                    rng_state=None, precommit_hash=None, scaler=None):
     """Save training checkpoint with RNG state for reproducibility."""
     path.parent.mkdir(parents=True, exist_ok=True)
     ckpt = {
@@ -175,19 +175,33 @@ def save_checkpoint(model, optimizer, step, eval_results, path,
         ckpt["numpy_rng_state"] = rng_state
     if precommit_hash is not None:
         ckpt["precommit_integrity_sha256"] = precommit_hash
+    if scaler is not None:
+        ckpt["scaler_state_dict"] = scaler.state_dict()
     torch.save(ckpt, path)
     print(f"  Checkpoint saved: {path}")
 
 
-def load_checkpoint(model, optimizer, path):
+def load_checkpoint(model, optimizer, path, expected_precommit_hash=None,
+                    scaler=None):
     """Load training checkpoint. Returns (step, numpy_rng_state_or_None)."""
     ckpt = torch.load(path, map_location=DEVICE, weights_only=False)
+    if expected_precommit_hash is not None:
+        saved_hash = ckpt.get("precommit_integrity_sha256")
+        if saved_hash is not None and saved_hash != expected_precommit_hash:
+            raise ValueError(
+                f"Checkpoint precommit hash mismatch.\n"
+                f"  Checkpoint: {saved_hash}\n"
+                f"  Current:    {expected_precommit_hash}\n"
+                "Precommit changed since checkpoint was saved."
+            )
     model.load_state_dict(ckpt["model_state_dict"])
     optimizer.load_state_dict(ckpt["optimizer_state_dict"])
     if "torch_rng_state" in ckpt:
         torch.random.set_rng_state(ckpt["torch_rng_state"].cpu())
     if DEVICE.type == "cuda" and "cuda_rng_state" in ckpt:
         torch.cuda.set_rng_state(ckpt["cuda_rng_state"])
+    if scaler is not None and "scaler_state_dict" in ckpt:
+        scaler.load_state_dict(ckpt["scaler_state_dict"])
     step = ckpt["step"]
     numpy_state = ckpt.get("numpy_rng_state")
     print(f"  Resumed from step {step}: {path}")
@@ -250,19 +264,23 @@ def train_donor(max_steps=MAX_STEPS, smoke=False):
         model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY
     )
 
+    model.train()
+    scaler = torch.amp.GradScaler("cuda", enabled=(DEVICE.type == "cuda"))
+
     start_step = 0
     rng = np.random.RandomState(42)
     latest_ckpt = find_latest_checkpoint(ckpt_dir)
     if latest_ckpt is not None and not smoke:
-        start_step, saved_rng = load_checkpoint(model, optimizer, latest_ckpt)
+        start_step, saved_rng = load_checkpoint(
+            model, optimizer, latest_ckpt,
+            expected_precommit_hash=precommit_hash,
+            scaler=scaler,
+        )
         if saved_rng is not None:
             rng.set_state(saved_rng)
         else:
             rng = np.random.RandomState(42 + start_step)
     eval_rng = np.random.RandomState(9999)
-
-    model.train()
-    scaler = torch.amp.GradScaler("cuda", enabled=(DEVICE.type == "cuda"))
 
     best_acc = 0.0
     gate_passed = False
@@ -315,6 +333,7 @@ def train_donor(max_steps=MAX_STEPS, smoke=False):
                     ckpt_dir / "donor_best.pt",
                     rng_state=rng.get_state(),
                     precommit_hash=precommit_hash,
+                    scaler=scaler,
                 )
 
         if (step + 1) % checkpoint_every == 0:
@@ -323,6 +342,7 @@ def train_donor(max_steps=MAX_STEPS, smoke=False):
                 ckpt_dir / f"donor_step_{step + 1:06d}.pt",
                 rng_state=rng.get_state(),
                 precommit_hash=precommit_hash,
+                scaler=scaler,
             )
             if DEVICE.type == "cuda" and COOLDOWN_SECONDS > 0:
                 time.sleep(COOLDOWN_SECONDS)
@@ -345,6 +365,7 @@ def train_donor(max_steps=MAX_STEPS, smoke=False):
         ckpt_dir / "donor_final.pt",
         rng_state=rng.get_state(),
         precommit_hash=precommit_hash,
+        scaler=scaler,
     )
 
     result = {
