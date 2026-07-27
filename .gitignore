@@ -42,10 +42,9 @@ STARTUP_PROMPT.md
 # Atlas R2 cost ledger (generated at runtime, not precommit)
 results/atlas_r2_cost_ledger.csv
 
-# GAT (killed) training logs and scratch outputs
-results/geometry_admission/**/training_log.jsonl
-results/geometry_admission/**/repeat_check/
-results/stage_a_*.txt
+# Killed direction local scratch (prevent re-creation)
+results/geometry_admission/
+results/causal_organ/
 
 # OS / editor
 .DS_Store
