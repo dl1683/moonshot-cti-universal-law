@@ -142,13 +142,15 @@ Revised ceiling: 3-4/10 (down from 6-7/10). Six antipatterns apply.
 - VIL-1 (Village Intelligence Phase Transition): ~5/10 max — beyond-union exists weakly (EMNLP 2025 DDS), novelty preempted
 - Interaction necessity theorem (as stated): 3/10 — almost tautological from Bayes risk
 
-**Sole surviving direction concept: Compute-Interaction Frontier (CIF)**
-- **Question:** "When does asking the world beat thinking harder?"
-- **Ceiling:** Conditional 7/10 (not yet earned)
-- **Key object:** Adaptive advantage ratio gamma(eps) = min-cost-nonadaptive / min-cost-adaptive
-- **Surprising result target:** "Two adaptive questions let a 3B offline model beat a 30B model with 100x test-time compute, at 25x lower total cost including user time, across three natural task families."
-- **Cost accounting:** inference joules, latency, user seconds, answer bits, user error probability, connectivity, memory, question complexity
-- **5-day theorem gate (7 criteria):** (1) same external-info budget, (2) unrestricted internal computation, (3) superconstant gap, (4) noisy user responses with heterogeneous costs, (5) independently motivated task class, (6) not obtainable from Fano/active-learning/etc. by substitution, (7) matching constructive policy
+**CIF (Compute-Interaction Frontier): THEOREM GATE FAIL Day 0 (Jul 27)**
+- Fatal trilemma: (1) same info + unlimited compute = no separation, (2) different info = known query complexity, (3) bounded compute = known tradeoffs
+- Criterion 6 fails decisively. All 6 antipatterns apply.
+- CIF retained ONLY as empirical affordability study (not 7/10 theorem)
+- Full verdict: `results/codex_cif_theorem_gate.md`
+
+**11 DIRECTIONS KILLED. Direction selection restarting from scratch.**
+- Codex recommendation: start from concrete unmet need of poor users, not from another universal object
+- Comprehensive failure synthesis + R13 steering required
 
 **Deep pattern (R12 failure synthesis): The Compactness-Consequence Trap.**
 All 6 prior directions searched for a small, universal internal object after intelligence already exists. When easy to identify, tautological. When genuinely causal, difficult to learn and not cheaply portable. Next direction must start from direct scale-defying consequence and remain mechanism-agnostic.
@@ -192,7 +194,8 @@ All 6 prior directions searched for a small, universal internal object after int
 | 28 | CSO precommit hardening (v3-v12 review cycle) | DONE | 12-iteration Codex review cycle. v3-v11 NO-GO: NaN/tolerance, semantic gaps, thread-sensitive sockets, derived-set bypass, boolean type confusion, runtime env, training config binding, list recursion. All fixed. v12: **GO**. Integrity hash: 745f10e7... |
 | 29 | Donor capacity training (50K steps) | DONE | ALL GATES FAIL. 50K steps, 4.1h. Train 33.9%, extrap 0.4%, excluded 24.5%, withheld 5.9%. Model learned per-register tracking (~76%/reg) but never composed across registers. No grokking. Cosine LR drove to ~7.5e-10 by step 45K. |
 | 30 | CSO closure + R12 direction stress test | DONE | Results committed, STATUS updated. ACQ-1 killed (R12 R1), CCL-1/PCI-1/VIL-1 killed (R12 R2). CIF survives. 5-day theorem gate next. |
-| 31 | CIF 5-day theorem gate | PENDING | State theorem satisfying all 7 R12 R2 criteria. Day 0 = today. Kill if gate fails by day 5. |
+| 31 | CIF 5-day theorem gate | DONE | FAIL Day 0. Fatal trilemma: criterion 6 dead. No theorem target exists. CIF retained as empirical question only. |
+| 32 | Comprehensive failure synthesis + R13 | PENDING | 11 kills accumulated. Full constraint map. Direction restart from user needs. |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
