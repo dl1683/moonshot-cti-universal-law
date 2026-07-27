@@ -1,0 +1,104 @@
+# Atlas R2 Workload Configuration
+# Frozen per binding protocol: results/codex_scale_inversion_atlas_design_gate_r2.md
+
+workloads:
+  W-D1:
+    name: "SWE-bench-Live MultiLang"
+    role: "discovery_agentic"
+    source:
+      github: "https://github.com/microsoft/SWE-bench-Live"
+      huggingface: "SWE-bench-Live/SWE-bench-Live"
+      revision: null  # Pin at P0
+    task_count:
+      pilot: 24
+      remainder: 48
+      total: 72
+    selection: "ascending SHA256('atlas-r2-d1' || task_id), first 72"
+    languages: ["C/C++", "C#", "Java", "TS/JS", "Go", "Rust"]
+    task_type: "agentic"
+    quality_metric: "executable_pass_rate"
+    adjudicator: "containerized test harness"
+    license: null  # Verify at P0
+
+  W-D2:
+    name: "Apple MKQA"
+    role: "discovery_short"
+    source:
+      github: "https://github.com/apple/ml-mkqa"
+      huggingface: "apple/mkqa"
+      file: "mkqa.jsonl.gz"
+    task_count:
+      queries: 40
+      languages: 8
+      total: 320
+    selection: "ascending SHA256('atlas-r2-d2' || example_id), first 40 queries"
+    language_selection: ["en", "es", "fr", "de", "ja", "zh_cn", "ar", "hi"]
+    task_type: "short"
+    quality_metric: "canonical_answer_accuracy"
+    adjudicator: "exact match + F1 with answer aliases"
+    license: "CC BY-SA 3.0"
+
+  W-D3:
+    name: "PolicyBench US"
+    role: "discovery_short"
+    source:
+      github: "https://github.com/PolicyEngine/policybench"
+      pip: "policybench"
+      website: "https://policybench.org"
+    task_count:
+      households: 100
+      scored_outputs: 18
+      total_targets: 1984
+    generation_command: "policybench reference-outputs -n 100 --seed 42"
+    task_type: "short"
+    quality_metric: "policyengine_agreement"
+    adjudicator: "PolicyEngine-US reference + explanation validity"
+    license: "Unlicense"
+
+  W-C1:
+    name: "RealClawBench"
+    role: "confirmation_cross_family"
+    source:
+      paper: "https://arxiv.org/abs/2606.03889"
+      anonymous_review: "https://anonymous.4open.science/r/real-claw-bench-582B"
+      public_release: null  # NOT CONFIRMED - AT RISK
+    task_count:
+      pool: 281
+      selected: 72
+    selection: "ascending SHA256('atlas-r2-c1' || immutable_task_id), first 72"
+    task_type: "agentic"
+    quality_metric: "deterministic_task_completion"
+    adjudicator: "reconstructed execution environment + deterministic verifier"
+    license: "CC BY 4.0"
+    status: "AT_RISK"
+    fallback: "If unavailable, W-C2 is sole confirmation. Score capped below 7/10."
+
+  W-C2:
+    name: "Future SWE-bench-Live MultiLang"
+    role: "confirmation_temporal_prospective"
+    source:
+      github: "https://github.com/microsoft/SWE-bench-Live"
+      note: "First batch with issue/merge cutoff AFTER selector freeze"
+    task_count:
+      selected: 48
+    selection: "ascending SHA256('atlas-r2-c2' || immutable_task_id), first 48 valid"
+    task_type: "agentic"
+    quality_metric: "executable_pass_rate"
+    adjudicator: "containerized test harness"
+    constraint: "No W-C2 task may enter retrieval, tuning, threshold selection, prompt editing, or model selection"
+
+quality_floors:
+  non_inferiority_margin_pp: 5
+  reliability_min_completion_rate: 0.95
+  cost_ratio_min: 10
+  bootstrap_ci: 0.95
+
+kill_criteria:
+  - "fewer than 2 workload families show sub-1.7B at frontier non-inferiority"
+  - "no verified local-vs-hosted avoided-cost ratio reaches 10x at 10K tasks"
+  - "selector cost regret exceeds 20% on either confirmation track"
+  - "recommendation stability below 80% across bootstrap resamples"
+  - "more than 25% of conclusions are RECIPE_SENSITIVE"
+  - "positive result depends on composite score, omitted adaptation, or hand-selected floor"
+  - "future-model test fails"
+  - "strongest defensible sentence is 'we evaluated many systems and built a framework'"

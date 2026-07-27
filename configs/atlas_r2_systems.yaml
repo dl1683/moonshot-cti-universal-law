@@ -1,0 +1,184 @@
+# Atlas R2 System Roster
+# Frozen per binding protocol: results/codex_scale_inversion_atlas_design_gate_r2.md
+
+local_checkpoints:
+  qwen3_0.6b:
+    hf_id: "Qwen/Qwen3-0.6B"
+    hf_revision: null  # Pin at P0 preflight
+    params_b: 0.6
+    family: "qwen3"
+    architecture: "transformer"
+    license: "apache-2.0"
+    quantization: "W4A16"
+    engine: null  # Set at P0: vllm or llama.cpp
+
+  qwen3_4b:
+    hf_id: "Qwen/Qwen3-4B"
+    hf_revision: null
+    params_b: 4.0
+    family: "qwen3"
+    architecture: "transformer"
+    license: "apache-2.0"
+    quantization: "W4A16"
+    engine: null
+
+  qwen3_14b:
+    hf_id: "Qwen/Qwen3-14B"
+    hf_revision: null
+    params_b: 14.0
+    family: "qwen3"
+    architecture: "transformer"
+    license: "apache-2.0"
+    quantization: "W4A16"
+    engine: null
+
+  gemma3_1b:
+    hf_id: "google/gemma-3-1b-it"
+    hf_revision: null
+    params_b: 1.0
+    family: "gemma3"
+    architecture: "transformer"
+    license: "gemma"
+    quantization: "W4A16"
+    engine: null
+
+  gemma3_4b:
+    hf_id: "google/gemma-3-4b-it"
+    hf_revision: null
+    params_b: 4.0
+    family: "gemma3"
+    architecture: "transformer"
+    license: "gemma"
+    quantization: "W4A16"
+    engine: null
+
+  gemma3_12b:
+    hf_id: "google/gemma-3-12b-it"
+    hf_revision: null
+    params_b: 12.0
+    family: "gemma3"
+    architecture: "transformer"
+    license: "gemma"
+    quantization: "W4A16"
+    engine: null
+
+  falcon_h1_0.5b:
+    hf_id: "tiiuae/Falcon-H1-0.5B-Instruct"
+    hf_revision: null
+    params_b: 0.5
+    family: "falcon_h1"
+    architecture: "hybrid_ssm_attention"
+    license: "apache-2.0"
+    quantization: "W4A16"
+    engine: null
+
+  falcon_h1_3b:
+    hf_id: "tiiuae/Falcon-H1-3B-Instruct"
+    hf_revision: null
+    params_b: 3.0
+    family: "falcon_h1"
+    architecture: "hybrid_ssm_attention"
+    license: "apache-2.0"
+    quantization: "W4A16"
+    engine: null
+
+  falcon_h1_7b:
+    hf_id: "tiiuae/Falcon-H1-7B-Instruct"
+    hf_revision: null
+    params_b: 7.0
+    family: "falcon_h1"
+    architecture: "hybrid_ssm_attention"
+    license: "apache-2.0"
+    quantization: "W4A16"
+    engine: null
+
+api_systems:
+  gpt56_sol:
+    provider: "openai"
+    model_id: null  # Pin exact snapshot at P0
+    role: "frontier"
+    pricing_per_m_tokens:
+      input: 5.0
+      output: 30.0
+    pricing_date: "2026-07-27"
+    pricing_source: "https://developers.openai.com/api/docs/models"
+
+  gpt56_luna:
+    provider: "openai"
+    model_id: null
+    role: "value_control"
+    pricing_per_m_tokens:
+      input: 1.0
+      output: 6.0
+    pricing_date: "2026-07-27"
+    pricing_source: "https://developers.openai.com/api/docs/models"
+
+  claude_fable5:
+    provider: "anthropic"
+    model_id: null
+    role: "frontier"
+    pricing_per_m_tokens:
+      input: 10.0
+      output: 50.0
+    pricing_date: "2026-07-27"
+    pricing_source: "https://platform.claude.com/docs/es/about-claude/models/overview"
+
+  claude_sonnet5:
+    provider: "anthropic"
+    model_id: null
+    role: "value_control"
+    pricing_per_m_tokens:
+      input: 3.0
+      output: 15.0
+    pricing_date: "2026-07-27"
+    pricing_source: "https://platform.claude.com/docs/es/about-claude/models/overview"
+
+  gemini_31_pro:
+    provider: "google"
+    model_id: null
+    role: "frontier"
+    mutable_preview: true
+    drift_audit_window_days: 7
+    drift_audit_pct: 0.05
+    pricing_per_m_tokens:
+      input: 2.0
+      output: 12.0
+    pricing_date: "2026-07-27"
+    pricing_source: "https://ai.google.dev/gemini-api/docs/pricing"
+
+  gemini_31_flash_lite:
+    provider: "google"
+    model_id: null
+    role: "value_control"
+    mutable_preview: false
+    pricing_per_m_tokens:
+      input: 0.25
+      output: 1.50
+    pricing_date: "2026-07-27"
+    pricing_source: "https://ai.google.dev/gemini-api/docs/pricing"
+
+baselines:
+  - id: "regex_baseline"
+    description: "Regex/rule-based pattern matcher for W-D2/W-D3"
+  - id: "bm25_baseline"
+    description: "BM25 retrieval + template for W-D2"
+  - id: "random_baseline"
+    description: "Random feasible answer for floor calibration"
+
+gate_a:
+  input_count: 9
+  output_count: 6
+  rule: "2 per family: highest quality + cheapest within 10pt of family best"
+
+gate_b:
+  input_count_max: 32
+  output_count: 4
+  ranking: ["floors_passed", "worst_shortfall", "cost_10k", "peak_memory", "system_id"]
+  constraints:
+    min_families: 2
+    min_sub_1_7b: 1
+
+quantization_audit:
+  format: "W8A16"
+  scope: "4 finalists only"
+  purpose: "audit, not selector candidate"

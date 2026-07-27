@@ -39,8 +39,10 @@ secrets/
 REHYDRATE.md
 STARTUP_PROMPT.md
 
-# Geometry Admission Test sealed keys, model checkpoints, and training logs
-results/geometry_admission/secrets/
+# Atlas R2 cost ledger (generated at runtime, not precommit)
+results/atlas_r2_cost_ledger.csv
+
+# GAT (killed) training logs and scratch outputs
 results/geometry_admission/**/training_log.jsonl
 results/geometry_admission/**/repeat_check/
 results/stage_a_*.txt

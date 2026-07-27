@@ -1,0 +1,51 @@
+{
+  "version": "r2",
+  "date_frozen": null,
+  "gpu_budget": {
+    "unit": "rtx5090_hours",
+    "phases": {
+      "P0_preflight": {"allocated": 24.0, "description": "Harness build, power calibration, smoke tests"},
+      "P1_raw_short_screen": {"allocated": 31.5, "description": "9 checkpoints x 420 short episodes x 0.5min/ep"},
+      "P2_raw_code_pilot": {"allocated": 19.2, "description": "6 anchors x 24 W-D1 pilot x 8min/task"},
+      "P3_rag": {"allocated": 21.0, "description": "6 anchors x 420 short episodes x 0.5min/ep"},
+      "P3_best_of_4": {"allocated": 28.0, "description": "2 small anchors x 420 episodes x 4 samples x 0.5min"},
+      "P3_qlora": {"allocated": 14.0, "description": "4 anchors x 420 episodes x 0.5min/ep"},
+      "P3_qlora_rag": {"allocated": 7.0, "description": "2 small anchors x 420 episodes x 0.5min/ep"},
+      "P4_recipe_sensitivity": {"allocated": 28.0, "description": "4 anchors x 2 workloads x 3.5h budget envelope"},
+      "P5_code_best_of_4": {"allocated": 25.6, "description": "2 small x 24 pilot x 4 samples x 8min/task"},
+      "P5_code_remainder": {"allocated": 25.6, "description": "4 finalists x 48 W-D1 remainder x 8min/task"},
+      "P6_realclaw_confirmation": {"allocated": 38.4, "description": "4 finalists x 72 W-C1 tasks x 8min/task"},
+      "P6_future_swe_confirmation": {"allocated": 25.6, "description": "4 finalists x 48 W-C2 tasks x 8min/task"},
+      "P7_energy_repeats": {"allocated": 27.2, "description": "4 finalists x 3 repeats x (16x0.5 + 16x8)/60"},
+      "P7_engine_audit": {"allocated": 9.07, "description": "4 finalists x (16x0.5 + 16x8)/60"}
+    },
+    "scheduled_subtotal": 324.17,
+    "failure_reserve": 35.83,
+    "binding_maximum": 360.0,
+    "borrowing_rule": "No phase may borrow from another except through the failure reserve"
+  },
+  "api_budget": {
+    "unit": "usd",
+    "estimated_token_bill": 485,
+    "binding_maximum": 1200,
+    "requires_new_gate_if_exceeded": true
+  },
+  "task_caps": {
+    "short_tasks": {
+      "gpu_generation_cap_seconds": 30,
+      "output_tokens": 128,
+      "wall_clock_minutes": 5
+    },
+    "agentic_tasks": {
+      "gpu_generation_cap_minutes": 8,
+      "tool_actions": 16,
+      "cumulative_output_tokens": 8192,
+      "cumulative_input_tokens": 64000,
+      "wall_clock_minutes": 20
+    }
+  },
+  "timeline": {
+    "weeks_at_45h_per_week": 8,
+    "weeks_at_60h_per_week": 6
+  }
+}

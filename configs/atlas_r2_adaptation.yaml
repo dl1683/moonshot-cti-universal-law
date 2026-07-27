@@ -1,0 +1,58 @@
+# Atlas R2 Adaptation Configuration
+# Frozen per binding protocol: results/codex_scale_inversion_atlas_design_gate_r2.md
+
+qlora:
+  scope: "4 anchors (2 strongest families x small + large) on W-D2 and W-D3"
+  resource_envelopes:
+    - label: "0.5x"
+      gpu_hours: 0.5
+    - label: "1x"
+      gpu_hours: 1.0
+    - label: "2x"
+      gpu_hours: 2.0
+
+  search_method: "ASHA (asynchronous successive halving)"
+  grid:
+    lora_rank: [8, 32]
+    learning_rate: [5.0e-5, 2.0e-4]
+    target_modules: ["attention_only", "attention_mlp"]
+  early_stopping: "frozen validation verifier"
+
+  budget_accounting: >
+    Every cell receives the same GPU-hour ceiling, not the same optimizer steps.
+    Training tokens, joules, wall time, examples seen, and all failed trials
+    count as adaptation cost. The timer does NOT pause for evaluation.
+    The winning recipe is chosen only on the discovery validation split.
+
+  total_budget_hours: 28.0
+  calculation: "4 anchors x 2 workloads x 3.5h average"
+
+robustness_rule:
+  description: "Hard Atlas recommendation involving adaptation is allowed only if ALL hold"
+  conditions:
+    - "feasibility verdict unchanged between 1x and 2x"
+    - "selected system unchanged, or 1x choice has at most 20% cost regret under 2x results"
+    - "quality changes monotonically within bootstrap uncertainty"
+    - "recommendation survives high-precision finalist audit"
+  fallback: "RECIPE_SENSITIVE — recommend calibration run, not stable optimum"
+
+excluded_from_core:
+  rlvr:
+    reason: "512-prompt/500-step too small for production claim, too expensive to expand"
+    disposition: "May enter separately budgeted mechanism study after core result exists"
+  distillation:
+    reason: "Requires teacher API cost not bounded by local GPU budget"
+    disposition: "Same as RLVR"
+
+rag:
+  scope: "6 anchors after Gate A"
+  retrieval: "BM25 over workload-specific corpus"
+  corpus_construction: "Task descriptions from discovery split only"
+  top_k: 3
+  budget_per_episode_minutes: 0.5
+
+best_of_n:
+  scope: "2 small anchors after Gate A"
+  n: 4
+  selection: "majority vote or highest self-consistency"
+  budget_per_episode_minutes: 2.0
