@@ -492,6 +492,16 @@ def verify_precommit(partitions: dict) -> bool:
                     f"model_config.{model_key} has unexpected field '{field}'"
                 )
 
+    live_included_set = frozenset(tuple(b) for b in partitions["included_bigrams"])
+    live_excluded_set = frozenset(tuple(b) for b in partitions["excluded_bigrams"])
+    live_withheld_set = frozenset(tuple(t) for t in partitions["withheld_trigrams"])
+    if partitions.get("included_bigram_set") != live_included_set:
+        raise ValueError("included_bigram_set inconsistent with included_bigrams")
+    if partitions.get("excluded_bigram_set") != live_excluded_set:
+        raise ValueError("excluded_bigram_set inconsistent with excluded_bigrams")
+    if partitions.get("withheld_trigram_set") != live_withheld_set:
+        raise ValueError("withheld_trigram_set inconsistent with withheld_trigrams")
+
     print("Precommit verification: PASS")
     return True
 
@@ -1013,8 +1023,8 @@ def verify_data_generation(partitions: dict, n_samples: int = 1000):
     rng = np.random.RandomState(123)
     train_states_set = set(partitions["train_state_indices"])
     eval_states_set = set(partitions["eval_state_indices"])
-    included_set = partitions["included_bigram_set"]
-    withheld_set = partitions["withheld_trigram_set"]
+    included_set = frozenset(tuple(b) for b in partitions["included_bigrams"])
+    withheld_set = frozenset(tuple(t) for t in partitions["withheld_trigrams"])
 
     for i in range(n_samples):
         ex = generate_training_example(rng, partitions)
@@ -1030,7 +1040,7 @@ def verify_data_generation(partitions: dict, n_samples: int = 1000):
             f"Withheld trigram in train sample {i}"
         )
 
-    excluded_set = partitions["excluded_bigram_set"]
+    excluded_set = frozenset(tuple(b) for b in partitions["excluded_bigrams"])
     n_eval = n_samples // 5
 
     for i in range(n_eval):

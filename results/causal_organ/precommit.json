@@ -429,7 +429,7 @@
       7
     ]
   ],
-  "generator_source_sha256": "abdbba923d5967d0f3f07ef8f10aaffd27cc99fa284af2a406b83754f7371ea9",
+  "generator_source_sha256": "c7141d574987a04d2d92ee01e9f1ff8c2aad9bb2bb1bf3561cb1ed7179bccb10",
   "encoding": {
     "state_dtype": "uint32_be",
     "bigram_dtype": "uint8_be"
@@ -477,5 +477,5 @@
       "serialized_bytes": 61110
     }
   },
-  "integrity_sha256": "eb52c23b9ab870e42c0012eed6cf4ea6cfb6cb0cda118e162a9d5fbde4a9149b"
+  "integrity_sha256": "0157bcbdcb00022d6aff070316bec267ab6aed28bf2d9deee946a12867185185"
 }
