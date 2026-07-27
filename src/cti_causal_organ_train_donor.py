@@ -59,6 +59,24 @@ CAPACITY_GATES = {
 }
 
 
+def training_config() -> dict:
+    """Return effective training configuration for precommit binding."""
+    return {
+        "torch_seed": TORCH_SEED,
+        "max_steps": MAX_STEPS,
+        "batch_size": BATCH_SIZE,
+        "lr": LR,
+        "weight_decay": WEIGHT_DECAY,
+        "warmup_steps": WARMUP_STEPS,
+        "eval_every": EVAL_EVERY,
+        "checkpoint_every": CHECKPOINT_EVERY,
+        "cooldown_seconds": COOLDOWN_SECONDS,
+        "smoke_steps": SMOKE_STEPS,
+        "smoke_eval_every": SMOKE_EVAL_EVERY,
+        "capacity_gates": dict(CAPACITY_GATES),
+    }
+
+
 def make_batch(rng, partitions, batch_size, generator_fn, **kwargs):
     """Generate a batch of examples using the given generator function."""
     init_states = []
@@ -232,13 +250,6 @@ def find_latest_checkpoint(ckpt_dir):
     return ckpts[-1] if ckpts else None
 
 
-def _get_precommit_hash() -> str:
-    """Read integrity hash from the precommit artifact."""
-    precommit_path = RESULTS_DIR / "precommit.json"
-    with open(precommit_path) as f:
-        return json.load(f)["integrity_sha256"]
-
-
 def train_donor(smoke=False):
     """Train the donor model."""
     ckpt_dir = SMOKE_CHECKPOINT_DIR if smoke else CHECKPOINT_DIR
@@ -263,8 +274,7 @@ def train_donor(smoke=False):
     print()
 
     partitions = init_partitions()
-    verify_precommit(partitions)
-    precommit_hash = _get_precommit_hash()
+    precommit_hash = verify_precommit(partitions, training_cfg=training_config())
     print()
 
     torch.manual_seed(TORCH_SEED)

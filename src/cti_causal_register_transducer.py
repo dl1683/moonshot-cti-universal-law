@@ -256,12 +256,16 @@ def _socket_hash(seed: int = 777, d_in: int = 32, d_out: int = 128) -> str:
 SOCKET_SEED = 777
 
 
-def create_precommit(partitions: dict, model_config: dict) -> dict:
+def create_precommit(partitions: dict, model_config: dict,
+                     training_cfg: dict = None) -> dict:
     """Create and write the immutable precommit artifact.
     model_config is required and must include exact param counts, dims, and FLOPs.
+    training_cfg is required and must include all training hyperparameters.
     """
     if not model_config:
         raise ValueError("model_config is required for precommit creation")
+    if not training_cfg:
+        raise ValueError("training_cfg is required for precommit creation")
     hashes = partition_hashes(partitions)
 
     precommit = {
@@ -286,6 +290,7 @@ def create_precommit(partitions: dict, model_config: dict) -> dict:
         "runtime_env": _runtime_env(),
         "hashes": hashes,
         "model_config": model_config,
+        "training_config": training_cfg,
     }
 
     h = hashlib.sha256()
@@ -310,7 +315,7 @@ _PRECOMMIT_REQUIRED_KEYS = {
     "encoding", "socket_seed",
     "socket_weight_sha256", "socket_weight_gru_sha256",
     "runtime_env",
-    "hashes", "model_config", "integrity_sha256",
+    "hashes", "model_config", "training_config", "integrity_sha256",
 }
 
 
@@ -344,11 +349,83 @@ def _json_strict(raw: str) -> dict:
         raise ValueError(f"Precommit contains duplicate keys: {e}") from e
 
 
-def verify_precommit(partitions: dict) -> bool:
+def _strict_config_eq(path: str, frozen, live):
+    """Recursive strict equality: rejects bool/int and float/int confusion."""
+    if isinstance(frozen, bool) or isinstance(live, bool):
+        if type(frozen) is not bool or type(live) is not bool:
+            raise ValueError(
+                f"{path}: bool/non-bool type mismatch "
+                f"(frozen={type(frozen).__name__}({frozen!r}), "
+                f"live={type(live).__name__}({live!r}))"
+            )
+        if frozen != live:
+            raise ValueError(f"{path} mismatch: frozen={frozen!r}, live={live!r}")
+        return
+    if isinstance(live, int):
+        if not isinstance(frozen, int):
+            raise ValueError(
+                f"{path}: type mismatch "
+                f"(frozen={type(frozen).__name__}({frozen!r}), "
+                f"live=int({live!r}))"
+            )
+        if frozen != live:
+            raise ValueError(f"{path} mismatch: frozen={frozen}, live={live}")
+        return
+    if isinstance(live, float):
+        if not isinstance(frozen, (int, float)):
+            raise ValueError(f"{path}: frozen={frozen!r} is not numeric")
+        if float(frozen).hex() != float(live).hex():
+            raise ValueError(f"{path} mismatch: frozen={frozen}, live={live}")
+        return
+    if isinstance(live, str):
+        if not isinstance(frozen, str):
+            raise ValueError(
+                f"{path}: type mismatch "
+                f"(frozen={type(frozen).__name__}, live=str)"
+            )
+        if frozen != live:
+            raise ValueError(f"{path} mismatch: frozen={frozen!r}, live={live!r}")
+        return
+    if isinstance(live, dict):
+        if not isinstance(frozen, dict):
+            raise ValueError(
+                f"{path}: type mismatch "
+                f"(frozen={type(frozen).__name__}, live=dict)"
+            )
+        for k in live:
+            if k not in frozen:
+                raise ValueError(f"{path} missing key '{k}' in frozen")
+            _strict_config_eq(f"{path}.{k}", frozen[k], live[k])
+        for k in frozen:
+            if k not in live:
+                raise ValueError(f"{path} has unexpected key '{k}' in frozen")
+        return
+    if frozen != live:
+        raise ValueError(f"{path} mismatch: frozen={frozen!r}, live={live!r}")
+
+
+def _assert_int_elements(name: str, nested_list):
+    """Assert all elements in a list of int-sequences are int, not bool."""
+    for i, seq in enumerate(nested_list):
+        for j, elem in enumerate(seq):
+            if isinstance(elem, bool):
+                raise ValueError(
+                    f"{name}[{i}][{j}] is bool ({elem!r}), expected int"
+                )
+            if not isinstance(elem, int):
+                raise ValueError(
+                    f"{name}[{i}][{j}] is {type(elem).__name__} ({elem!r}), "
+                    f"expected int"
+                )
+
+
+def verify_precommit(partitions: dict, training_cfg: dict = None) -> str:
     """Verify current partitions match the frozen precommit. Raises on mismatch.
 
     Fail-closed: rejects unknown keys, duplicate JSON keys, missing fields,
     and verifies every frozen value against its live computation.
+    Returns the integrity hash string on success (use instead of double-read).
+    training_cfg: live training config dict from trainer.training_config().
     """
     if not PRECOMMIT_PATH.exists():
         raise FileNotFoundError(f"Precommit not found at {PRECOMMIT_PATH}")
@@ -400,6 +477,10 @@ def verify_precommit(partitions: dict) -> bool:
         raise ValueError("n_excluded_bigrams count mismatch")
     if precommit["n_withheld_trigrams"] != len(partitions["withheld_trigrams"]):
         raise ValueError("n_withheld_trigrams count mismatch")
+
+    _assert_int_elements("precommit.included_bigrams", precommit["included_bigrams"])
+    _assert_int_elements("precommit.excluded_bigrams", precommit["excluded_bigrams"])
+    _assert_int_elements("precommit.withheld_trigrams", precommit["withheld_trigrams"])
 
     if ([tuple(b) for b in precommit["included_bigrams"]]
             != [tuple(b) for b in partitions["included_bigrams"]]):
@@ -509,45 +590,14 @@ def verify_precommit(partitions: dict) -> bool:
     if h.hexdigest() != precommit["integrity_sha256"]:
         raise ValueError("Precommit integrity hash mismatch")
 
-    frozen_mc = precommit["model_config"]
-    live_mc = build_model_config()
-    for model_key in live_mc:
-        if model_key not in frozen_mc:
-            raise ValueError(f"Precommit model_config missing '{model_key}'")
-        for field in live_mc[model_key]:
-            frozen_val = frozen_mc[model_key].get(field)
-            live_val = live_mc[model_key][field]
-            if isinstance(frozen_val, bool) or isinstance(live_val, bool):
-                raise ValueError(
-                    f"model_config.{model_key}.{field}: "
-                    f"boolean values not allowed (frozen={frozen_val!r}, live={live_val!r})"
-                )
-            if isinstance(live_val, float):
-                if frozen_val is None or not isinstance(frozen_val, (int, float)):
-                    raise ValueError(
-                        f"model_config.{model_key}.{field}: "
-                        f"frozen={frozen_val!r} is not numeric"
-                    )
-                if float(frozen_val).hex() != float(live_val).hex():
-                    raise ValueError(
-                        f"model_config.{model_key}.{field} mismatch: "
-                        f"frozen={frozen_val}, live={live_val}"
-                    )
-            elif frozen_val != live_val:
-                raise ValueError(
-                    f"model_config.{model_key}.{field} mismatch: "
-                    f"frozen={frozen_val}, live={live_val}"
-                )
-    for model_key in frozen_mc:
-        if model_key not in live_mc:
-            raise ValueError(
-                f"Precommit model_config has unexpected key '{model_key}'"
-            )
-        for field in frozen_mc[model_key]:
-            if field not in live_mc[model_key]:
-                raise ValueError(
-                    f"model_config.{model_key} has unexpected field '{field}'"
-                )
+    _strict_config_eq("model_config", precommit["model_config"], build_model_config())
+
+    if training_cfg is None:
+        raise ValueError(
+            "training_cfg is required for verify_precommit "
+            "(pass training_config() from trainer)"
+        )
+    _strict_config_eq("training_config", precommit["training_config"], training_cfg)
 
     live_included_set = frozenset(tuple(b) for b in partitions["included_bigrams"])
     live_excluded_set = frozenset(tuple(b) for b in partitions["excluded_bigrams"])
@@ -559,8 +609,9 @@ def verify_precommit(partitions: dict) -> bool:
     if partitions.get("withheld_trigram_set") != live_withheld_set:
         raise ValueError("withheld_trigram_set inconsistent with withheld_trigrams")
 
-    print("Precommit verification: PASS")
-    return True
+    integrity_hash = precommit["integrity_sha256"]
+    print(f"Precommit verification: PASS (hash={integrity_hash[:16]}...)")
+    return integrity_hash
 
 
 # ---------------------------------------------------------------------------
@@ -1339,5 +1390,10 @@ if __name__ == "__main__":
     model_cfg = build_model_config()
     print(json.dumps(model_cfg, indent=2))
 
+    print("\nImporting training config...")
+    from cti_causal_organ_train_donor import training_config
+    train_cfg = training_config()
+    print(json.dumps(train_cfg, indent=2))
+
     print("\nWriting precommit...")
-    create_precommit(partitions, model_config=model_cfg)
+    create_precommit(partitions, model_config=model_cfg, training_cfg=train_cfg)
