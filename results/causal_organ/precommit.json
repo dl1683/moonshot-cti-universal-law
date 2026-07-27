@@ -429,14 +429,14 @@
       7
     ]
   ],
-  "generator_source_sha256": "83b02e6fd6eab2a0d1f44b6971ad3432f08ba4a7833eab71037177955fa54e15",
+  "generator_source_sha256": "a2af579c33b098fca04073881e0032c87b881ea573d66b98cb199c508549bb7a",
   "encoding": {
     "state_dtype": "uint32_be",
     "bigram_dtype": "uint8_be"
   },
   "socket_seed": 777,
   "socket_weight_sha256": "e57d7d7de57bb4540ea2adf73f47126dba1ed5b8e8771b9ca5ae4a2dbf611ddd",
-  "socket_weight_gru_sha256": "183e22dc84e67cd19d0a29bd9646f6cf7db5cf1ddb8cfc3f90f1a475233b3960",
+  "socket_weight_gru_sha256": "eb9669024b85321ed77de2a6dd4b74e9f90723353644d7724bfcc0d2a34ec15d",
   "hashes": {
     "train_states_sha256": "d28dc8adda28fab202f358b6c03d05568891eeec0eaeab1800c795b6747f747c",
     "eval_states_sha256": "14e05cbd9b6a7e23ad529011137f5517e5dc071ad390664e7082fdb72786e3cb",
@@ -477,5 +477,5 @@
       "serialized_bytes": 61110
     }
   },
-  "integrity_sha256": "93c8a697501938f6357d6928e952e912084cacd0c0c437eb1ae8357a47ea227f"
+  "integrity_sha256": "9531718f2fb0ab42dc02d7bf79a191ecc08ad7961f0423e73065aca5589da370"
 }

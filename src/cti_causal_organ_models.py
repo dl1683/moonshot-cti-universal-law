@@ -154,12 +154,16 @@ class RecurrentTransformerDonor(nn.Module):
 def _make_frozen_socket(d_in: int, d_out: int, seed: int = SOCKET_SEED) -> nn.Linear:
     """Create a parameter-free random projection socket.
     Fixed initialization, frozen (no gradients). Task-independent.
-    Saves/restores global RNG so socket creation never perturbs training.
+    Saves/restores global RNG and pins num_threads=1 so orthogonal_
+    init is deterministic regardless of host thread configuration.
     """
     rng_state = torch.random.get_rng_state()
+    saved_threads = torch.get_num_threads()
+    torch.set_num_threads(1)
     torch.manual_seed(seed)
     socket = nn.Linear(d_in, d_out, bias=False)
     nn.init.orthogonal_(socket.weight, gain=1.0)
+    torch.set_num_threads(saved_threads)
     torch.random.set_rng_state(rng_state)
     socket.weight.requires_grad_(False)
     return socket

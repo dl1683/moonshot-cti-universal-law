@@ -237,13 +237,18 @@ def _source_hash() -> str:
 
 
 def _socket_hash(seed: int = 777, d_in: int = 32, d_out: int = 128) -> str:
-    """SHA-256 of a frozen socket weight bytes for precommit."""
+    """SHA-256 of a frozen socket weight bytes for precommit.
+    Pins num_threads=1 so orthogonal_ init is thread-deterministic.
+    """
     import torch
     import torch.nn as nn
     rng_state = torch.random.get_rng_state()
+    saved_threads = torch.get_num_threads()
+    torch.set_num_threads(1)
     torch.manual_seed(seed)
     socket = nn.Linear(d_in, d_out, bias=False)
     nn.init.orthogonal_(socket.weight, gain=1.0)
+    torch.set_num_threads(saved_threads)
     torch.random.set_rng_state(rng_state)
     return hashlib.sha256(socket.weight.detach().cpu().numpy().tobytes()).hexdigest()
 
