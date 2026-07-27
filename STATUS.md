@@ -53,7 +53,7 @@ without teacher access or pair-specific tuning.
 - Geometry installs (aux loss converges) but does NOT transfer capability
 - Stage C-I: PERMANENTLY CANCELLED
 - Conditional GRU: PERMANENTLY CANCELLED
-- Evidence preserved in `results/geometry_admission/stage_b/decision.json`
+- Evidence preserved in STATUS.md kill records
 
 **Codex R11 diagnosis (5 failure mechanisms):**
 1. R describes sample flow, not the transition law
@@ -217,6 +217,7 @@ Revised ceiling: 3-4/10 (down from 6-7/10). Six antipatterns apply.
 | 33 | Dead code audit + cleanup | DONE | 79 LIVE, 6 DEAD, 246 UNCERTAIN (325 scripts). Deleted 19 dead scripts (bridge, equicorr, alpha-rho, campaign C64-C88, misplaced fractal), 8 dead result files. -12,852 lines. |
 | 34 | Atlas design gate R1 (Codex) | DONE | CONDITIONAL GO through P0 only. 832-line protocol: 4 workloads (SWE-bench-Live, MKQA, PolicyBench, RealClawBench), 9 checkpoints (Qwen3/Gemma3/Falcon-H1), 51 system templates, 167 executed cells, 320 GPU-hours, 15 kill criteria, 6 frozen hypotheses. |
 | 35 | Atlas design gate R2 pushback | DONE | CONVERGED. All 5 objections conceded. Budget 320h->360h (324.2h + 35.8h reserve). 6 API Goliaths added. Dual confirmation (W-C1 + W-C2). Equal-budget ASHA adaptation. RLVR/distillation removed. 32 templates. $1,200 API ceiling. |
+| 36 | P0 preflight + mass cleanup | DONE | P0 preflight PARTIAL PASS (W-C1 at risk). 9 HF revisions pinned. 222 files deleted from 6 killed directions (GAT, CSO, CIF, equicorrelation, bridge, steering/QL). Repo from ~950 to 726 tracked files. Precommit verifier passes. |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
@@ -254,9 +255,13 @@ Revised ceiling: 3-4/10 (down from 6-7/10). Six antipatterns apply.
 ### Dead Code Cleanup Log
 | Direction | Files Deleted | Date | Evidence Preserved |
 |-----------|--------------|------|-------------------|
-| GAT (Phase 1) | 11 files: `src/cti_geometry_admission_*.py` | Jul 27 | `results/geometry_admission/stage_b/decision.json` |
-| CSO (Phase 2) | 3 files: `src/cti_causal_organ_*.py`, `src/cti_causal_register_transducer.py` | Jul 27 | `results/causal_organ/donor_capacity_result.json` |
-| Bridge/equicorr/alpha-rho | 6 cti_* scripts, 7 result JSONs, downstream_bridge dir | Jul 27 | Kill records in STATUS.md |
-| Campaign C64-C88 | 10 numbered campaign scripts | Jul 27 | Kill records in STATUS.md |
+| GAT Phase 1 (pass 1) | 11 src scripts + 106 result artifacts + 13 Codex reviews | Jul 27 | Kill records in STATUS.md |
+| CSO Phase 2 (pass 1) | 3 src scripts + 3 result files + 14 Codex reviews | Jul 27 | Kill records in STATUS.md |
+| CIF Phase 3 | 2 result docs | Jul 27 | Kill records in STATUS.md |
+| Equicorrelation Phase 0 | 5 src scripts + 10 result files | Jul 27 | Kill records in STATUS.md |
+| Bridge/campaign Phase 0 | 1 src + 33 campaign JSONs (c64-c107) | Jul 27 | Kill records in STATUS.md |
+| Steering/QL (killed phases) | 9 result docs + 13 research docs | Jul 27 | Kill records in STATUS.md |
+| Dead research docs | CGF (3), COLM (1), CSO admission (1) | Jul 27 | Kill records in STATUS.md |
+| Misc dead | 3 result files, centroid dispersion, misc | Jul 27 | Kill records in STATUS.md |
 | Stale root files | generate_5task_correlation_summary.py, C80_MILESTONE_SYNTHESIS.md | Jul 27 | N/A |
-| Misplaced | hierarchical_datasets.py (fractal embeddings, wrong project) | Jul 27 | N/A |
+| **Total cleaned** | **~222 tracked files removed** | Jul 27 | All kills documented here |
