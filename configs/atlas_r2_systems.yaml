@@ -10,7 +10,7 @@ local_checkpoints:
     architecture: "transformer"
     license: "apache-2.0"
     quantization: "W4A16"
-    engine: null  # Set at P0: vllm or llama.cpp
+    engine: "transformers"
 
   qwen3_4b:
     hf_id: "Qwen/Qwen3-4B"
@@ -20,7 +20,7 @@ local_checkpoints:
     architecture: "transformer"
     license: "apache-2.0"
     quantization: "W4A16"
-    engine: null
+    engine: "transformers"
 
   qwen3_14b:
     hf_id: "Qwen/Qwen3-14B"
@@ -30,7 +30,7 @@ local_checkpoints:
     architecture: "transformer"
     license: "apache-2.0"
     quantization: "W4A16"
-    engine: null
+    engine: "transformers"
 
   gemma3_1b:
     hf_id: "google/gemma-3-1b-it"
@@ -40,7 +40,7 @@ local_checkpoints:
     architecture: "transformer"
     license: "gemma"
     quantization: "W4A16"
-    engine: null
+    engine: "transformers"
 
   gemma3_4b:
     hf_id: "google/gemma-3-4b-it"
@@ -50,7 +50,7 @@ local_checkpoints:
     architecture: "transformer"
     license: "gemma"
     quantization: "W4A16"
-    engine: null
+    engine: "transformers"
 
   gemma3_12b:
     hf_id: "google/gemma-3-12b-it"
@@ -60,7 +60,7 @@ local_checkpoints:
     architecture: "transformer"
     license: "gemma"
     quantization: "W4A16"
-    engine: null
+    engine: "transformers"
 
   falcon_h1_0.5b:
     hf_id: "tiiuae/Falcon-H1-0.5B-Instruct"
@@ -70,7 +70,7 @@ local_checkpoints:
     architecture: "hybrid_ssm_attention"
     license: "apache-2.0"
     quantization: "W4A16"
-    engine: null
+    engine: "transformers"
 
   falcon_h1_3b:
     hf_id: "tiiuae/Falcon-H1-3B-Instruct"
@@ -80,7 +80,7 @@ local_checkpoints:
     architecture: "hybrid_ssm_attention"
     license: "apache-2.0"
     quantization: "W4A16"
-    engine: null
+    engine: "transformers"
 
   falcon_h1_7b:
     hf_id: "tiiuae/Falcon-H1-7B-Instruct"
@@ -90,7 +90,7 @@ local_checkpoints:
     architecture: "hybrid_ssm_attention"
     license: "apache-2.0"
     quantization: "W4A16"
-    engine: null
+    engine: "transformers"
 
 api_systems:
   gpt56_sol:
