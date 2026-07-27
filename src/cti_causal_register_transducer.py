@@ -286,11 +286,7 @@ def create_precommit(partitions: dict, model_config: Optional[dict] = None) -> d
         precommit["model_config"] = model_config
 
     h = hashlib.sha256()
-    h.update(json.dumps(hashes, sort_keys=True).encode())
-    h.update(precommit["generator_source_sha256"].encode())
-    h.update(precommit["socket_weight_sha256"].encode())
-    h.update(precommit["socket_weight_gru_sha256"].encode())
-    h.update(json.dumps(precommit["encoding"], sort_keys=True).encode())
+    h.update(json.dumps(precommit, sort_keys=True).encode())
     precommit["integrity_sha256"] = h.hexdigest()
 
     PRECOMMIT_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -317,6 +313,10 @@ class _DuplicateKeyError(ValueError):
     pass
 
 
+def _reject_nan_inf(c):
+    raise ValueError(f"Non-finite JSON constant: {c!r}")
+
+
 def _json_no_duplicates(pairs):
     """JSON object_pairs_hook that rejects duplicate keys."""
     d = {}
@@ -325,6 +325,18 @@ def _json_no_duplicates(pairs):
             raise _DuplicateKeyError(f"Duplicate JSON key: '{k}'")
         d[k] = v
     return d
+
+
+def _json_strict(raw: str) -> dict:
+    """Parse JSON rejecting duplicate keys and non-finite constants."""
+    try:
+        return json.loads(
+            raw,
+            object_pairs_hook=_json_no_duplicates,
+            parse_constant=_reject_nan_inf,
+        )
+    except _DuplicateKeyError as e:
+        raise ValueError(f"Precommit contains duplicate keys: {e}") from e
 
 
 def verify_precommit(partitions: dict) -> bool:
@@ -338,10 +350,7 @@ def verify_precommit(partitions: dict) -> bool:
 
     with open(PRECOMMIT_PATH) as f:
         raw = f.read()
-    try:
-        precommit = json.loads(raw, object_pairs_hook=_json_no_duplicates)
-    except _DuplicateKeyError as e:
-        raise ValueError(f"Precommit contains duplicate keys: {e}") from e
+    precommit = _json_strict(raw)
 
     frozen_keys = set(precommit.keys())
     missing = _PRECOMMIT_REQUIRED_KEYS - frozen_keys
@@ -442,12 +451,9 @@ def verify_precommit(partitions: dict) -> bool:
         if key not in current_hashes:
             raise ValueError(f"Frozen partition hash key '{key}' not in live")
 
+    recompute_dict = {k: v for k, v in precommit.items() if k != "integrity_sha256"}
     h = hashlib.sha256()
-    h.update(json.dumps(frozen_hashes, sort_keys=True).encode())
-    h.update(precommit["generator_source_sha256"].encode())
-    h.update(precommit["socket_weight_sha256"].encode())
-    h.update(precommit["socket_weight_gru_sha256"].encode())
-    h.update(json.dumps(precommit["encoding"], sort_keys=True).encode())
+    h.update(json.dumps(recompute_dict, sort_keys=True).encode())
     if h.hexdigest() != precommit["integrity_sha256"]:
         raise ValueError("Precommit integrity hash mismatch")
 
@@ -460,7 +466,12 @@ def verify_precommit(partitions: dict) -> bool:
             frozen_val = frozen_mc[model_key].get(field)
             live_val = live_mc[model_key][field]
             if isinstance(live_val, float):
-                if frozen_val is None or abs(frozen_val - live_val) > 1e-6:
+                if frozen_val is None or not isinstance(frozen_val, (int, float)):
+                    raise ValueError(
+                        f"model_config.{model_key}.{field}: "
+                        f"frozen={frozen_val!r} is not numeric"
+                    )
+                if float(frozen_val).hex() != float(live_val).hex():
                     raise ValueError(
                         f"model_config.{model_key}.{field} mismatch: "
                         f"frozen={frozen_val}, live={live_val}"
@@ -1030,6 +1041,9 @@ def verify_data_generation(partitions: dict, n_samples: int = 1000):
         assert EVAL_LENGTHS[0] <= len(ex["ops"]) <= EVAL_LENGTHS[1], (
             f"length_extrapolation len={len(ex['ops'])} outside {EVAL_LENGTHS}"
         )
+        assert state_to_index(ex["init_state"]) in eval_states_set, (
+            f"length_extrapolation sample {i}: init state not in eval partition"
+        )
 
     for i in range(n_eval):
         ex = generate_excluded_bigram(rng, partitions)
@@ -1041,6 +1055,12 @@ def verify_data_generation(partitions: dict, n_samples: int = 1000):
             for j in range(1, len(ex["ops"]))
         )
         assert has_excluded, f"excluded_bigram sample {i} has no excluded bigram"
+        assert state_to_index(ex["init_state"]) in train_states_set, (
+            f"excluded_bigram sample {i}: init state not in train partition"
+        )
+        assert TRAIN_LENGTHS[0] <= len(ex["ops"]) <= TRAIN_LENGTHS[1], (
+            f"excluded_bigram sample {i}: len={len(ex['ops'])} outside train range"
+        )
 
     for i in range(n_eval):
         ex = generate_withheld_trigram(rng, partitions)
@@ -1049,6 +1069,12 @@ def verify_data_generation(partitions: dict, n_samples: int = 1000):
         assert ex["stratum"] == "withheld_trigram"
         assert _contains_withheld_trigram(ex["ops"], withheld_set), (
             f"withheld_trigram sample {i} has no withheld trigram"
+        )
+        assert state_to_index(ex["init_state"]) in eval_states_set, (
+            f"withheld_trigram sample {i}: init state not in eval partition"
+        )
+        assert 3 <= len(ex["ops"]) <= EVAL_LENGTHS[1], (
+            f"withheld_trigram sample {i}: len={len(ex['ops'])} outside range"
         )
 
     for i in range(n_eval):
@@ -1059,6 +1085,14 @@ def verify_data_generation(partitions: dict, n_samples: int = 1000):
         assert state_to_index(ex["init_state"]) in eval_states_set, (
             f"held_out_state sample {i} uses training init state"
         )
+        assert TRAIN_LENGTHS[0] <= len(ex["ops"]) <= TRAIN_LENGTHS[1], (
+            f"held_out_state sample {i}: len={len(ex['ops'])} outside train range"
+        )
+        for j in range(1, len(ex["ops"])):
+            bigram = (int(ex["ops"][j - 1]), int(ex["ops"][j]))
+            assert bigram in included_set, (
+                f"held_out_state sample {i}: excluded bigram {bigram}"
+            )
 
     for i in range(n_eval):
         ex = generate_full_intersection(rng, partitions)
