@@ -106,6 +106,7 @@ without teacher access or pair-specific tuning.
 | 22 | Stage A-T results + R9 gate redesign | DONE | Teacher in_range=1.0, extrap=0.618 (diagnostic), target_family=99.99%. R9 steering: replace 99% random-long gate with 95-99.5% target-family gate (p,r in [0,7]). Teacher now PASSES all R9 gates. Student 1 training. |
 | 23 | Stage A capacity gate adjudication | DONE | All 3 students pass R9: S1=95.7%/98.8%, S2=96.5%/99.3%, S3=97.1%/99.4% (in_range/target_family). 3/3 pass, stage_a_pass=true. Anchor range (8,32)->(8,20) per R9. |
 | 24 | Codex pre-extraction review + fixes + extraction | DONE | 12 findings (0 CRITICAL), fixed 4 (float32, competence gate, provenance, gate key). Extraction: 32 banks, all numerical PASS, repeat bit-identical. Competence: 2048/2048 + 8192/8192. Stage A COMPLETE. |
+| 25 | Stage B rewrite + Codex review (R10 design) | RUNNING | Complete rewrite: prepare/install/adjudicate. 4 Codex reviews (v1-v4). Fixes: autograd crash, fail-closed calibration, seeding order, save atomicity, float threshold, eigenspectrum, NaN validation, manifest hash verification. 12 runs LAUNCHED. |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
@@ -133,6 +134,7 @@ without teacher access or pair-specific tuning.
 | R7 | Training length spec bug | DONE | Fix applied: max_length=32, MAX_STEPS=7000, anchors (8,32), config hash fixed, old run quarantined |
 | R8 | CM-CKS design | DONE | 2 rounds converged. 0 new modules, 5 files modified. 8 sealed pairs, 7/8 threshold |
 | R9 | Gate redesign: target-family capacity | DONE | 3 rounds converged. Replace 99% random-long gate with target-family (p,r in [0,7]). Teacher: 99.99% target_family (PASS). Anchors 8-20. |
+| R10 | Stage B redesign | DONE | 3 rounds converged. Haar control (not deranged teacher), fresh init, target-only coefficient, effect-size screen. 5 binding amendments: PCG64DXSM, Helmert basis, frozen coefficients, diagnostic-only probe, VOID verdict. |
 
 ### GAT Implementation Status
 | Module | File | Status |
