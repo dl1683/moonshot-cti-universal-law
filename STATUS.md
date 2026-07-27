@@ -99,8 +99,8 @@ once, extract the mechanism it learned, and let cheap local AIs reuse it."
 
 **Admission test: Causal Register Transducer**
 - 4 registers in Z_16 (65,536 states), 8 invertible non-commuting operations
-- Donor: 19.5M recurrent-state Transformer; Hosts: 1.9M Transformer + 1.85M GRU
-- Organ: max 32-dim state, 32K quantized params, frozen before host installation
+- Donor: 18.9M recurrent-state Transformer; Hosts: 0.9M Transformer (5.6% compute) + 1.3M GRU
+- Organ: max 32-dim state, 14K params (59.7 KiB), frozen before host installation
 - Withheld: lengths 13-32, excluded bigrams, held-out initial states, counterfactuals
 - Budget: 40 GPU-hours, 4 calendar weeks
 - Admission: >=95% exact withheld acc, >=90% counterfactual fidelity, >=15pt over observational baseline, identical bytes in both hosts
@@ -155,7 +155,8 @@ once, extract the mechanism it learned, and let cheap local AIs reuse it."
 | 25 | Stage B structural screen | DONE | STRUCTURAL_SCREEN_FAIL. 12 runs completed. Both candidates: all deltas negative (correct WORSE than Haar). Raw mean=-0.0065, obs mean=-0.014. Withheld acc 10-13% (chance=8.3%). Geometry installs but does not transfer. Clean kill. |
 | 26 | R11 steering: post-kill pivot | DONE | 3 rounds converged. Kill "Intelligence = Geometry" strong form. New direction: Causal Skill Organs (CSO). Register transducer admission test. Prior art gap confirmed. |
 | 27 | CSO simulator + model smoke | DONE | Register transducer verified (8 ops, 65536 states, 23/28 non-commuting, group >201K). Models: donor 18.9M, host T 0.9M (5.6% compute), host G 1.3M, organ 54.7 KiB. Codex NO-GO -> 13 bugs fixed (5 CRITICAL, 4 HIGH, 4 MEDIUM). Precommit frozen. All verification PASS. |
-| 28 | CSO precommit hardening (v3-v7 review cycle) | IN PROGRESS | v3-v6 NO-GO: NaN/tolerance bypass, semantic gaps, thread-sensitive sockets, derived-set bypass. All fixed. v7 review running on commit 8ee6484. |
+| 28 | CSO precommit hardening (v3-v12 review cycle) | DONE | 12-iteration Codex review cycle. v3-v11 NO-GO: NaN/tolerance, semantic gaps, thread-sensitive sockets, derived-set bypass, boolean type confusion, runtime env, training config binding, list recursion. All fixed. v12: **GO**. Integrity hash: 745f10e7... |
+| 29 | Donor capacity training (50K steps) | IN PROGRESS | Smoke PASS (500 steps, loss 2.80->2.43, ~2.6 steps/sec). Full run launched. Gates: >=99.5% train, >=99.0% extrap/excluded/withheld. ETA ~5.3h. |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
