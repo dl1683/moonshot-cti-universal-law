@@ -157,13 +157,21 @@ def calibrate_coefficient(
             aux_norms.append(g_aux)
 
     if not aux_norms:
-        return 1.0
+        raise RuntimeError(
+            f"Calibration fail-closed: no finite nonzero auxiliary gradients for arm={arm}"
+        )
 
     median_g_aux = float(np.median(aux_norms))
     if median_g_aux == 0:
-        return 1.0
+        raise RuntimeError(
+            f"Calibration fail-closed: median auxiliary gradient is zero for arm={arm}"
+        )
 
     lam = g_task / median_g_aux
+    if not np.isfinite(lam) or lam <= 0:
+        raise RuntimeError(
+            f"Calibration fail-closed: invalid lambda={lam} for arm={arm}"
+        )
     return lam
 
 

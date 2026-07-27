@@ -59,9 +59,13 @@ def stage_b_structural_screen(
                 continue
             for condition in ["correct", "haar"]:
                 val = withheld_accuracies[seed][cand].get(condition)
-                if val is None or not np.isfinite(val):
+                if val is None or not isinstance(val, (int, float)):
                     void_reasons.append(
-                        f"Non-finite accuracy: seed={seed}, cand={cand}, cond={condition}, val={val}"
+                        f"Invalid accuracy type: seed={seed}, cand={cand}, cond={condition}, val={val}"
+                    )
+                elif not np.isfinite(val) or val < 0.0 or val > 1.0:
+                    void_reasons.append(
+                        f"Out-of-range accuracy: seed={seed}, cand={cand}, cond={condition}, val={val}"
                     )
 
     if void_reasons:

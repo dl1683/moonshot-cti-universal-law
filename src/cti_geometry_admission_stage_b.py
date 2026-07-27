@@ -112,12 +112,30 @@ def prepare(device: torch.device) -> dict:
     with open(obs_manifest_path) as f:
         obs_manifest = json.load(f)
 
+    raw_manifest_hashes = raw_manifest.get("bank_hashes", {})
+    obs_manifest_hashes = obs_manifest.get("bank_hashes", {})
     for bank_idx in range(32):
         raw_path = STAGE_A_DIR / f"bank_{bank_idx:03d}" / "raw_trace.json"
         obs_path = STAGE_A_DIR / f"bank_{bank_idx:03d}" / "observable_trace.json"
         if not raw_path.exists() or not obs_path.exists():
             raise RuntimeError(f"Missing artifact for bank {bank_idx}")
-    print("  Stage A artifacts: validated (32 raw + 32 observable)")
+        expected_raw = raw_manifest_hashes.get(str(bank_idx))
+        if expected_raw:
+            actual_raw = _sha256_file(raw_path)
+            if actual_raw != expected_raw:
+                raise RuntimeError(
+                    f"Raw artifact hash mismatch bank {bank_idx}: "
+                    f"expected={expected_raw[:16]}, actual={actual_raw[:16]}"
+                )
+        expected_obs = obs_manifest_hashes.get(str(bank_idx))
+        if expected_obs:
+            actual_obs = _sha256_file(obs_path)
+            if actual_obs != expected_obs:
+                raise RuntimeError(
+                    f"Observable artifact hash mismatch bank {bank_idx}: "
+                    f"expected={expected_obs[:16]}, actual={actual_obs[:16]}"
+                )
+    print("  Stage A artifacts: validated (32 raw + 32 observable, hashes checked)")
 
     raw_targets, obs_targets, _ = load_teacher_artifacts(STAGE_A_DIR)
     for bank_idx in range(32):
