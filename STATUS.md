@@ -155,6 +155,7 @@ once, extract the mechanism it learned, and let cheap local AIs reuse it."
 | 25 | Stage B structural screen | DONE | STRUCTURAL_SCREEN_FAIL. 12 runs completed. Both candidates: all deltas negative (correct WORSE than Haar). Raw mean=-0.0065, obs mean=-0.014. Withheld acc 10-13% (chance=8.3%). Geometry installs but does not transfer. Clean kill. |
 | 26 | R11 steering: post-kill pivot | DONE | 3 rounds converged. Kill "Intelligence = Geometry" strong form. New direction: Causal Skill Organs (CSO). Register transducer admission test. Prior art gap confirmed. |
 | 27 | CSO simulator + model smoke | DONE | Register transducer verified (8 ops, 65536 states, 23/28 non-commuting, group >201K). Models: donor 18.9M, host T 0.9M (5.6% compute), host G 1.3M, organ 54.7 KiB. Codex NO-GO -> 13 bugs fixed (5 CRITICAL, 4 HIGH, 4 MEDIUM). Precommit frozen. All verification PASS. |
+| 28 | CSO precommit hardening (v3-v7 review cycle) | IN PROGRESS | v3-v6 NO-GO: NaN/tolerance bypass, semantic gaps, thread-sensitive sockets, derived-set bypass. All fixed. v7 review running on commit 8ee6484. |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
