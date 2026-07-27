@@ -1,0 +1,206 @@
+{
+  "protocol": "OCF_GAT_STAGE_B_STRUCTURAL_SCREEN_V1",
+  "verdict": "STRUCTURAL_SCREEN_FAIL",
+  "winner": null,
+  "selection": {
+    "raw": {
+      "per_seed": {
+        "201": {
+          "correct": 0.11675,
+          "haar": 0.1235,
+          "delta": -0.006749999999999992
+        },
+        "202": {
+          "correct": 0.12075,
+          "haar": 0.123,
+          "delta": -0.002250000000000002
+        },
+        "203": {
+          "correct": 0.116,
+          "haar": 0.1265,
+          "delta": -0.010499999999999995
+        }
+      },
+      "deltas": [
+        -0.006749999999999992,
+        -0.002250000000000002,
+        -0.010499999999999995
+      ],
+      "min_delta": -0.010499999999999995,
+      "median_delta": -0.006749999999999992,
+      "mean_delta": -0.006499999999999996,
+      "eligible": false,
+      "sign_test_p": 1.0
+    },
+    "obs": {
+      "per_seed": {
+        "201": {
+          "correct": 0.12,
+          "haar": 0.13425,
+          "delta": -0.014250000000000013
+        },
+        "202": {
+          "correct": 0.13175,
+          "haar": 0.13375,
+          "delta": -0.0020000000000000018
+        },
+        "203": {
+          "correct": 0.10425,
+          "haar": 0.13025,
+          "delta": -0.02600000000000001
+        }
+      },
+      "deltas": [
+        -0.014250000000000013,
+        -0.0020000000000000018,
+        -0.02600000000000001
+      ],
+      "min_delta": -0.02600000000000001,
+      "median_delta": -0.014250000000000013,
+      "mean_delta": -0.014083333333333342,
+      "eligible": false,
+      "sign_test_p": 1.0
+    }
+  },
+  "withheld_accuracies": {
+    "201": {
+      "raw": {
+        "correct": 0.11675,
+        "haar": 0.1235
+      },
+      "obs": {
+        "correct": 0.12,
+        "haar": 0.13425
+      }
+    },
+    "202": {
+      "raw": {
+        "correct": 0.12075,
+        "haar": 0.123
+      },
+      "obs": {
+        "correct": 0.13175,
+        "haar": 0.13375
+      }
+    },
+    "203": {
+      "raw": {
+        "correct": 0.116,
+        "haar": 0.1265
+      },
+      "obs": {
+        "correct": 0.10425,
+        "haar": 0.13025
+      }
+    }
+  },
+  "probe_results": {
+    "201": {
+      "raw": {
+        "correct": {
+          "withheld_acc": 0.11675,
+          "probe_correct": 5,
+          "probe_total": 36,
+          "probe_acc": 0.1388888888888889,
+          "checkpoint_hash": "4908936e74e8a24832a64de267dd63acd7a6376f5af806aa8027a8568ec5b4e7"
+        },
+        "haar": {
+          "withheld_acc": 0.1235,
+          "probe_correct": 2,
+          "probe_total": 36,
+          "probe_acc": 0.05555555555555555,
+          "checkpoint_hash": "721a96a5df42ec490ee3c35c746692a24e8db965650bebcdccf7fe33c4c7ee8d"
+        }
+      },
+      "obs": {
+        "correct": {
+          "withheld_acc": 0.12,
+          "probe_correct": 5,
+          "probe_total": 36,
+          "probe_acc": 0.1388888888888889,
+          "checkpoint_hash": "40681ef88bb5d1a2174f80d2faae8238c1e4f7f63d37d8abba87c918b1380a6d"
+        },
+        "haar": {
+          "withheld_acc": 0.13425,
+          "probe_correct": 5,
+          "probe_total": 36,
+          "probe_acc": 0.1388888888888889,
+          "checkpoint_hash": "afde72ea69f1c092b6083186e9230201096d895fec673f5e61c9a73be7144149"
+        }
+      }
+    },
+    "202": {
+      "raw": {
+        "correct": {
+          "withheld_acc": 0.12075,
+          "probe_correct": 3,
+          "probe_total": 36,
+          "probe_acc": 0.08333333333333333,
+          "checkpoint_hash": "46fef648039df51ed464fa815ec634f44a2cde2687b8a9aec940a6c767319e41"
+        },
+        "haar": {
+          "withheld_acc": 0.123,
+          "probe_correct": 4,
+          "probe_total": 36,
+          "probe_acc": 0.1111111111111111,
+          "checkpoint_hash": "1d835b99dc88262fa32ace43431a16f4e676003f3452077155562bffe8310349"
+        }
+      },
+      "obs": {
+        "correct": {
+          "withheld_acc": 0.13175,
+          "probe_correct": 4,
+          "probe_total": 36,
+          "probe_acc": 0.1111111111111111,
+          "checkpoint_hash": "ba0e6cf2bb74bb1eae7849de51f5a7750658d3c179893ceb56b3786bd1bbb71d"
+        },
+        "haar": {
+          "withheld_acc": 0.13375,
+          "probe_correct": 4,
+          "probe_total": 36,
+          "probe_acc": 0.1111111111111111,
+          "checkpoint_hash": "d5361bdc7d0a83e5e6e411fff15bb02e5d0169f93ff009e5112bb15bf3d2b92d"
+        }
+      }
+    },
+    "203": {
+      "raw": {
+        "correct": {
+          "withheld_acc": 0.116,
+          "probe_correct": 4,
+          "probe_total": 36,
+          "probe_acc": 0.1111111111111111,
+          "checkpoint_hash": "59dac94e99204077f1e928df426faa673c04c1611db37a8980d334735ade6762"
+        },
+        "haar": {
+          "withheld_acc": 0.1265,
+          "probe_correct": 4,
+          "probe_total": 36,
+          "probe_acc": 0.1111111111111111,
+          "checkpoint_hash": "2812ff1f41cf0f283afeb7f2da4dac689484c785a8a659dfa108b34c25fd4c53"
+        }
+      },
+      "obs": {
+        "correct": {
+          "withheld_acc": 0.10425,
+          "probe_correct": 4,
+          "probe_total": 36,
+          "probe_acc": 0.1111111111111111,
+          "checkpoint_hash": "887e104b17aca61759868cb005ff4078ac74429fbaacabfbd66cd58042fb0443"
+        },
+        "haar": {
+          "withheld_acc": 0.13025,
+          "probe_correct": 2,
+          "probe_total": 36,
+          "probe_acc": 0.05555555555555555,
+          "checkpoint_hash": "4e2bfcebb3b71a659206ad958b1d6f3c01910c6e93872004e211302a45c49a25"
+        }
+      }
+    }
+  },
+  "frozen_coefficients": {
+    "raw": 5.220318634669956,
+    "obs": 4.036111096147058
+  },
+  "precommit_hash": "e95e4ad78e023f98339f57cd728e29e146f14a02e0603c2f0ec8d0ccd11cfc4c"
+}
