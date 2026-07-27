@@ -1,5 +1,0 @@
-{
-  "model": "EleutherAI/pythia-410m",
-  "task": "piqa",
-  "score": 0.6702937976060935
-}

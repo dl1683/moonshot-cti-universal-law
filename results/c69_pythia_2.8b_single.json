@@ -1,8 +1,0 @@
-{
-  "model": "EleutherAI/pythia-2.8b",
-  "task": "arc_easy",
-  "score": 0.6422558922558923,
-  "kappa": 0.6202677265814585,
-  "kappa_float32": 0.6201850733859813,
-  "q_knn": 0.7733333333333334
-}
