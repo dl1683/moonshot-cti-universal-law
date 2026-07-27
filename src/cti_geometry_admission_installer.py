@@ -420,6 +420,7 @@ def train_installer_run(
         cal_ids = cal_batch["input_ids"].to(device)
         cal_mask = cal_batch["attention_mask"].to(device)
         cal_labels = cal_batch["labels"].to(device)
+        inf_grad_count = 0
 
         for step in range(MAX_STEPS):
             lr = cosine_lr(step, WARMUP_STEPS, MAX_STEPS, peak_lr, COSINE_MIN_RATIO)
@@ -458,7 +459,18 @@ def train_installer_run(
             scaler.unscale_(optimizer)
             grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), GRAD_CLIP)
             if not torch.isfinite(grad_norm):
-                raise RuntimeError(f"[{name}] Non-finite gradient norm at step {step}")
+                inf_grad_count += 1
+                if inf_grad_count > 10:
+                    raise RuntimeError(
+                        f"[{name}] >10 non-finite gradient steps (latest at step {step})"
+                    )
+                print(f"[{name}] WARNING: non-finite grad at step {step}, "
+                      f"skipping (count={inf_grad_count})")
+                optimizer.zero_grad()
+                scaler.update()
+                continue
+            else:
+                inf_grad_count = 0
             scaler.step(optimizer)
             scaler.update()
 
