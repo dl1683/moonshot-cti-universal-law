@@ -350,7 +350,15 @@ def _json_strict(raw: str) -> dict:
 
 
 def _strict_config_eq(path: str, frozen, live):
-    """Recursive strict equality: rejects bool/int and float/int confusion."""
+    """Recursive strict equality: rejects bool/int, float/int, and list type confusion.
+    Fail-closed: unsupported types raise rather than falling through to ==.
+    """
+    if frozen is None and live is None:
+        return
+    if frozen is None or live is None:
+        raise ValueError(
+            f"{path}: None mismatch (frozen={frozen!r}, live={live!r})"
+        )
     if isinstance(frozen, bool) or isinstance(live, bool):
         if type(frozen) is not bool or type(live) is not bool:
             raise ValueError(
@@ -372,8 +380,12 @@ def _strict_config_eq(path: str, frozen, live):
             raise ValueError(f"{path} mismatch: frozen={frozen}, live={live}")
         return
     if isinstance(live, float):
-        if not isinstance(frozen, (int, float)):
-            raise ValueError(f"{path}: frozen={frozen!r} is not numeric")
+        if not isinstance(frozen, float):
+            raise ValueError(
+                f"{path}: type mismatch "
+                f"(frozen={type(frozen).__name__}({frozen!r}), "
+                f"live=float({live!r}))"
+            )
         if float(frozen).hex() != float(live).hex():
             raise ValueError(f"{path} mismatch: frozen={frozen}, live={live}")
         return
@@ -385,6 +397,20 @@ def _strict_config_eq(path: str, frozen, live):
             )
         if frozen != live:
             raise ValueError(f"{path} mismatch: frozen={frozen!r}, live={live!r}")
+        return
+    if isinstance(live, list):
+        if not isinstance(frozen, list):
+            raise ValueError(
+                f"{path}: type mismatch "
+                f"(frozen={type(frozen).__name__}, live=list)"
+            )
+        if len(frozen) != len(live):
+            raise ValueError(
+                f"{path}: length mismatch "
+                f"(frozen={len(frozen)}, live={len(live)})"
+            )
+        for i, (fv, lv) in enumerate(zip(frozen, live)):
+            _strict_config_eq(f"{path}[{i}]", fv, lv)
         return
     if isinstance(live, dict):
         if not isinstance(frozen, dict):
@@ -400,8 +426,10 @@ def _strict_config_eq(path: str, frozen, live):
             if k not in live:
                 raise ValueError(f"{path} has unexpected key '{k}' in frozen")
         return
-    if frozen != live:
-        raise ValueError(f"{path} mismatch: frozen={frozen!r}, live={live!r}")
+    raise ValueError(
+        f"{path}: unsupported type "
+        f"(frozen={type(frozen).__name__}, live={type(live).__name__})"
+    )
 
 
 def _assert_int_elements(name: str, nested_list):

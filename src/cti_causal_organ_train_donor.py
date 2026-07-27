@@ -60,15 +60,27 @@ CAPACITY_GATES = {
 
 
 def training_config() -> dict:
-    """Return effective training configuration for precommit binding."""
+    """Return effective training configuration for precommit binding.
+    Includes all outcome-affecting values: seeds, optimizer, schedule, amp,
+    clipping, evaluation protocol, and capacity gates.
+    """
     return {
         "torch_seed": TORCH_SEED,
+        "train_rng_seed": 42,
+        "eval_rng_seed": 9999,
         "max_steps": MAX_STEPS,
         "batch_size": BATCH_SIZE,
         "lr": LR,
         "weight_decay": WEIGHT_DECAY,
         "warmup_steps": WARMUP_STEPS,
+        "optimizer": "AdamW",
+        "lr_schedule": "cosine_with_warmup",
+        "grad_clip_norm": 1.0,
+        "amp_enabled_on_cuda": True,
         "eval_every": EVAL_EVERY,
+        "eval_n_batches": 10,
+        "eval_batch_size": 128,
+        "final_eval_n_batches": 20,
         "checkpoint_every": CHECKPOINT_EVERY,
         "cooldown_seconds": COOLDOWN_SECONDS,
         "smoke_steps": SMOKE_STEPS,

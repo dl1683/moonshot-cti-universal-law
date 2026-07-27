@@ -429,9 +429,9 @@
       7
     ]
   ],
-  "generator_source_sha256": "2bb10a08657a2678ec92e5b330d323ab1cc2e83a6b5e93e588449864f4150d03",
+  "generator_source_sha256": "670afd7c502c07ec5f8f683c6cb4a3f13920c727b5b7f223a5c50f802ed5e88a",
   "models_source_sha256": "0b252b18bc5fb87b472f927fef61826bbb199c17dce93efe643490ee509ef8c7",
-  "trainer_source_sha256": "0d9d98069c8058fcf3568fba726404d797a0201ca7d572c9a07461345cf0524f",
+  "trainer_source_sha256": "6ed72e3d72e611efa9d639f2d64e17a71d829f1fa66352acbaa94f62bedecea6",
   "encoding": {
     "state_dtype": "uint32_be",
     "bigram_dtype": "uint8_be"
@@ -494,12 +494,21 @@
   },
   "training_config": {
     "torch_seed": 2026,
+    "train_rng_seed": 42,
+    "eval_rng_seed": 9999,
     "max_steps": 50000,
     "batch_size": 128,
     "lr": 0.0003,
     "weight_decay": 0.01,
     "warmup_steps": 500,
+    "optimizer": "AdamW",
+    "lr_schedule": "cosine_with_warmup",
+    "grad_clip_norm": 1.0,
+    "amp_enabled_on_cuda": true,
     "eval_every": 500,
+    "eval_n_batches": 10,
+    "eval_batch_size": 128,
+    "final_eval_n_batches": 20,
     "checkpoint_every": 2000,
     "cooldown_seconds": 10,
     "smoke_steps": 500,
@@ -511,5 +520,5 @@
       "withheld_trigram": 0.99
     }
   },
-  "integrity_sha256": "d29e8c7465a87b0bc8169cf4281ebe677772bf782c6b9d04eb0e90fa81d162bf"
+  "integrity_sha256": "745f10e732c9b6876998d73dfad1d847bf1ffeed728d2b398ad93715d2205c38"
 }
