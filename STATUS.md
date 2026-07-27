@@ -225,17 +225,8 @@ All 6 prior directions searched for a small, universal internal object after int
 | R11 | Post-kill pivot: Causal Skill Organs | DONE | 3 rounds converged. Kill "Intelligence = Geometry" strong form. New direction: Causal Skill Organs (CSO). Register transducer admission test. Prior art gap confirmed (5-way conjunction novel). |
 | R12 | Post-CSO failure: direction stress test | DONE | 2 rounds. ACQ-1 killed (3-4/10). CCL-1 retracted, PCI-1 demoted (4/10), VIL-1 weakened (5/10). Surviving: Compute-Interaction Frontier (conditional 7/10). 5-day theorem gate. |
 
-### GAT Implementation Status
-| Module | File | Status |
-|--------|------|--------|
-| Automaton + data gen | `cti_geometry_admission_automaton.py` | DONE |
-| Model architectures | `cti_geometry_admission_models.py` | DONE |
-| Capacity trainer | `cti_geometry_admission_trainer.py` | DONE |
-| Trace extraction | `cti_geometry_admission_extraction.py` | DONE |
-| Geometry + losses | `cti_geometry_admission_geometry.py` | DONE |
-| Installer (student) | `cti_geometry_admission_installer.py` | DONE |
-| Statistics | `cti_geometry_admission_statistics.py` | DONE |
-| Stage A orchestrator | `cti_geometry_admission_stage_a.py` | DONE |
-| Stage B orchestrator | `cti_geometry_admission_stage_b.py` | DONE |
-| Stage C orchestrator | `cti_geometry_admission_stage_c.py` | DONE |
-| Verification | `cti_geometry_admission_verify.py` | DONE |
+### Dead Code Cleanup Log
+| Direction | Files Deleted | Date | Evidence Preserved |
+|-----------|--------------|------|-------------------|
+| GAT (Phase 1) | 11 files: `src/cti_geometry_admission_*.py` | Jul 27 | `results/geometry_admission/stage_b/decision.json` |
+| CSO (Phase 2) | 3 files: `src/cti_causal_organ_*.py`, `src/cti_causal_register_transducer.py` | Jul 27 | `results/causal_organ/donor_capacity_result.json` |
