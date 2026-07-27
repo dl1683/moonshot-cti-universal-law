@@ -205,7 +205,7 @@ def load_checkpoint(model, optimizer, path, expected_precommit_hash=None,
     if "torch_rng_state" in ckpt:
         torch.random.set_rng_state(ckpt["torch_rng_state"].cpu())
     if DEVICE.type == "cuda" and "cuda_rng_state" in ckpt:
-        torch.cuda.set_rng_state(ckpt["cuda_rng_state"])
+        torch.cuda.set_rng_state(ckpt["cuda_rng_state"].cpu())
     if scaler is not None and "scaler_state_dict" in ckpt:
         scaler.load_state_dict(ckpt["scaler_state_dict"])
     step = ckpt["step"]
