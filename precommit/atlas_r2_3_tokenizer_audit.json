@@ -1,0 +1,53 @@
+{
+  "amendment": "r2.3",
+  "audit_date": "2026-07-28",
+  "audit_script_sha256": "8894a5e87cc53ea788565fb466a71f3a0d79c49c6d5844691e0fa54674259978",
+  "panels": {
+    "prevalence": {
+      "file": "r2_2_prevalence.json",
+      "n": 100,
+      "sha256": "aa6d3c538b8edeaea5d58545fe4c8b0cea11ff6f70241428c13554243926098f"
+    },
+    "challenge": {
+      "file": "r2_2_challenge.json",
+      "n": 200,
+      "sha256": "47fb94b28fed649b433f77c9912240b6c36bbae954374afa8ff1b930d0a7c13b"
+    }
+  },
+  "serializers": ["minified", "indent=2", "indent=4"],
+  "tokenizer_revisions": {
+    "tiiuae/Falcon-H1-0.5B-Instruct": "8f2587ca06bff78d8fa1adfccbe8c24d5f86b368",
+    "tiiuae/Falcon-H1-3B-Instruct": "01087ec4c132d7f186908716b3530ea187f062a1",
+    "tiiuae/Falcon-H1-7B-Instruct": "41e72f27effbab80cd45b6e884688452253a3686",
+    "google/gemma-3-1b-it": "dcc83ea841ab6100d6b47a070329e1ba4cf78752",
+    "google/gemma-3-4b-it": "093f9f388b31de276ce2de164bdc2081324b9767",
+    "google/gemma-3-12b-it": "96b6f1eccf38110c56df3a15bffe176da04bfd80",
+    "Qwen/Qwen3-0.6B": "c1899de289a04d12100db370d81485cdf75e47ca",
+    "Qwen/Qwen3-4B": "1cfa9a7208912126459214e8b04321603b3df60c",
+    "Qwen/Qwen3-14B": "40c069824f4251a91eefaf281ebe4c544efd3e18"
+  },
+  "per_tokenizer_max": {
+    "tiiuae/Falcon-H1-0.5B-Instruct": 353,
+    "tiiuae/Falcon-H1-3B-Instruct": 353,
+    "tiiuae/Falcon-H1-7B-Instruct": 353,
+    "google/gemma-3-1b-it": 285,
+    "google/gemma-3-4b-it": 285,
+    "google/gemma-3-12b-it": 285,
+    "Qwen/Qwen3-0.6B": 285,
+    "Qwen/Qwen3-4B": 285,
+    "Qwen/Qwen3-14B": 285
+  },
+  "argmax": {
+    "M_eval": 353,
+    "tokenizer": "tiiuae/Falcon-H1-0.5B-Instruct",
+    "scenario_id": "scenario_1966",
+    "serializer": "indent=2",
+    "n_fields": 68
+  },
+  "r2_2_preflight_limit": 352,
+  "r2_2_preflight_result": "FAIL",
+  "r2_3_cap": 448,
+  "r2_3_preflight_limit": 416,
+  "r2_3_preflight_result": "PASS",
+  "r2_3_headroom": 63
+}

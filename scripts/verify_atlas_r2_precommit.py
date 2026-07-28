@@ -345,6 +345,66 @@ def check_adaptation_config():
           f"{grid_size} grid cells per anchor")
 
 
+def check_r2_3_amendment():
+    """Verify R2.3 cap amendment, hash sidecar, and tokenizer audit."""
+    proto_path = REPO / "precommit" / "atlas_r2_protocol_r2_3.md"
+    hash_path = REPO / "precommit" / "atlas_r2_protocol_r2_3.sha256"
+    audit_path = REPO / "precommit" / "atlas_r2_3_tokenizer_audit.json"
+
+    if not proto_path.exists():
+        warn("R2.3 amendment not yet created")
+        return
+    if not hash_path.exists():
+        fail("R2.3 amendment hash sidecar missing")
+        return
+
+    actual = hashlib.sha256(proto_path.read_bytes()).hexdigest()
+    expected = hash_path.read_text(encoding="utf-8").strip().split()[0]
+    if actual != expected:
+        fail(f"R2.3 amendment hash mismatch: {actual[:16]}... != {expected[:16]}...")
+    else:
+        print(f"  R2.3 amendment hash verified: {actual[:16]}...")
+
+    if not audit_path.exists():
+        fail("R2.3 tokenizer audit artifact missing")
+        return
+
+    audit = json.loads(audit_path.read_text(encoding="utf-8"))
+
+    if audit.get("r2_3_cap") != 448:
+        fail(f"R2.3 audit cap != 448: {audit.get('r2_3_cap')}")
+    if audit.get("r2_3_preflight_limit") != 416:
+        fail(f"R2.3 audit preflight limit != 416: {audit.get('r2_3_preflight_limit')}")
+    if audit.get("r2_3_preflight_result") != "PASS":
+        fail(f"R2.3 tokenizer preflight did not PASS")
+
+    m_eval = audit.get("argmax", {}).get("M_eval", 0)
+    if m_eval > 416:
+        fail(f"R2.3 M_eval {m_eval} exceeds preflight limit 416")
+    else:
+        print(f"  M_eval={m_eval}, cap=448, preflight=416: PASS")
+
+    tok_revs = audit.get("tokenizer_revisions", {})
+    if len(tok_revs) != 9:
+        fail(f"R2.3 audit has {len(tok_revs)} tokenizers, expected 9")
+    else:
+        print(f"  Tokenizer revisions: {len(tok_revs)} pinned")
+
+    p_hash = audit.get("panels", {}).get("prevalence", {}).get("sha256", "")
+    c_hash = audit.get("panels", {}).get("challenge", {}).get("sha256", "")
+    manifest_path = REPO / "data" / "policybench" / "r2_2_panel_manifest.json"
+    if manifest_path.exists():
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        mp = manifest.get("prevalence", {}).get("hash", "")
+        mc = manifest.get("challenge", {}).get("hash", "")
+        if p_hash != mp:
+            fail("R2.3 audit prevalence hash != manifest")
+        if c_hash != mc:
+            fail("R2.3 audit challenge hash != manifest")
+        else:
+            print("  Panel hashes match manifest")
+
+
 def main():
     print("=" * 60)
     print("Atlas R2 Precommit Verification")
@@ -373,6 +433,9 @@ def main():
 
     print("\n[8] R2.2 panel manifests")
     check_r2_2_panels()
+
+    print("\n[9] R2.3 cap amendment")
+    check_r2_3_amendment()
 
     print("\n" + "=" * 60)
     if EXIT_CODE == 0:
