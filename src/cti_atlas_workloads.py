@@ -469,6 +469,211 @@ def _try_parse_json(text):
     return None
 
 
+# ---------------------------------------------------------------------------
+# R2.2 PolicyBench (indexed array format, fail-closed)
+# ---------------------------------------------------------------------------
+
+R2_2_SCORER_VERSION = "r2.2.0"
+
+
+def load_r2_2_panel(panel_path):
+    """Load a sealed R2.2 panel (prevalence or challenge) from JSON."""
+    data = json.loads(Path(panel_path).read_bytes().decode("utf-8"))
+    return data
+
+
+def format_r2_2_prompt(household):
+    """R2.2 indexed-array prompt per protocol Section 1.1."""
+    fields = household["fields"]
+    sc_json = household["scenario_json"]
+    n = len(fields)
+
+    index_lines = []
+    for i, fname in enumerate(fields):
+        index_lines.append(f"{i}={fname}")
+    index_block = "\n".join(index_lines)
+
+    prompt = (
+        "Given the following US household for tax year 2026, "
+        "compute ALL of the following tax and benefit variables.\n\n"
+        f"Household: {sc_json}\n\n"
+        f"Required output fields (indexed 0 to {n-1}):\n"
+        f"{index_block}\n\n"
+        f"Return exactly one minified JSON array and nothing else.\n"
+        f"The array must contain exactly {n} entries in the indexed order above.\n"
+        "Eligibility entries must be integer 0 or 1.\n"
+        "Dollar entries must be signed integer dollars, "
+        "rounded to the nearest dollar.\n"
+        "Do not emit keys, prose, Markdown, null, NaN, Infinity, "
+        "or an explanation."
+    )
+    return prompt
+
+
+def _strip_think_block(text):
+    """Strip model-family think blocks (e.g. <think>...</think>)."""
+    return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+
+
+def parse_r2_2_output(raw_output, expected_length, fields):
+    """Fail-closed R2.2 parser per protocol Section 1.1.
+
+    Returns (parsed_array_or_None, schema_valid, error_code).
+    """
+    text = _strip_think_block(raw_output)
+
+    if not text:
+        return None, False, "EMPTY"
+
+    try:
+        parsed = json.loads(text)
+    except (json.JSONDecodeError, ValueError):
+        return None, False, "NOT_JSON"
+
+    if not isinstance(parsed, list):
+        return None, False, "NOT_ARRAY"
+
+    if len(parsed) != expected_length:
+        return None, False, "WRONG_LENGTH"
+
+    result = []
+    for i, val in enumerate(parsed):
+        if val is None or isinstance(val, bool):
+            return None, False, "NON_INTEGER"
+        if isinstance(val, float):
+            if val != val:  # NaN
+                return None, False, "NONFINITE"
+            if val == float("inf") or val == float("-inf"):
+                return None, False, "NONFINITE"
+            return None, False, "NON_INTEGER"
+        if isinstance(val, str):
+            return None, False, "NON_INTEGER"
+        if not isinstance(val, int):
+            return None, False, "NON_INTEGER"
+
+        fname = fields[i]
+        if "eligible" in fname:
+            if val not in (0, 1):
+                return None, False, "BAD_ELIGIBILITY"
+
+        result.append(val)
+
+    return result, True, None
+
+
+def score_r2_2_field(fname, predicted, reference):
+    """Score a single R2.2 field. Returns (correct, details)."""
+    is_binary = "eligible" in fname
+
+    if is_binary:
+        correct = (predicted == int(reference))
+        return correct, {
+            "type": "eligibility",
+            "predicted": predicted,
+            "reference": int(reference),
+            "correct": correct,
+        }
+
+    ref_val = float(reference)
+    pred_val = float(predicted)
+
+    if ref_val == 0.0:
+        correct = abs(pred_val) < 50.0
+    else:
+        rel_err = abs(pred_val - ref_val) / abs(ref_val)
+        abs_err = abs(pred_val - ref_val)
+        correct = rel_err < 0.05 or abs_err < 50.0
+
+    zero_ref_correct = (ref_val == 0.0) or (abs(ref_val) < 50.0)
+
+    nme = min(abs(pred_val - ref_val) / max(abs(ref_val), 50.0), 10.0)
+
+    return correct, {
+        "type": "amount",
+        "predicted": predicted,
+        "reference": ref_val,
+        "correct": correct,
+        "zero_baseline_correct": zero_ref_correct,
+        "normalized_magnitude_error": round(nme, 6),
+    }
+
+
+def score_r2_2_household(parsed_array, household):
+    """Score a complete R2.2 household. Returns detailed result dict."""
+    fields = household["fields"]
+    gold = household["gold_array"]
+    n = len(fields)
+
+    if parsed_array is None:
+        field_results = []
+        for i, fname in enumerate(fields):
+            is_binary = "eligible" in fname
+            ref_val = float(gold[i])
+            zero_correct = (ref_val == 0.0) if is_binary else (
+                ref_val == 0.0 or abs(ref_val) < 50.0
+            )
+            field_results.append({
+                "field": fname,
+                "type": "eligibility" if is_binary else "amount",
+                "predicted": None,
+                "reference": gold[i],
+                "correct": False,
+                "zero_baseline_correct": zero_correct,
+                "rescue": False,
+                "harm": not zero_correct,
+            })
+        return {
+            "schema_valid": False,
+            "fields": field_results,
+            "agreement": 0.0,
+            "n_correct": 0,
+            "n_fields": n,
+        }
+
+    field_results = []
+    n_correct = 0
+
+    for i, fname in enumerate(fields):
+        ref_val = gold[i]
+        pred_val = parsed_array[i]
+
+        correct, details = score_r2_2_field(fname, pred_val, ref_val)
+        if correct:
+            n_correct += 1
+
+        is_binary = "eligible" in fname
+        if is_binary:
+            zero_correct = (float(ref_val) == 0.0)
+        else:
+            zero_correct = (float(ref_val) == 0.0) or (abs(float(ref_val)) < 50.0)
+
+        rescue = (not zero_correct) and correct
+        harm = zero_correct and (not correct)
+
+        field_results.append({
+            "field": fname,
+            "type": details["type"],
+            "predicted": pred_val,
+            "reference": ref_val,
+            "correct": correct,
+            "zero_baseline_correct": zero_correct,
+            "rescue": rescue,
+            "harm": harm,
+            "normalized_magnitude_error": details.get(
+                "normalized_magnitude_error"),
+        })
+
+    agreement = n_correct / n if n > 0 else 0.0
+
+    return {
+        "schema_valid": True,
+        "fields": field_results,
+        "agreement": round(agreement, 6),
+        "n_correct": n_correct,
+        "n_fields": n,
+    }
+
+
 def gold_answer_hash(episode, workload="W-D2"):
     """SHA256 hash of ground-truth answers for provenance tracking."""
     if workload == "W-D2":

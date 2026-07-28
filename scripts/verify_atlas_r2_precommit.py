@@ -173,6 +173,127 @@ def check_workloads_config():
     print(f"  Workloads: {len(workloads)} defined, {len(kills)} kill criteria")
 
 
+def check_r2_2_protocol():
+    """Verify R2.2 protocol hash and panel manifests."""
+    proto_path = REPO / "precommit" / "atlas_r2_protocol_r2_2.md"
+    hash_path = REPO / "precommit" / "atlas_r2_protocol_r2_2.sha256"
+
+    if not proto_path.exists():
+        fail("R2.2 protocol file missing")
+        return
+    if not hash_path.exists():
+        fail("R2.2 protocol hash sidecar missing")
+        return
+
+    actual = hashlib.sha256(proto_path.read_bytes()).hexdigest()
+    expected = hash_path.read_text(encoding="utf-8").strip().split()[0]
+
+    if actual != expected:
+        fail(f"R2.2 protocol hash mismatch: {actual[:16]}... != {expected[:16]}...")
+    else:
+        print(f"  Protocol hash verified: {actual[:16]}...")
+
+    gate_a_path = REPO / "results" / "atlas_r2_gate_a_output.json"
+    if not gate_a_path.exists():
+        fail("Gate A output missing")
+    else:
+        gate_a_hash = hashlib.sha256(gate_a_path.read_bytes()).hexdigest()
+        expected_ga = (
+            "41283d943c69693b8ce3623692b1005fdad644250e06aafce54375ae4939b401"
+        )
+        if gate_a_hash != expected_ga:
+            fail(f"Gate A hash mismatch: {gate_a_hash[:16]}...")
+        else:
+            print(f"  Gate A hash verified: {gate_a_hash[:16]}...")
+
+
+def check_r2_2_panels():
+    """Verify R2.2 panel manifests, sizes, ESS, and disjointness."""
+    pb_dir = REPO / "data" / "policybench"
+    manifest_path = pb_dir / "r2_2_panel_manifest.json"
+
+    if not manifest_path.exists():
+        warn("R2.2 panel manifest not yet created (run panel builder first)")
+        return
+
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+
+    cal_hash = manifest.get("calibration", {}).get("manifest_hash", "")
+    expected_cal = (
+        "f3d5e4d8c80949f50e639e7e80696c6c9c64a2122ab050aca2ee93c21b2747fb"
+    )
+    if cal_hash != expected_cal:
+        fail(f"Calibration manifest hash mismatch in panel manifest")
+
+    ref_hash = manifest.get("calibration", {}).get("references_hash", "")
+    expected_ref = (
+        "da51998841f41a7794c23d818a276aee53cd94767fbd08030d9ee293041e7aac"
+    )
+    if ref_hash != expected_ref:
+        fail(f"Calibration references hash mismatch in panel manifest")
+
+    p_n = manifest.get("prevalence", {}).get("n", 0)
+    if p_n != 100:
+        fail(f"Prevalence panel size {p_n} != 100")
+
+    c_n = manifest.get("challenge", {}).get("n", 0)
+    if c_n != 200:
+        fail(f"Challenge panel size {c_n} != 200")
+
+    strata = manifest.get("challenge", {}).get("stratum_counts", {})
+    required_strata = [
+        "REFUNDABLE_CREDIT", "TAX_ONLY", "BENEFIT_ONLY", "TAX_AND_BENEFIT",
+    ]
+    for st in required_strata:
+        count = strata.get(st, 0)
+        if count != 50:
+            fail(f"Challenge stratum {st} has {count} != 50 households")
+
+    ess = manifest.get("ess_preflight", {})
+    for key in ["global_eligibility_rescue_ess", "global_eligibility_harm_ess",
+                "global_amount_rescue_ess", "global_amount_harm_ess"]:
+        val = ess.get(key, 0.0)
+        if val < 60.0:
+            fail(f"ESS {key} = {val} < 60.0")
+
+    stratum_ess = ess.get("stratum_rescue_ess", {})
+    for st in required_strata:
+        val = stratum_ess.get(st, 0.0)
+        if val < 35.0:
+            fail(f"Stratum ESS {st} = {val} < 35.0")
+
+    if not manifest.get("disjointness_verified", False):
+        fail("Panel disjointness not verified")
+
+    prior_path = pb_dir / manifest.get("field_prior", {}).get("file", "")
+    if not prior_path.exists():
+        fail("Field prior file missing")
+    else:
+        prior_hash = hashlib.sha256(prior_path.read_bytes()).hexdigest()
+        expected_prior = manifest.get("field_prior", {}).get("hash", "")
+        if prior_hash != expected_prior:
+            fail(f"Field prior hash mismatch")
+
+    p_file = pb_dir / manifest.get("prevalence", {}).get("file", "")
+    c_file = pb_dir / manifest.get("challenge", {}).get("file", "")
+
+    for label, fpath, expected_hash in [
+        ("Prevalence", p_file, manifest.get("prevalence", {}).get("hash", "")),
+        ("Challenge", c_file, manifest.get("challenge", {}).get("hash", "")),
+    ]:
+        if not fpath.exists():
+            fail(f"{label} panel file missing: {fpath.name}")
+        else:
+            actual_hash = hashlib.sha256(fpath.read_bytes()).hexdigest()
+            if actual_hash != expected_hash:
+                fail(f"{label} panel hash mismatch")
+            else:
+                print(f"  {label} panel hash verified: {actual_hash[:16]}...")
+
+    print(f"  Panels: P={p_n}, C={c_n} "
+          f"({'/'.join(str(strata.get(s,0)) for s in required_strata)})")
+
+
 def check_selector():
     path = REPO / "precommit" / "atlas_r2_selector.json"
     if not path.exists():
@@ -246,6 +367,12 @@ def main():
 
     print("\n[6/6] Task seal (pre-confirmation)")
     check_task_seal()
+
+    print("\n[7] R2.2 protocol hash")
+    check_r2_2_protocol()
+
+    print("\n[8] R2.2 panel manifests")
+    check_r2_2_panels()
 
     print("\n" + "=" * 60)
     if EXIT_CODE == 0:
