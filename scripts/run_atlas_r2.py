@@ -185,6 +185,13 @@ def _save_task_records(records, phase, workload, system_id):
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as f:
             json.dump(records, f, indent=2, ensure_ascii=True)
+        for attempt in range(5):
+            try:
+                os.replace(tmp, str(path))
+                return
+            except PermissionError:
+                if attempt < 4:
+                    time.sleep(0.5)
         os.replace(tmp, str(path))
     except Exception:
         try:
