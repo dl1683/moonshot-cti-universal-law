@@ -29,14 +29,17 @@ The canonical live record is [STATUS.md](STATUS.md). As of 2026-07-28:
 - R2.1 W-D3 (PolicyBench) is finalized as diagnostic-only with **0% Gate A
   weight**. Its all-zero collapse and 11% Qwen3-14B parse failure motivated a
   prospective repair, not a retroactive rescore.
-- The narrow R2.2 amendment is frozen, but no R2.2 execution is authorized
-  until its panels, implementation, and fail-closed verifier pass.
+- The narrow R2.2 amendment was refrozen after round-2 adversarial review, but
+  no R2.2 execution is authorized until its panels, implementation, and
+  fail-closed verifier pass.
 
 The binding protocol is
 [the Atlas R2 design gate](results/codex_scale_inversion_atlas_design_gate_r2.md)
 plus [R2.1](precommit/atlas_r2_protocol_r2_1.md) and the narrow
 [R2.2 amendment](precommit/atlas_r2_protocol_r2_2.md). The R2.1 W-D3
-adjudication is recorded in [Codex steering](results/codex_steering_wd3_r2.md).
+adjudication is recorded in [Codex steering](results/codex_steering_wd3_r2.md),
+and the R2.2 pushback rulings are in the
+[round-2 adjudication](results/codex_r2_2_round2_adjudication.md).
 
 ## What happened to CTI Universal Law
 

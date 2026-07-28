@@ -1,3 +1,7 @@
+> SUPERSEDED BEFORE EXECUTION by
+> `results/codex_r2_2_round2_adjudication.md` and the refrozen R2.2 protocol.
+> This file preserves the first-freeze audit record; its hash is withdrawn.
+
 R2.2 is designed, hashed, and documented. No R2.2 experiments were run.
 
 Main artifact: [atlas_r2_protocol_r2_2.md](</C:/Users/devan/OneDrive/Desktop/Projects/AI Moonshots/moonshot-cti-universal-law/precommit/atlas_r2_protocol_r2_2.md>)  

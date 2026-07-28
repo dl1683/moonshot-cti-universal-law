@@ -224,6 +224,7 @@ Revised ceiling: 3-4/10 (down from 6-7/10). Six antipatterns apply.
 | 40 | Entropy cleanup pass 2 | DONE | 920+ files total removed (Jul 27-28). Repo: 61 tracked files. experiments/ reset. |
 | 41 | Gate A from W-D2 macro F1 | DONE | 6 anchors + 3 exploratory systems selected. W-D3 weight fixed at 0%. Output: `results/atlas_r2_gate_a_output.json`. |
 | 42 | Atlas R2.2 protocol design gate | DONE | Narrow W-D3/API delta frozen in `precommit/atlas_r2_protocol_r2_2.md`. No R2.2 execution authorized until implementation, manifests, and verifier pass. |
+| 43 | Atlas R2.2 round-2 adversarial review | DONE | First freeze withdrawn before execution. Refrozen with 384-token local W-D3 cap, 50 households/stratum, reference-bound PolicyEngine role, hash-randomized atomically funded API ladder, and explicit W-D3 Gate B shortfall. |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
@@ -309,18 +310,26 @@ All 9 local systems evaluated on 320 multilingual QA episodes (MKQA, official sc
 exploratory systems. The output is `results/atlas_r2_gate_a_output.json`.
 W-D3 remains 0% of Gate A and cannot retroactively reorder the roster.
 
-The frozen R2.2 design delta is `precommit/atlas_r2_protocol_r2_2.md`:
+The round-2-refrozen R2.2 design delta is
+`precommit/atlas_r2_protocol_r2_2.md`. The first hash at commit `2f48de4` was
+withdrawn before any R2.2 execution. The binding changes are:
 
-- W-D3 uses an indexed integer JSON array with a 256-token cap;
+- W-D3 uses an indexed integer JSON array with a 384-token local cap derived
+  from a 300-token pretty-JSON audit; no W-D3 API cap is authorized;
 - a 120-second execution watchdog is separate from the 30-second p95 user
   latency floor;
-- all-zero, field-prior, and pinned PolicyEngine are first-class candidates;
-- fresh 100-household prevalence and 80-household four-stratum challenge
-  panels use NRI-inspired rescue/harm and hard false-positive, magnitude, and
-  completion floors;
-- W-D3 remains 0% for Gate A and can earn only a binary Gate B workload-floor
-  vote after the sealed smoke and full gates pass; and
-- the six-system W-D2 API ladder is cheapest-first with a USD 30.50 sub-budget.
+- all-zero and field-prior are statistical baselines; pinned PolicyEngine is a
+  separately costed `REFERENCE_BOUND` control, not an independent winner;
+- fresh 100-household prevalence and 200-household challenge panels use 50
+  household clusters per stratum, model-independent ESS checks,
+  household-macro stratum rescue/harm/NRI, and hard critical floors;
+- W-D3 remains 0% for completed Gate A but has an explicit Gate B floor and
+  continuous standardized shortfall that can reorder finalists; and
+- the six-system W-D2 API ladder is hash-randomized, atomically reserves USD
+  30.50, and forbids contract edits between systems.
+
+Round-2 rationale and rulings are in
+`results/codex_r2_2_round2_adjudication.md`.
 
 **Next:** implement R2.2, extend the fail-closed verifier, seal the new panel
 manifests, and pass dry runs before any W-D3 smoke or W-D2 API canary.
