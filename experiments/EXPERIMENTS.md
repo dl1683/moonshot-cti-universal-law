@@ -13,13 +13,18 @@ All experiments listed in reverse chronological order.
 - Records: `results/cti_atlas_r2_task_records/cti_atlas_r2_r2.1_P1_W-D3_qwen3_*.json`
 - Codex steering: `results/codex_steering_wd3_emerging.md`, `results/codex_steering_wd3_r2.md`
 
-100 households, 20 fields each. Qwen3 family only (0.6B, 4B, 14B in progress).
+100 households, 20 fields each. Qwen3 family only (0.6B, 4B, 14B). ALL COMPLETE.
 Remaining 6 systems (gemma3 x3, falcon_h1 x3): NOT RUN per Codex R2 hard stop.
 Label: `diagnostic_r2.1_deviation_384_120` (protocol violations: 384 vs 128 tokens, 120 vs 30s).
 
-**What we learned:** All-zero baseline dominates (100% pass, 84.85% mean) because most
-reference fields are zero. Metric is collapsed. Parse failures from token truncation are
-the main bottleneck for 14B (not accuracy -- valid parses score 84.7% vs all-zero 84.9%).
+Results: qwen3_14b 88.0% pass / 0.7565 mean / 11% parse fail / valid-parse mean 0.8500;
+qwen3_0.6b 94.0% pass / 0.7654 mean; qwen3_4b 55.0% pass / 0.5096 mean.
+
+**What we learned:** All-zero baseline dominates (100% pass, 84.85% mean) because ~85% of
+reference fields are zero. Metric is collapsed. The 14B valid-parse mean (0.8500) actually
+EXCEEDS all-zero (0.8485) -- the aggregate gap is entirely from 11% parse failures caused by
+token truncation at 384 tokens. This is a reliability bottleneck, not a capability gap.
+Compact schema would likely eliminate most failures.
 Gate A weight: 0%. R2.2 amendment required with compact schema and rescue/harm metrics.
 
 ## Atlas R2.1 P1 -- W-D2 MKQA (Jul 2026) [COMPLETE]

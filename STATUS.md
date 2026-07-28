@@ -218,8 +218,10 @@ Revised ceiling: 3-4/10 (down from 6-7/10). Six antipatterns apply.
 | 34 | Atlas design gate R1 (Codex) | DONE | CONDITIONAL GO through P0 only. 832-line protocol: 4 workloads (SWE-bench-Live, MKQA, PolicyBench, RealClawBench), 9 checkpoints (Qwen3/Gemma3/Falcon-H1), 51 system templates, 167 executed cells, 320 GPU-hours, 15 kill criteria, 6 frozen hypotheses. |
 | 35 | Atlas design gate R2 pushback | DONE | CONVERGED. All 5 objections conceded. Budget 320h->360h (324.2h + 35.8h reserve). 6 API Goliaths added. Dual confirmation (W-C1 + W-C2). Equal-budget ASHA adaptation. RLVR/distillation removed. 32 templates. $1,200 API ceiling. |
 | 36 | P0 preflight + mass cleanup | DONE | P0 preflight PARTIAL PASS (W-C1 at risk). 9 HF revisions pinned. 222 files deleted from 6 killed directions (GAT, CSO, CIF, equicorrelation, bridge, steering/QL). Repo from ~950 to 726 tracked files. Precommit verifier passes. |
-| 37 | P1 W-D2 MKQA raw screen | IN PROGRESS | 3/9 local systems done: qwen3_0.6b=5.5%, qwen3_4b=11.3%, qwen3_14b=partial. 314 dead src scripts deleted (-123,897 lines). Runner fixed: merge-on-write, --system filter, resume, 4-bit NF4 for >7B. |
+| 37 | P1 W-D2 MKQA raw screen | DONE | 9/9 local systems. Monotonic scaling (bigger=better). Best: gemma3_12b F1=0.254. No inversion. 1.15 GPU-hours total. |
 | 38 | P1 infrastructure fixes | DONE | PolicyBench W-D3 loader + scorer added. Chat template mode (enable_thinking=False). 4-bit NF4 quantization for >7B models. JSON merge-on-write bug fixed (was overwriting per-system). |
+| 39 | P1 W-D3 PolicyBench diagnostic (Qwen3) | DONE | 3/3 Qwen3 systems. 0% Gate A weight (Codex R2). 14B valid-parse=0.850 vs all-zero=0.849: reliability bottleneck (11% parse fail from truncation), not capability gap. Remaining 6 systems NOT RUN per hard stop. |
+| 40 | Entropy cleanup pass 2 | DONE | 920+ files total removed (Jul 27-28). Repo: 61 tracked files. experiments/ reset. |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
@@ -272,33 +274,34 @@ All 9 local systems evaluated on 320 multilingual QA episodes (MKQA, official sc
 
 **Cross-family inversions observed:** gemma3 dominates at every size tier. falcon_h1_7b (hybrid SSM, 7B) competitive with qwen3_14b (transformer, 14B).
 
-### Atlas R2.1 — P1 W-D3 (PolicyBench) Results (Jul 28, IN PROGRESS)
+### Atlas R2.1 — P1 W-D3 (PolicyBench) Results (Jul 28, DIAGNOSTIC ONLY)
 
-3/9 local systems evaluated on 100 tax-policy households (PolicyBench, field-level scoring).
+**Label: `diagnostic_r2.1_deviation_384_120`. Gate A weight: 0% (Codex R2 steering).**
 
-| Rank | System | Family | Params | Pass Rate | Mean Score | Status |
-|------|--------|--------|--------|-----------|------------|--------|
-| ref | **ALL-ZERO BASELINE** | - | 0 | **100.0%** | **0.8485** | trivial |
-| 1 | qwen3_0.6b | qwen3 | 0.6B | 94.0% | 0.7654 | done |
-| 2 | qwen3_14b | qwen3 | 14B | 82.6% | 0.7312 | 23/100 |
-| 3 | qwen3_4b | qwen3 | 4B | 55.0% | 0.5096 | done |
+3/9 local systems evaluated (Qwen3 family). Remaining 6: NOT RUN per Codex R2 hard stop.
 
-**Critical finding: all-zero baseline dominance.** 83.9% of gold fields are zero. Predicting
-zeros for everything gets 100% pass and 84.85% mean score. Every model is WORSE than this
-trivial baseline. The "scale inversion" (0.6b > 4b) is proximity to the zero baseline, not
-genuine capability: 0.6b defaults to zeros, 4b hallucinates placeholder values (1234.56).
+| Rank | System | Family | Params | Pass Rate | Mean Score | Parse Fail | Valid-Parse Mean |
+|------|--------|--------|--------|-----------|------------|------------|-----------------|
+| ref | **ALL-ZERO** | - | 0 | **100.0%** | **0.8485** | 0% | 0.8485 |
+| 1 | qwen3_14b | qwen3 | 14B | 88.0% | 0.7565 | 11.0% | **0.8500** |
+| 2 | qwen3_0.6b | qwen3 | 0.6B | 94.0% | 0.7654 | 0% | 0.7654 |
+| 3 | qwen3_4b | qwen3 | 4B | 55.0% | 0.5096 | high | low |
 
-Thermal protection implemented (hysteresis gate: pause at 85C, resume at 78C).
-qwen3_14b running with thermal gate active (40/100 at 87.5% pass as of Jul 28 03:55 UTC).
+**Critical findings:**
 
-**Codex W-D3 steering (R1, Jul 28):** Current W-D3 metric gets **0% Gate A weight**.
-All-zero baseline dominance is a metric-collapse finding, not a capability finding.
-Protocol violations: runner uses 384 tokens / 120s timeout, but R2.1 protocol freezes 128 / 30s.
-128 tokens is mathematically impossible for the 20-field JSON (minimum 175 tokens compact).
-R2.2 amendment required before Gate A. See `results/codex_steering_wd3_emerging.md`.
+1. **All-zero baseline dominates** (100% pass, 84.85% mean). ~85% of gold fields are zero.
+2. **Reliability, not capability, is the bottleneck.** 14B valid-parse mean (0.8500) actually
+   exceeds all-zero (0.8485). The entire gap is 11% parse failures from token truncation at
+   384 tokens. Compact schema would likely eliminate most failures.
+3. **Protocol violations:** 384 tokens (vs 128 frozen), 120s timeout (vs 30s frozen). 128 tokens
+   is mathematically impossible (minimum 175 compact, 236 pretty-printed).
+4. **0.6B > 4B** is proximity to zero baseline, not capability: 0.6B defaults to zeros.
 
-**Next:** Finish qwen3_14b, then decide via Codex R2/R3 steering whether to run remaining
-6 systems under current protocol or amend first.
+**Codex W-D3 steering converged (2 rounds):**
+- R1: 0% Gate A weight, baselines as first-class candidates. See `results/codex_steering_wd3_emerging.md`.
+- R2: Finish 14B diagnostic, then hard stop. Gate A from W-D2 only. R2.2 required. See `results/codex_steering_wd3_r2.md`.
+
+**Next:** Gate A from W-D2 macro F1 only. Freeze R2.2 protocol delta. W-D2 API ladder.
 
 ### Dead Code Cleanup Log
 | Direction | Files Deleted | Date | Evidence Preserved |
