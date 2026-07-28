@@ -222,6 +222,8 @@ Revised ceiling: 3-4/10 (down from 6-7/10). Six antipatterns apply.
 | 38 | P1 infrastructure fixes | DONE | PolicyBench W-D3 loader + scorer added. Chat template mode (enable_thinking=False). 4-bit NF4 quantization for >7B models. JSON merge-on-write bug fixed (was overwriting per-system). |
 | 39 | P1 W-D3 PolicyBench diagnostic (Qwen3) | DONE | 3/3 Qwen3 systems. 0% Gate A weight (Codex R2). 14B valid-parse=0.850 vs all-zero=0.849: reliability bottleneck (11% parse fail from truncation), not capability gap. Remaining 6 systems NOT RUN per hard stop. |
 | 40 | Entropy cleanup pass 2 | DONE | 920+ files total removed (Jul 27-28). Repo: 61 tracked files. experiments/ reset. |
+| 41 | Gate A from W-D2 macro F1 | DONE | 6 anchors + 3 exploratory systems selected. W-D3 weight fixed at 0%. Output: `results/atlas_r2_gate_a_output.json`. |
+| 42 | Atlas R2.2 protocol design gate | DONE | Narrow W-D3/API delta frozen in `precommit/atlas_r2_protocol_r2_2.md`. No R2.2 execution authorized until implementation, manifests, and verifier pass. |
 
 ### Question Loop (supervisor check-in at iteration 8)
 | QL | Question | Status | Finding |
@@ -301,7 +303,27 @@ All 9 local systems evaluated on 320 multilingual QA episodes (MKQA, official sc
 - R1: 0% Gate A weight, baselines as first-class candidates. See `results/codex_steering_wd3_emerging.md`.
 - R2: Finish 14B diagnostic, then hard stop. Gate A from W-D2 only. R2.2 required. See `results/codex_steering_wd3_r2.md`.
 
-**Next:** Gate A from W-D2 macro F1 only. Freeze R2.2 protocol delta. W-D2 API ladder.
+### Atlas R2.1 Gate A and R2.2 Freeze (Jul 28)
+
+**Gate A is complete.** W-D2 macro F1 selected six anchors plus three
+exploratory systems. The output is `results/atlas_r2_gate_a_output.json`.
+W-D3 remains 0% of Gate A and cannot retroactively reorder the roster.
+
+The frozen R2.2 design delta is `precommit/atlas_r2_protocol_r2_2.md`:
+
+- W-D3 uses an indexed integer JSON array with a 256-token cap;
+- a 120-second execution watchdog is separate from the 30-second p95 user
+  latency floor;
+- all-zero, field-prior, and pinned PolicyEngine are first-class candidates;
+- fresh 100-household prevalence and 80-household four-stratum challenge
+  panels use NRI-inspired rescue/harm and hard false-positive, magnitude, and
+  completion floors;
+- W-D3 remains 0% for Gate A and can earn only a binary Gate B workload-floor
+  vote after the sealed smoke and full gates pass; and
+- the six-system W-D2 API ladder is cheapest-first with a USD 30.50 sub-budget.
+
+**Next:** implement R2.2, extend the fail-closed verifier, seal the new panel
+manifests, and pass dry runs before any W-D3 smoke or W-D2 API canary.
 
 ### Dead Code Cleanup Log
 | Direction | Files Deleted | Date | Evidence Preserved |

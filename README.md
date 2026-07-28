@@ -18,28 +18,25 @@ verification cost, energy, latency, and failure modes.
 
 ## Current status
 
-**Atlas R2.1 is in Phase P1 and has not passed Gate A. No prospective selector
-claim has been earned.**
+**Atlas R2.1 completed Gate A from W-D2 only. No prospective selector claim has
+been earned.**
 
 The canonical live record is [STATUS.md](STATUS.md). As of 2026-07-28:
 
 - P0 preflight was only a partial pass.
-- W-D2 (MKQA) completed its nine-local-system raw screen and exposed
-  cross-family ordering differences.
-- W-D3 (PolicyBench) is not Gate-A-eligible under its current metric. An
-  all-zero baseline dominates because most gold fields are zero, and the
-  executed token/timeout settings diverged from the frozen R2.1 protocol.
-- Codex steering assigns the current W-D3 result **0% Gate A weight**. A
-  protocol amendment and a non-collapsed scoring contract are required before
-  the workload can support a capability or scale-inversion conclusion.
-- The W-D3 task-record file and runner contain live local changes. Treat them as
-  an in-progress working surface, not a finalized result.
+- W-D2 (MKQA) selected six anchors plus three exploratory systems. Scaling was
+  monotonic within all three local families; no local scale inversion appeared.
+- R2.1 W-D3 (PolicyBench) is finalized as diagnostic-only with **0% Gate A
+  weight**. Its all-zero collapse and 11% Qwen3-14B parse failure motivated a
+  prospective repair, not a retroactive rescore.
+- The narrow R2.2 amendment is frozen, but no R2.2 execution is authorized
+  until its panels, implementation, and fail-closed verifier pass.
 
 The binding protocol is
 [the Atlas R2 design gate](results/codex_scale_inversion_atlas_design_gate_r2.md)
-plus [the R2.1 protocol](precommit/atlas_r2_protocol_r2_1.md). The W-D3
-adjudication is recorded in
-[Codex steering](results/codex_steering_wd3_emerging.md).
+plus [R2.1](precommit/atlas_r2_protocol_r2_1.md) and the narrow
+[R2.2 amendment](precommit/atlas_r2_protocol_r2_2.md). The R2.1 W-D3
+adjudication is recorded in [Codex steering](results/codex_steering_wd3_r2.md).
 
 ## What happened to CTI Universal Law
 
