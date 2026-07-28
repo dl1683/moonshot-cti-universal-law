@@ -349,8 +349,36 @@ Artifacts:
 
 Verifier extended: 9 checks, all pass.
 
-**Next:** Codex runner design gate, then implement R2.3 runner, smoke
-test, full 9-system execution.
+**Next:** R2.4 amendment applied, runner implementation in progress.
+
+### Atlas R2.4 --- Scorer/Watchdog Amendment (Jul 28)
+
+R2.2 runner design gate REJECTED execution due to three blocking
+implementation conflicts:
+
+1. **Scorer harm reversal (bug fix):** Invalid-output branch had
+   `harm = not zero_correct` (reversed). Fixed to `harm = zero_correct`
+   per Section 5.2 of R2.2. Added NME=10 for invalid amount fields.
+   Scorer version bumped r2.2.0 -> r2.4.0.
+
+2. **Reference clarification:** Sealed panels store integer references
+   (`int(round(x))`), not unrounded PolicyEngine floats. Protocol text
+   corrected; no code change.
+
+3. **Hard watchdog:** `generate()` extended with `eos_reached`,
+   `cap_hit`, `stop_reason` fields. Timer starts before tokenization.
+   `SupervisedWorker` class added for process-isolated inference with
+   hard 120s kill capability.
+
+Artifacts:
+- `precommit/atlas_r2_protocol_r2_4.md` + `.sha256` (amendment)
+- `results/codex_r2_2_runner_design_gate.md` (REJECT ruling)
+- `results/codex_r2_4_amendment_ruling.md` (R2.4 conditions)
+
+Verifier extended: 10 checks, all pass.
+
+**Next:** Implement R2.4 runner (`run_p1_policybench_r2_4()`), smoke
+test (falcon_h1_0.5b + gemma3_12b on 24 HH), full 9-system execution.
 
 ### Dead Code Cleanup Log
 | Direction | Files Deleted | Date | Evidence Preserved |

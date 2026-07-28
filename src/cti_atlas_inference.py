@@ -4,9 +4,11 @@ Loads a HuggingFace checkpoint with NF4 quantization,
 runs generation with synchronized timing and timeout enforcement,
 and returns structured results compatible with the task-record schema.
 
-Protocol: R2.1 (precommit/atlas_r2_protocol_r2_1.md)
+Protocol: R2.4 (precommit/atlas_r2_protocol_r2_2.md + R2.4 amendment)
 """
 
+import multiprocessing as mp
+import queue as queue_mod
 import time
 from pathlib import Path
 
@@ -107,6 +109,7 @@ def generate(model, tok, prompt, max_new_tokens=128, temperature=0.0,
     input_len = inputs["input_ids"].shape[1]
 
     time_limit = _TimeLimit(timeout_seconds)
+    time_limit.start_time = time.perf_counter()
     stopping = StoppingCriteriaList([time_limit])
 
     torch.cuda.synchronize()
@@ -132,19 +135,41 @@ def generate(model, tok, prompt, max_new_tokens=128, temperature=0.0,
     text = tok.decode(output_ids, skip_special_tokens=True)
 
     pad_id = tok.pad_token_id
-    is_empty = len(output_ids) == 0 or all(
+    n_out = len(output_ids)
+    is_empty = n_out == 0 or all(
         oid == pad_id for oid in output_ids.tolist()
     )
     timed_out = (time_limit.start_time is not None
                  and wall_seconds > timeout_seconds)
 
+    eos_reached = (
+        n_out > 0
+        and tok.eos_token_id is not None
+        and int(output_ids[-1]) == tok.eos_token_id
+    )
+    cap_hit = n_out >= max_new_tokens and not eos_reached
+
+    if is_empty:
+        stop_reason = "empty"
+    elif timed_out:
+        stop_reason = "watchdog_abort"
+    elif eos_reached:
+        stop_reason = "eos"
+    elif cap_hit:
+        stop_reason = "cap_hit"
+    else:
+        stop_reason = "eos"
+
     return {
         "text": text,
         "input_tokens": input_len,
-        "output_tokens": len(output_ids),
+        "output_tokens": n_out,
         "wall_seconds": round(wall_seconds, 3),
         "is_empty": is_empty,
         "timed_out": timed_out,
+        "eos_reached": eos_reached,
+        "cap_hit": cap_hit,
+        "stop_reason": stop_reason,
     }
 
 
@@ -154,6 +179,122 @@ def batch_generate(model, tok, prompts, max_new_tokens=128, temperature=0.0):
         r = generate(model, tok, prompt, max_new_tokens, temperature)
         results.append(r)
     return results
+
+
+def _worker_main(system_id, req_queue, resp_queue):
+    """Child process: load model, process generation requests."""
+    try:
+        model, tok, spec = load_model(system_id)
+        resp_queue.put(("ready", {
+            "hf_id": spec["hf_id"],
+            "params_b": spec.get("params_b"),
+            "hf_revision": spec.get("hf_revision"),
+        }))
+    except Exception as e:
+        resp_queue.put(("error", str(e)))
+        return
+
+    while True:
+        try:
+            msg = req_queue.get(timeout=600)
+        except queue_mod.Empty:
+            break
+        if msg is None:
+            break
+        prompt, max_new_tokens, temperature, timeout_seconds, use_chat = msg
+        try:
+            result = generate(model, tok, prompt, max_new_tokens,
+                              temperature, use_chat, timeout_seconds)
+            resp_queue.put(("result", result))
+        except Exception as e:
+            resp_queue.put(("error", str(e)))
+
+    del model, tok
+    torch.cuda.empty_cache()
+
+
+class SupervisedWorker:
+    """Process-isolated inference with hard watchdog kill."""
+
+    def __init__(self, system_id):
+        self.system_id = system_id
+        self._ctx = mp.get_context("spawn")
+        self._req_q = self._ctx.Queue()
+        self._resp_q = self._ctx.Queue()
+        self._proc = None
+        self.spec = None
+
+    def start(self, load_timeout=300):
+        self._proc = self._ctx.Process(
+            target=_worker_main,
+            args=(self.system_id, self._req_q, self._resp_q),
+            daemon=True)
+        self._proc.start()
+        try:
+            msg_type, payload = self._resp_q.get(timeout=load_timeout)
+        except queue_mod.Empty:
+            self._proc.kill()
+            self._proc.join(timeout=10)
+            raise RuntimeError(
+                f"Model load timeout for {self.system_id}")
+        if msg_type == "error":
+            raise RuntimeError(f"Model load failed: {payload}")
+        self.spec = payload
+
+    def generate(self, prompt, max_new_tokens, temperature,
+                 watchdog_seconds, use_chat=True):
+        if self._proc is None or not self._proc.is_alive():
+            raise RuntimeError("Worker not running")
+        t0 = time.perf_counter()
+        self._req_q.put((prompt, max_new_tokens, temperature,
+                         watchdog_seconds, use_chat))
+        try:
+            msg_type, payload = self._resp_q.get(
+                timeout=watchdog_seconds)
+        except queue_mod.Empty:
+            wall = time.perf_counter() - t0
+            self._proc.kill()
+            self._proc.join(timeout=10)
+            self._proc = None
+            return {
+                "text": "",
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "wall_seconds": round(min(wall, watchdog_seconds), 3),
+                "is_empty": True,
+                "timed_out": True,
+                "eos_reached": False,
+                "cap_hit": False,
+                "stop_reason": "watchdog_abort",
+            }
+        if msg_type == "error":
+            raise RuntimeError(f"Generation error: {payload}")
+        result = payload
+        result["user_wall_seconds"] = round(
+            time.perf_counter() - t0, 3)
+        return result
+
+    def respawn(self, load_timeout=300):
+        if self._proc is not None and self._proc.is_alive():
+            self._proc.kill()
+            self._proc.join(timeout=10)
+        self._req_q = self._ctx.Queue()
+        self._resp_q = self._ctx.Queue()
+        self.start(load_timeout)
+
+    def shutdown(self):
+        if self._proc is not None and self._proc.is_alive():
+            try:
+                self._req_q.put(None)
+                self._proc.join(timeout=30)
+            except Exception:
+                self._proc.kill()
+                self._proc.join(timeout=10)
+        self._proc = None
+
+    @property
+    def alive(self):
+        return self._proc is not None and self._proc.is_alive()
 
 
 if __name__ == "__main__":

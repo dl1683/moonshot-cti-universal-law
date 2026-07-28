@@ -405,6 +405,73 @@ def check_r2_3_amendment():
             print("  Panel hashes match manifest")
 
 
+def check_r2_4_amendment():
+    """Verify R2.4 scorer/watchdog amendment and implementation."""
+    proto_path = REPO / "precommit" / "atlas_r2_protocol_r2_4.md"
+    hash_path = REPO / "precommit" / "atlas_r2_protocol_r2_4.sha256"
+
+    if not proto_path.exists():
+        warn("R2.4 amendment not yet created")
+        return
+    if not hash_path.exists():
+        fail("R2.4 amendment hash sidecar missing")
+        return
+
+    actual = hashlib.sha256(proto_path.read_bytes()).hexdigest()
+    expected = hash_path.read_text(encoding="utf-8").strip().split()[0]
+    if actual != expected:
+        fail(f"R2.4 amendment hash mismatch: "
+             f"{actual[:16]}... != {expected[:16]}...")
+    else:
+        print(f"  R2.4 amendment hash verified: {actual[:16]}...")
+
+    scorer_path = REPO / "src" / "cti_atlas_workloads.py"
+    if not scorer_path.exists():
+        fail("cti_atlas_workloads.py missing")
+        return
+    scorer_src = scorer_path.read_text(encoding="utf-8")
+
+    if 'R2_2_SCORER_VERSION = "r2.4.0"' not in scorer_src:
+        fail("R2_2_SCORER_VERSION not bumped to r2.4.0")
+    else:
+        print("  Scorer version: r2.4.0")
+
+    if '"harm": not zero_correct' in scorer_src:
+        fail("Scorer still contains reversed harm polarity")
+    elif '"harm": zero_correct' in scorer_src:
+        print("  Harm polarity: corrected (zero_correct)")
+    else:
+        warn("Could not verify harm polarity in scorer source")
+
+    if '"normalized_magnitude_error": (\n' in scorer_src or \
+       '"normalized_magnitude_error": (' in scorer_src:
+        print("  Invalid-output NME: present")
+    else:
+        warn("Could not verify invalid-output NME in scorer")
+
+    inference_path = REPO / "src" / "cti_atlas_inference.py"
+    if not inference_path.exists():
+        fail("cti_atlas_inference.py missing")
+        return
+    inference_src = inference_path.read_text(encoding="utf-8")
+
+    for field in ["eos_reached", "cap_hit", "stop_reason"]:
+        if f'"{field}"' in inference_src:
+            print(f"  generate() field: {field}")
+        else:
+            fail(f"generate() missing {field} field")
+
+    if "SupervisedWorker" in inference_src:
+        print("  SupervisedWorker: present")
+    else:
+        fail("SupervisedWorker class missing from inference module")
+
+    if "time_limit.start_time = time.perf_counter()" in inference_src:
+        print("  Timer pre-start: enabled")
+    else:
+        fail("Timer not pre-started before tokenization")
+
+
 def main():
     print("=" * 60)
     print("Atlas R2 Precommit Verification")
@@ -436,6 +503,9 @@ def main():
 
     print("\n[9] R2.3 cap amendment")
     check_r2_3_amendment()
+
+    print("\n[10] R2.4 scorer/watchdog amendment")
+    check_r2_4_amendment()
 
     print("\n" + "=" * 60)
     if EXIT_CODE == 0:

@@ -473,7 +473,7 @@ def _try_parse_json(text):
 # R2.2 PolicyBench (indexed array format, fail-closed)
 # ---------------------------------------------------------------------------
 
-R2_2_SCORER_VERSION = "r2.2.0"
+R2_2_SCORER_VERSION = "r2.4.0"
 
 
 def load_r2_2_panel(panel_path):
@@ -620,7 +620,9 @@ def score_r2_2_household(parsed_array, household):
                 "correct": False,
                 "zero_baseline_correct": zero_correct,
                 "rescue": False,
-                "harm": not zero_correct,
+                "harm": zero_correct,
+                "normalized_magnitude_error": (
+                    10 if not is_binary else None),
             })
         return {
             "schema_valid": False,
