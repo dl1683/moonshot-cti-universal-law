@@ -1,5 +1,16 @@
 # CTI Universal Law — Program Status
 
+## PROJECT CLOSED (Jul 28, 2026)
+
+All 13 attempted directions were killed at their gates. No universal law,
+validated selector, or positive scientific result was produced. Codex R16
+strategic review recommended full closure. This repository is archived as
+a negative-results and methodological record.
+
+See the full Codex R16 assessment: `results/codex_steering_r16_post_gate0.md`
+
+---
+
 ## Honest Assessment (Jul 25, 2026 — Codex Steering Dialogue)
 
 **Nobel trajectory: 2/10.** The prior 8/10 was structurally inflated.
@@ -354,31 +365,39 @@ Verifier extended: 9 checks, all pass.
 ### Atlas R2.4 --- Scorer/Watchdog Amendment (Jul 28)
 
 R2.2 runner design gate REJECTED execution due to three blocking
-implementation conflicts:
+implementation conflicts. Amendment applied, runner implemented,
+falcon_h1_0.5b smoke completed (24/24). Gemma3_12b smoke not completed.
 
-1. **Scorer harm reversal (bug fix):** Invalid-output branch had
-   `harm = not zero_correct` (reversed). Fixed to `harm = zero_correct`
-   per Section 5.2 of R2.2. Added NME=10 for invalid amount fields.
-   Scorer version bumped r2.2.0 -> r2.4.0.
+### Scale-Inversion Atlas --- KILLED (Jul 28)
 
-2. **Reference clarification:** Sealed panels store integer references
-   (`int(round(x))`), not unrounded PolicyEngine floats. Protocol text
-   corrected; no code change.
+**Kill reason:** W-D2 data is decisive. Within-family scaling is strictly
+monotonic across all 3 families (gemma3, qwen3, falcon_h1) --- bigger
+always wins. The only macro cross-family inversion (gemma3_12b > qwen3_14b)
+is a training-data artifact (language coverage), not a structural principle
+an Atlas could predict.
 
-3. **Hard watchdog:** `generate()` extended with `eos_reached`,
-   `cap_hit`, `stop_reason` fields. Timer starts before tokenization.
-   `SupervisedWorker` class added for process-isolated inference with
-   hard 120s kill capability.
+The core thesis --- "predict when cheap beats expensive" --- has no signal
+to predict. The answer is "never, within a family" and "only when training
+data differs, across families." Neither is a moonshot.
 
-Artifacts:
-- `precommit/atlas_r2_protocol_r2_4.md` + `.sha256` (amendment)
-- `results/codex_r2_2_runner_design_gate.md` (REJECT ruling)
-- `results/codex_r2_4_amendment_ruling.md` (R2.4 conditions)
+**What was spent:** ~6 GPU-hours on W-D2 (9 systems x 321 episodes),
+~1 GPU-hour on W-D3 diagnostics, ~2 calendar days on protocol amendments
+(R2.1 through R2.4), scorer fixes, runner infrastructure, smoke tests.
 
-Verifier extended: 10 checks, all pass.
+**What was learned:**
+1. Scaling is monotonic within families on multilingual QA (MKQA)
+2. Cross-family inversions are language-specific, not architecture-specific
+3. The "infrastructure before nontriviality" antipattern struck again ---
+   elaborate protocol machinery built before checking if the basic signal exists
+4. PolicyBench (W-D3) was collapsed by an 85% zero-baseline, making it
+   useless as a discrimination workload
 
-**Next:** Implement R2.4 runner (`run_p1_policybench_r2_4()`), smoke
-test (falcon_h1_0.5b + gemma3_12b on 24 HH), full 9-system execution.
+**Disposition:** Direction permanently closed. All Atlas R2 infrastructure
+(runner, scorer, protocol amendments, precommit artifacts) retained as
+reference. No further execution authorized.
+
+**13 DIRECTIONS NOW KILLED.** Codex R16 strategic review: no viable 14th
+direction exists. Project closed. See `results/codex_steering_r16_post_gate0.md`.
 
 ### Dead Code Cleanup Log
 | Direction | Files Deleted | Date | Evidence Preserved |

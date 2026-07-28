@@ -1,117 +1,81 @@
-# Affordable Intelligence Science
+# CTI Universal Law — Archived
 
-This repository began as **CTI Universal Law**. That work is retained as a
-legacy research record, but it is no longer the active thesis or the
-authoritative description of this project.
+**This project is closed.** All 13 attempted research directions were killed
+at their gates. No universal law, validated selector, or positive scientific
+result was produced. The repository is preserved as a negative-results and
+methodological record.
 
-## Current program
+## What this project attempted
 
-The active program is the **Scale-Inversion Atlas**:
+The project began as **CTI Universal Law** (a proposed relationship between
+nearest-neighbor accuracy and representation geometry), pivoted through
+**Geometry Admission Test**, **Causal Skill Organs**, six theoretical
+directions (ACQ-1, CCL-1, PCI-1, VIL-1, CIF, CR-USB), and finally the
+applied **Scale-Inversion Atlas** program. Each was killed at its first
+substantive gate.
 
-> Given a workload, hardware, volume, quality requirement, and safety floor,
-> what is the cheapest complete AI system that meets them?
+## Why it was closed
 
-The goal is prospective model and system selection under explicit constraints,
-not another correlation between model scale and benchmark accuracy. A useful
-result must include the full system, quality and safety floors, adaptation and
-verification cost, energy, latency, and failure modes.
+Codex strategic review (R16, Jul 28 2026) identified the generative pattern
+behind all 13 failures:
 
-## Current status
+> Choose an imagined essence of intelligence, construct an assay or world
+> where it is visible, recover or formalize it, extrapolate to a universal
+> consequence.
 
-**Atlas R2.1 completed Gate A from W-D2 only. No prospective selector claim has
-been earned.**
+When the essence was easy to recover, it was supplied by the benchmark or
+causally inert. When it became strong enough to carry capability, it was
+impossible to acquire. In theorem space, it collided with mature theory or
+inherited established hard open problems.
 
-The canonical live record is [STATUS.md](STATUS.md). As of 2026-07-28:
+The honest conclusion: this researcher, with the available evidence, methods,
+data, and comparative advantages, had no credible path to a universal law of
+intelligence. Continuing would have been persistence theater.
 
-- P0 preflight was only a partial pass.
-- W-D2 (MKQA) selected six anchors plus three exploratory systems. Scaling was
-  monotonic within all three local families; no local scale inversion appeared.
-- R2.1 W-D3 (PolicyBench) is finalized as diagnostic-only with **0% Gate A
-  weight**. Its all-zero collapse and 11% Qwen3-14B parse failure motivated a
-  prospective repair, not a retroactive rescore.
-- The narrow R2.2 amendment was refrozen after round-2 adversarial review, but
-  no R2.2 execution is authorized until its panels, implementation, and
-  fail-closed verifier pass.
+## Kill list (13 directions, zero survivors)
 
-The binding protocol is
-[the Atlas R2 design gate](results/codex_scale_inversion_atlas_design_gate_r2.md)
-plus [R2.1](precommit/atlas_r2_protocol_r2_1.md) and the narrow
-[R2.2 amendment](precommit/atlas_r2_protocol_r2_2.md). The R2.1 W-D3
-adjudication is recorded in [Codex steering](results/codex_steering_wd3_r2.md),
-and the R2.2 pushback rulings are in the
-[round-2 adjudication](results/codex_r2_2_round2_adjudication.md).
+| # | Direction | Gate result | Core failure |
+|---|-----------|-------------|--------------|
+| 1 | CTI Universal Law | Nobel 2/10 | Predictor-target conflation |
+| 2 | Equicorrelation | Whitening bug | Geometric null after correction |
+| 3 | Benchmark Bridge | Strategic termination | q ~ kappa, circular |
+| 4 | AMCL | Zero results | 504 files, nothing inside |
+| 5 | GAT | Structural screen fail | Geometry installs but does not transfer |
+| 6 | CSO | Donor gate fail | No compositional learning |
+| 7 | ACQ-1 | Literature kill | Block-MDP preempts |
+| 8 | CCL-1 | Retracted | Reduces to established theory |
+| 9 | PCI-1 | Demoted | Reduces to established theory |
+| 10 | VIL-1 | Weakened | Reduces to established theory |
+| 11 | CIF | Theorem gate fail day 0 | Fatal trilemma |
+| 12 | CR-USB / sfat-1 | Gate 0 fail | ell-2 to ell-infinity barrier |
+| 13 | Scale-Inversion Atlas | Monotonic scaling | Bigger always wins within family |
 
-## What happened to CTI Universal Law
+## What was learned
 
-The original project studied a relationship between normalized 1-NN accuracy
-and nearest-class representation separation. It produced broad internal
-validation and a paper artifact, but later adversarial review sharply reduced
-the claim:
+Six systematic direction-selection antipatterns were identified:
 
-- predictor and target are closely related measurements of the same labeled
-  geometry;
-- the strongest reported fit used per-dataset intercepts and did not transfer
-  well to unseen datasets;
-- the leave-one-architecture-out stability statistic was an overlapping
-  jackknife, not independent replication;
-- downstream ranking evidence was confounded by scale; and
-- the equicorrelation result contained a whitening bug and matched a geometric
-  null after correction.
+1. Projects begin with an answer (ontology by construction)
+2. Surrogates replace consequences (rigorous proxy, unmeasured gap)
+3. Chosen tasks contain the desired answer (circular validation)
+4. Infrastructure before nontriviality (elaborate protocol, cheapest objection unresolved)
+5. Conjunction novelty is not a new principle (unoccupied table cell is not a moonshot)
+6. Destination scores leak into experiment scores (9/10 vision inflates 3/10 test)
 
-The paper and surviving artifacts remain in `paper/` and the status history for
-auditability. They must not be described as a current universal law, a validated
-economic reduction, or the portfolio flagship. The later Geometry Admission
-Test, Causal Skill Organs, and several follow-on directions also failed their
-gates; their negative evidence remains summarized in [STATUS.md](STATUS.md).
-
-## Claim boundary
-
-This repository currently supports:
-
-- a carefully specified prospective evaluation program;
-- completed raw screens and metric-collapse findings;
-- preserved negative results from the CTI, GAT, CSO, and direction-selection
-  arcs; and
-- infrastructure for cost, energy, thermal, workload, and system accounting.
-
-It does **not** currently support:
-
-- a universal law of learned representation quality;
-- a validated Scale-Inversion selector;
-- a claim that smaller systems beat larger systems in general;
-- a PolicyBench capability ordering from the current W-D3 metric; or
-- a demonstrated end-to-end cost reduction for a real deployment.
-
-## Repository map
+## What survives in this repo
 
 ```text
-STATUS.md          Canonical program state, kill records, and current results
-precommit/         Frozen Atlas protocol and verification contracts
-scripts/           Canonical Atlas runner, scorer, and precommit verifier
-src/               Atlas workloads, inference, API, and energy instrumentation
-results/           Active task records and Codex steering/audit trail
-paper/             Legacy CTI paper and retained reference artifacts
+STATUS.md          Full program history, all kill records, cleanup log
+paper/             Legacy CTI paper (reference only, claims retracted)
+results/           Codex steering dialogues, task records, audit trail
+src/               Atlas workloads, inference, energy instrumentation (dead)
+scripts/           Atlas runner, scorer, verifier (dead)
+precommit/         Frozen Atlas protocol artifacts (dead)
 experiments/       Compact experiment ledger
 ```
 
-## Reproduce or inspect the active Atlas
+No code in this repository is actively maintained. Do not use the Atlas
+runner, scorer, or protocol artifacts for new work.
 
-```powershell
-# Validate the currently available precommit contracts
-python scripts/verify_atlas_r2_precommit.py
+## Hardware context
 
-# Check a run without executing it
-python scripts/run_atlas_r2.py --phase P1 --workload W-D2 --dry-run
-
-# Inspect the current ledger
-python scripts/score_atlas_r2.py --summary
-```
-
-Do not run confirmation phases until the selector and task-seal files required
-by the verifier exist and the relevant gate explicitly authorizes them.
-
-## Hardware
-
-Local experiments target one NVIDIA RTX 5090 laptop GPU with 24 GB VRAM.
-External API systems are part of the Atlas only when their costs, versions,
-quality, safety, and latency are included in the same accounting contract.
+All local experiments ran on one NVIDIA RTX 5090 laptop GPU (24 GB VRAM).
