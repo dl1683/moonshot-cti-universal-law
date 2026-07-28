@@ -146,7 +146,7 @@ Revised ceiling: 3-4/10 (down from 6-7/10). Six antipatterns apply.
 - Fatal trilemma: (1) same info + unlimited compute = no separation, (2) different info = known query complexity, (3) bounded compute = known tradeoffs
 - Criterion 6 fails decisively. All 6 antipatterns apply.
 - CIF retained ONLY as empirical affordability study (not 7/10 theorem)
-- Full verdict: `results/codex_cif_theorem_gate.md`
+- Full verdict: documented in `results/codex_steering_r12.md`
 
 **11 DIRECTIONS KILLED. Identity pivot underway (R13).**
 
@@ -288,10 +288,17 @@ zeros for everything gets 100% pass and 84.85% mean score. Every model is WORSE 
 trivial baseline. The "scale inversion" (0.6b > 4b) is proximity to the zero baseline, not
 genuine capability: 0.6b defaults to zeros, 4b hallucinates placeholder values (1234.56).
 
-6 systems remaining (gemma3, falcon_h1 families). Blocked on thermal protection fix
-(laptop GPU shuts down during sustained 14B inference).
+Thermal protection implemented (hysteresis gate: pause at 85C, resume at 78C).
+qwen3_14b running with thermal gate active (40/100 at 87.5% pass as of Jul 28 03:55 UTC).
 
-**Next:** Complete W-D3 for all 9 systems, then API ladder, then Gate A.
+**Codex W-D3 steering (R1, Jul 28):** Current W-D3 metric gets **0% Gate A weight**.
+All-zero baseline dominance is a metric-collapse finding, not a capability finding.
+Protocol violations: runner uses 384 tokens / 120s timeout, but R2.1 protocol freezes 128 / 30s.
+128 tokens is mathematically impossible for the 20-field JSON (minimum 175 tokens compact).
+R2.2 amendment required before Gate A. See `results/codex_steering_wd3_emerging.md`.
+
+**Next:** Finish qwen3_14b, then decide via Codex R2/R3 steering whether to run remaining
+6 systems under current protocol or amend first.
 
 ### Dead Code Cleanup Log
 | Direction | Files Deleted | Date | Evidence Preserved |
@@ -305,6 +312,9 @@ genuine capability: 0.6b defaults to zeros, 4b hallucinates placeholder values (
 | Dead research docs | CGF (3), COLM (1), CSO admission (1) | Jul 27 | Kill records in STATUS.md |
 | Misc dead | 3 result files, centroid dispersion, misc | Jul 27 | Kill records in STATUS.md |
 | Stale root files | generate_5task_correlation_summary.py, C80_MILESTONE_SYNTHESIS.md | Jul 27 | N/A |
-| Dead src scripts (Codex triage) | 314 cti_*.py scripts (-123,897 lines) | Jul 27 | Codex triage: `results/codex_src_triage.md`. 5 LIVE (Atlas R2), 4 PAPER, 314 DEAD |
+| Dead src scripts (Codex triage) | 314 cti_*.py scripts (-123,897 lines) | Jul 27 | 5 LIVE (Atlas R2), 4 PAPER, 314 DEAD |
 | Stale run logs | 5 stage_a_*.txt result logs | Jul 27 | N/A |
-| **Total cleaned** | **~541 tracked files removed** | Jul 27 | All kills documented here |
+| Dead result JSONs | 339 cti_*.json + 12 paper figures + 21 logs | Jul 28 | -256,113 lines. 28 files + 3 dirs remain |
+| Dead research docs | 20 files (theory, preregistration, archive) | Jul 28 | Paper in paper/ retained for reference |
+| Pre-Atlas steering | 4 codex_steering_r9* + codex_src_triage.md | Jul 28 | R12+ steering retained |
+| **Total cleaned** | **~920 tracked files removed** | Jul 27-28 | All kills documented here. Repo: 59 tracked files |
