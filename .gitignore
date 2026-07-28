@@ -46,6 +46,10 @@ results/atlas_r2_cost_ledger.csv
 results/geometry_admission/
 results/causal_organ/
 
+# P1 runtime artifacts (regenerated on each run)
+results/local/
+results/p1_*_run_log.txt
+
 # OS / editor
 .DS_Store
 Thumbs.db

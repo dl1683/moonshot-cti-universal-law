@@ -314,22 +314,40 @@ def run_p1_mkqa(budget, system_filter=None):
         meter.stop()
         energy = meter.summary()
 
+        if done:
+            ledger_pass = sum(
+                1 for line in open(LEDGER_PATH, encoding="utf-8")
+                if not line.startswith("timestamp")
+                and line.split(",")[1] == "P1"
+                and line.split(",")[2] == "W-D2"
+                and line.split(",")[3] == sys_id
+                and line.split(",")[5] == "pass"
+            )
+            ledger_total = len(done) + total
+            ledger_f1 = f1_sum / total if total else 0
+            all_passed = ledger_pass
+            all_total = ledger_total
+        else:
+            all_passed = passed
+            all_total = total
+            ledger_f1 = f1_sum / total if total else 0
+
         summary = {
             "system_id": sys_id,
             "hf_id": spec["hf_id"],
             "params_b": spec["params_b"],
             "family": spec["family"],
-            "pass_rate": round(passed / total, 4) if total else 0,
-            "mean_f1": round(f1_sum / total, 4) if total else 0,
-            "passed": passed,
-            "total": total,
+            "pass_rate": round(all_passed / all_total, 4) if all_total else 0,
+            "mean_f1": round(ledger_f1, 4),
+            "passed": all_passed,
+            "total": all_total,
             "energy": energy,
             "tasks": task_results,
         }
         all_summaries[sys_id] = summary
 
-        print(f"  Final: {passed}/{total} "
-              f"({100*passed/total:.1f}%) | "
+        print(f"  Final: {all_passed}/{all_total} "
+              f"({100*all_passed/all_total:.1f}%) | "
               f"F1={summary['mean_f1']:.3f} | "
               f"{energy['energy_joules']:.0f}J | "
               f"{energy['mean_power_watts']:.0f}W avg")
@@ -456,25 +474,40 @@ def run_p1_policybench(budget, system_filter=None):
                          if not t["is_binary"] and t["status"] == "pass")
         dollar_total = sum(1 for t in task_results if not t["is_binary"])
 
+        if done:
+            ledger_pass = sum(
+                1 for line in open(LEDGER_PATH, encoding="utf-8")
+                if not line.startswith("timestamp")
+                and line.split(",")[1] == "P1"
+                and line.split(",")[2] == "W-D3"
+                and line.split(",")[3] == sys_id
+                and line.split(",")[5] == "pass"
+            )
+            all_passed = ledger_pass
+            all_total = len(done) + total
+        else:
+            all_passed = passed
+            all_total = total
+
         summary = {
             "system_id": sys_id,
             "hf_id": spec["hf_id"],
             "params_b": spec["params_b"],
             "family": spec["family"],
-            "pass_rate": round(passed / total, 4) if total else 0,
+            "pass_rate": round(all_passed / all_total, 4) if all_total else 0,
             "binary_pass_rate": round(binary_pass / binary_total, 4)
             if binary_total else 0,
             "dollar_pass_rate": round(dollar_pass / dollar_total, 4)
             if dollar_total else 0,
-            "passed": passed,
-            "total": total,
+            "passed": all_passed,
+            "total": all_total,
             "energy": energy,
             "tasks": task_results,
         }
         all_summaries[sys_id] = summary
 
-        print(f"  Final: {passed}/{total} "
-              f"({100*passed/total:.1f}%) | "
+        print(f"  Final: {all_passed}/{all_total} "
+              f"({100*all_passed/all_total:.1f}%) | "
               f"binary={binary_pass}/{binary_total} "
               f"dollar={dollar_pass}/{dollar_total} | "
               f"{energy['energy_joules']:.0f}J")
