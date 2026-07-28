@@ -272,7 +272,26 @@ All 9 local systems evaluated on 320 multilingual QA episodes (MKQA, official sc
 
 **Cross-family inversions observed:** gemma3 dominates at every size tier. falcon_h1_7b (hybrid SSM, 7B) competitive with qwen3_14b (transformer, 14B).
 
-**Next:** W-D3 (PolicyBench) runs in progress, then API ladder, then Gate A.
+### Atlas R2.1 — P1 W-D3 (PolicyBench) Results (Jul 28, IN PROGRESS)
+
+3/9 local systems evaluated on 100 tax-policy households (PolicyBench, field-level scoring).
+
+| Rank | System | Family | Params | Pass Rate | Mean Score | Status |
+|------|--------|--------|--------|-----------|------------|--------|
+| ref | **ALL-ZERO BASELINE** | - | 0 | **100.0%** | **0.8485** | trivial |
+| 1 | qwen3_0.6b | qwen3 | 0.6B | 94.0% | 0.7654 | done |
+| 2 | qwen3_14b | qwen3 | 14B | 82.6% | 0.7312 | 23/100 |
+| 3 | qwen3_4b | qwen3 | 4B | 55.0% | 0.5096 | done |
+
+**Critical finding: all-zero baseline dominance.** 83.9% of gold fields are zero. Predicting
+zeros for everything gets 100% pass and 84.85% mean score. Every model is WORSE than this
+trivial baseline. The "scale inversion" (0.6b > 4b) is proximity to the zero baseline, not
+genuine capability: 0.6b defaults to zeros, 4b hallucinates placeholder values (1234.56).
+
+6 systems remaining (gemma3, falcon_h1 families). Blocked on thermal protection fix
+(laptop GPU shuts down during sustained 14B inference).
+
+**Next:** Complete W-D3 for all 9 systems, then API ladder, then Gate A.
 
 ### Dead Code Cleanup Log
 | Direction | Files Deleted | Date | Evidence Preserved |
