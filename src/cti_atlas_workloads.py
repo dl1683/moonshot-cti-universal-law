@@ -1,16 +1,23 @@
-"""Workload data loaders for Atlas R2.
+"""Workload data loaders and scientific scorers for Atlas R2.
 
-Handles task selection (deterministic SHA256 hash), formatting prompts,
-and scoring outputs for each workload type.
+Handles deterministic task selection (SHA256 hash), prompt formatting,
+and scoring with official evaluation semantics.
+
+Protocol: R2.1 (precommit/atlas_r2_protocol_r2_1.md)
+  - MKQA: official Apple mixed_segmentation, Counter F1, language macro-average
+  - PolicyBench: 100 household-level structured JSON generations
 """
 
 import hashlib
 import json
 import re
+from collections import Counter, defaultdict
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 DATA_DIR = REPO / "data"
+
+SCORER_VERSION = "r2.1.0"
 
 
 def _hash_rank(seed, task_id):
@@ -19,13 +26,128 @@ def _hash_rank(seed, task_id):
     return h
 
 
-def load_mkqa(n_queries=40, languages=None):
-    """Load MKQA (W-D2) with deterministic task selection.
+# ---------------------------------------------------------------------------
+# MKQA (W-D2)
+# ---------------------------------------------------------------------------
 
-    Returns list of episodes: {query_id, lang, question, answers, aliases}.
+_MKQA_LANGUAGES = ["en", "es", "fr", "de", "ja", "zh_cn", "ar", "ko"]
+
+ARTICLE_REGEX = {
+    "en": re.compile(r"\b(a|an|the)\b"),
+    "es": re.compile(r"\b(el|la|los|las|un|una|unos|unas)\b"),
+    "fr": re.compile(r"\b(le|la|les|l'|un|une|des)\b"),
+    "de": re.compile(
+        r"\b(der|die|das|den|dem|des|ein|eine|einem|einen|eines|einer)\b"
+    ),
+    "ar": re.compile(r"\bال\b"),
+}
+
+
+def _is_cjk(char):
+    """Check if character is CJK (Chinese, Japanese kanji, kana)."""
+    cp = ord(char)
+    if 0x4E00 <= cp <= 0x9FFF:
+        return True
+    if 0x3400 <= cp <= 0x4DBF:
+        return True
+    if 0x20000 <= cp <= 0x2A6DF:
+        return True
+    if 0x2A700 <= cp <= 0x2B73F:
+        return True
+    if 0x2B740 <= cp <= 0x2B81F:
+        return True
+    if 0x2B820 <= cp <= 0x2CEAF:
+        return True
+    if 0xF900 <= cp <= 0xFAFF:
+        return True
+    if 0x2F800 <= cp <= 0x2FA1F:
+        return True
+    if 0x3040 <= cp <= 0x309F:
+        return True
+    if 0x30A0 <= cp <= 0x30FF:
+        return True
+    if 0x31F0 <= cp <= 0x31FF:
+        return True
+    if 0xFF65 <= cp <= 0xFF9F:
+        return True
+    return False
+
+
+def _mixed_segmentation(text):
+    """Official MKQA mixed segmentation for ja/zh_cn.
+
+    CJK characters become individual tokens; non-CJK runs split on whitespace.
+    """
+    tokens = []
+    buf = []
+    for ch in text:
+        if _is_cjk(ch):
+            if buf:
+                tokens.extend("".join(buf).split())
+                buf = []
+            tokens.append(ch)
+        else:
+            buf.append(ch)
+    if buf:
+        tokens.extend("".join(buf).split())
+    return tokens
+
+
+def _normalize_mkqa(text, lang):
+    """Official MKQA normalization: lowercase, remove articles, collapse whitespace."""
+    text = text.lower().strip()
+    regex = ARTICLE_REGEX.get(lang)
+    if regex:
+        text = regex.sub(" ", text)
+    text = re.sub(r"[^\w\s]", "", text)
+    text = " ".join(text.split())
+    return text
+
+
+def _tokenize_mkqa(text, lang):
+    """Tokenize per MKQA language rules."""
+    if lang in ("ja", "zh_cn"):
+        return _mixed_segmentation(text)
+    return text.split()
+
+
+def _compute_f1(pred_tokens, gold_tokens):
+    """Token-level F1 with multiplicities via Counter."""
+    if not pred_tokens or not gold_tokens:
+        return 0.0
+    common = sum((Counter(pred_tokens) & Counter(gold_tokens)).values())
+    if common == 0:
+        return 0.0
+    precision = common / len(pred_tokens)
+    recall = common / len(gold_tokens)
+    return 2 * precision * recall / (precision + recall)
+
+
+def _query_is_answerable(example, languages):
+    """True if the query has at least one non-empty answer in any target language."""
+    answers = example.get("answers", {})
+    for lang in languages:
+        lang_answers = answers.get(lang, [])
+        if isinstance(lang_answers, list):
+            for a in lang_answers:
+                if isinstance(a, dict):
+                    if a.get("text", ""):
+                        return True
+                elif isinstance(a, str) and a:
+                    return True
+        elif lang_answers:
+            return True
+    return False
+
+
+def load_mkqa(n_queries=40, languages=None):
+    """Load MKQA (W-D2) with R2.1 deterministic task selection.
+
+    Pre-filters to answerable queries, then selects first n_queries by hash rank.
+    Returns list of episodes: {query_id, lang, question, answers, aliases, task_id}.
     """
     if languages is None:
-        languages = ["en", "es", "fr", "de", "ja", "zh_cn", "ar", "ko"]
+        languages = list(_MKQA_LANGUAGES)
 
     mkqa_path = DATA_DIR / "mkqa.jsonl"
     if not mkqa_path.exists():
@@ -37,11 +159,13 @@ def load_mkqa(n_queries=40, languages=None):
     examples = []
     with open(mkqa_path, encoding="utf-8") as f:
         for line in f:
-            ex = json.loads(line)
-            examples.append(ex)
+            examples.append(json.loads(line))
+
+    answerable = [ex for ex in examples
+                  if _query_is_answerable(ex, languages)]
 
     ranked = sorted(
-        examples,
+        answerable,
         key=lambda ex: _hash_rank("atlas-r2-d2", str(ex["example_id"])),
     )
     selected = ranked[:n_queries]
@@ -52,9 +176,9 @@ def load_mkqa(n_queries=40, languages=None):
             query = ex.get("queries", {}).get(lang, "")
             answers_raw = ex.get("answers", {}).get(lang, [])
 
+            answer_texts = []
+            aliases = []
             if isinstance(answers_raw, list):
-                answer_texts = []
-                aliases = []
                 for a in answers_raw:
                     if isinstance(a, dict):
                         t = a.get("text", "")
@@ -64,9 +188,8 @@ def load_mkqa(n_queries=40, languages=None):
                             aliases.append(alias)
                     elif isinstance(a, str):
                         answer_texts.append(a)
-            else:
+            elif answers_raw:
                 answer_texts = [str(answers_raw)]
-                aliases = []
 
             if not query:
                 continue
@@ -94,57 +217,83 @@ def format_mkqa_prompt(episode):
     )
 
 
-def _normalize(text):
-    """Normalize text for comparison."""
-    text = text.lower().strip()
-    text = re.sub(r"\s+", " ", text)
-    text = re.sub(r"[.,;:!?]$", "", text)
-    return text
-
-
 def score_mkqa(prediction, episode):
-    """Score a prediction against MKQA ground truth.
+    """Score using official MKQA evaluation semantics (R2.1).
 
-    Returns dict with exact_match, f1, and pass/fail status.
+    Uses mixed_segmentation for ja/zh_cn, Counter F1, language-specific articles.
+    Returns dict with exact_match, f1, status.
     """
-    pred_norm = _normalize(prediction)
+    lang = episode["lang"]
+    pred_norm = _normalize_mkqa(prediction, lang)
 
-    candidates = episode["answers"] + episode["aliases"]
-    candidates = [_normalize(c) for c in candidates if c]
+    candidates = episode["answers"] + episode.get("aliases", [])
+    candidates = [c for c in candidates if c]
 
     if not candidates:
-        return {"exact_match": False, "f1": 0.0, "status": "no_answer"}
+        return {"exact_match": False, "f1": 0.0, "status": "no_answer",
+                "scorer_version": SCORER_VERSION}
 
-    exact = any(pred_norm == c for c in candidates)
+    pred_tokens = _tokenize_mkqa(pred_norm, lang)
 
+    best_em = False
     best_f1 = 0.0
     for cand in candidates:
-        pred_tokens = set(pred_norm.split())
-        cand_tokens = set(cand.split())
-        if not pred_tokens or not cand_tokens:
-            continue
-        common = pred_tokens & cand_tokens
-        if not common:
-            continue
-        precision = len(common) / len(pred_tokens)
-        recall = len(common) / len(cand_tokens)
-        f1 = 2 * precision * recall / (precision + recall)
-        best_f1 = max(best_f1, f1)
+        cand_norm = _normalize_mkqa(cand, lang)
+        if pred_norm == cand_norm:
+            best_em = True
+        cand_tokens = _tokenize_mkqa(cand_norm, lang)
+        if pred_tokens and cand_tokens:
+            f1 = _compute_f1(pred_tokens, cand_tokens)
+            best_f1 = max(best_f1, f1)
 
-    passed = exact or best_f1 >= 0.5
+    passed = best_em or best_f1 >= 0.5
 
     return {
-        "exact_match": exact,
+        "exact_match": best_em,
         "f1": round(best_f1, 4),
         "status": "pass" if passed else "fail",
+        "scorer_version": SCORER_VERSION,
     }
 
 
-def load_policybench(n_households=100):
-    """Load PolicyBench (W-D3) scenarios and reference outputs.
+def mkqa_language_macro_average(task_records):
+    """Compute macro-averaged F1 and EM across languages from task records.
 
-    Returns list of episodes: {scenario_id, variable, ref_value, prompt_text,
-    is_binary, scenario_json}.
+    Returns dict: {lang: {mean_f1, mean_em, n}, macro_f1, macro_em}.
+    """
+    by_lang = defaultdict(lambda: {"f1_sum": 0.0, "em_sum": 0, "n": 0})
+    for rec in task_records:
+        lang = rec["lang"]
+        by_lang[lang]["f1_sum"] += rec["f1"]
+        by_lang[lang]["em_sum"] += int(rec["exact_match"])
+        by_lang[lang]["n"] += 1
+
+    result = {}
+    f1_values = []
+    em_values = []
+    for lang, stats in sorted(by_lang.items()):
+        n = stats["n"]
+        mean_f1 = stats["f1_sum"] / n if n else 0.0
+        mean_em = stats["em_sum"] / n if n else 0.0
+        result[lang] = {"mean_f1": round(mean_f1, 4),
+                        "mean_em": round(mean_em, 4), "n": n}
+        f1_values.append(mean_f1)
+        em_values.append(mean_em)
+
+    result["macro_f1"] = round(sum(f1_values) / len(f1_values), 4) if f1_values else 0.0
+    result["macro_em"] = round(sum(em_values) / len(em_values), 4) if em_values else 0.0
+    return result
+
+
+# ---------------------------------------------------------------------------
+# PolicyBench (W-D3) -- household-level structured generations
+# ---------------------------------------------------------------------------
+
+def load_policybench(n_households=100):
+    """Load PolicyBench (W-D3) -- one episode per household.
+
+    Each episode contains ALL reference fields for that household.
+    Hash-ranks scenarios and selects first n_households.
     """
     import csv
 
@@ -164,31 +313,40 @@ def load_policybench(n_households=100):
         for row in reader:
             scenarios[row["scenario_id"]] = row
 
-    refs = []
+    refs_by_scenario = defaultdict(list)
     with open(refs_path, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            refs.append(row)
+            refs_by_scenario[row["scenario_id"]].append(row)
 
-    binary_vars = {v for v in
-                   {r["variable"] for r in refs}
-                   if "eligible" in v}
+    binary_vars = set()
+    for refs_list in refs_by_scenario.values():
+        for r in refs_list:
+            if "eligible" in r["variable"]:
+                binary_vars.add(r["variable"])
+
+    ranked_ids = sorted(
+        [sid for sid in refs_by_scenario if sid in scenarios],
+        key=lambda sid: _hash_rank("atlas-r2-d3", sid),
+    )[:n_households]
 
     episodes = []
-    for ref in refs:
-        sid = ref["scenario_id"]
-        if sid not in scenarios:
-            continue
+    for sid in ranked_ids:
         sc = scenarios[sid]
-        var = ref["variable"]
-        val = float(ref["value"])
+        refs = refs_by_scenario[sid]
+
+        fields = {}
+        for r in refs:
+            var = r["variable"]
+            fields[var] = {
+                "ref_value": float(r["value"]),
+                "is_binary": var in binary_vars,
+            }
 
         episodes.append({
             "scenario_id": sid,
-            "variable": var,
-            "task_id": f"pb_{sid}_{var}",
-            "ref_value": val,
-            "is_binary": var in binary_vars,
+            "task_id": f"pb_{sid}",
+            "fields": fields,
             "scenario_json": sc.get("scenario_json", ""),
             "state": sc.get("state", ""),
             "filing_status": sc.get("filing_status", ""),
@@ -198,76 +356,154 @@ def load_policybench(n_households=100):
 
 
 def format_policybench_prompt(episode):
-    """Format a PolicyBench episode as a generation prompt."""
-    var = episode["variable"]
+    """Format a household episode as a single structured JSON generation prompt."""
     sc = episode["scenario_json"]
+    fields = episode["fields"]
 
-    if episode["is_binary"]:
-        return (
-            f"Given the following US household for tax year 2026, "
-            f"determine if the variable '{var}' applies (1 for yes, 0 for no).\n\n"
-            f"Household: {sc}\n\n"
-            f"Answer with ONLY the number (0 or 1), nothing else.\n"
-            f"Answer:"
-        )
+    field_specs = []
+    for var in sorted(fields):
+        info = fields[var]
+        if info["is_binary"]:
+            field_specs.append(f'  "{var}": 0 or 1')
+        else:
+            field_specs.append(f'  "{var}": <dollar amount as number>')
+
+    fields_str = ",\n".join(field_specs)
+
     return (
-        f"Given the following US household for tax year 2026, "
-        f"compute the value of '{var}' in US dollars.\n\n"
+        "Given the following US household for tax year 2026, "
+        "compute ALL of the following tax variables.\n\n"
         f"Household: {sc}\n\n"
-        f"Answer with ONLY the numeric dollar amount (no $ sign, "
-        f"no commas), nothing else.\n"
-        f"Answer:"
+        "Return ONLY a JSON object with these fields:\n"
+        "{\n" + fields_str + "\n}\n\n"
+        "Return ONLY the JSON object, nothing else."
     )
 
 
 def score_policybench(prediction, episode):
-    """Score a PolicyBench prediction against reference value.
+    """Score a household-level PolicyBench prediction (R2.1).
 
-    Binary variables: exact match (0 or 1).
-    Dollar variables: within 5% relative tolerance or $50 absolute.
+    Parses JSON, scores each field, returns household-level metrics.
     """
-    pred_text = _normalize(prediction)
-    pred_text = pred_text.replace("$", "").replace(",", "")
+    fields = episode["fields"]
+    n_fields = len(fields)
 
-    try:
-        pred_val = float(pred_text.split()[0])
-    except (ValueError, IndexError):
-        return {"exact_match": False, "error": 0.0, "status": "parse_fail"}
+    pred_obj = _try_parse_json(prediction)
+    if pred_obj is None:
+        return {
+            "parse_valid": False,
+            "fields_correct": 0,
+            "fields_total": n_fields,
+            "household_score": 0.0,
+            "all_correct": False,
+            "status": "parse_fail",
+            "field_results": {},
+            "scorer_version": SCORER_VERSION,
+        }
 
-    ref = episode["ref_value"]
+    field_results = {}
+    correct = 0
+    for var, info in fields.items():
+        ref = info["ref_value"]
+        is_binary = info["is_binary"]
 
-    if episode["is_binary"]:
-        match = (pred_val > 0.5) == (ref > 0.5)
-        return {"exact_match": match, "error": 0.0,
-                "status": "pass" if match else "fail"}
+        raw_val = pred_obj.get(var)
+        if raw_val is None:
+            field_results[var] = {"status": "missing", "correct": False}
+            continue
 
-    if ref == 0:
-        match = abs(pred_val) < 50
-    else:
-        rel_err = abs(pred_val - ref) / abs(ref)
-        abs_err = abs(pred_val - ref)
-        match = rel_err < 0.05 or abs_err < 50
+        try:
+            pred_val = float(
+                str(raw_val).replace("$", "").replace(",", "").strip()
+            )
+        except (ValueError, TypeError):
+            field_results[var] = {"status": "parse_fail", "correct": False}
+            continue
+
+        if is_binary:
+            match = (pred_val > 0.5) == (ref > 0.5)
+        elif ref == 0:
+            match = abs(pred_val) < 50
+        else:
+            rel_err = abs(pred_val - ref) / abs(ref)
+            abs_err = abs(pred_val - ref)
+            match = rel_err < 0.05 or abs_err < 50
+
+        field_results[var] = {
+            "status": "pass" if match else "fail",
+            "correct": match,
+            "predicted": pred_val,
+            "reference": ref,
+        }
+        if match:
+            correct += 1
+
+    household_score = correct / n_fields if n_fields else 0.0
+    all_correct = correct == n_fields
 
     return {
-        "exact_match": pred_val == ref,
-        "error": round(abs(pred_val - ref), 2),
-        "status": "pass" if match else "fail",
+        "parse_valid": True,
+        "fields_correct": correct,
+        "fields_total": n_fields,
+        "household_score": round(household_score, 4),
+        "all_correct": all_correct,
+        "status": "pass" if household_score >= 0.5 else "fail",
+        "field_results": field_results,
+        "scorer_version": SCORER_VERSION,
     }
 
 
+def _try_parse_json(text):
+    """Attempt to parse JSON from model output, with fallback extraction."""
+    text = text.strip()
+    try:
+        return json.loads(text)
+    except (json.JSONDecodeError, ValueError):
+        pass
+    match = re.search(r"\{[^{}]*\}", text, re.DOTALL)
+    if match:
+        try:
+            return json.loads(match.group())
+        except (json.JSONDecodeError, ValueError):
+            pass
+    return None
+
+
+def gold_answer_hash(episode, workload="W-D2"):
+    """SHA256 hash of ground-truth answers for provenance tracking."""
+    if workload == "W-D2":
+        parts = sorted(episode.get("answers", []) + episode.get("aliases", []))
+    else:
+        parts = sorted(
+            f"{k}={v['ref_value']}" for k, v in episode.get("fields", {}).items()
+        )
+    return hashlib.sha256("|".join(str(p) for p in parts).encode()).hexdigest()[:16]
+
+
 if __name__ == "__main__":
-    print("Loading MKQA (W-D2)...")
-    episodes = load_mkqa(n_queries=5, languages=["en", "es"])
-    print(f"Episodes: {len(episodes)}")
+    print("=== MKQA (W-D2) R2.1 ===")
+    episodes = load_mkqa(n_queries=5, languages=["en", "ja", "ko"])
+    print(f"Episodes: {len(episodes)} (5 queries x 3 languages)")
 
-    for ep in episodes[:4]:
-        print(f"\n  [{ep['lang']}] {ep['question'][:80]}")
-        print(f"  Answers: {ep['answers'][:3]}")
-        print(f"  Prompt: {format_mkqa_prompt(ep)[:100]}...")
+    for ep in episodes[:6]:
+        q = ep["question"][:60].encode("ascii", errors="replace").decode()
+        print(f"\n  [{ep['lang']}] {q}")
+        print(f"  Answers: {ep['answers'][:2]}")
 
-        fake_pred = ep["answers"][0] if ep["answers"] else "unknown"
-        score = score_mkqa(fake_pred, ep)
-        print(f"  Score (gold answer): {score}")
-
+        if ep["answers"]:
+            score = score_mkqa(ep["answers"][0], ep)
+            print(f"  Gold score: {score}")
         score_wrong = score_mkqa("definitely wrong answer", ep)
-        print(f"  Score (wrong): {score_wrong}")
+        print(f"  Wrong score: {score_wrong}")
+
+    print("\n=== PolicyBench (W-D3) R2.1 ===")
+    try:
+        pb_eps = load_policybench(n_households=3)
+        print(f"Households: {len(pb_eps)}")
+        for ep in pb_eps[:2]:
+            print(f"\n  Scenario: {ep['scenario_id']}")
+            print(f"  Fields: {len(ep['fields'])}")
+            print(f"  Prompt (first 200): "
+                  f"{format_policybench_prompt(ep)[:200]}...")
+    except FileNotFoundError as e:
+        print(f"  Skipped: {e}")

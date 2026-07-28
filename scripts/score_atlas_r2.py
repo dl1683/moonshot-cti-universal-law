@@ -2,12 +2,14 @@
 """
 score_atlas_r2.py
 
-Paired metrics, quality floors, confidence intervals, cost regret, and kill tests
-for the Atlas R2 experiment.
+Paired metrics, quality floors, confidence intervals, cost accounting,
+and kill tests for the Atlas R2.1 experiment.
+
+Protocol: R2.1 (precommit/atlas_r2_protocol_r2_1.md)
 
 Usage:
-    python scripts/score_atlas_r2.py --phase discovery
-    python scripts/score_atlas_r2.py --phase confirmation
+    python scripts/score_atlas_r2.py --summary
+    python scripts/score_atlas_r2.py --gate-a
     python scripts/score_atlas_r2.py --kill-test
 """
 
@@ -22,18 +24,24 @@ import numpy as np
 
 REPO = Path(__file__).resolve().parent.parent
 LEDGER_PATH = REPO / "results" / "atlas_r2_cost_ledger.csv"
+TASK_RECORDS_DIR = REPO / "results" / "cti_atlas_r2_task_records"
 BUDGET_PATH = REPO / "precommit" / "atlas_r2_budget.json"
+SYSTEMS_CONFIG = REPO / "configs" / "atlas_r2_systems.yaml"
 
-NON_INFERIORITY_MARGIN = 5.0
+PROTOCOL_REVISION = "r2.1"
+NON_INFERIORITY_MARGIN = 0.05
 COST_RATIO_MIN = 10.0
 BOOTSTRAP_SAMPLES = 10000
 CI_LEVEL = 0.95
 STABILITY_THRESHOLD = 0.80
 RECIPE_SENSITIVE_THRESHOLD = 0.25
 
+LOCAL_HOURLY_RATE = 0.518
+CAPITAL_RATE_PER_HOUR = 0.50
+ELECTRICITY_RATE_PER_HOUR = 0.018
+
 
 def load_ledger():
-    """Load cost ledger into list of dicts."""
     if not LEDGER_PATH.exists():
         print("No ledger found.", file=sys.stderr)
         return []
@@ -45,19 +53,34 @@ def load_ledger():
     return rows
 
 
-def compute_pass_rate(rows, system_id, workload):
-    """Compute pass rate for a system on a workload."""
-    relevant = [r for r in rows
-                if r["system_id"] == system_id and r["workload"] == workload]
-    if not relevant:
+def load_task_records(system_id, phase="P1", workload="W-D2"):
+    """Load authoritative task records for a system."""
+    path = (TASK_RECORDS_DIR
+            / f"cti_atlas_r2_{PROTOCOL_REVISION}_{phase}_{workload}_{system_id}.json")
+    if not path.exists():
+        return {}
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def load_systems_config():
+    import yaml
+    with open(SYSTEMS_CONFIG, encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
+
+def compute_pass_rate_from_records(system_id, phase="P1", workload="W-D2"):
+    """Compute pass rate from authoritative task records (not ledger)."""
+    records = load_task_records(system_id, phase, workload)
+    task_records = {k: v for k, v in records.items() if not k.startswith("__")}
+    if not task_records:
         return 0.0, 0
-    passed = sum(1 for r in relevant if r["status"] == "pass")
-    return passed / len(relevant), len(relevant)
+    passed = sum(1 for r in task_records.values() if r["status"] == "pass")
+    return passed / len(task_records), len(task_records)
 
 
 def bootstrap_ci(values, stat_fn=np.mean, n_boot=BOOTSTRAP_SAMPLES,
                  ci=CI_LEVEL):
-    """Bootstrap confidence interval for a statistic."""
     rng = np.random.default_rng(42)
     arr = np.array(values, dtype=float)
     boot_stats = np.array([
@@ -70,30 +93,47 @@ def bootstrap_ci(values, stat_fn=np.mean, n_boot=BOOTSTRAP_SAMPLES,
     return float(lo), float(hi), float(np.mean(boot_stats))
 
 
-def paired_non_inferiority(local_scores, frontier_scores, margin=NON_INFERIORITY_MARGIN):
-    """Test if local is non-inferior to frontier within margin.
+def bootstrap_ci_clustered(values, cluster_ids, stat_fn=np.mean,
+                           n_boot=BOOTSTRAP_SAMPLES, ci=CI_LEVEL):
+    """Bootstrap CI with cluster resampling (e.g. by query_id)."""
+    rng = np.random.default_rng(42)
+    clusters = defaultdict(list)
+    for v, cid in zip(values, cluster_ids):
+        clusters[cid].append(v)
+    cluster_keys = list(clusters.keys())
+    n_clusters = len(cluster_keys)
 
-    Returns (is_non_inferior, lower_bound, point_estimate).
-    Non-inferior if lower 95% CI bound of (local - frontier) > -margin.
-    """
+    boot_stats = []
+    for _ in range(n_boot):
+        sampled_keys = rng.choice(cluster_keys, size=n_clusters, replace=True)
+        sampled_values = []
+        for k in sampled_keys:
+            sampled_values.extend(clusters[k])
+        boot_stats.append(stat_fn(np.array(sampled_values)))
+
+    boot_stats = np.array(boot_stats)
+    alpha = (1 - ci) / 2
+    lo = np.percentile(boot_stats, 100 * alpha)
+    hi = np.percentile(boot_stats, 100 * (1 - alpha))
+    return float(lo), float(hi), float(np.mean(boot_stats))
+
+
+def paired_non_inferiority(local_scores, frontier_scores,
+                           margin=NON_INFERIORITY_MARGIN):
+    """Test non-inferiority: lower 95% CI of (local - frontier) > -margin."""
     diffs = np.array(local_scores) - np.array(frontier_scores)
     lo, hi, mean = bootstrap_ci(diffs)
     return lo > -margin, lo, mean
 
 
-def compute_cost_ratio(local_cost_per_task, api_cost_per_task):
-    """Compute avoided-cost ratio."""
-    if local_cost_per_task <= 0:
-        return float("inf")
-    if api_cost_per_task <= 0:
-        return 0.0
-    return api_cost_per_task / local_cost_per_task
+def cost_per_task_local(rows, system_id, workload, volume=10000):
+    """All-in cost per successful task for a local system at given volume.
 
-
-def cost_per_task(rows, system_id, workload, volume=10000):
-    """Compute all-in cost per successful task at given volume."""
+    Cost = capital_amortization + electricity.
+    """
     relevant = [r for r in rows
-                if r["system_id"] == system_id and r["workload"] == workload]
+                if r["system_id"] == system_id and r["workload"] == workload
+                ]
     if not relevant:
         return float("inf")
 
@@ -102,33 +142,116 @@ def cost_per_task(rows, system_id, workload, volume=10000):
         return float("inf")
 
     total_gpu_hours = sum(float(r.get("gpu_seconds", 0)) for r in relevant) / 3600
-    total_api_cost = sum(float(r.get("api_cost_usd", 0)) for r in relevant)
-    total_energy_j = sum(float(r.get("energy_joules", 0)) for r in relevant)
-
     n_attempted = len(relevant)
     n_successful = len(successful)
-    success_rate = n_successful / n_attempted
 
     scale_factor = volume / n_attempted if n_attempted > 0 else 1
+    total_hours_at_volume = total_gpu_hours * scale_factor
 
-    variable_cost = (total_gpu_hours * 0 + total_api_cost + total_energy_j * 0) * scale_factor
-    per_successful = variable_cost / (n_successful * scale_factor) if n_successful > 0 else float("inf")
+    variable_cost = total_hours_at_volume * LOCAL_HOURLY_RATE
+    per_successful = variable_cost / (n_successful * scale_factor)
 
     return per_successful
 
 
-def run_kill_tests(rows):
-    """Run all 8 kill criteria from the R2 protocol."""
+def cost_per_task_api(rows, system_id, workload, volume=10000):
+    """All-in cost per successful task for an API system at given volume."""
+    relevant = [r for r in rows
+                if r["system_id"] == system_id and r["workload"] == workload
+                ]
+    if not relevant:
+        return float("inf")
+
+    successful = [r for r in relevant if r["status"] == "pass"]
+    if not successful:
+        return float("inf")
+
+    total_api_cost = sum(float(r.get("api_cost_usd", 0)) for r in relevant)
+    n_attempted = len(relevant)
+    n_successful = len(successful)
+
+    scale_factor = volume / n_attempted if n_attempted > 0 else 1
+    variable_cost = total_api_cost * scale_factor
+    per_successful = variable_cost / (n_successful * scale_factor)
+
+    return per_successful
+
+
+def compute_cost_ratio(local_cost, api_cost):
+    if local_cost <= 0:
+        return float("inf")
+    if api_cost <= 0:
+        return 0.0
+    return api_cost / local_cost
+
+
+def run_gate_a(rows):
+    """Gate A: 2 per family -- highest quality + cheapest within 10pt of family best.
+
+    50/50 workload-level aggregate (W-D2 and W-D3 weighted equally).
+    """
     print("\n" + "=" * 60)
-    print("KILL TEST BATTERY")
+    print("GATE A (R2.1)")
     print("=" * 60)
 
-    kills = []
+    cfg = load_systems_config()
+    local = cfg.get("local_checkpoints", {})
 
-    # Placeholder: these need real data from completed experiments
+    families = defaultdict(list)
+    for sys_id, spec in local.items():
+        wd2_rate, wd2_n = compute_pass_rate_from_records(sys_id, "P1", "W-D2")
+        wd3_rate, wd3_n = compute_pass_rate_from_records(sys_id, "P1", "W-D3")
+
+        if wd2_n == 0 and wd3_n == 0:
+            print(f"  INCOMPLETE: {sys_id} has no R2.1 data")
+            continue
+
+        composite = 0.5 * wd2_rate + 0.5 * wd3_rate
+
+        families[spec["family"]].append({
+            "system_id": sys_id,
+            "params_b": spec["params_b"],
+            "wd2_rate": wd2_rate,
+            "wd2_n": wd2_n,
+            "wd3_rate": wd3_rate,
+            "wd3_n": wd3_n,
+            "composite": composite,
+        })
+
+    anchors = []
+    for family, members in sorted(families.items()):
+        members.sort(key=lambda x: x["composite"], reverse=True)
+        best = members[0]
+        anchors.append(best)
+        print(f"\n  {family}: best = {best['system_id']} "
+              f"(composite={best['composite']:.3f})")
+
+        within_10pt = [m for m in members[1:]
+                       if best["composite"] - m["composite"] <= 0.10]
+        if within_10pt:
+            cheapest = min(within_10pt, key=lambda x: x["params_b"])
+            if cheapest["system_id"] != best["system_id"]:
+                anchors.append(cheapest)
+                print(f"           cheapest = {cheapest['system_id']} "
+                      f"(composite={cheapest['composite']:.3f})")
+
+    print(f"\n  Gate A output: {len(anchors)} anchors")
+    for a in anchors:
+        print(f"    {a['system_id']:20s}  W-D2={a['wd2_rate']:.1%} "
+              f"W-D3={a['wd3_rate']:.1%}  "
+              f"composite={a['composite']:.3f}")
+
+    return anchors
+
+
+def run_kill_tests(rows):
+    """Run kill criteria from the R2 protocol."""
+    print("\n" + "=" * 60)
+    print("KILL TEST BATTERY (R2.1)")
+    print("=" * 60)
+
     print("\nKill tests require completed discovery + confirmation data.")
     print("Run after P5/P6 phases complete.")
-    print("\nKill criteria checked:")
     criteria = [
         "1. Fewer than 2 workloads show sub-1.7B at frontier non-inferiority",
         "2. No local-vs-hosted ratio reaches 10x at 10K tasks",
@@ -142,13 +265,43 @@ def run_kill_tests(rows):
     for c in criteria:
         print(f"  [ ] {c}")
 
-    return kills
+    return []
+
+
+def print_summary(rows):
+    """Print ledger summary filtered to R2.1 protocol."""
+    r21_rows = [r for r in rows
+                if r.get("protocol_revision", "") == PROTOCOL_REVISION]
+    pilot_rows = [r for r in rows
+                  if r.get("protocol_revision", "") != PROTOCOL_REVISION]
+
+    print(f"\nLedger: {len(rows)} total records")
+    print(f"  R2.1 canonical: {len(r21_rows)}")
+    print(f"  Pilot/superseded: {len(pilot_rows)}")
+
+    if r21_rows:
+        systems = set(r["system_id"] for r in r21_rows)
+        workloads = set(r["workload"] for r in r21_rows)
+        passed = sum(1 for r in r21_rows if r["status"] == "pass")
+        print(f"\n  R2.1 Systems: {sorted(systems)}")
+        print(f"  R2.1 Workloads: {sorted(workloads)}")
+        print(f"  R2.1 Pass rate: {passed}/{len(r21_rows)} "
+              f"({100*passed/len(r21_rows):.1f}%)")
+
+        for wl in sorted(workloads):
+            wl_rows = [r for r in r21_rows if r["workload"] == wl]
+            wl_pass = sum(1 for r in wl_rows if r["status"] == "pass")
+            print(f"    {wl}: {wl_pass}/{len(wl_rows)} "
+                  f"({100*wl_pass/len(wl_rows):.1f}%)")
+
+    gpu_hours = sum(float(r.get("gpu_seconds", 0)) for r in rows) / 3600
+    print(f"\n  Total GPU-hours (all revisions): {gpu_hours:.2f}h")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Atlas R2 scorer")
-    parser.add_argument("--phase", choices=["discovery", "confirmation"],
-                        help="Which phase to score")
+    parser = argparse.ArgumentParser(description="Atlas R2.1 scorer")
+    parser.add_argument("--gate-a", action="store_true",
+                        help="Run Gate A selection")
     parser.add_argument("--kill-test", action="store_true",
                         help="Run kill test battery")
     parser.add_argument("--summary", action="store_true",
@@ -157,18 +310,11 @@ def main():
 
     rows = load_ledger()
 
-    if args.summary or (not args.phase and not args.kill_test):
-        print(f"Ledger: {len(rows)} task records")
-        if rows:
-            systems = set(r["system_id"] for r in rows)
-            workloads = set(r["workload"] for r in rows)
-            phases = set(r["phase"] for r in rows)
-            passed = sum(1 for r in rows if r["status"] == "pass")
-            print(f"  Systems: {len(systems)}")
-            print(f"  Workloads: {len(workloads)}")
-            print(f"  Phases: {phases}")
-            print(f"  Pass rate: {passed}/{len(rows)} "
-                  f"({100*passed/len(rows):.1f}%)")
+    if args.summary or (not args.gate_a and not args.kill_test):
+        print_summary(rows)
+
+    if args.gate_a:
+        run_gate_a(rows)
 
     if args.kill_test:
         run_kill_tests(rows)
