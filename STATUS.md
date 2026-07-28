@@ -331,8 +331,26 @@ withdrawn before any R2.2 execution. The binding changes are:
 Round-2 rationale and rulings are in
 `results/codex_r2_2_round2_adjudication.md`.
 
-**Next:** implement R2.2, extend the fail-closed verifier, seal the new panel
-manifests, and pass dry runs before any W-D3 smoke or W-D2 API canary.
+### Atlas R2.3 — Cap Amendment (Jul 28)
+
+R2.2 tokenizer preflight FAILED: M_eval=353 (Falcon-H1, scenario_1966,
+indent=2, 68 fields) exceeds the R2.2 preflight limit of 352 by 1 token.
+Per R2.2 Section 1.2, this triggers R2.3.
+
+Codex R2.3 ruling: **APPROVE WITH CONDITIONS.** Cap raised 384->448,
+preflight limit 352->416, M_local 300->353. Protocol revision becomes
+`r2.3`. All non-cap terms inherited unchanged from R2.2. Separate delta
+file created (R2.2 protocol untouched).
+
+Artifacts:
+- `precommit/atlas_r2_protocol_r2_3.md` + `.sha256` (amendment)
+- `precommit/atlas_r2_3_tokenizer_audit.json` (sealed audit)
+- `results/codex_r2_3_cap_amendment.md` (Codex ruling)
+
+Verifier extended: 9 checks, all pass.
+
+**Next:** Codex runner design gate, then implement R2.3 runner, smoke
+test, full 9-system execution.
 
 ### Dead Code Cleanup Log
 | Direction | Files Deleted | Date | Evidence Preserved |
