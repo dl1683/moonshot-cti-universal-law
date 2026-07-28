@@ -185,9 +185,7 @@ def _save_task_records(records, phase, workload, system_id):
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as f:
             json.dump(records, f, indent=2, ensure_ascii=True)
-        if path.exists():
-            path.unlink()
-        Path(tmp).rename(path)
+        os.replace(tmp, str(path))
     except Exception:
         try:
             os.unlink(tmp)
