@@ -1,0 +1,213 @@
+{
+  "gate": "A",
+  "protocol_revision": "r2.1",
+  "metric": "W-D2 macro F1 (clustered bootstrap by query_id)",
+  "wd3_weight": 0.0,
+  "bootstrap_samples": 10000,
+  "ci_level": 0.95,
+  "leaderboard": [
+    {
+      "system_id": "gemma3_12b",
+      "family": "gemma3",
+      "params_b": 12.0,
+      "macro_f1": 0.25436218750000006,
+      "ci_lo": 0.17371061718750003,
+      "ci_hi": 0.34437046874999977,
+      "n_tasks": 320,
+      "n_clusters": 40
+    },
+    {
+      "system_id": "qwen3_14b",
+      "family": "qwen3",
+      "params_b": 14.0,
+      "macro_f1": 0.2383884375,
+      "ci_lo": 0.16538276562499998,
+      "ci_hi": 0.31650150781249997,
+      "n_tasks": 320,
+      "n_clusters": 40
+    },
+    {
+      "system_id": "falcon_h1_7b",
+      "family": "falcon_h1",
+      "params_b": 7.0,
+      "macro_f1": 0.1971525,
+      "ci_lo": 0.130143671875,
+      "ci_hi": 0.26907196874999995,
+      "n_tasks": 320,
+      "n_clusters": 40
+    },
+    {
+      "system_id": "gemma3_4b",
+      "family": "gemma3",
+      "params_b": 4.0,
+      "macro_f1": 0.16580750000000002,
+      "ci_lo": 0.0997192890625,
+      "ci_hi": 0.24133353124999993,
+      "n_tasks": 320,
+      "n_clusters": 40
+    },
+    {
+      "system_id": "qwen3_4b",
+      "family": "qwen3",
+      "params_b": 4.0,
+      "macro_f1": 0.141018125,
+      "ci_lo": 0.08829405468750001,
+      "ci_hi": 0.20132885937499995,
+      "n_tasks": 320,
+      "n_clusters": 40
+    },
+    {
+      "system_id": "falcon_h1_3b",
+      "family": "falcon_h1",
+      "params_b": 3.0,
+      "macro_f1": 0.1310084375,
+      "ci_lo": 0.08282185937500001,
+      "ci_hi": 0.18589918749999992,
+      "n_tasks": 320,
+      "n_clusters": 40
+    },
+    {
+      "system_id": "gemma3_1b",
+      "family": "gemma3",
+      "params_b": 1.0,
+      "macro_f1": 0.0983446875,
+      "ci_lo": 0.05515992968750002,
+      "ci_hi": 0.1487768359375,
+      "n_tasks": 320,
+      "n_clusters": 40
+    },
+    {
+      "system_id": "qwen3_0.6b",
+      "family": "qwen3",
+      "params_b": 0.6,
+      "macro_f1": 0.06432125,
+      "ci_lo": 0.021485218750000007,
+      "ci_hi": 0.11887090624999994,
+      "n_tasks": 320,
+      "n_clusters": 40
+    },
+    {
+      "system_id": "falcon_h1_0.5b",
+      "family": "falcon_h1",
+      "params_b": 0.5,
+      "macro_f1": 0.0400753125,
+      "ci_lo": 0.019076929687500004,
+      "ci_hi": 0.06710950781249998,
+      "n_tasks": 320,
+      "n_clusters": 40
+    }
+  ],
+  "selected": [
+    {
+      "system_id": "falcon_h1_7b",
+      "family": "falcon_h1",
+      "params_b": 7.0,
+      "macro_f1": 0.1971525,
+      "ci_lo": 0.130143671875,
+      "ci_hi": 0.26907196874999995,
+      "n_tasks": 320,
+      "n_clusters": 40,
+      "role": "anchor-best"
+    },
+    {
+      "system_id": "falcon_h1_3b",
+      "family": "falcon_h1",
+      "params_b": 3.0,
+      "macro_f1": 0.1310084375,
+      "ci_lo": 0.08282185937500001,
+      "ci_hi": 0.18589918749999992,
+      "n_tasks": 320,
+      "n_clusters": 40,
+      "role": "anchor-cheap"
+    },
+    {
+      "system_id": "falcon_h1_0.5b",
+      "family": "falcon_h1",
+      "params_b": 0.5,
+      "macro_f1": 0.0400753125,
+      "ci_lo": 0.019076929687500004,
+      "ci_hi": 0.06710950781249998,
+      "n_tasks": 320,
+      "n_clusters": 40,
+      "role": "exploratory"
+    },
+    {
+      "system_id": "gemma3_12b",
+      "family": "gemma3",
+      "params_b": 12.0,
+      "macro_f1": 0.25436218750000006,
+      "ci_lo": 0.17371061718750003,
+      "ci_hi": 0.34437046874999977,
+      "n_tasks": 320,
+      "n_clusters": 40,
+      "role": "anchor-best"
+    },
+    {
+      "system_id": "gemma3_4b",
+      "family": "gemma3",
+      "params_b": 4.0,
+      "macro_f1": 0.16580750000000002,
+      "ci_lo": 0.0997192890625,
+      "ci_hi": 0.24133353124999993,
+      "n_tasks": 320,
+      "n_clusters": 40,
+      "role": "anchor-cheap"
+    },
+    {
+      "system_id": "gemma3_1b",
+      "family": "gemma3",
+      "params_b": 1.0,
+      "macro_f1": 0.0983446875,
+      "ci_lo": 0.05515992968750002,
+      "ci_hi": 0.1487768359375,
+      "n_tasks": 320,
+      "n_clusters": 40,
+      "role": "exploratory"
+    },
+    {
+      "system_id": "qwen3_14b",
+      "family": "qwen3",
+      "params_b": 14.0,
+      "macro_f1": 0.2383884375,
+      "ci_lo": 0.16538276562499998,
+      "ci_hi": 0.31650150781249997,
+      "n_tasks": 320,
+      "n_clusters": 40,
+      "role": "anchor-best"
+    },
+    {
+      "system_id": "qwen3_4b",
+      "family": "qwen3",
+      "params_b": 4.0,
+      "macro_f1": 0.141018125,
+      "ci_lo": 0.08829405468750001,
+      "ci_hi": 0.20132885937499995,
+      "n_tasks": 320,
+      "n_clusters": 40,
+      "role": "anchor-cheap"
+    },
+    {
+      "system_id": "qwen3_0.6b",
+      "family": "qwen3",
+      "params_b": 0.6,
+      "macro_f1": 0.06432125,
+      "ci_lo": 0.021485218750000007,
+      "ci_hi": 0.11887090624999994,
+      "n_tasks": 320,
+      "n_clusters": 40,
+      "role": "exploratory"
+    }
+  ],
+  "n_anchors": 6,
+  "n_exploratory": 3,
+  "codex_steering": "R2: 0% W-D3 weight, Gate A from W-D2 macro F1 only",
+  "next_action": "W-D2 API ladder to establish Goliath ceiling for cost ratio computation",
+  "findings": [
+    "Monotonic scaling within all 3 families (bigger=better)",
+    "No scale inversion in local systems",
+    "Cross-family: gemma3_12b > qwen3_14b despite fewer params",
+    "falcon_h1_7b (SSM hybrid) competitive with qwen3_14b (transformer)",
+    "Wide CIs expected: 40 query clusters, need API data for meaningful comparisons",
+    "All 9 systems advance: every family has within-10pt second member"
+  ]
+}

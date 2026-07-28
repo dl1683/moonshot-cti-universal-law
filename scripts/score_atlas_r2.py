@@ -185,13 +185,27 @@ def compute_cost_ratio(local_cost, api_cost):
     return api_cost / local_cost
 
 
-def run_gate_a(rows):
-    """Gate A: 2 per family -- highest quality + cheapest within 10pt of family best.
+def compute_macro_f1_with_ci(system_id, phase="P1", workload="W-D2"):
+    """Compute macro F1 with clustered bootstrap CI (by query_id)."""
+    records = load_task_records(system_id, phase, workload)
+    tasks = {k: v for k, v in records.items() if not k.startswith("__")}
+    if not tasks:
+        return 0.0, 0.0, 0.0, 0
 
-    50/50 workload-level aggregate (W-D2 and W-D3 weighted equally).
+    f1_scores = [t["f1"] for t in tasks.values()]
+    query_ids = [t["query_id"] for t in tasks.values()]
+    macro_f1 = float(np.mean(f1_scores))
+    lo, hi, _ = bootstrap_ci_clustered(f1_scores, query_ids)
+    return macro_f1, lo, hi, len(f1_scores)
+
+
+def run_gate_a(rows):
+    """Gate A: W-D2 macro F1 only (0% W-D3 weight per Codex R2 steering).
+
+    2 per family (best + cheapest within 10pt) + 1 exploratory (smallest).
     """
     print("\n" + "=" * 60)
-    print("GATE A (R2.1)")
+    print("GATE A (R2.1 — W-D2 Macro F1 Only)")
     print("=" * 60)
 
     cfg = load_systems_config()
@@ -199,49 +213,55 @@ def run_gate_a(rows):
 
     families = defaultdict(list)
     for sys_id, spec in local.items():
-        wd2_rate, wd2_n = compute_pass_rate_from_records(sys_id, "P1", "W-D2")
-        wd3_rate, wd3_n = compute_pass_rate_from_records(sys_id, "P1", "W-D3")
-
-        if wd2_n == 0 and wd3_n == 0:
-            print(f"  INCOMPLETE: {sys_id} has no R2.1 data")
+        f1, lo, hi, n = compute_macro_f1_with_ci(sys_id, "P1", "W-D2")
+        if n == 0:
+            print(f"  INCOMPLETE: {sys_id} has no W-D2 data")
             continue
-
-        composite = 0.5 * wd2_rate + 0.5 * wd3_rate
 
         families[spec["family"]].append({
             "system_id": sys_id,
             "params_b": spec["params_b"],
-            "wd2_rate": wd2_rate,
-            "wd2_n": wd2_n,
-            "wd3_rate": wd3_rate,
-            "wd3_n": wd3_n,
-            "composite": composite,
+            "macro_f1": f1,
+            "ci_lo": lo,
+            "ci_hi": hi,
+            "n_tasks": n,
         })
 
-    anchors = []
+    selected = []
     for family, members in sorted(families.items()):
-        members.sort(key=lambda x: x["composite"], reverse=True)
+        members.sort(key=lambda x: x["macro_f1"], reverse=True)
         best = members[0]
-        anchors.append(best)
+        selected.append({**best, "role": "anchor-best"})
         print(f"\n  {family}: best = {best['system_id']} "
-              f"(composite={best['composite']:.3f})")
+              f"(F1={best['macro_f1']:.4f} [{best['ci_lo']:.4f}, "
+              f"{best['ci_hi']:.4f}])")
 
         within_10pt = [m for m in members[1:]
-                       if best["composite"] - m["composite"] <= 0.10]
+                       if best["macro_f1"] - m["macro_f1"] <= 0.10]
         if within_10pt:
             cheapest = min(within_10pt, key=lambda x: x["params_b"])
             if cheapest["system_id"] != best["system_id"]:
-                anchors.append(cheapest)
+                selected.append({**cheapest, "role": "anchor-cheap"})
                 print(f"           cheapest = {cheapest['system_id']} "
-                      f"(composite={cheapest['composite']:.3f})")
+                      f"(F1={cheapest['macro_f1']:.4f}, "
+                      f"gap={best['macro_f1'] - cheapest['macro_f1']:.4f})")
 
-    print(f"\n  Gate A output: {len(anchors)} anchors")
-    for a in anchors:
-        print(f"    {a['system_id']:20s}  W-D2={a['wd2_rate']:.1%} "
-              f"W-D3={a['wd3_rate']:.1%}  "
-              f"composite={a['composite']:.3f}")
+        smallest = min(members, key=lambda x: x["params_b"])
+        if smallest["system_id"] not in [s["system_id"] for s in selected]:
+            selected.append({**smallest, "role": "exploratory"})
+            print(f"           exploratory = {smallest['system_id']} "
+                  f"(F1={smallest['macro_f1']:.4f})")
 
-    return anchors
+    n_anchor = sum(1 for s in selected if s["role"].startswith("anchor"))
+    n_expl = sum(1 for s in selected if s["role"] == "exploratory")
+    print(f"\n  Gate A output: {len(selected)} systems "
+          f"({n_anchor} anchors + {n_expl} exploratory)")
+    for s in selected:
+        print(f"    [{s['role']:15s}] {s['system_id']:20s} "
+              f"F1={s['macro_f1']:.4f} [{s['ci_lo']:.4f}, {s['ci_hi']:.4f}] "
+              f"{s['params_b']}B")
+
+    return selected
 
 
 def run_kill_tests(rows):
