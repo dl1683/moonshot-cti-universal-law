@@ -1,136 +1,117 @@
-# CTI Universal Law
+# Affordable Intelligence Science
 
-**A first-principles derivation of a universal law governing the quality of learned representations.**
+This repository began as **CTI Universal Law**. That work is retained as a
+legacy research record, but it is no longer the active thesis or the
+authoritative description of this project.
 
-## The Law
+## Current program
 
-```
-logit(q_norm) = alpha * kappa_nearest - beta * log(K-1) + C_dataset
-```
+The active program is the **Scale-Inversion Atlas**:
 
-Where:
-- `q_norm` = normalized 1-NN accuracy: `(acc_1NN - 1/K) / (1 - 1/K)`
-- `kappa_nearest` = nearest-class separation SNR: `min_{j!=k} ||mu_j - mu_k|| / (sigma_W * sqrt(d))`
-- `alpha` = 1.477 (NLP decoders, CV=2.3% across 12 architectures, R^2=0.955)
-- `beta` = 0.746 (log-K scaling)
-- `C_dataset` = per-dataset intercept
+> Given a workload, hardware, volume, quality requirement, and safety floor,
+> what is the cheapest complete AI system that meets them?
 
-The **functional form is derived** from extreme value theory (Gumbel race competition among K classes) before fitting any constants. This is a conditional theorem -- the shape is proven, only the constants are estimated.
+The goal is prospective model and system selection under explicit constraints,
+not another correlation between model scale and benchmark accuracy. A useful
+result must include the full system, quality and safety floors, adaptation and
+verification cost, energy, latency, and failure modes.
 
-## Key Results
+## Current status
 
-### Core Universality
+**Atlas R2.1 is in Phase P1 and has not passed Gate A. No prospective selector
+claim has been earned.**
 
-| Test | Result | Status |
-|------|--------|--------|
-| LOAO across 12 NLP architectures (192 pts) | alpha=1.477, CV=2.3%, R^2=0.955 | **PASS** |
-| Pre-registered RWKV-4 boundary test | alpha=2.887 in [2.43, 3.29] | **PASS** |
-| Blind OOD (new arch + new datasets) | r=0.817, p=0.013 | **PASS** |
-| H8+ expanded holdout (11 models x 8 datasets, n=77) | r=0.879, MAE=0.077 | **PASS** |
-| LOMFO (leave-one-family-out, all 4 families) | r>=0.84 each family | **PASS** |
+The canonical live record is [STATUS.md](STATUS.md). As of 2026-07-28:
 
-### Causal Evidence
+- P0 preflight was only a partial pass.
+- W-D2 (MKQA) completed its nine-local-system raw screen and exposed
+  cross-family ordering differences.
+- W-D3 (PolicyBench) is not Gate-A-eligible under its current metric. An
+  all-zero baseline dominates because most gold fields are zero, and the
+  executed token/timeout settings diverged from the frozen R2.1 protocol.
+- Codex steering assigns the current W-D3 result **0% Gate A weight**. A
+  protocol amendment and a non-collapsed scoring contract are required before
+  the workload can support a capability or scale-inversion conclusion.
+- The W-D3 task-record file and runner contain live local changes. Treat them as
+  an in-progress working surface, not a finalized result.
 
-| Test | Result | Status |
-|------|--------|--------|
-| Confusion-matrix causal prediction (3 shift levels) | r=0.842-0.776, sign acc 93-100%, n=182, p<10^-35 | **PASS** |
-| Frozen do-interventions (multi-architecture) | Predicted direction confirmed | **PASS** |
-| Orthogonal factorial design | kappa_nearest is causal driver | **PASS** |
+The binding protocol is
+[the Atlas R2 design gate](results/codex_scale_inversion_atlas_design_gate_r2.md)
+plus [the R2.1 protocol](precommit/atlas_r2_protocol_r2_1.md). The W-D3
+adjudication is recorded in
+[Codex steering](results/codex_steering_wd3_emerging.md).
 
-### Cross-Modal Validation
+## What happened to CTI Universal Law
 
-| Test | Result | Status |
-|------|--------|--------|
-| ViT-Large (CIFAR-10) | R^2=0.964 | **PASS** |
-| ResNet-50 (CIFAR-100) | Same functional form | **PASS** |
-| Alpha-family law | NLP decoders: 1.48, ViT: 0.63, CNN: 4.4 | **PASS** |
+The original project studied a relationship between normalized 1-NN accuracy
+and nearest-class representation separation. It produced broad internal
+validation and a paper artifact, but later adversarial review sharply reduced
+the claim:
 
-### Biological Generalization (Mouse Visual Cortex)
+- predictor and target are closely related measurements of the same labeled
+  geometry;
+- the strongest reported fit used per-dataset intercepts and did not transfer
+  well to unseen datasets;
+- the leave-one-architecture-out stability statistic was an overlapping
+  jackknife, not independent replication;
+- downstream ranking evidence was confounded by scale; and
+- the equicorrelation result contained a whitening bug and matched a geometric
+  null after correction.
 
-| Test | Result | Status |
-|------|--------|--------|
-| 32 mouse V1 Neuropixels sessions | 30/32 PASS, mean r=0.736 | **PASS** |
-| Multi-area batch (30 mice, 5 cortical areas) | VISp 30/30, VISl 22/22, all areas >=87% | **PASS** |
-| Equicorrelation across areas | rho~0.46, likely geometric null artifact | **KILLED** |
+The paper and surviving artifacts remain in `paper/` and the status history for
+auditability. They must not be described as a current universal law, a validated
+economic reduction, or the portfolio flagship. The later Geometry Admission
+Test, Causal Skill Organs, and several follow-on directions also failed their
+gates; their negative evidence remains summarized in [STATUS.md](STATUS.md).
 
-### Practical Utility
+## Claim boundary
 
-| Test | Result | Status |
-|------|--------|--------|
-| H3 cross-model ranking (9 architectures) | rho=0.833, p=0.005 (kappa ranks by MAP@10) | **PASS** |
-| Alpha-rho zero-parameter prediction | Mean error +4.7%, MAE=0.068 (zero free params) | **PASS** |
+This repository currently supports:
 
-### Three-Level Universality Structure
+- a carefully specified prospective evaluation program;
+- completed raw screens and metric-collapse findings;
+- preserved negative results from the CTI, GAT, CSO, and direction-selection
+  arcs; and
+- infrastructure for cost, energy, thermal, workload, and system accounting.
 
-The law exhibits universality at three levels:
-1. **Functional form**: `logit(q_norm) = alpha * kappa_nearest - beta * log(K-1) + C` holds across all tested architectures, modalities, and biological systems
-2. **Slope constant**: `alpha` is universal within a modality family (NLP decoders: CV=2.3%)
-3. **Intercept**: `C_dataset` varies by task (expected -- different datasets have different baseline difficulties)
+It does **not** currently support:
 
-Cross-dataset prediction (LODO CV=0.42) is an expected scope limit under this three-level structure, not a failure.
+- a universal law of learned representation quality;
+- a validated Scale-Inversion selector;
+- a claim that smaller systems beat larger systems in general;
+- a PolicyBench capability ordering from the current W-D3 metric; or
+- a demonstrated end-to-end cost reduction for a real deployment.
 
-## Honest Scope
+## Repository map
 
-- `alpha` varies by architecture family (NLP decoders: 1.48, ViT: 0.63, CNN: 4.4) -- universality is of **functional form**, not constants
-- Absolute prediction requires per-family calibration (4 probe measurements reduce MAE by 86%)
-- Within-dataset architecture ranking is the primary validated use case
-- Encoder `alpha` is not universal within-family (CV=0.42 for encoders vs 0.023 for decoders)
-- Per-model `rho` does not monotonically predict per-model `alpha` (r=-0.55) -- `rho` captures the universal geometric baseline but not architecture-specific residuals
-
-## Paper
-
-`paper/cti_universal_law.pdf` -- 28 pages, targeting COLM 2026
-
-## Repository Structure
-
-```
-src/           CTI experiment scripts (cti_*.py)
-results/       Canonical result JSONs + figures
-paper/         LaTeX source + compiled PDF
-research/      Theory docs, pre-registrations, literature synthesis
-experiments/   Experiment ledger (EXPERIMENTS.md)
-```
-
-### Canonical Files
-
-| Category | File | Description |
-|----------|------|-------------|
-| **Core law** | `results/cti_kappa_loao_per_dataset.json` | LOAO fit: alpha=1.477, R^2=0.955 |
-| **Holdout** | `results/cti_utility_revised.json` | H8+ expanded holdout (n=77) |
-| **Biological** | `results/cti_allen_all_sessions_complete.json` | 32 mouse V1 sessions |
-| **Multi-area** | `results/cti_allen_multiarea_batch.json` | 30 mice, 5 cortical areas |
-| **Equicorrelation** | `results/cti_allen_equicorr_multiarea.json` | rho across 5 areas |
-| **Causal** | `results/cti_confusion_causal_prediction.json` | Confusion-matrix causal test |
-| **Downstream** | `results/cti_downstream_h3_n9.json` | H3 ranking (9 models, rho=0.833) |
-| **Alpha-rho** | `results/cti_alpha_rho_multidataset.json` | Zero-parameter alpha prediction |
-| **Cross-modal** | `results/cti_vit_cross_modality.json` | ViT validation (R^2=0.964) |
-| **Family law** | `results/cti_extended_family_loao.json` | Alpha by architecture family |
-| **Theory** | `research/OBSERVABLE_ORDER_PARAMETER_THEOREM.md` | Master derivation chain |
-| **Figures** | `src/cti_generate_figures.py` | All paper figures |
-
-## Running Experiments
-
-```bash
-# Refit the universal law (12 NLP architectures, 4 datasets)
-python src/cti_kappa_nearest_universal.py
-
-# Run H8+ expanded holdout validation
-python src/cti_utility_revised.py
-
-# Biological validation (Allen Neuropixels, 32 sessions)
-python src/cti_allen_batch_remaining.py
-
-# Reproduce all paper figures
-python src/cti_generate_figures.py
+```text
+STATUS.md          Canonical program state, kill records, and current results
+precommit/         Frozen Atlas protocol and verification contracts
+scripts/           Canonical Atlas runner, scorer, and precommit verifier
+src/               Atlas workloads, inference, API, and energy instrumentation
+results/           Active task records and Codex steering/audit trail
+paper/             Legacy CTI paper and retained reference artifacts
+experiments/       Compact experiment ledger
 ```
 
-## Citation
+## Reproduce or inspect the active Atlas
 
-If you use this work, please cite:
+```powershell
+# Validate the currently available precommit contracts
+python scripts/verify_atlas_r2_precommit.py
 
+# Check a run without executing it
+python scripts/run_atlas_r2.py --phase P1 --workload W-D2 --dry-run
+
+# Inspect the current ledger
+python scripts/score_atlas_r2.py --summary
 ```
-@article{cti2026,
-  title={A Universal Law for Learned Representation Quality from Extreme Value Theory},
-  year={2026}
-}
-```
+
+Do not run confirmation phases until the selector and task-seal files required
+by the verifier exist and the relevant gate explicitly authorizes them.
+
+## Hardware
+
+Local experiments target one NVIDIA RTX 5090 laptop GPU with 24 GB VRAM.
+External API systems are part of the Atlas only when their costs, versions,
+quality, safety, and latency are included in the same accounting contract.
