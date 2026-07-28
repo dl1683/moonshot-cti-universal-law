@@ -254,6 +254,26 @@ Revised ceiling: 3-4/10 (down from 6-7/10). Six antipatterns apply.
 | R13 | Comprehensive failure synthesis + direction restart | DONE | 2 rounds converged. PCSI-1 demoted to PC-H1 (3/10). Scale-Inversion Atlas becomes primary program (4/10 today, conditional 7/10). Identity pivot: Affordable Intelligence Science. "Stop paying for the biggest AI." |
 | R14 | Atlas design gate | DONE | R1: CONDITIONAL GO (832 lines). R2: CONVERGED after material redesign. Binding protocol: `results/codex_scale_inversion_atlas_design_gate_r2.md` (521 lines). R1 superseded. |
 
+### Atlas R2.1 — P1 W-D2 (MKQA) Results (Jul 28)
+
+All 9 local systems evaluated on 320 multilingual QA episodes (MKQA, official scoring).
+
+| Rank | System | Family | Params | Pass Rate |
+|------|--------|--------|--------|-----------|
+| 1 | gemma3_12b | gemma3 | 12B | 29.4% |
+| 2 | qwen3_14b | qwen3 | 14B | 24.4% |
+| 3 | falcon_h1_7b | falcon_h1 | 7B | 21.2% |
+| 4 | gemma3_4b | gemma3 | 4B | 17.5% |
+| 5 | qwen3_4b | qwen3 | 4B | 13.1% |
+| 6 | falcon_h1_3b | falcon_h1 | 3B | 12.5% |
+| 7 | gemma3_1b | gemma3 | 1B | 10.6% |
+| 8 | qwen3_0.6b | qwen3 | 0.6B | 5.0% |
+| 9 | falcon_h1_0.5b | falcon_h1 | 0.5B | 3.1% |
+
+**Cross-family inversions observed:** gemma3 dominates at every size tier. falcon_h1_7b (hybrid SSM, 7B) competitive with qwen3_14b (transformer, 14B).
+
+**Next:** W-D3 (PolicyBench) runs in progress, then API ladder, then Gate A.
+
 ### Dead Code Cleanup Log
 | Direction | Files Deleted | Date | Evidence Preserved |
 |-----------|--------------|------|-------------------|
