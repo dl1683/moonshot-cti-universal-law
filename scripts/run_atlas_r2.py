@@ -214,7 +214,7 @@ def _log_ledger(phase, workload, system_id, task_id, status,
 
 def _recompute_mkqa_summary(records, spec):
     """Recompute all W-D2 metrics from authoritative task records."""
-    task_list = list(records.values())
+    task_list = [v for k, v in records.items() if not k.startswith("__")]
     total = len(task_list)
     if total == 0:
         return {"system_id": spec.get("system_id", ""),
@@ -244,7 +244,7 @@ def _recompute_mkqa_summary(records, spec):
 
 def _recompute_policybench_summary(records, spec):
     """Recompute all W-D3 metrics from authoritative task records."""
-    task_list = list(records.values())
+    task_list = [v for k, v in records.items() if not k.startswith("__")]
     total = len(task_list)
     if total == 0:
         return {"system_id": spec.get("system_id", ""),

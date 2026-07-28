@@ -269,33 +269,32 @@ def run_kill_tests(rows):
 
 
 def print_summary(rows):
-    """Print ledger summary filtered to R2.1 protocol."""
-    r21_rows = [r for r in rows
-                if r.get("protocol_revision", "") == PROTOCOL_REVISION]
-    pilot_rows = [r for r in rows
-                  if r.get("protocol_revision", "") != PROTOCOL_REVISION]
-
-    print(f"\nLedger: {len(rows)} total records")
-    print(f"  R2.1 canonical: {len(r21_rows)}")
-    print(f"  Pilot/superseded: {len(pilot_rows)}")
-
-    if r21_rows:
-        systems = set(r["system_id"] for r in r21_rows)
-        workloads = set(r["workload"] for r in r21_rows)
-        passed = sum(1 for r in r21_rows if r["status"] == "pass")
-        print(f"\n  R2.1 Systems: {sorted(systems)}")
-        print(f"  R2.1 Workloads: {sorted(workloads)}")
-        print(f"  R2.1 Pass rate: {passed}/{len(r21_rows)} "
-              f"({100*passed/len(r21_rows):.1f}%)")
-
-        for wl in sorted(workloads):
-            wl_rows = [r for r in r21_rows if r["workload"] == wl]
-            wl_pass = sum(1 for r in wl_rows if r["status"] == "pass")
-            print(f"    {wl}: {wl_pass}/{len(wl_rows)} "
-                  f"({100*wl_pass/len(wl_rows):.1f}%)")
-
+    """Print summary from ledger (budget) and task records (science)."""
     gpu_hours = sum(float(r.get("gpu_seconds", 0)) for r in rows) / 3600
-    print(f"\n  Total GPU-hours (all revisions): {gpu_hours:.2f}h")
+    print(f"\nBudget ledger: {len(rows)} total records, {gpu_hours:.2f} GPU-hours")
+
+    if TASK_RECORDS_DIR.exists():
+        import yaml
+        cfg = load_systems_config()
+        local_systems = list(cfg.get("local_checkpoints", {}).keys())
+
+        print(f"\nR2.1 Task Records (authoritative):")
+        for workload in ["W-D2", "W-D3"]:
+            wl_total = 0
+            wl_passed = 0
+            for sys_id in local_systems:
+                rate, n = compute_pass_rate_from_records(sys_id, "P1", workload)
+                if n > 0:
+                    passed = int(rate * n)
+                    wl_total += n
+                    wl_passed += passed
+                    print(f"  {sys_id:20s} {workload}: "
+                          f"{passed}/{n} ({rate:.1%})")
+            if wl_total > 0:
+                print(f"  {'TOTAL':20s} {workload}: "
+                      f"{wl_passed}/{wl_total} ({100*wl_passed/wl_total:.1f}%)")
+    else:
+        print("\n  No R2.1 task records yet.")
 
 
 def main():
