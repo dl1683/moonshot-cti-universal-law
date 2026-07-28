@@ -69,7 +69,7 @@ def load_model(system_id, device="cuda"):
     model = AutoModelForCausalLM.from_pretrained(
         hf_id, revision=revision,
         quantization_config=bnb_cfg,
-        torch_dtype=torch.bfloat16,
+        dtype=torch.bfloat16,
         device_map=device, trust_remote_code=True,
     )
 
