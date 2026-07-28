@@ -50,8 +50,8 @@ def _strip_think(text):
     return THINK_RE.sub("", text).strip()
 
 
-def _thermal_gate(system_id, gpu_index=0, pause_temp_c=78,
-                  resume_temp_c=70, poll_seconds=5,
+def _thermal_gate(system_id, gpu_index=0, pause_temp_c=85,
+                  resume_temp_c=78, poll_seconds=5,
                   sensor_failure_seconds=60):
     """Block between tasks until the GPU has safe thermal headroom."""
     import pynvml
