@@ -50,6 +50,84 @@ def _strip_think(text):
     return THINK_RE.sub("", text).strip()
 
 
+def _thermal_gate(system_id, gpu_index=0, pause_temp_c=78,
+                  resume_temp_c=70, poll_seconds=5,
+                  sensor_failure_seconds=60):
+    """Block between tasks until the GPU has safe thermal headroom."""
+    import pynvml
+
+    if resume_temp_c >= pause_temp_c:
+        raise ValueError("resume_temp_c must be lower than pause_temp_c")
+
+    def log(event, **fields):
+        details = " ".join(f"{key}={value}" for key, value in fields.items())
+        print(
+            f"{datetime.now(timezone.utc).isoformat()} THERMAL "
+            f"event={event} system={system_id} {details}".rstrip(),
+            flush=True,
+        )
+
+    initialized = False
+    handle = None
+    cooling = False
+
+    try:
+        while True:
+            try:
+                if not initialized:
+                    pynvml.nvmlInit()
+                    initialized = True
+                    handle = pynvml.nvmlDeviceGetHandleByIndex(gpu_index)
+                temp_c = pynvml.nvmlDeviceGetTemperature(
+                    handle, pynvml.NVML_TEMPERATURE_GPU
+                )
+            except pynvml.NVMLError as exc:
+                log(
+                    "sensor_error",
+                    gpu_index=gpu_index,
+                    error=type(exc).__name__,
+                    assumed_hot=True,
+                    retry_seconds=sensor_failure_seconds,
+                )
+                cooling = True
+                if initialized:
+                    try:
+                        pynvml.nvmlShutdown()
+                    except pynvml.NVMLError:
+                        pass
+                    initialized = False
+                    handle = None
+                time.sleep(sensor_failure_seconds)
+                continue
+
+            if not cooling and temp_c <= pause_temp_c:
+                return
+
+            if cooling and temp_c < resume_temp_c:
+                log("resume", temp_c=temp_c, resume_below_c=resume_temp_c)
+                return
+
+            if not cooling:
+                cooling = True
+                log(
+                    "pause",
+                    temp_c=temp_c,
+                    pause_above_c=pause_temp_c,
+                    resume_below_c=resume_temp_c,
+                )
+            else:
+                log("cooling", temp_c=temp_c,
+                    resume_below_c=resume_temp_c)
+
+            time.sleep(poll_seconds)
+    finally:
+        if initialized:
+            try:
+                pynvml.nvmlShutdown()
+            except pynvml.NVMLError:
+                pass
+
+
 def _run_id():
     return f"run_{uuid.uuid4().hex[:12]}"
 
@@ -399,6 +477,8 @@ def run_p1_mkqa(budget, system_filter=None):
             )
 
             _save_task_records(records, "P1", "W-D2", sys_id)
+            if i + 1 < len(remaining):
+                _thermal_gate(sys_id)
 
             if (i + 1) % 40 == 0 or i == 0 or i == len(remaining) - 1:
                 done_now = len(done_ids) + i + 1
@@ -591,6 +671,8 @@ def run_p1_policybench(budget, system_filter=None):
             )
 
             _save_task_records(records, "P1", "W-D3", sys_id)
+            if i + 1 < len(remaining):
+                _thermal_gate(sys_id)
 
             if (i + 1) % 20 == 0 or i == 0 or i == len(remaining) - 1:
                 done_now = len(done_ids) + i + 1
