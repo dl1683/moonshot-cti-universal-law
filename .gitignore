@@ -42,10 +42,6 @@ STARTUP_PROMPT.md
 # Atlas R2 cost ledger (generated at runtime, not precommit)
 results/atlas_r2_cost_ledger.csv
 
-# Killed direction local scratch (prevent re-creation)
-results/geometry_admission/
-results/causal_organ/
-
 # P1 runtime artifacts (regenerated on each run)
 results/local/
 results/p1_*_run_log.txt

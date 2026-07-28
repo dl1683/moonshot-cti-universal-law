@@ -2669,5 +2669,2012 @@
     "gpu_seconds": 66.824,
     "segment_id": "seg_b274a453",
     "timed_out": false
+  },
+  "pb_scenario_080": {
+    "task_id": "pb_scenario_080",
+    "scenario_id": "scenario_080",
+    "protocol_revision": "r2.1",
+    "run_id": "run_4e26ac38e09a",
+    "raw_output": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 1,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "cleaned_prediction": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 1,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "parse_valid": true,
+    "fields_correct": 15,
+    "fields_total": 16,
+    "household_score": 0.9375,
+    "all_correct": false,
+    "status": "pass",
+    "field_results": {
+      "federal_income_tax_before_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "federal_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "payroll_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "self_employment_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_income_tax_before_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "local_income_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "snap": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 3596.039794921875
+      },
+      "ssi": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "tanf": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_wic_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicaid_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 1.0,
+        "reference": 1.0
+      },
+      "head_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "free_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "reduced_price_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      }
+    },
+    "scorer_version": "r2.1.0",
+    "gold_answer_hash": "7f470db92c892e6a",
+    "model_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+    "input_tokens": 546,
+    "output_tokens": 185,
+    "wall_seconds": 16.429,
+    "gpu_seconds": 16.458,
+    "segment_id": "seg_7574e28f",
+    "timed_out": false
+  },
+  "pb_scenario_081": {
+    "task_id": "pb_scenario_081",
+    "scenario_id": "scenario_081",
+    "protocol_revision": "r2.1",
+    "run_id": "run_4e26ac38e09a",
+    "raw_output": "{\n  \"federal_income_tax_before_refundable_credits\": 28450.0,\n  \"federal_refundable_credits\": 0.0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0.0,\n  \"payroll_tax\": 3850.0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0.0,\n  \"snap\": 0.0,\n  \"ssi\": 0.0,\n  \"state_income_tax_before_refundable_credits\": 2845.0,\n  \"state_refundable_credits\": 0.0,\n  \"tanf\": 0.0\n}",
+    "cleaned_prediction": "{\n  \"federal_income_tax_before_refundable_credits\": 28450.0,\n  \"federal_refundable_credits\": 0.0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0.0,\n  \"payroll_tax\": 3850.0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0.0,\n  \"snap\": 0.0,\n  \"ssi\": 0.0,\n  \"state_income_tax_before_refundable_credits\": 2845.0,\n  \"state_refundable_credits\": 0.0,\n  \"tanf\": 0.0\n}",
+    "parse_valid": true,
+    "fields_correct": 13,
+    "fields_total": 16,
+    "household_score": 0.8125,
+    "all_correct": false,
+    "status": "pass",
+    "field_results": {
+      "federal_income_tax_before_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 28450.0,
+        "reference": 26932.2734375
+      },
+      "federal_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "payroll_tax": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 3850.0,
+        "reference": 14192.662109375
+      },
+      "self_employment_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_income_tax_before_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 2845.0,
+        "reference": 8238.40625
+      },
+      "state_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "local_income_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "snap": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "ssi": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "tanf": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_wic_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicaid_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "free_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "reduced_price_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      }
+    },
+    "scorer_version": "r2.1.0",
+    "gold_answer_hash": "ddcf90fa64ea77e4",
+    "model_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+    "input_tokens": 801,
+    "output_tokens": 215,
+    "wall_seconds": 17.35,
+    "gpu_seconds": 17.353,
+    "segment_id": "seg_7574e28f",
+    "timed_out": false
+  },
+  "pb_scenario_022": {
+    "task_id": "pb_scenario_022",
+    "scenario_id": "scenario_022",
+    "protocol_revision": "r2.1",
+    "run_id": "run_4e26ac38e09a",
+    "raw_output": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 1,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "cleaned_prediction": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 1,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "parse_valid": true,
+    "fields_correct": 13,
+    "fields_total": 16,
+    "household_score": 0.8125,
+    "all_correct": false,
+    "status": "pass",
+    "field_results": {
+      "federal_income_tax_before_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 11131.3271484375
+      },
+      "federal_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "payroll_tax": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 4710.83251953125
+      },
+      "self_employment_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_income_tax_before_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 2439.650146484375
+      },
+      "state_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "local_income_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "snap": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "ssi": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "tanf": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_wic_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicaid_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 1.0,
+        "reference": 1.0
+      },
+      "free_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "reduced_price_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      }
+    },
+    "scorer_version": "r2.1.0",
+    "gold_answer_hash": "bbea17a6b49f7be1",
+    "model_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+    "input_tokens": 746,
+    "output_tokens": 185,
+    "wall_seconds": 14.213,
+    "gpu_seconds": 14.217,
+    "segment_id": "seg_7574e28f",
+    "timed_out": false
+  },
+  "pb_scenario_046": {
+    "task_id": "pb_scenario_046",
+    "scenario_id": "scenario_046",
+    "protocol_revision": "r2.1",
+    "run_id": "run_4e26ac38e09a",
+    "raw_output": "{\n  \"child1_chip_eligible\": 1,\n  \"child1_early_head_start_eligible\": 1,\n  \"child1_head_start_eligible\": 1,\n  \"child1_medicaid_eligible\": 1,\n  \"child1_medicare_eligible\": 0,\n  \"child1_wic_eligible\": 1,\n  \"child2_chip_eligible\": 1,\n  \"child2_early_head_start_eligible\": 1,\n  \"child2_head_start_eligible\": 1,\n  \"child2_medicaid_eligible\": 1,\n  \"child2_medicare_eligible\": 0,\n  \"child2_wic_eligible\": 1,\n  \"federal_income_tax_before_refundable_credits\": 12345.67,\n  \"federal_refundable_credits\": 2345.67,\n  \"free_school_meals_eligible\": 1,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 12345.67,\n  \"reduced_price_school_meals_eligible\": 1,\n  \"self_employment_tax\": 0,\n  \"snap\": 2345.67,\n  \"spouse_chip_eligible\": 0,\n  \"spouse_medicaid_eligible\": 0,\n  \"spouse_medicare_eligible\": 0,\n  \"spouse_wic_eligible\": 0,\n  \"ssi\": ",
+    "cleaned_prediction": "{\n  \"child1_chip_eligible\": 1,\n  \"child1_early_head_start_eligible\": 1,\n  \"child1_head_start_eligible\": 1,\n  \"child1_medicaid_eligible\": 1,\n  \"child1_medicare_eligible\": 0,\n  \"child1_wic_eligible\": 1,\n  \"child2_chip_eligible\": 1,\n  \"child2_early_head_start_eligible\": 1,\n  \"child2_head_start_eligible\": 1,\n  \"child2_medicaid_eligible\": 1,\n  \"child2_medicare_eligible\": 0,\n  \"child2_wic_eligible\": 1,\n  \"federal_income_tax_before_refundable_credits\": 12345.67,\n  \"federal_refundable_credits\": 2345.67,\n  \"free_school_meals_eligible\": 1,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 12345.67,\n  \"reduced_price_school_meals_eligible\": 1,\n  \"self_employment_tax\": 0,\n  \"snap\": 2345.67,\n  \"spouse_chip_eligible\": 0,\n  \"spouse_medicaid_eligible\": 0,\n  \"spouse_medicare_eligible\": 0,\n  \"spouse_wic_eligible\": 0,\n  \"ssi\":",
+    "parse_valid": false,
+    "fields_correct": 0,
+    "fields_total": 32,
+    "household_score": 0.0,
+    "all_correct": false,
+    "status": "parse_fail",
+    "field_results": {},
+    "scorer_version": "r2.1.0",
+    "gold_answer_hash": "92cdbcb67aad276b",
+    "model_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+    "input_tokens": 1308,
+    "output_tokens": 384,
+    "wall_seconds": 30.854,
+    "gpu_seconds": 30.86,
+    "segment_id": "seg_7574e28f",
+    "timed_out": false
+  },
+  "pb_scenario_083": {
+    "task_id": "pb_scenario_083",
+    "scenario_id": "scenario_083",
+    "protocol_revision": "r2.1",
+    "run_id": "run_4e26ac38e09a",
+    "raw_output": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "cleaned_prediction": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "parse_valid": true,
+    "fields_correct": 15,
+    "fields_total": 16,
+    "household_score": 0.9375,
+    "all_correct": false,
+    "status": "pass",
+    "field_results": {
+      "federal_income_tax_before_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "federal_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "payroll_tax": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 539.3250122070312
+      },
+      "self_employment_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_income_tax_before_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "local_income_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "snap": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "ssi": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "tanf": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_wic_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicaid_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "free_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "reduced_price_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      }
+    },
+    "scorer_version": "r2.1.0",
+    "gold_answer_hash": "11c6f8272f771c5e",
+    "model_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+    "input_tokens": 569,
+    "output_tokens": 185,
+    "wall_seconds": 16.558,
+    "gpu_seconds": 16.562,
+    "segment_id": "seg_7574e28f",
+    "timed_out": false
+  },
+  "pb_scenario_066": {
+    "task_id": "pb_scenario_066",
+    "scenario_id": "scenario_066",
+    "protocol_revision": "r2.1",
+    "run_id": "run_4e26ac38e09a",
+    "raw_output": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "cleaned_prediction": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "parse_valid": true,
+    "fields_correct": 14,
+    "fields_total": 16,
+    "household_score": 0.875,
+    "all_correct": false,
+    "status": "pass",
+    "field_results": {
+      "federal_income_tax_before_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "federal_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 39.779998779296875
+      },
+      "payroll_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 39.779998779296875
+      },
+      "self_employment_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_income_tax_before_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 7.955999851226807
+      },
+      "local_income_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "snap": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 3596.039794921875
+      },
+      "ssi": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "tanf": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_wic_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicaid_eligible": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 1.0
+      },
+      "head_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "free_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "reduced_price_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      }
+    },
+    "scorer_version": "r2.1.0",
+    "gold_answer_hash": "348e77a17f7e880b",
+    "model_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+    "input_tokens": 509,
+    "output_tokens": 185,
+    "wall_seconds": 16.073,
+    "gpu_seconds": 16.078,
+    "segment_id": "seg_7574e28f",
+    "timed_out": false
+  },
+  "pb_scenario_042": {
+    "task_id": "pb_scenario_042",
+    "scenario_id": "scenario_042",
+    "protocol_revision": "r2.1",
+    "run_id": "run_4e26ac38e09a",
+    "raw_output": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 1,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "cleaned_prediction": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 1,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "parse_valid": true,
+    "fields_correct": 14,
+    "fields_total": 16,
+    "household_score": 0.875,
+    "all_correct": false,
+    "status": "pass",
+    "field_results": {
+      "federal_income_tax_before_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 1979.1583251953125
+      },
+      "federal_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "payroll_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "self_employment_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_income_tax_before_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 284.74090576171875
+      },
+      "state_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "local_income_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "snap": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "ssi": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "tanf": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_wic_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicaid_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 1.0,
+        "reference": 1.0
+      },
+      "free_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "reduced_price_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      }
+    },
+    "scorer_version": "r2.1.0",
+    "gold_answer_hash": "62c300f4b07a19c1",
+    "model_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+    "input_tokens": 709,
+    "output_tokens": 185,
+    "wall_seconds": 12.955,
+    "gpu_seconds": 12.958,
+    "segment_id": "seg_7574e28f",
+    "timed_out": false
+  },
+  "pb_scenario_004": {
+    "task_id": "pb_scenario_004",
+    "scenario_id": "scenario_004",
+    "protocol_revision": "r2.1",
+    "run_id": "run_4e26ac38e09a",
+    "raw_output": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 1,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"spouse_chip_eligible\": 0,\n  \"spouse_medicaid_eligible\": 0,\n  \"spouse_medicare_eligible\": 0,\n  \"spouse_wic_eligible\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "cleaned_prediction": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 1,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"spouse_chip_eligible\": 0,\n  \"spouse_medicaid_eligible\": 0,\n  \"spouse_medicare_eligible\": 0,\n  \"spouse_wic_eligible\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "parse_valid": true,
+    "fields_correct": 19,
+    "fields_total": 20,
+    "household_score": 0.95,
+    "all_correct": false,
+    "status": "pass",
+    "field_results": {
+      "federal_income_tax_before_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "federal_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "payroll_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "self_employment_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_income_tax_before_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "local_income_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "snap": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "ssi": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "tanf": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_wic_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "spouse_wic_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicaid_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "spouse_medicaid_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "spouse_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicare_eligible": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 1.0,
+        "reference": 0.0
+      },
+      "spouse_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "free_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "reduced_price_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      }
+    },
+    "scorer_version": "r2.1.0",
+    "gold_answer_hash": "23f89b085b962047",
+    "model_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+    "input_tokens": 879,
+    "output_tokens": 237,
+    "wall_seconds": 21.019,
+    "gpu_seconds": 21.021,
+    "segment_id": "seg_7574e28f",
+    "timed_out": false
+  },
+  "pb_scenario_009": {
+    "task_id": "pb_scenario_009",
+    "scenario_id": "scenario_009",
+    "protocol_revision": "r2.1",
+    "run_id": "run_4e26ac38e09a",
+    "raw_output": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"spouse_chip_eligible\": 0,\n  \"spouse_medicaid_eligible\": 0,\n  \"spouse_medicare_eligible\": 0,\n  \"spouse_wic_eligible\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "cleaned_prediction": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"spouse_chip_eligible\": 0,\n  \"spouse_medicaid_eligible\": 0,\n  \"spouse_medicare_eligible\": 0,\n  \"spouse_wic_eligible\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "parse_valid": true,
+    "fields_correct": 17,
+    "fields_total": 20,
+    "household_score": 0.85,
+    "all_correct": false,
+    "status": "pass",
+    "field_results": {
+      "federal_income_tax_before_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 8348.0
+      },
+      "federal_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "payroll_tax": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 4590.0
+      },
+      "self_employment_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_income_tax_before_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 2190.510009765625
+      },
+      "state_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "local_income_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "snap": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "ssi": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "tanf": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_wic_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "spouse_wic_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicaid_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "spouse_medicaid_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "spouse_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "spouse_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "free_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "reduced_price_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      }
+    },
+    "scorer_version": "r2.1.0",
+    "gold_answer_hash": "17b6015175fd92f9",
+    "model_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+    "input_tokens": 827,
+    "output_tokens": 237,
+    "wall_seconds": 20.346,
+    "gpu_seconds": 20.349,
+    "segment_id": "seg_7574e28f",
+    "timed_out": false
+  },
+  "pb_scenario_033": {
+    "task_id": "pb_scenario_033",
+    "scenario_id": "scenario_033",
+    "protocol_revision": "r2.1",
+    "run_id": "run_4e26ac38e09a",
+    "raw_output": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 1,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"spouse_chip_eligible\": 0,\n  \"spouse_medicaid_eligible\": 0,\n  \"spouse_medicare_eligible\": 1,\n  \"spouse_wic_eligible\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "cleaned_prediction": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 1,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"spouse_chip_eligible\": 0,\n  \"spouse_medicaid_eligible\": 0,\n  \"spouse_medicare_eligible\": 1,\n  \"spouse_wic_eligible\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "parse_valid": true,
+    "fields_correct": 18,
+    "fields_total": 20,
+    "household_score": 0.9,
+    "all_correct": false,
+    "status": "pass",
+    "field_results": {
+      "federal_income_tax_before_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 3788.988037109375
+      },
+      "federal_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "payroll_tax": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 6043.5
+      },
+      "self_employment_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_income_tax_before_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "local_income_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "snap": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "ssi": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "tanf": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_wic_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "spouse_wic_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicaid_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "spouse_medicaid_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "spouse_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 1.0,
+        "reference": 1.0
+      },
+      "spouse_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 1.0,
+        "reference": 1.0
+      },
+      "free_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "reduced_price_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      }
+    },
+    "scorer_version": "r2.1.0",
+    "gold_answer_hash": "cfc837d35d53726b",
+    "model_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+    "input_tokens": 809,
+    "output_tokens": 237,
+    "wall_seconds": 20.561,
+    "gpu_seconds": 20.564,
+    "segment_id": "seg_7574e28f",
+    "timed_out": false
+  },
+  "pb_scenario_077": {
+    "task_id": "pb_scenario_077",
+    "scenario_id": "scenario_077",
+    "protocol_revision": "r2.1",
+    "run_id": "run_4e26ac38e09a",
+    "raw_output": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 3825.93,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "cleaned_prediction": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 3825.93,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "parse_valid": true,
+    "fields_correct": 13,
+    "fields_total": 16,
+    "household_score": 0.8125,
+    "all_correct": false,
+    "status": "pass",
+    "field_results": {
+      "federal_income_tax_before_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 690.6175537109375
+      },
+      "federal_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "payroll_tax": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 3825.93,
+        "reference": 1989.472412109375
+      },
+      "self_employment_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_income_tax_before_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 305.13525390625
+      },
+      "state_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "local_income_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "snap": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "ssi": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "tanf": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_wic_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicaid_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "free_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "reduced_price_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      }
+    },
+    "scorer_version": "r2.1.0",
+    "gold_answer_hash": "bf9c34def279a945",
+    "model_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+    "input_tokens": 604,
+    "output_tokens": 191,
+    "wall_seconds": 14.065,
+    "gpu_seconds": 14.067,
+    "segment_id": "seg_7574e28f",
+    "timed_out": false
+  },
+  "pb_scenario_086": {
+    "task_id": "pb_scenario_086",
+    "scenario_id": "scenario_086",
+    "protocol_revision": "r2.1",
+    "run_id": "run_4e26ac38e09a",
+    "raw_output": "{\n  \"child1_chip_eligible\": 1,\n  \"child1_early_head_start_eligible\": 0,\n  \"child1_head_start_eligible\": 0,\n  \"child1_medicaid_eligible\": 1,\n  \"child1_medicare_eligible\": 0,\n  \"child1_wic_eligible\": 1,\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 1,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 7620.0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "cleaned_prediction": "{\n  \"child1_chip_eligible\": 1,\n  \"child1_early_head_start_eligible\": 0,\n  \"child1_head_start_eligible\": 0,\n  \"child1_medicaid_eligible\": 1,\n  \"child1_medicare_eligible\": 0,\n  \"child1_wic_eligible\": 1,\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 1,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 7620.0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "parse_valid": true,
+    "fields_correct": 15,
+    "fields_total": 22,
+    "household_score": 0.6818,
+    "all_correct": false,
+    "status": "pass",
+    "field_results": {
+      "federal_income_tax_before_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 3255.5478515625
+      },
+      "federal_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "payroll_tax": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 7620.0,
+        "reference": 4743.0
+      },
+      "self_employment_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_income_tax_before_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 2078.958740234375
+      },
+      "state_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "local_income_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "snap": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "ssi": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "tanf": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_wic_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "child1_wic_eligible": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 1.0,
+        "reference": 0.0
+      },
+      "head_medicaid_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "child1_medicaid_eligible": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 1.0,
+        "reference": 0.0
+      },
+      "head_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "child1_chip_eligible": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 1.0,
+        "reference": 0.0
+      },
+      "head_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "child1_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "child1_head_start_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "child1_early_head_start_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "free_school_meals_eligible": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 1.0,
+        "reference": 0.0
+      },
+      "reduced_price_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      }
+    },
+    "scorer_version": "r2.1.0",
+    "gold_answer_hash": "90e2e2d01629264c",
+    "model_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+    "input_tokens": 806,
+    "output_tokens": 270,
+    "wall_seconds": 22.297,
+    "gpu_seconds": 22.3,
+    "segment_id": "seg_7574e28f",
+    "timed_out": false
+  },
+  "pb_scenario_056": {
+    "task_id": "pb_scenario_056",
+    "scenario_id": "scenario_056",
+    "protocol_revision": "r2.1",
+    "run_id": "run_4e26ac38e09a",
+    "raw_output": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "cleaned_prediction": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "parse_valid": true,
+    "fields_correct": 11,
+    "fields_total": 16,
+    "household_score": 0.6875,
+    "all_correct": false,
+    "status": "pass",
+    "field_results": {
+      "federal_income_tax_before_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "federal_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "payroll_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "self_employment_tax": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 613.2224731445312
+      },
+      "state_income_tax_before_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 67.73941040039062
+      },
+      "state_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 265.6000061035156
+      },
+      "local_income_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "snap": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 1140.0
+      },
+      "ssi": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "tanf": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_wic_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicaid_eligible": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 1.0
+      },
+      "head_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "free_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "reduced_price_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      }
+    },
+    "scorer_version": "r2.1.0",
+    "gold_answer_hash": "c8a33919468e5209",
+    "model_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+    "input_tokens": 597,
+    "output_tokens": 185,
+    "wall_seconds": 16.976,
+    "gpu_seconds": 16.979,
+    "segment_id": "seg_7574e28f",
+    "timed_out": false
+  },
+  "pb_scenario_097": {
+    "task_id": "pb_scenario_097",
+    "scenario_id": "scenario_097",
+    "protocol_revision": "r2.1",
+    "run_id": "run_4e26ac38e09a",
+    "raw_output": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "cleaned_prediction": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "parse_valid": true,
+    "fields_correct": 10,
+    "fields_total": 16,
+    "household_score": 0.625,
+    "all_correct": false,
+    "status": "pass",
+    "field_results": {
+      "federal_income_tax_before_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "federal_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 356.7919921875
+      },
+      "payroll_tax": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 676.7384643554688
+      },
+      "self_employment_tax": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 1112.066162109375
+      },
+      "state_income_tax_before_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 172.93783569335938
+      },
+      "local_income_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "snap": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 3596.039794921875
+      },
+      "ssi": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "tanf": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_wic_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicaid_eligible": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 1.0
+      },
+      "head_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "free_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "reduced_price_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      }
+    },
+    "scorer_version": "r2.1.0",
+    "gold_answer_hash": "4946f8c5ebb984af",
+    "model_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+    "input_tokens": 736,
+    "output_tokens": 185,
+    "wall_seconds": 16.849,
+    "gpu_seconds": 16.852,
+    "segment_id": "seg_7574e28f",
+    "timed_out": false
+  },
+  "pb_scenario_012": {
+    "task_id": "pb_scenario_012",
+    "scenario_id": "scenario_012",
+    "protocol_revision": "r2.1",
+    "run_id": "run_4e26ac38e09a",
+    "raw_output": "{\n  \"child1_chip_eligible\": 1,\n  \"child1_early_head_start_eligible\": 1,\n  \"child1_head_start_eligible\": 1,\n  \"child1_medicaid_eligible\": 1,\n  \"child1_medicare_eligible\": 0,\n  \"child1_wic_eligible\": 1,\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 1,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 3150.0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"spouse_chip_eligible\": 0,\n  \"spouse_medicaid_eligible\": 0,\n  \"spouse_medicare_eligible\": 0,\n  \"spouse_wic_eligible\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "cleaned_prediction": "{\n  \"child1_chip_eligible\": 1,\n  \"child1_early_head_start_eligible\": 1,\n  \"child1_head_start_eligible\": 1,\n  \"child1_medicaid_eligible\": 1,\n  \"child1_medicare_eligible\": 0,\n  \"child1_wic_eligible\": 1,\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 1,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 0,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 3150.0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"spouse_chip_eligible\": 0,\n  \"spouse_medicaid_eligible\": 0,\n  \"spouse_medicare_eligible\": 0,\n  \"spouse_wic_eligible\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "parse_valid": true,
+    "fields_correct": 17,
+    "fields_total": 26,
+    "household_score": 0.6538,
+    "all_correct": false,
+    "status": "pass",
+    "field_results": {
+      "federal_income_tax_before_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "federal_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 6127.0
+      },
+      "payroll_tax": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 3150.0,
+        "reference": 1683.0
+      },
+      "self_employment_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_income_tax_before_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "local_income_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "snap": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 4952.08935546875
+      },
+      "ssi": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "tanf": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_wic_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "spouse_wic_eligible": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 1.0
+      },
+      "child1_wic_eligible": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 1.0,
+        "reference": 0.0
+      },
+      "head_medicaid_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "spouse_medicaid_eligible": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 1.0
+      },
+      "child1_medicaid_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 1.0,
+        "reference": 1.0
+      },
+      "head_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "spouse_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "child1_chip_eligible": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 1.0,
+        "reference": 0.0
+      },
+      "head_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "spouse_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "child1_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "child1_head_start_eligible": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 1.0,
+        "reference": 0.0
+      },
+      "child1_early_head_start_eligible": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 1.0,
+        "reference": 0.0
+      },
+      "free_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 1.0,
+        "reference": 1.0
+      },
+      "reduced_price_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      }
+    },
+    "scorer_version": "r2.1.0",
+    "gold_answer_hash": "55b8c2432353391c",
+    "model_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+    "input_tokens": 822,
+    "output_tokens": 322,
+    "wall_seconds": 30.066,
+    "gpu_seconds": 30.069,
+    "segment_id": "seg_7574e28f",
+    "timed_out": false
+  },
+  "pb_scenario_024": {
+    "task_id": "pb_scenario_024",
+    "scenario_id": "scenario_024",
+    "protocol_revision": "r2.1",
+    "run_id": "run_4e26ac38e09a",
+    "raw_output": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 1,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "cleaned_prediction": "{\n  \"federal_income_tax_before_refundable_credits\": 0,\n  \"federal_refundable_credits\": 0,\n  \"free_school_meals_eligible\": 0,\n  \"head_chip_eligible\": 0,\n  \"head_medicaid_eligible\": 0,\n  \"head_medicare_eligible\": 1,\n  \"head_wic_eligible\": 0,\n  \"local_income_tax\": 0,\n  \"payroll_tax\": 0,\n  \"reduced_price_school_meals_eligible\": 0,\n  \"self_employment_tax\": 0,\n  \"snap\": 0,\n  \"ssi\": 0,\n  \"state_income_tax_before_refundable_credits\": 0,\n  \"state_refundable_credits\": 0,\n  \"tanf\": 0\n}",
+    "parse_valid": true,
+    "fields_correct": 14,
+    "fields_total": 16,
+    "household_score": 0.875,
+    "all_correct": false,
+    "status": "pass",
+    "field_results": {
+      "federal_income_tax_before_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "federal_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "payroll_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "self_employment_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_income_tax_before_refundable_credits": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "state_refundable_credits": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 1150.0
+      },
+      "local_income_tax": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "snap": {
+        "status": "fail",
+        "correct": false,
+        "predicted": 0.0,
+        "reference": 287.68316650390625
+      },
+      "ssi": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "tanf": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_wic_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicaid_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_chip_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "head_medicare_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 1.0,
+        "reference": 1.0
+      },
+      "free_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      },
+      "reduced_price_school_meals_eligible": {
+        "status": "pass",
+        "correct": true,
+        "predicted": 0.0,
+        "reference": 0.0
+      }
+    },
+    "scorer_version": "r2.1.0",
+    "gold_answer_hash": "ef9a406f8c3fe5d1",
+    "model_revision": "40c069824f4251a91eefaf281ebe4c544efd3e18",
+    "input_tokens": 797,
+    "output_tokens": 185,
+    "wall_seconds": 15.017,
+    "gpu_seconds": 15.021,
+    "segment_id": "seg_7574e28f",
+    "timed_out": false
   }
 }
