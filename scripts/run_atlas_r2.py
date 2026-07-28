@@ -529,7 +529,8 @@ def run_p1_policybench(budget, system_filter=None):
 
             torch.cuda.synchronize()
             t_gen_start = time.perf_counter()
-            result = generate(model, tok, prompt, max_new_tokens=384)
+            result = generate(model, tok, prompt, max_new_tokens=384,
+                               timeout_seconds=120)
             torch.cuda.synchronize()
             t_gen_end = time.perf_counter()
             gen_time = t_gen_end - t_gen_start
