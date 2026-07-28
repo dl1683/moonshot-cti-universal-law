@@ -81,3 +81,5 @@ NUL
 *_temp.*
 *_scratch.*
 demo/
+results/atlas_r2_p1_mkqa_pilot.json
+results/atlas_r2_p1_mkqa_raw.json
